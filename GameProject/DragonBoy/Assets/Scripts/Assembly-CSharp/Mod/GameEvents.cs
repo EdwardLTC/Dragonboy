@@ -11,6 +11,8 @@ using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
 using Mod.ModHelper;
+using Mod.ModHelper.CommandMod.Chat;
+using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModMenu;
 using Mod.PickMob;
 using Mod.R;
@@ -18,41 +20,41 @@ using Mod.Set;
 using Mod.TeleportMenu;
 using Mod.Xmap;
 using UnityEngine;
+using CharacterInfo = Mod.AccountManager.CharacterInfo;
 
 namespace Mod
 {
     /// <summary>
-    /// Định nghĩa các sự kiện của game.
+    ///     Định nghĩa các sự kiện của game.
     /// </summary>
     /// <remarks>
-    /// - Các hàm bool trả về true thì sự kiện game sẽ không được thực hiện, 
-    /// trả về false thì sự kiện sẽ được kích hoạt như bình thường.<br/>
-    /// - Các hàm void hỗ trợ thực hiện các lệnh cùng với sự kiện.
+    ///     - Các hàm bool trả về true thì sự kiện game sẽ không được thực hiện,
+    ///     trả về false thì sự kiện sẽ được kích hoạt như bình thường.<br />
+    ///     - Các hàm void hỗ trợ thực hiện các lệnh cùng với sự kiện.
     /// </remarks>
     internal static class GameEvents
     {
-        static float _previousWidth = Screen.width;
-        static float _previousHeight = Screen.height;
-        static bool isHaveSelectSkill_old;
-        static long lastTimeGamePause;
-        static long lastTimeRequestPetInfo;
-        static long delayRequestPetInfo = 1000;
-        static long lastTimeRequestZoneInfo;
-        static long delayRequestZoneInfo = 100;
-        static bool isFirstPause = true;
-        static bool isOpenZoneUI;
-        static GUIStyle style;
-        static string nameCustomServer = "";
-        static string currentHost = "";
-        static ushort currentPort = 0;
+        private static float _previousWidth = Screen.width;
+        private static float _previousHeight = Screen.height;
+        private static bool isHaveSelectSkill_old;
+        private static long lastTimeGamePause;
+        private static long lastTimeRequestPetInfo;
+        private static long delayRequestPetInfo = 1000;
+        private static long lastTimeRequestZoneInfo;
+        private static long delayRequestZoneInfo = 100;
+        private static bool isFirstPause = true;
+        private static bool isOpenZoneUI;
+        private static GUIStyle style;
+        private static string nameCustomServer = "";
+        private static string currentHost = "";
+        private static ushort currentPort;
 
         internal static void OnAwake()
         {
-
         }
 
         /// <summary>
-        /// Kích hoạt sau khi game khởi động.
+        ///     Kích hoạt sau khi game khởi động.
         /// </summary>
         internal static void OnGameStart()
         {
@@ -68,6 +70,7 @@ namespace Mod
                 Screen.autorotateToPortrait = false;
                 Screen.autorotateToPortraitUpsideDown = false;
             }
+
             OnSetResolution();
             OnCheckZoomLevel(Screen.width, Screen.height);
             GameEventHook.InstallAllHooks();
@@ -76,8 +79,8 @@ namespace Mod
             CustomBackground.LoadData();
             CharEffectMain.Init();
             Setup.loadFile();
-            //ChatCommandHandler.loadDefault();
-            //HotkeyCommandHandler.loadDefault();
+            ChatCommandHandler.loadDefault();
+            HotkeyCommandHandler.loadDefault();
             //SocketClient.gI.initSender();
             //CustomLogo.LoadData();
             //CustomCursor.LoadData();
@@ -92,7 +95,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt khi người chơi chat.
+        ///     Kích hoạt khi người chơi chat.
         /// </summary>
         /// <param name="text">Nội dung chat.</param>
         /// <returns></returns>
@@ -104,7 +107,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt sau khi <see cref="MonoBehaviour"/> <see cref="Main"/> được kích hoạt.
+        ///     Kích hoạt sau khi <see cref="MonoBehaviour" /> <see cref="Main" /> được kích hoạt.
         /// </summary>
         internal static void OnMainStart()
         {
@@ -125,13 +128,14 @@ namespace Mod
                 if (!Utils.IsOpenedByExternalAccountManager)
                     InGameAccountManager.OnCloseAndPause();
             }
+
             lastTimeGamePause = mSystem.currentTimeMillis();
             if (isFirstPause)
                 isFirstPause = false;
         }
 
         /// <summary>
-        /// Kích hoạt khi game đóng
+        ///     Kích hoạt khi game đóng
         /// </summary>
         internal static void OnGameClosing()
         {
@@ -164,10 +168,13 @@ namespace Mod
                     else
                         GameCanvas.panel2?.updateKey();
                 }
+
                 if (!GameCanvas.panel.isShow && GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
-                    if (!GameCanvas.isPointer(GameCanvas.panel2.X, GameCanvas.panel2.Y, GameCanvas.panel2.W, GameCanvas.panel2.H) && GameCanvas.isPointerJustRelease && GameCanvas.panel2.isDoneCombine)
+                    if (!GameCanvas.isPointer(GameCanvas.panel2.X, GameCanvas.panel2.Y, GameCanvas.panel2.W,
+                            GameCanvas.panel2.H) && GameCanvas.isPointerJustRelease && GameCanvas.panel2.isDoneCombine)
                         GameCanvas.panel2?.hide();
             }
+
             CustomBackground.Update();
             //CustomLogo.update();
         }
@@ -216,7 +223,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt khi cài đăt kích thước màn hình.
+        ///     Kích hoạt khi cài đăt kích thước màn hình.
         /// </summary>
         /// <returns></returns>
         internal static void OnSetResolution()
@@ -225,9 +232,9 @@ namespace Mod
                 return;
             if (Utils.sizeData != null)
             {
-                int width = (int)Utils.sizeData["width"];
-                int height = (int)Utils.sizeData["height"];
-                bool fullScreen = (bool)Utils.sizeData["fullScreen"];
+                var width = (int)Utils.sizeData["width"];
+                var height = (int)Utils.sizeData["height"];
+                var fullScreen = (bool)Utils.sizeData["fullScreen"];
                 if (Screen.width != width || Screen.height != height)
                     Screen.SetResolution(width, height, fullScreen);
                 new Thread(() =>
@@ -242,15 +249,15 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt khi nhấn phím tắt (GameScr) chưa được xử lý.
+        ///     Kích hoạt khi nhấn phím tắt (GameScr) chưa được xử lý.
         /// </summary>
         internal static void OnGameScrPressHotkeysUnassigned()
         {
-            //HotkeyCommandHandler.handleHotkey(GameCanvas.keyAsciiPress);
+            HotkeyCommandHandler.handleHotkey(GameCanvas.keyAsciiPress);
         }
 
         /// <summary>
-        /// Kích hoạt khi nhấn phím tắt (GameScr).
+        ///     Kích hoạt khi nhấn phím tắt (GameScr).
         /// </summary>
         internal static void OnGameScrPressHotkeys()
         {
@@ -258,7 +265,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt sau khi vẽ khung chat.
+        ///     Kích hoạt sau khi vẽ khung chat.
         /// </summary>
         internal static void OnPaintChatTextField(ChatTextField instance, mGraphics g)
         {
@@ -267,7 +274,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt khi mở khung chat.
+        ///     Kích hoạt khi mở khung chat.
         /// </summary>
         internal static bool OnStartChatTextField(ChatTextField sender, IChatable parentScreen)
         {
@@ -282,7 +289,7 @@ namespace Mod
         internal static bool OnGetRMSPath(out string result)
         {
             //result = $"{Application.persistentDataPath}\\{GameMidlet.IP}_{GameMidlet.PORT}_x{mGraphics.zoomLevel}\\";
-            string subFolder = $"TeaMobi";
+            var subFolder = "TeaMobi";
             //string subFolder = $"TeaMobi{Path.DirectorySeparatorChar}Vietnam";
 
             //if (ServerListScreen.address[ServerListScreen.ipSelect] == "dragon.indonaga.com")
@@ -314,11 +321,12 @@ namespace Mod
                 SpaceshipSkip.Update(teleport);
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Kích hoạt khi có ChatTextField update.
+        ///     Kích hoạt khi có ChatTextField update.
         /// </summary>
         internal static void OnUpdateChatTextField(ChatTextField sender)
         {
@@ -328,27 +336,30 @@ namespace Mod
 
         internal static bool OnClearAllRMS()
         {
-            foreach (FileInfo file in new DirectoryInfo(Rms.GetiPhoneDocumentsPath() + "/").GetFiles().Where(f => f.Extension != ".log"))
-            {
+            foreach (var file in new DirectoryInfo(Rms.GetiPhoneDocumentsPath() + "/").GetFiles()
+                         .Where(f => f.Extension != ".log"))
                 try
                 {
                     if (file.Name != "isPlaySound")
                         file.Delete();
                 }
-                catch { }
-            }
+                catch
+                {
+                }
+
             return true;
         }
 
         /// <summary>
-        /// Kích hoạt khi <see cref="GameScr.update"/> được gọi.
+        ///     Kích hoạt khi <see cref="GameScr.update" /> được gọi.
         /// </summary>
         internal static void OnUpdateGameScr()
         {
             if (!Utils.IsOpenedByExternalAccountManager && GameCanvas.gameTick % (60 * Time.timeScale) == 0)
             {
-                Account account = InGameAccountManager.SelectedAccount;
-                if (account != null && account.Server.hostnameOrIPAddress == currentHost && account.Server.port == currentPort)
+                var account = InGameAccountManager.SelectedAccount;
+                if (account != null && account.Server.hostnameOrIPAddress == currentHost &&
+                    account.Server.port == currentPort)
                 {
                     account.Gold = Char.myCharz().xu;
                     account.Gem = Char.myCharz().luong;
@@ -364,7 +375,7 @@ namespace Mod
                     if (Char.myCharz().havePet)
                     {
                         if (account.PetInfo == null)
-                            account.PetInfo = new AccountManager.CharacterInfo();
+                            account.PetInfo = new CharacterInfo();
                         account.PetInfo.Name = Char.myPetz().cName;
                         account.PetInfo.CharID = Char.myPetz().charID;
                         account.PetInfo.Gender = (sbyte)Utils.GetPetGender();
@@ -374,15 +385,19 @@ namespace Mod
                         account.PetInfo.Icon = Char.myPetz().avatarz();
                     }
                     else
+                    {
                         account.PetInfo = null;
+                    }
                 }
             }
+
             if (Char.myCharz().havePet && mSystem.currentTimeMillis() - lastTimeRequestPetInfo > delayRequestPetInfo)
             {
                 delayRequestPetInfo = Res.random(750, 1000);
                 lastTimeRequestPetInfo = mSystem.currentTimeMillis();
                 Service.gI().petInfo();
             }
+
             if (mSystem.currentTimeMillis() - lastTimeRequestZoneInfo > delayRequestZoneInfo)
             {
                 delayRequestZoneInfo = Res.random(200, 300);
@@ -403,12 +418,14 @@ namespace Mod
             //SuicideRange.update();
             AutoSellTrashItems.Update();
             AutoLogin.OnGameScrUpdate();
-            if (!AutoTrainNewAccount.isEnabled && !AutoGoback.IsGoingBack && !AutoSellTrashItems.IsRunning && !AutoLogin.IsRunning)
+            if (!AutoTrainNewAccount.isEnabled && !AutoGoback.IsGoingBack && !AutoSellTrashItems.IsRunning &&
+                !AutoLogin.IsRunning)
             {
                 if (Pk9rPickMob.IsTanSat)
                     GameScr.isAutoPlay = GameScr.canAutoPlay = false;
                 Pk9rPickMob.Update();
             }
+
             Boss.Update();
             SetDo.Update();
             AutoPean.Update();
@@ -420,7 +437,7 @@ namespace Mod
         }
 
         /// <summary>
-        /// Kích hoạt khi gửi yêu cầu đăng nhập.
+        ///     Kích hoạt khi gửi yêu cầu đăng nhập.
         /// </summary>
         /// <param name="username"></param>
         /// <param name="pass"></param>
@@ -436,18 +453,22 @@ namespace Mod
                     Rms.DeleteStorage("pass");
                     return;
                 }
-                Account acc = InGameAccountManager.SelectedAccount;
+
+                var acc = InGameAccountManager.SelectedAccount;
                 if (acc == null)
                     return;
                 type = (sbyte)acc.Type;
                 username = acc.Username;
                 if (acc.Type == AccountType.Registered)
+                {
                     pass = acc.Password;
+                }
                 else
                 {
                     pass = string.Empty;
                     Rms.DeleteStorage("userAo" + acc.Server.index);
                 }
+
                 acc.LastTimeLogin = DateTime.Now;
             }
             else
@@ -459,12 +480,14 @@ namespace Mod
                     type = 1;
                 }
                 else
+                {
                     pass = Utils.password == "" ? pass : Utils.password;
+                }
             }
         }
 
         /// <summary>
-        /// Kích hoạt sau khi màn hình chọn server được load.
+        ///     Kích hoạt sau khi màn hình chọn server được load.
         /// </summary>
         internal static void OnServerListScreenLoaded(ServerListScreen serverListScreen)
         {
@@ -481,12 +504,13 @@ namespace Mod
             {
                 if (string.IsNullOrEmpty(nameCustomServer))
                     return;
-                serverListScreen.cmd[2 + serverListScreen.nCmdPlay].caption = mResources.server + ": [custom] " + nameCustomServer;
+                serverListScreen.cmd[2 + serverListScreen.nCmdPlay].caption =
+                    mResources.server + ": [custom] " + nameCustomServer;
             }
         }
 
         /// <summary>
-        /// Kích hoạt khi Session kết nối đến server.
+        ///     Kích hoạt khi Session kết nối đến server.
         /// </summary>
         /// <param name="host"></param>
         /// <param name="port"></param>
@@ -497,7 +521,7 @@ namespace Mod
                 nameCustomServer = "";
                 if (InGameAccountManager.SelectedAccount == null)
                     return;
-                Server server = InGameAccountManager.SelectedServer;
+                var server = InGameAccountManager.SelectedServer;
                 if (server == null)
                     return;
                 InGameAccountManager.SelectedServer = null;
@@ -550,6 +574,7 @@ namespace Mod
                 if (w * h < 480000)
                     mGraphics.zoomLevel = 1;
             }
+
             return true;
         }
 
@@ -564,6 +589,7 @@ namespace Mod
                 //    Utils.channelSyncKey
                 //});
             }
+
             return false;
         }
 
@@ -578,29 +604,31 @@ namespace Mod
                 //    Utils.channelSyncKey
                 //});
             }
+
             return false;
         }
 
         internal static bool OnChatPopupMultiLine(string chat)
         {
-            if (AutoTrainNewAccount.isEnabled || AutoSellTrashItems.IsRunning || AutoGoback.IsGoingBack || AutoLogin.IsRunning)
+            if (AutoTrainNewAccount.isEnabled || AutoSellTrashItems.IsRunning || AutoGoback.IsGoingBack ||
+                AutoLogin.IsRunning)
             {
                 GameScr.info1.addInfo(chat, 0);
                 return true;
             }
+
             return false;
         }
 
         internal static bool OnAddBigMessage(string chat, Npc npc)
         {
             if (npc.avatar == 1139 || AutoTrainNewAccount.isEnabled)
-            {
-                if (new string[] { "NGOCRONGONLINE.COM", "Hack, Mod" }.Any(s => chat.Contains(s)))
+                if (new[] { "NGOCRONGONLINE.COM", "Hack, Mod" }.Any(s => chat.Contains(s)))
                 {
                     GameScr.info1.addInfo(chat, 0);
                     return true;
                 }
-            }
+
             return false;
         }
 
@@ -642,7 +670,9 @@ namespace Mod
                 if (!TileMap.isOfflineMap())
                     return false;
                 if (GameCanvas.isMouseFocus(GameScr.xC, GameScr.yC, 34, 34))
+                {
                     mScreen.keyMouse = 15;
+                }
                 else if (GameCanvas.isMouseFocus(GameScr.xHP, GameScr.yHP, 40, 40))
                 {
                     if (Char.myCharz().statusMe != 14)
@@ -653,10 +683,16 @@ namespace Mod
                     if (Char.myCharz().statusMe != 14)
                         mScreen.keyMouse = 5;
                 }
-                else if (instance.cmdMenu != null && GameCanvas.isMouseFocus(instance.cmdMenu.x, instance.cmdMenu.y, instance.cmdMenu.w / 2, instance.cmdMenu.h))
+                else if (instance.cmdMenu != null && GameCanvas.isMouseFocus(instance.cmdMenu.x, instance.cmdMenu.y,
+                             instance.cmdMenu.w / 2, instance.cmdMenu.h))
+                {
                     mScreen.keyMouse = 1;
+                }
                 else
+                {
                     mScreen.keyMouse = -1;
+                }
+
                 if (GameCanvas.isPointerHoldIn(GameScr.xC, GameScr.yC, 34, 34))
                 {
                     mScreen.keyTouch = 15;
@@ -669,24 +705,27 @@ namespace Mod
                         Char.myCharz().currentMovePoint = null;
                         GameCanvas.clearAllPointerEvent();
                     }
+
                     return true;
                 }
             }
+
             if (instance.mobCapcha != null)
+            {
                 ;
+            }
             else if (GameScr.isHaveSelectSkill)
             {
                 if (Char.myCharz().IsCharDead())
                     return false;
                 if (!instance.isCharging())
                 {
-                    Skill[] skills = Main.isPC ? GameScr.keySkill : GameScr.onScreenSkill;
-                    int xSMax = int.MinValue;
-                    int xSMin = int.MaxValue;
-                    int ySMax = int.MinValue;
-                    int ySMin = int.MaxValue;
-                    for (int i = skills.Length - 1; i >= 0; i--)
-                    {
+                    var skills = Main.isPC ? GameScr.keySkill : GameScr.onScreenSkill;
+                    var xSMax = int.MinValue;
+                    var xSMin = int.MaxValue;
+                    var ySMax = int.MinValue;
+                    var ySMin = int.MaxValue;
+                    for (var i = skills.Length - 1; i >= 0; i--)
                         if (skills[i] != null)
                         {
                             xSMax = Math.Max(GameScr.xS[i], xSMax);
@@ -694,19 +733,21 @@ namespace Mod
                             ySMax = Math.Max(GameScr.yS[i], ySMax);
                             ySMin = Math.Min(GameScr.yS[i], ySMin);
                         }
-                    }
-                    if (GameCanvas.isPointerHoldIn(GameScr.xSkill - 5, ySMin - 5, xSMax - xSMin + GameScr.wSkill, ySMax - ySMin + GameScr.wSkill))
+
+                    if (GameCanvas.isPointerHoldIn(GameScr.xSkill - 5, ySMin - 5, xSMax - xSMin + GameScr.wSkill,
+                            ySMax - ySMin + GameScr.wSkill))
                     {
-                        for (int i = 0; i < GameScr.onScreenSkill.Length; i++)
-                        {
-                            if (GameCanvas.isPointerHoldIn(GameScr.xSkill + GameScr.xS[i], GameScr.yS[i], GameScr.wSkill, GameScr.wSkill))
+                        for (var i = 0; i < GameScr.onScreenSkill.Length; i++)
+                            if (GameCanvas.isPointerHoldIn(GameScr.xSkill + GameScr.xS[i], GameScr.yS[i],
+                                    GameScr.wSkill, GameScr.wSkill))
                             {
                                 GameCanvas.isPointerJustDown = false;
                                 instance.isPointerDowning = false;
                                 instance.keyTouchSkill = i;
                                 if (GameCanvas.isPointerClick && GameCanvas.isPointerJustRelease)
                                 {
-                                    GameCanvas.isPointerClick = (GameCanvas.isPointerJustDown = (GameCanvas.isPointerJustRelease = false));
+                                    GameCanvas.isPointerClick = GameCanvas.isPointerJustDown =
+                                        GameCanvas.isPointerJustRelease = false;
                                     instance.selectedIndexSkill = i;
                                     if (GameScr.indexSelect < 0)
                                         GameScr.indexSelect = 0;
@@ -716,18 +757,24 @@ namespace Mod
                                             instance.selectedIndexSkill = GameScr.onScreenSkill.Length - 1;
                                     }
                                     else if (instance.selectedIndexSkill > GameScr.keySkill.Length - 1)
+                                    {
                                         instance.selectedIndexSkill = GameScr.keySkill.Length - 1;
-                                    Skill skill = Main.isPC ? GameScr.keySkill[instance.selectedIndexSkill] : GameScr.onScreenSkill[instance.selectedIndexSkill];
+                                    }
+
+                                    var skill = Main.isPC
+                                        ? GameScr.keySkill[instance.selectedIndexSkill]
+                                        : GameScr.onScreenSkill[instance.selectedIndexSkill];
                                     if (skill != null)
                                         instance.doSelectSkill(skill, true);
                                     break;
                                 }
                             }
-                        }
+
                         return true;
                     }
                 }
             }
+
             //ListCharsInMap.updateTouch();
             return false;
         }
@@ -754,8 +801,8 @@ namespace Mod
         {
             if (AutoTrainNewAccount.isEnabled && menuItems.size() == 2)
             {
-                Command command1 = (Command)menuItems.elementAt(0);
-                Command command2 = (Command)menuItems.elementAt(1);
+                var command1 = (Command)menuItems.elementAt(0);
+                var command2 = (Command)menuItems.elementAt(1);
                 if (command1.caption == LocalizedString.getGift && command2.caption == LocalizedString.rejectGift)
                 {
                     GameCanvas.menu.menuSelectedItem = 0;
@@ -764,30 +811,35 @@ namespace Mod
                     return true;
                 }
             }
+
             return false;
         }
 
         internal static void OnAddInfoChar(Char c, string info)
         {
-            if (LocalizedString.saoMayLuoiThe.ContainsReversed(info.ToLower()) && AutoTrainPet.Mode > AutoTrainPetMode.Disabled && c.charID == -Char.myCharz().charID)
+            if (LocalizedString.saoMayLuoiThe.ContainsReversed(info.ToLower()) &&
+                AutoTrainPet.Mode > AutoTrainPetMode.Disabled && c.charID == -Char.myCharz().charID)
                 AutoTrainPet.saoMayLuoiThe = true;
         }
 
         internal static bool OnPaintBgGameScr(mGraphics g)
         {
-            bool result = false;
-            if (GraphicsReducer.Level > ReduceGraphicsLevel.Off || (CustomBackground.isEnabled && CustomBackground.customBgs.Count > 0))
+            var result = false;
+            if (GraphicsReducer.Level > ReduceGraphicsLevel.Off ||
+                (CustomBackground.isEnabled && CustomBackground.customBgs.Count > 0))
             {
                 //GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.blackTexture, ScaleMode.StretchToFill);
                 g.setColor(0);
                 g.fillRect(0, 0, GameCanvas.w, GameCanvas.h);
                 result = true;
             }
+
             if (CustomBackground.isEnabled && CustomBackground.customBgs.Count > 0)
             {
                 CustomBackground.Paint(g);
                 result = true;
             }
+
             return result;
         }
 
@@ -803,22 +855,25 @@ namespace Mod
 
         internal static bool OnCreateImage(string filename, out Image image)
         {
-            string streamingAssetsPath = Application.streamingAssetsPath;
+            var streamingAssetsPath = Application.streamingAssetsPath;
             if (Utils.IsAndroidBuild())
                 streamingAssetsPath = Path.Combine(Utils.PersistentDataPath, "StreamingAssets");
-            string customAssetsPath = Path.Combine(streamingAssetsPath, "CustomAssets");
+            var customAssetsPath = Path.Combine(streamingAssetsPath, "CustomAssets");
             image = new Image();
             Texture2D texture2D;
             if (!Utils.IsEditor() && !Directory.Exists(customAssetsPath))
                 Directory.CreateDirectory(customAssetsPath);
-            string filePath = Path.Combine(customAssetsPath, filename.Replace('/', Path.DirectorySeparatorChar) + ".png");
+            var filePath = Path.Combine(customAssetsPath, filename.Replace('/', Path.DirectorySeparatorChar) + ".png");
             if (File.Exists(filePath))
             {
                 texture2D = new Texture2D(1, 1);
                 texture2D.LoadImage(File.ReadAllBytes(filePath));
             }
             else
+            {
                 texture2D = Resources.Load<Texture2D>(filename);
+            }
+
             if (texture2D == null)
                 throw new NullReferenceException(nameof(texture2D));
             image.texture = texture2D;
@@ -846,12 +901,10 @@ namespace Mod
 
         internal static void OnPanelHide(Panel instance)
         {
-
         }
 
         internal static void OnUpdateKeyPanel(Panel instance)
         {
-
         }
 
         internal static void OnUpdateChar(Char ch)
@@ -880,9 +933,11 @@ namespace Mod
                 return false;
             GameScr.resetTranslate(g);
             if (mScreen.keyTouch == 15 || (Utils.IsPC() && mScreen.keyMouse == 15))
-                g.drawImage(Utils.IsPC() ? GameScr.imgChatsPC2 : GameScr.imgChat2, GameScr.xC + 17, GameScr.yC + 17 + mGraphics.addYWhenOpenKeyBoard, mGraphics.HCENTER | mGraphics.VCENTER);
+                g.drawImage(Utils.IsPC() ? GameScr.imgChatsPC2 : GameScr.imgChat2, GameScr.xC + 17,
+                    GameScr.yC + 17 + mGraphics.addYWhenOpenKeyBoard, mGraphics.HCENTER | mGraphics.VCENTER);
             else
-                g.drawImage(Utils.IsPC() ? GameScr.imgChatPC : GameScr.imgChat, GameScr.xC + 17, GameScr.yC + 17 + mGraphics.addYWhenOpenKeyBoard, mGraphics.HCENTER | mGraphics.VCENTER);
+                g.drawImage(Utils.IsPC() ? GameScr.imgChatPC : GameScr.imgChat, GameScr.xC + 17,
+                    GameScr.yC + 17 + mGraphics.addYWhenOpenKeyBoard, mGraphics.HCENTER | mGraphics.VCENTER);
             return true;
         }
 
@@ -891,17 +946,19 @@ namespace Mod
             GameScr.isHaveSelectSkill = isHaveSelectSkill_old;
             if (GameScr.isAnalog != 0 && Char.myCharz().statusMe != 14)
             {
-                g.drawImage(mScreen.keyTouch == 5 ? GameScr.imgFire1 : GameScr.imgFire0, GameScr.xF + 20, GameScr.yF + 20, mGraphics.HCENTER | mGraphics.VCENTER);
+                g.drawImage(mScreen.keyTouch == 5 ? GameScr.imgFire1 : GameScr.imgFire0, GameScr.xF + 20,
+                    GameScr.yF + 20, mGraphics.HCENTER | mGraphics.VCENTER);
                 GameScr.gamePad.paint(g);
-                g.drawImage(mScreen.keyTouch != 13 ? GameScr.imgFocus : GameScr.imgFocus2, GameScr.xTG + 20, GameScr.yTG + 20, mGraphics.HCENTER | mGraphics.VCENTER);
+                g.drawImage(mScreen.keyTouch != 13 ? GameScr.imgFocus : GameScr.imgFocus2, GameScr.xTG + 20,
+                    GameScr.yTG + 20, mGraphics.HCENTER | mGraphics.VCENTER);
             }
+
             return true;
         }
 
         internal static bool OnPanelFireOption(Panel panel)
         {
             if (panel.selected >= 0)
-            {
                 switch (panel.selected)
                 {
                     case 0:
@@ -923,16 +980,18 @@ namespace Mod
                         SoundMn.gI().CaseSizeScr();
                         break;
                     case 6:
-                        GameCanvas.startYesNoDlg(mResources.changeSizeScreen, new Command(mResources.YES, panel, 170391, null), new Command(mResources.NO, panel, 4005, null));
+                        GameCanvas.startYesNoDlg(mResources.changeSizeScreen,
+                            new Command(mResources.YES, panel, 170391, null),
+                            new Command(mResources.NO, panel, 4005, null));
                         break;
                 }
-            }
+
             return true;
         }
 
         internal static bool OnSoundMnGetStrOption()
         {
-            Panel.strCauhinh = new string[]
+            Panel.strCauhinh = new[]
             {
                 mResources.aura_off?.Trim() + ": " + Strings.OnOffStatus(Char.isPaintAura),
                 mResources.aura_off_2?.Trim() + ": " + Strings.OnOffStatus(Char.isPaintAura2),
@@ -940,18 +999,20 @@ namespace Mod
                 mResources.turnOffSound?.Trim() + ": " + Strings.OnOffStatus(GameCanvas.isPlaySound),
                 mResources.analog?.Trim() + ": " + Strings.OnOffStatus(GameScr.isAnalog != 0),
                 (GameCanvas.lowGraphic ? mResources.cauhinhcao : mResources.cauhinhthap)?.Trim(),
-                mGraphics.zoomLevel <= 1 ? mResources.x2Screen : mResources.x1Screen,
+                mGraphics.zoomLevel <= 1 ? mResources.x2Screen : mResources.x1Screen
             };
             return true;
         }
 
         internal static bool OnSetSkillBarPosition()
         {
-            Skill[] skills = /*GameCanvas.isTouch ? GameScr.onScreenSkill : */GameScr.keySkill;
+            var skills = /*GameCanvas.isTouch ? GameScr.onScreenSkill : */GameScr.keySkill;
             GameScr.xS = new int[skills.Length];
             GameScr.yS = new int[skills.Length];
             if (GameCanvas.isTouchControlSmallScreen && GameScr.isUseTouch)
+            {
                 GameScr.padSkill = 5;
+            }
             else
             {
                 GameScr.wSkill = 30;
@@ -960,6 +1021,7 @@ namespace Mod
                 else
                     GameScr.wSkill = 40;
             }
+
             GameScr.xSkill = 17;
             if (InputDeviceDetector.IsController() && GameScr.gamePad.isLargeGamePad)
                 GameScr.xSkill = 40;
@@ -974,6 +1036,7 @@ namespace Mod
                 GameScr.xHP = GameCanvas.w - 45;
                 GameScr.yHP = GameCanvas.h - 45;
             }
+
             //GameScr.setTouchBtn();
             if (GameScr.isAnalog != 0)
             {
@@ -981,26 +1044,30 @@ namespace Mod
                 if (GameScr.gamePad.isLargeGamePad)
                 {
                     //GameScr.xSkill = GameScr.gamePad.wZone + 20;
-                    int skillsCountNotNull = skills.Length;
-                    for (int i = skills.Length - 1; i >= 0; i--)
-                    {
+                    var skillsCountNotNull = skills.Length;
+                    for (var i = skills.Length - 1; i >= 0; i--)
                         if (skills[i] == null)
                             skillsCountNotNull--;
                         else
                             break;
-                    }
                     GameScr.wSkill = 35;
-                    GameScr.xSkill = Math.Max(GameScr.gamePad.wZone + 20, GameCanvas.hw - skillsCountNotNull * GameScr.wSkill / 2);
+                    GameScr.xSkill = Math.Max(GameScr.gamePad.wZone + 20,
+                        GameCanvas.hw - skillsCountNotNull * GameScr.wSkill / 2);
                     GameScr.xHP = GameScr.xF - 45;
                 }
                 else if (GameScr.gamePad.isMediumGamePad)
+                {
                     GameScr.xHP = GameScr.xF - 45;
+                }
+
                 GameScr.yF = GameCanvas.h - 45;
                 GameScr.yTG = GameScr.yF - 45;
             }
-            if ((GameCanvas.isTouchControlSmallScreen && GameScr.isUseTouch) || (!GameScr.gamePad.isLargeGamePad && GameScr.isAnalog == 1))
+
+            if ((GameCanvas.isTouchControlSmallScreen && GameScr.isUseTouch) ||
+                (!GameScr.gamePad.isLargeGamePad && GameScr.isAnalog == 1))
             {
-                for (int i = 0; i < GameScr.xS.Length; i++)
+                for (var i = 0; i < GameScr.xS.Length; i++)
                 {
                     GameScr.xS[i] = i * GameScr.wSkill;
                     GameScr.yS[i] = GameScr.ySkill;
@@ -1013,8 +1080,8 @@ namespace Mod
             }
             else
             {
-                int lastJ = 0;
-                for (int i = 0; i < GameScr.xS.Length; i++)
+                var lastJ = 0;
+                for (var i = 0; i < GameScr.xS.Length; i++)
                 {
                     GameScr.xS[i] = i * GameScr.wSkill;
                     GameScr.yS[i] = GameScr.ySkill;
@@ -1027,6 +1094,7 @@ namespace Mod
                     }
                 }
             }
+
             return true;
         }
 
@@ -1039,8 +1107,10 @@ namespace Mod
                     g.drawImage(GameScr.imgAnalog1, instance.xC, instance.yC, mGraphics.HCENTER | mGraphics.VCENTER);
                     g.drawImage(GameScr.imgAnalog2, instance.xM, instance.yM, mGraphics.HCENTER | mGraphics.VCENTER);
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -1063,32 +1133,35 @@ namespace Mod
             {
                 g.setColor(0xAA2C11);
                 g.fillRect(GameScr.xSkill + GameScr.xHP + 2, GameScr.yHP - 10 + 6, 20, 10);
-                mFont.tahoma_7_white.drawString(g, "*", GameScr.xSkill + GameScr.xHP + 12, GameScr.yHP - 8 + 6, mFont.CENTER);
+                mFont.tahoma_7_white.drawString(g, "*", GameScr.xSkill + GameScr.xHP + 12, GameScr.yHP - 8 + 6,
+                    mFont.CENTER);
             }
-            int num = instance.nSkill;
+
+            var num = instance.nSkill;
             if (Main.isPC || !GameCanvas.isTouch)
                 num = array.Length;
-            string[] array2 = TField.isQwerty ? new string[10] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" } : new string[5] { "7", "8", "9", "10", "11" };
-            bool hasSkillsInTopRow = false;
-            bool isStartHasSkill = false;
-            for (int i = num - 1; i >= 0; i--)
+            var array2 = TField.isQwerty
+                ? new string[10] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }
+                : new string[5] { "7", "8", "9", "10", "11" };
+            var hasSkillsInTopRow = false;
+            var isStartHasSkill = false;
+            for (var i = num - 1; i >= 0; i--)
             {
                 if (array[i] != null)
                     isStartHasSkill = true;
                 if (isStartHasSkill)
-                {
                     if (GameScr.yS[i] == GameScr.ySkill - 32)
                     {
                         hasSkillsInTopRow = true;
                         break;
                     }
-                }
             }
+
             isStartHasSkill = false;
 
-            for (int i = num - 1; i >= 0; i--)
+            for (var i = num - 1; i >= 0; i--)
             {
-                Skill skill = array[i];
+                var skill = array[i];
                 if (skill != null)
                 {
                     isStartHasSkill = true;
@@ -1103,20 +1176,27 @@ namespace Mod
                         g.drawImage(GameScr.imgSkill, GameScr.xSkill + GameScr.xS[i] - 1, GameScr.yS[i] - 1, 0);
                     continue;
                 }
+
                 if (Utils.IsPC())
                 {
-                    int num2 = 27;
+                    var num2 = 27;
                     if (hasSkillsInTopRow)
                     {
                         if (GameScr.yS[i] == GameScr.ySkill - 32)
                             num2 = -13;
                     }
                     else
+                    {
                         num2 = -13;
-                    mFont.tahoma_7b_white.drawString(g, array2[i], GameScr.xSkill + GameScr.xS[i] + 14, GameScr.yS[i] + num2 + 1, mFont.CENTER, mFont.tahoma_7b_dark);
+                    }
+
+                    mFont.tahoma_7b_white.drawString(g, array2[i], GameScr.xSkill + GameScr.xS[i] + 14,
+                        GameScr.yS[i] + num2 + 1, mFont.CENTER, mFont.tahoma_7b_dark);
                 }
+
                 skill.paint(GameScr.xSkill + GameScr.xS[i] + 13, GameScr.yS[i] + 13, g);
-                if ((i == instance.selectedIndexSkill && !instance.isPaintUI() && GameCanvas.gameTick % 10 > 5) || i == instance.keyTouchSkill)
+                if ((i == instance.selectedIndexSkill && !instance.isPaintUI() && GameCanvas.gameTick % 10 > 5) ||
+                    i == instance.keyTouchSkill)
                     g.drawImage(ItemMap.imageFlare, GameScr.xSkill + GameScr.xS[i] + 13, GameScr.yS[i] + 14, 3);
             }
         }
@@ -1130,11 +1210,17 @@ namespace Mod
         internal static bool OnPanelPaintToolInfo(mGraphics g)
         {
             mFont.tahoma_7b_white.drawString(g, Strings.communityMod, 60, 4, mFont.LEFT, mFont.tahoma_7b_dark);
-            mFont.tahoma_7_yellow.drawString(g, Strings.gameVersion + ": v" + GameMidlet.VERSION, 60, 16, mFont.LEFT, mFont.tahoma_7_grey);
-            mFont.tahoma_7_yellow.drawString(g, mResources.character + ": " + Char.myCharz().cName, 60, 27, mFont.LEFT, mFont.tahoma_7_grey);
-            Account account = InGameAccountManager.SelectedAccount;
-            string serverName = account.Server.IsCustomIP() ? account.Server.name : ServerListScreen.nameServer[account.Server.index];
-            mFont.tahoma_7_yellow.drawString(g, mResources.account + " " + mResources.account_server.ToLower() + " " + serverName, 60, 39, mFont.LEFT, mFont.tahoma_7_grey);
+            mFont.tahoma_7_yellow.drawString(g, Strings.gameVersion + ": v" + GameMidlet.VERSION, 60, 16, mFont.LEFT,
+                mFont.tahoma_7_grey);
+            mFont.tahoma_7_yellow.drawString(g, mResources.character + ": " + Char.myCharz().cName, 60, 27, mFont.LEFT,
+                mFont.tahoma_7_grey);
+            var account = InGameAccountManager.SelectedAccount;
+            var serverName = account.Server.IsCustomIP()
+                ? account.Server.name
+                : ServerListScreen.nameServer[account.Server.index];
+            mFont.tahoma_7_yellow.drawString(g,
+                mResources.account + " " + mResources.account_server.ToLower() + " " + serverName, 60, 39, mFont.LEFT,
+                mFont.tahoma_7_grey);
             return true;
         }
 
@@ -1142,25 +1228,29 @@ namespace Mod
         {
             if (!HideGameUI.isEnabled)
                 SmallImage.drawSmallImage(g, skill.template.iconId, x, y, 0, StaticObj.VCENTER_HCENTER);
-            long coolingDown = mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill;
+            var coolingDown = mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill;
             if (coolingDown < skill.coolDown)
             {
-                float opacity = .6f;
-                int realX = x - 11;
-                int realY = y - 11;
-                Color color = new Color(0, 0, 0, opacity);
-                Color color2 = new Color(0, 0, 0, opacity / 2);
+                var opacity = .6f;
+                var realX = x - 11;
+                var realY = y - 11;
+                var color = new Color(0, 0, 0, opacity);
+                var color2 = new Color(0, 0, 0, opacity / 2);
                 g.setColor(color2);
                 g.fillRect(realX, realY, 22, 22);
-                float coolDownRatio = 1 - coolingDown / (float)skill.coolDown;
+                var coolDownRatio = 1 - coolingDown / (float)skill.coolDown;
                 CustomGraphics.drawCooldownRect(x, y, 22, 22, coolDownRatio, color);
-                string cooldownStr = $"{(skill.coolDown - coolingDown) / 1000f:#.0}".Replace(',', '.');
+                var cooldownStr = $"{(skill.coolDown - coolingDown) / 1000f:#.0}".Replace(',', '.');
                 if (cooldownStr.Length > 4)
                     cooldownStr = cooldownStr.Substring(0, cooldownStr.IndexOf('.'));
-                mFont.tahoma_7_yellow.drawString(g, cooldownStr, x + 1, y - 12 + mFont.tahoma_7.getHeight() / 2, mFont.CENTER);
+                mFont.tahoma_7_yellow.drawString(g, cooldownStr, x + 1, y - 12 + mFont.tahoma_7.getHeight() / 2,
+                    mFont.CENTER);
             }
             else
+            {
                 skill.paintCanNotUseSkill = false;
+            }
+
             return true;
         }
 
@@ -1168,43 +1258,47 @@ namespace Mod
         {
             if (isAutoUseYardrat)
             {
-                new Thread(delegate ()
+                new Thread(delegate()
                 {
-                    int previousDisguiseId = -1;
-                    if (Char.myCharz().arrItemBody[5] == null || (Char.myCharz().arrItemBody[5] != null && (Char.myCharz().arrItemBody[5].template.id < 592 || Char.myCharz().arrItemBody[5].template.id > 594)))
+                    var previousDisguiseId = -1;
+                    if (Char.myCharz().arrItemBody[5] == null || (Char.myCharz().arrItemBody[5] != null &&
+                                                                  (Char.myCharz().arrItemBody[5].template.id < 592 ||
+                                                                   Char.myCharz().arrItemBody[5].template.id > 594)))
                     {
                         if (Char.myCharz().arrItemBody[5] != null)
                             previousDisguiseId = Char.myCharz().arrItemBody[5].template.id;
-                        for (int i = 0; i < Char.myCharz().arrItemBag.Length; i++)
+                        for (var i = 0; i < Char.myCharz().arrItemBag.Length; i++)
                         {
-                            Item item = Char.myCharz().arrItemBag[i];
+                            var item = Char.myCharz().arrItemBag[i];
                             if (item != null && item.template.id >= 592 && item.template.id <= 594)
                             {
                                 do
                                 {
                                     Service.gI().getItem(4, (sbyte)i);
                                     Thread.Sleep(250);
-                                }
-                                while (Char.myCharz().arrItemBody[5].template.id < 592 || Char.myCharz().arrItemBody[5].template.id > 594);
+                                } while (Char.myCharz().arrItemBody[5].template.id < 592 ||
+                                         Char.myCharz().arrItemBody[5].template.id > 594);
+
                                 break;
                             }
                         }
                     }
+
                     GameEventHook.Service_gotoPlayer_original(Service.gI(), id);
                     if (previousDisguiseId != -1)
                     {
                         Thread.Sleep(500);
-                        for (int j = 0; j < Char.myCharz().arrItemBag.Length; j++)
+                        for (var j = 0; j < Char.myCharz().arrItemBag.Length; j++)
                         {
-                            Item item = Char.myCharz().arrItemBag[j];
+                            var item = Char.myCharz().arrItemBag[j];
                             if (item != null && item.template.id == previousDisguiseId)
                             {
                                 do
                                 {
                                     Service.gI().getItem(4, (sbyte)j);
                                     Thread.Sleep(250);
-                                }
-                                while (Char.myCharz().arrItemBody[5].template.id != previousDisguiseId);
+                                } while (Char.myCharz().arrItemBody[5].template.id != previousDisguiseId);
+
                                 break;
                             }
                         }
@@ -1212,8 +1306,8 @@ namespace Mod
                 }).Start();
                 return true;
             }
-            else
-                return false;
+
+            return false;
         }
 
         internal static bool OnPaintPanel(Panel panel, mGraphics g)
@@ -1249,12 +1343,12 @@ namespace Mod
                 style = new GUIStyle(GUI.skin.label)
                 {
                     fontStyle = FontStyle.Bold,
-                    fontSize = (int)(8.5 * mGraphics.zoomLevel),
+                    fontSize = (int)(8.5 * mGraphics.zoomLevel)
                 };
                 style.normal.textColor = style.hover.textColor = Color.yellow;
             }
+
             if (!GameCanvas.panel.isShow)
-            {
                 if (GameCanvas.panel2 != null)
                 {
                     g.translate(-g.getTranslateX(), -g.getTranslateY());
@@ -1264,10 +1358,10 @@ namespace Mod
                     if (GameCanvas.panel2.chatTField != null && GameCanvas.panel2.chatTField.isShow)
                         GameCanvas.panel2.chatTField.paint(g);
                 }
-            }
+
             g.setColor(new Color(0.2f, 0.2f, 0.2f, 0.6f));
-            double fps = Math.Round((double)(1f / Time.smoothDeltaTime * Time.timeScale), 1);
-            string fpsStr = fps.ToString("F1").Replace(',', '.');
+            var fps = Math.Round(1f / Time.smoothDeltaTime * Time.timeScale, 1);
+            var fpsStr = fps.ToString("F1").Replace(',', '.');
             g.fillRect(0, 0, mFont.tahoma_7b_red.getWidth(fpsStr) + 2, 12);
             mFont.tahoma_7b_red.drawString(g, fpsStr, 2, 0, 0);
         }
@@ -1277,25 +1371,27 @@ namespace Mod
             if (instance == GameCanvas.panel)
             {
                 ModMenuMain.UpdateTouch();
-                Panel panel = ModMenuMain.currentPanel;
-                if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease && !GameCanvas.isPointer(instance.X, instance.Y, instance.W, instance.H) && !GameCanvas.isPointer(panel.X, panel.Y, panel.W, panel.H) && !instance.pointerIsDowning)
+                var panel = ModMenuMain.currentPanel;
+                if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
+                    !GameCanvas.isPointer(instance.X, instance.Y, instance.W, instance.H) &&
+                    !GameCanvas.isPointer(panel.X, panel.Y, panel.W, panel.H) && !instance.pointerIsDowning)
                 {
                     instance.hide();
                     return false;
                 }
             }
+
             if (instance.type == CustomPanelMenu.TYPE_CUSTOM_PANEL_MENU)
-            {
-                if ((instance.chatTField == null || !instance.chatTField.isShow) && !instance.isKiguiXu && !instance.isKiguiLuong && (instance.tabIcon == null || !instance.tabIcon.isShow) && instance.waitToPerform > 0)
-                {
+                if ((instance.chatTField == null || !instance.chatTField.isShow) && !instance.isKiguiXu &&
+                    !instance.isKiguiLuong && (instance.tabIcon == null || !instance.tabIcon.isShow) &&
+                    instance.waitToPerform > 0)
                     if (instance.waitToPerform - 1 == 0)
                     {
                         instance.waitToPerform--;
                         instance.lastSelect[instance.currentTabIndex] = instance.selected;
                         CustomPanelMenu.DoFire(instance);
                     }
-                }
-            }
+
             return false;
         }
 
@@ -1305,7 +1401,7 @@ namespace Mod
             {
                 if ((instance.scroll != null && instance.scroll.pointerIsDowning) || instance.pointerIsDowning)
                     return true;
-                int num = instance.currentTabIndex;
+                var num = instance.currentTabIndex;
                 if (instance.isTabInven() && instance.isnewInventory)
                 {
                     if (instance.selected == -1)
@@ -1321,11 +1417,15 @@ namespace Mod
                                     GameCanvas.isFocusPanel2 = true;
                                 }
                                 else
+                                {
                                     instance.currentTabIndex = 0;
+                                }
                             }
+
                             instance.selected = instance.lastSelect[instance.currentTabIndex];
                             instance.lastTabIndex[instance.type] = instance.currentTabIndex;
                         }
+
                         if (GameCanvas.keyPressed[4])
                         {
                             instance.currentTabIndex--;
@@ -1368,17 +1468,20 @@ namespace Mod
                                 instance.sellectInventory++;
                         }
                     }
+
                     if (instance.sellectInventory == instance.nTableItem)
                         instance.sellectInventory = 0;
                 }
                 else if (!instance.IsTabOption())
                 {
-                    if (GameCanvas.keyPressed[(!Main.isPC) ? 6 : 24])
+                    if (GameCanvas.keyPressed[!Main.isPC ? 6 : 24])
                     {
                         if (instance.isTabInven())
                         {
                             if (instance.selected >= 0)
+                            {
                                 instance.updateKeyInvenTab();
+                            }
                             else
                             {
                                 instance.currentTabIndex++;
@@ -1390,8 +1493,11 @@ namespace Mod
                                         GameCanvas.isFocusPanel2 = true;
                                     }
                                     else
+                                    {
                                         instance.currentTabIndex = 0;
+                                    }
                                 }
+
                                 instance.selected = instance.lastSelect[instance.currentTabIndex];
                                 instance.lastTabIndex[instance.type] = instance.currentTabIndex;
                             }
@@ -1407,13 +1513,17 @@ namespace Mod
                                     GameCanvas.isFocusPanel2 = true;
                                 }
                                 else
+                                {
                                     instance.currentTabIndex = 0;
+                                }
                             }
+
                             instance.selected = instance.lastSelect[instance.currentTabIndex];
                             instance.lastTabIndex[instance.type] = instance.currentTabIndex;
                         }
                     }
-                    if (GameCanvas.keyPressed[(!Main.isPC) ? 4 : 23])
+
+                    if (GameCanvas.keyPressed[!Main.isPC ? 4 : 23])
                     {
                         instance.currentTabIndex--;
                         if (instance.currentTabIndex < 0)
@@ -1424,8 +1534,9 @@ namespace Mod
                         instance.lastTabIndex[instance.type] = instance.currentTabIndex;
                     }
                 }
+
                 instance.keyTouchTab = -1;
-                for (int i = 0; i < instance.currentTabName.Length; i++)
+                for (var i = 0; i < instance.currentTabName.Length; i++)
                 {
                     if (!GameCanvas.isPointer(instance.startTabPos + i * instance.TAB_W, 52, instance.TAB_W - 1, 25))
                         continue;
@@ -1441,9 +1552,11 @@ namespace Mod
                             instance.cmtoY = 0;
                             instance.selected = GameCanvas.isTouch ? -1 : 0;
                         }
+
                         break;
                     }
                 }
+
                 if (num == instance.currentTabIndex)
                     return true;
                 instance.size_tab = 0;
@@ -1453,6 +1566,7 @@ namespace Mod
 
                 return true;
             }
+
             return false;
         }
 
@@ -1462,12 +1576,12 @@ namespace Mod
                 return;
             if (c != Char.myCharz())
                 return;
-            int xHP = 85;
-            int xMP = xHP;
-            int yHP = 4;
-            int yMP = 19;
-            string cHP = Utils.FormatWithSIPrefix(Char.myCharz().cHP);
-            string cMP = Utils.FormatWithSIPrefix(Char.myCharz().cMP);
+            var xHP = 85;
+            var xMP = xHP;
+            var yHP = 4;
+            var yMP = 19;
+            var cHP = Utils.FormatWithSIPrefix(Char.myCharz().cHP);
+            var cMP = Utils.FormatWithSIPrefix(Char.myCharz().cMP);
             g.setColor(new Color(0.2f, 0.2f, 0.2f, 0.6f));
             if (mGraphics.zoomLevel > 1)
             {
@@ -1480,9 +1594,11 @@ namespace Mod
             }
             else
             {
-                g.fillRect(xHP - 1, yHP + 1, mFont.tahoma_7b_yellow.getWidth(cHP), mFont.tahoma_7b_yellow.getHeight() - 2);
+                g.fillRect(xHP - 1, yHP + 1, mFont.tahoma_7b_yellow.getWidth(cHP),
+                    mFont.tahoma_7b_yellow.getHeight() - 2);
                 mFont.tahoma_7b_yellow.drawString(g, cHP, xHP, yHP, mFont.LEFT);
-                g.fillRect(xMP - 1, yMP + 1, mFont.tahoma_7_yellow.getWidth(cMP), mFont.tahoma_7_yellow.getHeight() - 2);
+                g.fillRect(xMP - 1, yMP + 1, mFont.tahoma_7_yellow.getWidth(cMP),
+                    mFont.tahoma_7_yellow.getHeight() - 2);
                 mFont.tahoma_7_yellow.drawString(g, cMP, xMP, yMP, mFont.LEFT);
             }
         }
@@ -1494,9 +1610,21 @@ namespace Mod
 
         internal static void OnAfterPaintPanel(Panel panel, mGraphics g)
         {
-            bool GetInventorySelect_isbody(int select, int subSelect, Item[] arrItem) => subSelect == 0 && select - 1 + subSelect * 20 < arrItem.Length;
-            int GetInventorySelect_body(int select, int subSelect) => select - 1 + subSelect * 20;
-            int GetInventorySelect_bag(int select, int subSelect, Item[] arrItem) => select - 1 + subSelect * 20 - arrItem.Length;
+            bool GetInventorySelect_isbody(int select, int subSelect, Item[] arrItem)
+            {
+                return subSelect == 0 && select - 1 + subSelect * 20 < arrItem.Length;
+            }
+
+            int GetInventorySelect_body(int select, int subSelect)
+            {
+                return select - 1 + subSelect * 20;
+            }
+
+            int GetInventorySelect_bag(int select, int subSelect, Item[] arrItem)
+            {
+                return select - 1 + subSelect * 20 - arrItem.Length;
+            }
+
             sbyte GetColor_Item_Upgrade(int lv)
             {
                 if (lv < 8)
@@ -1513,6 +1641,7 @@ namespace Mod
                     return 2;
                 return 6;
             }
+
             int GetColor_ItemBg(int id)
             {
                 switch (id)
@@ -1537,7 +1666,7 @@ namespace Mod
             if (GameCanvas.panel.combineSuccess != -1)
                 return;
             g.translate(-(panel.cmx - panel.cmtoX), -panel.cmy);
-            if (panel.type == 13)   //trade
+            if (panel.type == 13) //trade
             {
                 bool? isMe = null;
                 if (panel.currentTabIndex == 0 && panel != GameCanvas.panel)
@@ -1548,23 +1677,25 @@ namespace Mod
                     isMe = true;
                 if (isMe != null)
                 {
-                    MyVector myVector = isMe.Value ? panel.vMyGD : panel.vFriendGD;
+                    var myVector = isMe.Value ? panel.vMyGD : panel.vFriendGD;
                     if (myVector.size() <= 0)
                         return;
-                    int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 0);
-                    for (int i = offset; i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, myVector.size()); i++)
+                    var offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 0);
+                    for (var i = offset;
+                         i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, myVector.size());
+                         i++)
                     {
-                        Item item = (Item)myVector.elementAt(i);
+                        var item = (Item)myVector.elementAt(i);
                         if (item == null)
                             continue;
-                        int y = panel.yScroll + i * panel.ITEM_HEIGHT;
+                        var y = panel.yScroll + i * panel.ITEM_HEIGHT;
                         if (item.itemOption != null)
                         {
-                            ItemOption itemOption = item.GetBestItemOption();
+                            var itemOption = item.GetBestItemOption();
                             if (itemOption == null)
                                 goto Label;
-                            int param = itemOption.param;
-                            int id = itemOption.optionTemplate.id;
+                            var param = itemOption.param;
+                            var id = itemOption.optionTemplate.id;
                             if (param > 7 || (id >= 127 && id <= 135))
                                 param = 7;
                             if (id == 107)
@@ -1574,58 +1705,62 @@ namespace Mod
                                 else if (param == 1)
                                     goto Label;
                             }
+
                             if (param <= 0)
                                 goto Label;
                             g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-                            for (int j = 0; j < item.itemOption.Length; j++)
-                            {
+                            for (var j = 0; j < item.itemOption.Length; j++)
                                 if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                                 {
-                                    byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                    var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                     if (GetColor_ItemBg(id_) != -1)
                                         g.setColor(GetColor_ItemBg(id_));
                                 }
-                            }
+
                             g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-                            CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1, item);
-                            SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                            CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34,
+                                panel.ITEM_HEIGHT - 1, item);
+                            SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
+                                panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                         }
-                    Label:;
+
+                        Label: ;
                         CustomGraphics.PaintItemOptions(g, panel, item, y);
                     }
                 }
             }
-            else if (panel.type == 1 || panel.type == 17)   //shop
+            else if (panel.type == 1 || panel.type == 17) //shop
             {
-                if (panel.type == 1 && panel.currentTabIndex == panel.currentTabName.Length - 1 && GameCanvas.panel2 == null && panel.typeShop != 2)
+                if (panel.type == 1 && panel.currentTabIndex == panel.currentTabName.Length - 1 &&
+                    GameCanvas.panel2 == null && panel.typeShop != 2)
                     return;
                 if (panel.typeShop == 2 && panel == GameCanvas.panel)
-                {
                     if (Char.myCharz().arrItemShop[panel.currentTabIndex].Length == 0 && panel.type != 17)
                         return;
-                }
-                Item[] array = Char.myCharz().arrItemShop[panel.currentTabIndex];
+                var array = Char.myCharz().arrItemShop[panel.currentTabIndex];
                 if (panel.typeShop == 2 && (panel.currentTabIndex == 4 || panel.type == 17))
                 {
                     array = Char.myCharz().arrItemShop[4];
                     if (array.Length == 0)
                         return;
                 }
-                for (int i = 0; i < array.Length; i++)
+
+                for (var i = 0; i < array.Length; i++)
                 {
-                    int y = panel.yScroll + i * panel.ITEM_HEIGHT;
-                    if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+                    var y = panel.yScroll + i * panel.ITEM_HEIGHT;
+                    if (y - panel.cmy > panel.yScroll + panel.hScroll ||
+                        y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
                         continue;
-                    Item item = array[i];
+                    var item = array[i];
                     if (item == null)
                         continue;
                     if (item.itemOption != null)
                     {
-                        ItemOption itemOption = item.GetBestItemOption();
+                        var itemOption = item.GetBestItemOption();
                         if (itemOption == null)
                             goto Label;
-                        int param = itemOption.param;
-                        int id = itemOption.optionTemplate.id;
+                        var param = itemOption.param;
+                        var id = itemOption.optionTemplate.id;
                         if (param > 7 || (id >= 127 && id <= 135))
                             param = 7;
                         if (id == 107)
@@ -1635,62 +1770,75 @@ namespace Mod
                             else if (param == 1)
                                 goto Label;
                         }
+
                         if (param <= 0)
                             goto Label;
                         g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-                        for (int j = 0; j < item.itemOption.Length; j++)
-                        {
+                        for (var j = 0; j < item.itemOption.Length; j++)
                             if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                             {
-                                byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                 if (GetColor_ItemBg(id_) != -1)
                                     g.setColor(GetColor_ItemBg(id_));
                             }
-                        }
+
                         g.fillRect(panel.xScroll, y, 24, panel.ITEM_HEIGHT - 1);
-                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 12, y + 11, 24, panel.ITEM_HEIGHT - 1, item);
-                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 24 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 12, y + 11, 24, panel.ITEM_HEIGHT - 1,
+                            item);
+                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 24 / 2,
+                            panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                     }
-                Label:;
+
+                    Label: ;
                     if (panel.type == Panel.TYPE_KIGUI)
+                    {
                         CustomGraphics.PaintItemOptions(g, panel, item, y + mFont.tahoma_7b_blue.getHeight() + 2);
+                    }
                     else if (panel.type == Panel.TYPE_SHOP)
                     {
                         if (!string.IsNullOrEmpty(item.nameNguoiKyGui))
                         {
-                            if (GameCanvas.gameTick % 120 > 60 && (Utils.HasStarOption(item, out _, out _) || Utils.HasActivateOption(item)))
+                            if (GameCanvas.gameTick % 120 > 60 && (Utils.HasStarOption(item, out _, out _) ||
+                                                                   Utils.HasActivateOption(item)))
                             {
-                                int w = mFont.tahoma_7b_green.getWidth(item.nameNguoiKyGui) + 5;
+                                var w = mFont.tahoma_7b_green.getWidth(item.nameNguoiKyGui) + 5;
                                 g.setColor(i != panel.selected ? 0xE7DFD2 : 0xF9FF4A);
-                                g.fillRect(panel.X + Panel.WIDTH_PANEL - 2 - w, y + mFont.tahoma_7b_blue.getHeight() + 2, w, mFont.tahoma_7b_green.getHeight());
-                                CustomGraphics.PaintItemOptions(g, panel, item, y + mFont.tahoma_7b_blue.getHeight() + 2);
+                                g.fillRect(panel.X + Panel.WIDTH_PANEL - 2 - w,
+                                    y + mFont.tahoma_7b_blue.getHeight() + 2, w, mFont.tahoma_7b_green.getHeight());
+                                CustomGraphics.PaintItemOptions(g, panel, item,
+                                    y + mFont.tahoma_7b_blue.getHeight() + 2);
                             }
                         }
                         else
+                        {
                             CustomGraphics.PaintItemOptions(g, panel, item, y + mFont.tahoma_7b_blue.getHeight() + 2);
+                        }
                     }
                     else
+                    {
                         CustomGraphics.PaintItemOptions(g, panel, item, y);
+                    }
                 }
             }
-            else if (panel.type == 21 && panel.currentTabIndex == 0)    //pet inventory
+            else if (panel.type == 21 && panel.currentTabIndex == 0) //pet inventory
             {
-                Item[] arrItemBody = Char.myPetz().arrItemBody;
-                for (int i = 0; i < arrItemBody.Length; i++)
+                var arrItemBody = Char.myPetz().arrItemBody;
+                for (var i = 0; i < arrItemBody.Length; i++)
                 {
-                    int y = panel.yScroll + i * panel.ITEM_HEIGHT;
-                    if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+                    var y = panel.yScroll + i * panel.ITEM_HEIGHT;
+                    if (y - panel.cmy > panel.yScroll + panel.hScroll ||
+                        y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
                         continue;
-                    Item item = arrItemBody[i];
+                    var item = arrItemBody[i];
                     if (item == null)
                         continue;
                     if (item.itemOption != null)
                     {
-                        ItemOption itemOption = item.GetBestItemOption();
+                        var itemOption = item.GetBestItemOption();
                         if (itemOption == null)
                             goto Label;
-                        int param = itemOption.param;
-                        int id = itemOption.optionTemplate.id;
+                        var param = itemOption.param;
+                        var id = itemOption.optionTemplate.id;
                         if (param > 7 || (id >= 127 && id <= 135))
                             param = 7;
                         if (id == 107)
@@ -1700,47 +1848,53 @@ namespace Mod
                             else if (param == 1)
                                 goto Label;
                         }
+
                         if (param <= 0)
                             goto Label;
                         g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-                        for (int j = 0; j < item.itemOption.Length; j++)
-                        {
+                        for (var j = 0; j < item.itemOption.Length; j++)
                             if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                             {
-                                byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                 if (GetColor_ItemBg(id_) != -1)
                                     g.setColor(GetColor_ItemBg(id_));
                             }
-                        }
+
                         g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 14, 34, panel.ITEM_HEIGHT - 1, item);
-                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 14, 34, panel.ITEM_HEIGHT - 1,
+                            item);
+                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
+                            panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                     }
-                Label:;
+
+                    Label: ;
                     CustomGraphics.PaintItemOptions(g, panel, item, y);
                 }
             }
             else if (panel.type == 2 && panel.currentTabIndex == 0) //box
             {
-                Item[] arrItemBox = Char.myCharz().arrItemBox;
-                int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT - 1, 0);
-                for (int i = offset; i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, arrItemBox.Length); i++)
+                var arrItemBox = Char.myCharz().arrItemBox;
+                var offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT - 1, 0);
+                for (var i = offset;
+                     i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, arrItemBox.Length);
+                     i++)
                 {
-                    int y = panel.yScroll + (i + 1) * panel.ITEM_HEIGHT;
-                    if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+                    var y = panel.yScroll + (i + 1) * panel.ITEM_HEIGHT;
+                    if (y - panel.cmy > panel.yScroll + panel.hScroll ||
+                        y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
                         continue;
                     if (i == 0)
                         continue;
-                    Item item = arrItemBox[i];
+                    var item = arrItemBox[i];
                     if (item == null)
                         continue;
                     if (item.itemOption != null)
                     {
-                        ItemOption itemOption = item.GetBestItemOption();
+                        var itemOption = item.GetBestItemOption();
                         if (itemOption == null)
                             goto Label;
-                        int param = itemOption.param;
-                        int id = itemOption.optionTemplate.id;
+                        var param = itemOption.param;
+                        var id = itemOption.optionTemplate.id;
                         if (param > 7 || (id >= 127 && id <= 135))
                             param = 7;
                         if (id == 107)
@@ -1750,48 +1904,54 @@ namespace Mod
                             else if (param == 1)
                                 goto Label;
                         }
+
                         if (param <= 0)
                             goto Label;
                         g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-                        for (int j = 0; j < item.itemOption.Length; j++)
-                        {
+                        for (var j = 0; j < item.itemOption.Length; j++)
                             if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                             {
-                                byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                 if (GetColor_ItemBg(id_) != -1)
                                     g.setColor(GetColor_ItemBg(id_));
                             }
-                        }
+
                         g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1, item);
-                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, y + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1,
+                            item);
+                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
+                            y + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                     }
-                Label:;
+
+                    Label: ;
                     CustomGraphics.PaintItemOptions(g, panel, item, y);
                 }
             }
-            else if (panel.type == 12 && panel.currentTabIndex == 0)    //combine
+            else if (panel.type == 12 && panel.currentTabIndex == 0) //combine
             {
                 if (panel.vItemCombine.size() == 0)
                     return;
-                int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 0);
-                for (int i = offset; i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, panel.vItemCombine.size() + 1); i++)
+                var offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 0);
+                for (var i = offset;
+                     i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, panel.vItemCombine.size() + 1);
+                     i++)
                 {
-                    int y = panel.yScroll + i * panel.ITEM_HEIGHT;
-                    if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+                    var y = panel.yScroll + i * panel.ITEM_HEIGHT;
+                    if (y - panel.cmy > panel.yScroll + panel.hScroll ||
+                        y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
                         continue;
                     if (i == panel.vItemCombine.size())
                         continue;
-                    Item item = (Item)panel.vItemCombine.elementAt(i);
+                    var item = (Item)panel.vItemCombine.elementAt(i);
                     if (item == null)
                         continue;
                     if (item.itemOption != null)
                     {
-                        ItemOption itemOption = item.GetBestItemOption();
+                        var itemOption = item.GetBestItemOption();
                         if (itemOption == null)
                             goto Label;
-                        int param = itemOption.param;
-                        int id = itemOption.optionTemplate.id;
+                        var param = itemOption.param;
+                        var id = itemOption.optionTemplate.id;
                         if (param > 7 || (id >= 127 && id <= 135))
                             param = 7;
                         if (id == 107)
@@ -1801,55 +1961,64 @@ namespace Mod
                             else if (param == 1)
                                 goto Label;
                         }
+
                         if (param <= 0)
                             goto Label;
                         g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-                        for (int j = 0; j < item.itemOption.Length; j++)
-                        {
+                        for (var j = 0; j < item.itemOption.Length; j++)
                             if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                             {
-                                byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                 if (GetColor_ItemBg(id_) != -1)
                                     g.setColor(GetColor_ItemBg(id_));
                             }
-                        }
+
                         g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1, item);
-                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1,
+                            item);
+                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
+                            panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                     }
-                Label:;
+
+                    Label: ;
                     CustomGraphics.PaintItemOptions(g, panel, item, y);
                 }
             }
             else if ((panel.type == 21 && panel.currentTabIndex == 2) ||
-                (panel.type == 0 && panel.currentTabIndex == 1) ||
-                (panel.type == 2 && panel.currentTabIndex == 1) ||
-                panel.type == 7 ||
-                (panel.type == 12 && panel.currentTabIndex == 1) ||
-                (panel.type == 13 && panel.currentTabIndex == 0 && panel == GameCanvas.panel) ||
-                (panel.type == 1 && panel.currentTabIndex == panel.currentTabName.Length - 1 && GameCanvas.panel2 == null && panel.typeShop != 2))  //my inventory
+                     (panel.type == 0 && panel.currentTabIndex == 1) ||
+                     (panel.type == 2 && panel.currentTabIndex == 1) ||
+                     panel.type == 7 ||
+                     (panel.type == 12 && panel.currentTabIndex == 1) ||
+                     (panel.type == 13 && panel.currentTabIndex == 0 && panel == GameCanvas.panel) ||
+                     (panel.type == 1 && panel.currentTabIndex == panel.currentTabName.Length - 1 &&
+                      GameCanvas.panel2 == null && panel.typeShop != 2)) //my inventory
             {
-                Item[] arrItemBody = Char.myCharz().arrItemBody;
-                Item[] arrItemBag = Char.myCharz().arrItemBag;
-                int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 1);
-                for (int i = offset; i < Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, panel.currentListLength); i++)
+                var arrItemBody = Char.myCharz().arrItemBody;
+                var arrItemBag = Char.myCharz().arrItemBag;
+                var offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 1);
+                for (var i = offset;
+                     i < Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, panel.currentListLength);
+                     i++)
                 {
-                    int y = panel.yScroll + i * panel.ITEM_HEIGHT;
-                    if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+                    var y = panel.yScroll + i * panel.ITEM_HEIGHT;
+                    if (y - panel.cmy > panel.yScroll + panel.hScroll ||
+                        y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
                         continue;
-                    bool inventorySelect_isbody = GetInventorySelect_isbody(i, panel.newSelected, arrItemBody);
-                    int inventorySelect_body = GetInventorySelect_body(i, panel.newSelected);
-                    int inventorySelect_bag = GetInventorySelect_bag(i, panel.newSelected, arrItemBody);
-                    Item item = (!inventorySelect_isbody) ? arrItemBag[inventorySelect_bag] : arrItemBody[inventorySelect_body];
+                    var inventorySelect_isbody = GetInventorySelect_isbody(i, panel.newSelected, arrItemBody);
+                    var inventorySelect_body = GetInventorySelect_body(i, panel.newSelected);
+                    var inventorySelect_bag = GetInventorySelect_bag(i, panel.newSelected, arrItemBody);
+                    var item = !inventorySelect_isbody
+                        ? arrItemBag[inventorySelect_bag]
+                        : arrItemBody[inventorySelect_body];
                     if (item == null)
                         continue;
                     if (item.itemOption != null)
                     {
-                        ItemOption itemOption = item.GetBestItemOption();
+                        var itemOption = item.GetBestItemOption();
                         if (itemOption == null)
                             goto Label;
-                        int param = itemOption.param;
-                        int id = itemOption.optionTemplate.id;
+                        var param = itemOption.param;
+                        var id = itemOption.optionTemplate.id;
                         if (param > 7 || (id >= 127 && id <= 135))
                             param = 7;
                         if (id == 107)
@@ -1859,6 +2028,7 @@ namespace Mod
                             else if (param == 1)
                                 goto Label;
                         }
+
                         if (param <= 0)
                             goto Label;
                         if (i == panel.selected)
@@ -1867,20 +2037,23 @@ namespace Mod
                             g.setColor(0x987B55);
                         else
                             g.setColor(0xB49F84);
-                        for (int j = 0; j < item.itemOption.Length; j++)
-                        {
+                        for (var j = 0; j < item.itemOption.Length; j++)
                             if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
                             {
-                                byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+                                var id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
                                 if (GetColor_ItemBg(id_) != -1)
                                     g.setColor(GetColor_ItemBg(id_));
                             }
-                        }
+
                         g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-                        CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17 + (panel == GameCanvas.panel2 ? 2 : 0), y + 11, 34, panel.ITEM_HEIGHT - 1, item);
-                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+                        CustomGraphics.PaintItemEffectInPanel(g,
+                            panel.xScroll + 17 + (panel == GameCanvas.panel2 ? 2 : 0), y + 11, 34,
+                            panel.ITEM_HEIGHT - 1, item);
+                        SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
+                            panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
                     }
-                Label:;
+
+                    Label: ;
                     CustomGraphics.PaintItemOptions(g, panel, item, y);
                 }
             }
@@ -1889,8 +2062,8 @@ namespace Mod
         internal static bool OnServerListScreenInitCommand(ServerListScreen screen)
         {
             screen.nCmdPlay = 0;
-            string text = Rms.loadRMSString("acc");
-            sbyte[] userAo = Rms.loadRMS("userAo" + ServerListScreen.ipSelect);
+            var text = Rms.loadRMSString("acc");
+            var userAo = Rms.loadRMS("userAo" + ServerListScreen.ipSelect);
             if (text == null)
             {
                 if (userAo != null)
@@ -1905,9 +2078,10 @@ namespace Mod
             {
                 screen.nCmdPlay = 1;
             }
+
             screen.cmd = new Command[4 + screen.nCmdPlay];
-            int num = GameCanvas.hh - 15 * screen.cmd.Length + 28;
-            for (int i = 0; i < screen.cmd.Length; i++)
+            var num = GameCanvas.hh - 15 * screen.cmd.Length + 28;
+            for (var i = 0; i < screen.cmd.Length; i++)
             {
                 switch (i)
                 {
@@ -1921,19 +2095,23 @@ namespace Mod
                         }
                         else if (!Utils.IsOpenedByExternalAccountManager)
                         {
-                            Account acc = InGameAccountManager.SelectedAccount;
+                            var acc = InGameAccountManager.SelectedAccount;
                             if (acc == null)
                                 screen.cmd[0].caption = mResources.playAcc + ": " + new string('*', text.Length);
                             else
                                 screen.cmd[0].caption = mResources.playAcc + ": " + acc.Info.Name;
                         }
                         else
+                        {
                             screen.cmd[0].caption = mResources.playAcc + ": " + new string('*', text.Length);
+                        }
+
                         if (screen.cmd[0].caption.Length > 23)
                         {
                             screen.cmd[0].caption = screen.cmd[0].caption.Substring(0, 23);
                             screen.cmd[0].caption += "...";
                         }
+
                         break;
                     case 1:
                         if (screen.nCmdPlay == 1)
@@ -1944,21 +2122,27 @@ namespace Mod
                         else
                         {
                             if (!Utils.IsOpenedByExternalAccountManager)
-                                screen.cmd[1] = new Command(Strings.accounts, new InGameAccountManager.ActionListener(), 7, null);
+                                screen.cmd[1] = new Command(Strings.accounts, new InGameAccountManager.ActionListener(),
+                                    7, null);
                             else
                                 screen.cmd[1] = new Command(mResources.change_account, screen, 7, null);
                         }
+
                         break;
                     case 2:
                         if (screen.nCmdPlay == 1)
                         {
                             if (!Utils.IsOpenedByExternalAccountManager)
-                                screen.cmd[2] = new Command(Strings.accounts, new InGameAccountManager.ActionListener(), 7, null);
+                                screen.cmd[2] = new Command(Strings.accounts, new InGameAccountManager.ActionListener(),
+                                    7, null);
                             else
                                 screen.cmd[2] = new Command(mResources.change_account, screen, 7, null);
                         }
                         else
+                        {
                             screen.cmd[2] = new Command(string.Empty, screen, 17, null);
+                        }
+
                         break;
                     case 3:
                         if (screen.nCmdPlay == 1)
@@ -1970,11 +2154,13 @@ namespace Mod
                         screen.cmd[4] = new Command(mResources.option, screen, 8, null);
                         break;
                 }
+
                 screen.cmd[i].y = num;
                 screen.cmd[i].setType();
                 screen.cmd[i].x = (GameCanvas.w - screen.cmd[i].w) / 2;
                 num += 30;
             }
+
             return true;
         }
 
@@ -1985,7 +2171,6 @@ namespace Mod
             if (SoundMn.IsDelAcc && panel.selected == Panel.strTool.Length - 1)
                 return false;
             if (!Char.myCharz().havePet)
-            {
                 switch (panel.selected)
                 {
                     case 4:
@@ -2000,9 +2185,7 @@ namespace Mod
                         GameCanvas.instance.doResetToLoginScr(GameCanvas.serverScreen);
                         return true;
                 }
-            }
             else
-            {
                 switch (panel.selected)
                 {
                     case 5:
@@ -2017,35 +2200,23 @@ namespace Mod
                         GameCanvas.instance.doResetToLoginScr(GameCanvas.serverScreen);
                         return true;
                 }
-            }
+
             return false;
         }
 
         internal static bool OnGetSoundOption()
         {
-            bool canRegister = GameCanvas.loginScr.isLogin2 || (!Utils.IsOpenedByExternalAccountManager && InGameAccountManager.SelectedAccount != null && InGameAccountManager.SelectedAccount.Type == AccountType.Unregistered);
+            var canRegister = GameCanvas.loginScr.isLogin2 || (!Utils.IsOpenedByExternalAccountManager &&
+                                                               InGameAccountManager.SelectedAccount != null &&
+                                                               InGameAccountManager.SelectedAccount.Type ==
+                                                               AccountType.Unregistered);
             if (canRegister && Char.myCharz().taskMaint != null && Char.myCharz().taskMaint.taskId >= 2)
             {
-                Panel.strTool = new string[]
+                Panel.strTool = new[]
                 {
-                mResources.radaCard,
-                mResources.quayso,
-                mResources.gameInfo,
-                mResources.change_flag,
-                mResources.change_zone,
-                mResources.chat_world,
-                mResources.account,
-                mResources.option,
-                Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout,
-                mResources.REGISTOPROTECT
-                };
-                if (Char.myCharz().havePet)
-                    Panel.strTool = new string[]
-                    {
                     mResources.radaCard,
                     mResources.quayso,
                     mResources.gameInfo,
-                    mResources.pet,
                     mResources.change_flag,
                     mResources.change_zone,
                     mResources.chat_world,
@@ -2053,47 +2224,61 @@ namespace Mod
                     mResources.option,
                     Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout,
                     mResources.REGISTOPROTECT
+                };
+                if (Char.myCharz().havePet)
+                    Panel.strTool = new[]
+                    {
+                        mResources.radaCard,
+                        mResources.quayso,
+                        mResources.gameInfo,
+                        mResources.pet,
+                        mResources.change_flag,
+                        mResources.change_zone,
+                        mResources.chat_world,
+                        mResources.account,
+                        mResources.option,
+                        Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout,
+                        mResources.REGISTOPROTECT
                     };
             }
             else
             {
-                Panel.strTool = new string[]
+                Panel.strTool = new[]
                 {
-                mResources.radaCard,
-                mResources.quayso,
-                mResources.gameInfo,
-                mResources.change_flag,
-                mResources.change_zone,
-                mResources.chat_world,
-                mResources.account,
-                mResources.option,
-                Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout
-                };
-                if (Char.myCharz().havePet)
-                    Panel.strTool = new string[]
-                    {
                     mResources.radaCard,
                     mResources.quayso,
                     mResources.gameInfo,
-                    mResources.pet,
                     mResources.change_flag,
                     mResources.change_zone,
                     mResources.chat_world,
                     mResources.account,
                     mResources.option,
                     Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout
+                };
+                if (Char.myCharz().havePet)
+                    Panel.strTool = new[]
+                    {
+                        mResources.radaCard,
+                        mResources.quayso,
+                        mResources.gameInfo,
+                        mResources.pet,
+                        mResources.change_flag,
+                        mResources.change_zone,
+                        mResources.chat_world,
+                        mResources.account,
+                        mResources.option,
+                        Utils.IsOpenedByExternalAccountManager ? mResources.change_account : Strings.logout
                     };
             }
+
             if (SoundMn.IsDelAcc)
             {
-                string[] array = new string[Panel.strTool.Length + 1];
-                for (int i = 0; i < Panel.strTool.Length; i++)
-                {
-                    array[i] = Panel.strTool[i];
-                }
+                var array = new string[Panel.strTool.Length + 1];
+                for (var i = 0; i < Panel.strTool.Length; i++) array[i] = Panel.strTool[i];
                 array[Panel.strTool.Length] = mResources.delacc;
                 Panel.strTool = array;
             }
+
             return true;
         }
 
@@ -2110,7 +2295,7 @@ namespace Mod
                 instance.rankName1 = new string[instance.zones.Length];
                 instance.rank2 = new int[instance.zones.Length];
                 instance.rankName2 = new string[instance.zones.Length];
-                for (int i = 0; i < instance.zones.Length; i++)
+                for (var i = 0; i < instance.zones.Length; i++)
                 {
                     instance.zones[i] = message.reader().readByte();
                     instance.pts[i] = message.reader().readByte();
@@ -2127,8 +2312,9 @@ namespace Mod
             }
             catch (Exception ex)
             {
-                Cout.LogError("Loi ham OPEN UIZONE " + ex.ToString());
+                Cout.LogError("Loi ham OPEN UIZONE " + ex);
             }
+
             return true;
         }
 
@@ -2141,8 +2327,10 @@ namespace Mod
                     isOpenZoneUI = false;
                     return false;
                 }
+
                 return true;
             }
+
             return false;
         }
 
