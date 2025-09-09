@@ -162,6 +162,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: pk9r327.DragonBoy.CommunityMod
     Standalone: com.TeaMobi.DragonBoy
+    iPhone: com.edward.DragonBoy-CommunityMod
   buildNumber:
     Bratwurst: 0
     Standalone: 0
@@ -185,7 +186,7 @@ PlayerSettings:
   StripUnusedMeshComponents: 0
   strictShaderVariantMatching: 0
   VertexChannelCompressionMask: 4054
-  iPhoneSdkVersion: 989
+  iPhoneSdkVersion: 988
   iOSTargetOSVersionString: 13.0
   tvOSSdkVersion: 0
   tvOSRequireExtendedGameController: 0
@@ -243,7 +244,7 @@ PlayerSettings:
   iOSManualSigningProvisioningProfileType: 0
   tvOSManualSigningProvisioningProfileType: 0
   bratwurstManualSigningProvisioningProfileType: 0
-  appleEnableAutomaticSigning: 0
+  appleEnableAutomaticSigning: 1
   iOSRequireARKit: 0
   iOSAutomaticallyDetectAndAddCapabilities: 0
   appleEnableProMotion: 0
