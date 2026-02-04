@@ -112,36 +112,37 @@ public class ChatPopup : Effect2, IActionListener
 
 	public static void addBigMessage(string chat, int howLong, Npc c)
 	{
-		string[] array = new string[1] { chat };
-		if (c.charID != 5 && GameScr.info1.isDone)
-			GameScr.info1.isUpdate = false;
-		Char.isLockKey = true;
-		serverChatPopUp = addChatPopup(array[0], howLong, c);
-		serverChatPopUp.strY = 5;
-		serverChatPopUp.cx = GameCanvas.w / 2 - serverChatPopUp.sayWidth / 2 - 1;
-		serverChatPopUp.cy = GameCanvas.h - 20 - serverChatPopUp.ch;
-		serverChatPopUp.currentLine = 0;
-		serverChatPopUp.lines = array;
-		scr = new Scroll();
-		int nItem = serverChatPopUp.says.Length;
-		scr.setStyle(nItem, 12, serverChatPopUp.cx, serverChatPopUp.cy - serverChatPopUp.strY + 12, serverChatPopUp.sayWidth + 2, serverChatPopUp.ch - 25, true, 1);
-		SoundMn.gI().openDialog();
+		// string[] array = new string[1] { chat };
+		// if (c.charID != 5 && GameScr.info1.isDone)
+		// 	GameScr.info1.isUpdate = false;
+		// Char.isLockKey = true;
+		// serverChatPopUp = addChatPopup(array[0], howLong, c);
+		// serverChatPopUp.strY = 5;
+		// serverChatPopUp.cx = GameCanvas.w / 2 - serverChatPopUp.sayWidth / 2 - 1;
+		// serverChatPopUp.cy = GameCanvas.h - 20 - serverChatPopUp.ch;
+		// serverChatPopUp.currentLine = 0;
+		// serverChatPopUp.lines = array;
+		// scr = new Scroll();
+		// int nItem = serverChatPopUp.says.Length;
+		// scr.setStyle(nItem, 12, serverChatPopUp.cx, serverChatPopUp.cy - serverChatPopUp.strY + 12, serverChatPopUp.sayWidth + 2, serverChatPopUp.ch - 25, true, 1);
+		// SoundMn.gI().openDialog();
 	}
 
 	public static void addChatPopupMultiLine(string chat, int howLong, Npc c)
 	{
-		string[] array = Res.split(chat, "\n", 0);
-		Char.isLockKey = true;
-		currChatPopup = addChatPopup(array[0], howLong, c);
-		currChatPopup.currentLine = 0;
-		currChatPopup.lines = array;
-		string caption = mResources.CONTINUE;
-		if (array.Length == 1)
-			caption = mResources.CLOSE;
-		currChatPopup.cmdNextLine = new Command(caption, currChatPopup, 8000, null);
-		currChatPopup.cmdNextLine.x = GameCanvas.w / 2 - 35;
-		currChatPopup.cmdNextLine.y = GameCanvas.h - 35;
-		SoundMn.gI().openDialog();
+		// string[] array = Res.split(chat, "\n", 0);
+		// Char.isLockKey = true;
+		// currChatPopup = addChatPopup(array[0], howLong, c);
+		// currChatPopup.currentLine = 0;
+		// currChatPopup.lines = array;
+		// string caption = mResources.CONTINUE;
+		// if (array.Length == 1)
+		// 	caption = mResources.CLOSE;
+		// currChatPopup.cmdNextLine = new Command(caption, currChatPopup, 8000, null);
+		// currChatPopup.cmdNextLine.x = GameCanvas.w / 2 - 35;
+		// currChatPopup.cmdNextLine.y = GameCanvas.h - 35;
+		// SoundMn.gI().openDialog();
+		GameScr.info1.addInfo(chat, 0);
 	}
 
 	public static ChatPopup addChatPopupWithIcon(string chat, int howLong, Npc c, int idIcon)
@@ -166,14 +167,14 @@ public class ChatPopup : Effect2, IActionListener
 		chatPopup.mH = 10;
 		if (GameCanvas.menu.showMenu)
 			chatPopup.mH = 0;
-		Effect2.vEffect2.addElement(chatPopup);
+		vEffect2.addElement(chatPopup);
 		isHavePetNpc = false;
 		if (c != null && c.charID == 5)
 		{
 			isHavePetNpc = true;
 			GameScr.info1.addInfo(string.Empty, 1);
 		}
-		curr = (last = mSystem.currentTimeMillis());
+		curr = last = mSystem.currentTimeMillis();
 		chatPopup.ch += 15;
 		return chatPopup;
 	}
@@ -199,14 +200,14 @@ public class ChatPopup : Effect2, IActionListener
 		chatPopup.mH = 10;
 		if (GameCanvas.menu.showMenu)
 			chatPopup.mH = 0;
-		Effect2.vEffect2.addElement(chatPopup);
+		vEffect2.addElement(chatPopup);
 		isHavePetNpc = false;
 		if (c != null && c.charID == 5)
 		{
 			isHavePetNpc = true;
 			GameScr.info1.addInfo(string.Empty, 1);
 		}
-		curr = (last = mSystem.currentTimeMillis());
+		curr = last = mSystem.currentTimeMillis();
 		return chatPopup;
 	}
 
@@ -255,10 +256,10 @@ public class ChatPopup : Effect2, IActionListener
 		}
 		if (sayRun > 1)
 			sayRun--;
-		if ((c != null && Char.chatPopup != null && Char.chatPopup != this) || (c != null && Char.chatPopup == null) || delay <= 0)
+		if (c != null && Char.chatPopup != null && Char.chatPopup != this || c != null && Char.chatPopup == null || delay <= 0)
 		{
-			Effect2.vEffect2Outside.removeElement(this);
-			Effect2.vEffect2.removeElement(this);
+			vEffect2Outside.removeElement(this);
+			vEffect2.removeElement(this);
 		}
 	}
 
@@ -276,12 +277,12 @@ public class ChatPopup : Effect2, IActionListener
 		int num5 = 0;
 		if (c != null)
 		{
-			num5 = ((GameCanvas.gameTick % 10 <= 2) ? 1 : 0);
+			num5 = GameCanvas.gameTick % 10 <= 2 ? 1 : 0;
 			SmallImage.drawSmallImage(g, c.avatar, cx + 14, cy + num5, 0, StaticObj.BOTTOM_LEFT);
 		}
 		if (iconID != 0)
 		{
-			num5 = ((GameCanvas.gameTick % 10 <= 2) ? 1 : 0);
+			num5 = GameCanvas.gameTick % 10 <= 2 ? 1 : 0;
 			SmallImage.drawSmallImage(g, iconID, cx + num3 / 2, cy + ch - 15 + num5, 0, StaticObj.VCENTER_HCENTER);
 		}
 		PopUp.paintPopUp(g, num, num2, num3, num4, 16777215, false);
@@ -554,14 +555,14 @@ public class ChatPopup : Effect2, IActionListener
 	{
 		if (isClip)
 		{
-			if (GameCanvas.keyPressed[(!Main.isPC) ? 8 : 22])
+			if (GameCanvas.keyPressed[!Main.isPC ? 8 : 22])
 			{
-				GameCanvas.keyPressed[(!Main.isPC) ? 8 : 22] = false;
+				GameCanvas.keyPressed[!Main.isPC ? 8 : 22] = false;
 				doKeyText(1);
 			}
-			if (GameCanvas.keyPressed[(!Main.isPC) ? 2 : 21])
+			if (GameCanvas.keyPressed[!Main.isPC ? 2 : 21])
 			{
-				GameCanvas.keyPressed[(!Main.isPC) ? 2 : 21] = false;
+				GameCanvas.keyPressed[!Main.isPC ? 2 : 21] = false;
 				doKeyText(-1);
 			}
 			if (GameCanvas.isPointerHoldIn(cx, 0, sayWidth + 2, ch))
@@ -592,23 +593,23 @@ public class ChatPopup : Effect2, IActionListener
 		{
 			if (GameCanvas.isTouch)
 				scr.updateKey();
-			if (GameCanvas.keyHold[(!Main.isPC) ? 2 : 21])
+			if (GameCanvas.keyHold[!Main.isPC ? 2 : 21])
 			{
 				scr.cmtoY -= 12;
 				if (scr.cmtoY < 0)
 					scr.cmtoY = 0;
 			}
-			if (GameCanvas.keyHold[(!Main.isPC) ? 8 : 22])
+			if (GameCanvas.keyHold[!Main.isPC ? 8 : 22])
 			{
-				GameCanvas.keyPressed[(!Main.isPC) ? 8 : 22] = false;
+				GameCanvas.keyPressed[!Main.isPC ? 8 : 22] = false;
 				scr.cmtoY += 12;
 				if (scr.cmtoY > scr.cmyLim)
 					scr.cmtoY = scr.cmyLim;
 			}
 		}
-		if (GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25] || mScreen.getCmdPointerLast(GameCanvas.currentScreen.center))
+		if (GameCanvas.keyPressed[!Main.isPC ? 5 : 25] || mScreen.getCmdPointerLast(GameCanvas.currentScreen.center))
 		{
-			GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25] = false;
+			GameCanvas.keyPressed[!Main.isPC ? 5 : 25] = false;
 			mScreen.keyTouch = -1;
 			if (cmdNextLine != null)
 				cmdNextLine.performAction();
@@ -623,10 +624,10 @@ public class ChatPopup : Effect2, IActionListener
 		}
 		if (scr == null || !scr.pointerIsDowning)
 		{
-			if (cmdMsg1 != null && (GameCanvas.keyPressed[12] || GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25] || mScreen.getCmdPointerLast(cmdMsg1)))
+			if (cmdMsg1 != null && (GameCanvas.keyPressed[12] || GameCanvas.keyPressed[!Main.isPC ? 5 : 25] || mScreen.getCmdPointerLast(cmdMsg1)))
 			{
 				GameCanvas.keyPressed[12] = false;
-				GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25] = false;
+				GameCanvas.keyPressed[!Main.isPC ? 5 : 25] = false;
 				GameCanvas.isPointerClick = false;
 				GameCanvas.isPointerJustRelease = false;
 				cmdMsg1.performAction();

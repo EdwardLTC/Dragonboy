@@ -103,13 +103,25 @@ public class ServerScr : mScreen, IActionListener
 
 	internal int htext = 15;
 
-	internal string[] strLang = new string[3] { "Tiếng Việt", "English", "Indo" };
+	internal string[] strLang = new string[3]
+	{
+		"Tiếng Việt", "English", "Indo"
+	};
 
-	internal string[] strArea = new string[2] { "VIỆT NAM", "GLOBAL" };
+	internal string[] strArea = new string[2]
+	{
+		"VIỆT NAM", "GLOBAL"
+	};
 
-	internal string[] strTypeSV = new string[2] { "Máy chủ tiêu chuẩn", "Máy chủ theo mùa" };
+	internal string[] strTypeSV = new string[2]
+	{
+		"Máy chủ tiêu chuẩn", "Máy chủ theo mùa"
+	};
 
-	internal string[] strTypeSV_info = new string[2] { "Máy chủ tiêu chuẩn:\n-Không reset.\nTiến trình game bình thường.", "Máy chủ theo mùa:\n -Reset toàn bộ server và phát thưởng vào cuối mùa.\n x3 Sức mạnh\n x3 Tiềm năng\n x3 Vàng\n x3 Vật phẩm khác" };
+	internal string[] strTypeSV_info = new string[2]
+	{
+		"Máy chủ tiêu chuẩn:\n-Không reset.\nTiến trình game bình thường.", "Máy chủ theo mùa:\n -Reset toàn bộ server và phát thưởng vào cuối mùa.\n x3 Sức mạnh\n x3 Tiềm năng\n x3 Vàng\n x3 Vật phẩm khác"
+	};
 
 	public int cmy;
 
@@ -125,7 +137,6 @@ public class ServerScr : mScreen, IActionListener
 
 	public override void switchToMe()
 	{
-		Debug.LogError(">>>>>>switchToMe: ");
 		SoundMn.gI().stopAll();
 		base.switchToMe();
 		Load_NewUI();
@@ -149,11 +160,11 @@ public class ServerScr : mScreen, IActionListener
 		mainSelect = ServerListScreen.ipSelect;
 		w2c = 5;
 		wc = 76;
-		hc = mScreen.cmdH;
+		hc = cmdH;
 		numw = 2;
 		if (vecServer.size() > 2)
 			numw = GameCanvas.w / (wc + w2c);
-		numh = vecServer.size() / numw + ((vecServer.size() % numw != 0) ? 1 : 0);
+		numh = vecServer.size() / numw + (vecServer.size() % numw != 0 ? 1 : 0);
 		for (int i = 0; i < vecServer.size(); i++)
 		{
 			Command command = (Command)vecServer.elementAt(i);
@@ -173,12 +184,12 @@ public class ServerScr : mScreen, IActionListener
 		mainSelect = ServerListScreen.ipSelect;
 		w2c = 5;
 		wc = 76;
-		hc = mScreen.cmdH;
+		hc = cmdH;
 		numw = 1;
 		int num = xsub + wsub / 2 + 3;
 		ysubpaint = ysub + 5;
 		numw = wsub / (wc + w2c);
-		numh = vecServer.size() / numw + ((vecServer.size() % numw != 0) ? 1 : 0);
+		numh = vecServer.size() / numw + (vecServer.size() % numw != 0 ? 1 : 0);
 		xsubpaint = num - numw * (wc + w2c) / 2;
 		for (int i = 0; i < vecServer.size(); i++)
 		{
@@ -257,11 +268,11 @@ public class ServerScr : mScreen, IActionListener
 
 		//int num = mainSelect % numw;
 		//int num2 = mainSelect / numw;
-        //fix division by 0
-        int num = mainSelect % (numw == 0 ? 1 : numw);
-        int num2 = mainSelect / (numw == 0 ? 1 : numw);
+		//fix division by 0
+		int num = mainSelect % (numw == 0 ? 1 : numw);
+		int num2 = mainSelect / (numw == 0 ? 1 : numw);
 		//--------------------------------------
-        if (GameCanvas.keyPressed[4])
+		if (GameCanvas.keyPressed[4])
 		{
 			if (num > 0)
 				mainSelect--;
@@ -456,7 +467,7 @@ public class ServerScr : mScreen, IActionListener
 		for (int i = 0; i < ntypeSv; i++)
 		{
 			int num = yPop + i * (hPop + 5);
-			PopUp.paintPopUp(g, xPop, num, wPop, hPop, (select_typeSv == i) ? 1 : 0, true);
+			PopUp.paintPopUp(g, xPop, num, wPop, hPop, select_typeSv == i ? 1 : 0, true);
 			mFont.tahoma_7b_dark.drawString(g, strTypeSV[i], xPop + wPop / 2, num + 5, 2);
 		}
 		g.setColor(10254674);
@@ -570,7 +581,7 @@ public class ServerScr : mScreen, IActionListener
 					select_Area = b;
 				else
 					SetNewSelectMenu(b, select_typeSv);
-				isPaint_select_lang = (isPaint_select_area = false);
+				isPaint_select_lang = isPaint_select_area = false;
 				break;
 			}
 		}
@@ -603,7 +614,10 @@ public class ServerScr : mScreen, IActionListener
 
 	internal void Save_RMS_Area()
 	{
-		Rms.saveRMS("area_select", new sbyte[2] { select_Area, select_Lang });
+		Rms.saveRMS("area_select", new sbyte[2]
+		{
+			select_Area, select_Lang
+		});
 	}
 
 	internal void Load_RMS_Area()
@@ -616,7 +630,7 @@ public class ServerScr : mScreen, IActionListener
 		}
 		catch (Exception)
 		{
-			select_Area = (select_Lang = 0);
+			select_Area = select_Lang = 0;
 		}
 	}
 
