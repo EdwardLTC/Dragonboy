@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
@@ -399,6 +400,35 @@ namespace Mod
 			}
 
 			Service.gI().useItem(0, 1, index, -1);
+		}
+
+		internal static bool useItem(short itemTemplateId)
+		{
+			sbyte index = getIndexItemBag(itemTemplateId);
+			if (index == -1)
+			{
+				return false;
+			}
+
+			Service.gI().useItem(0, 1, index, -1);
+			return true;
+		}
+
+		[CanBeNull]
+		internal static Item getItemInBag(short itemTemplateId)
+		{
+			Char myChar = Char.myCharz();
+			int length = myChar.arrItemBag.Length;
+			for (sbyte i = 0; i < length; i++)
+			{
+				Item item = myChar.arrItemBag[i];
+				if (item != null && item.template.id == itemTemplateId)
+				{
+					return item;
+				}
+			}
+
+			return null;
 		}
 
 		[ChatCommand("bt"), HotkeyCommand('f')]
@@ -825,7 +855,7 @@ namespace Mod
 			bool result = false;
 			if (item.itemOption == null)
 				return result;
-			if ((item.template.type <= ItemTemplateType.Shirt || item.template.type >= ItemTemplateType.Radar) && item.template.type != ItemTemplateType.TrainingSuite)
+			if ((item.template.type < ItemTemplateType.Shirt || item.template.type > ItemTemplateType.Radar) && item.template.type != ItemTemplateType.TrainingSuite)
 				return result;
 			for (int i = 0; i < item.itemOption.Length; i++)
 			{

@@ -15,7 +15,7 @@ namespace Mod.PickMob
 		const int DEFAULT_MP_BUFF = 20;
 		static readonly sbyte[] IdSkillsBase =
 		{
-			0, 2, 17, 4, 13
+			0, 2, 17, 4, 13, 19, 6, 21
 		};
 		static readonly short[] IdItemBlockBase =
 		{

@@ -8,8 +8,8 @@ namespace Mod.PickMob
 {
 	public class PickMobController
 	{
-		const int TIME_RE_PICK_ITEM = 500;
-		const int TIME_DELAY_TANSAT = 500;
+		const int TIME_RE_PICK_ITEM = 200;
+		const int TIME_DELAY_TANSAT = 200;
 		const int ID_ICON_ITEM_TDLT = 4387;
 		static readonly sbyte[] IdSkillsMelee =
 		{
