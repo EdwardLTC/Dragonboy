@@ -1,4 +1,7 @@
+using System;
+using Mod.Auto;
 using Mod.ModHelper;
+using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.Xmap;
 
 namespace Mod.PickMob
@@ -6,28 +9,38 @@ namespace Mod.PickMob
 	internal class UpCSKBController : ThreadActionUpdate<UpCSKBController>
 	{
 
-		internal override int Interval => 100;
+		internal override int Interval => 1000;
 
-		static int ID_ICON_MD = 2758;
-		static short ID_CAPSULE_MD = 379;
-		static short ID_CAPSULE_KB = 380;
+		const int ID_ICON_MD = 2758;
+		const short ID_CAPSULE_MD = 379;
+		const short ID_CAPSULE_KB = 380;
 
-		long notUsingMDTime;
+		static long notUsingMDTime;
+		static int mapIdTrain;
+		static int mapIdHome;
+		static int zoneIdTrain;
 
 		protected override void update()
 		{
-			if (!ItemTime.isExistItem(ID_CAPSULE_MD))
+			if (!ItemTime.isExistItem(ID_ICON_MD))
 			{
-				notUsingMDTime = System.DateTime.Now.Ticks;
+				if (notUsingMDTime == 0L)
+				{
+					notUsingMDTime = DateTime.Now.Ticks;
+				}
+			}
+			else
+			{
+				notUsingMDTime = 0L;
 			}
 
-			if (System.DateTime.Now.Ticks - notUsingMDTime > 3 * 60 * 10000000L)
+			if (DateTime.Now.Ticks - notUsingMDTime > 3 * 60 * 10000000L)
 			{
 				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
 
 				if (!isUseMDSuccess)
 				{
-					toggle(false);
+					toggleActing();
 					return;
 				}
 
@@ -36,24 +49,56 @@ namespace Mod.PickMob
 
 			Item capsuleKB = Utils.getItemInBag(ID_CAPSULE_KB);
 
-			if (capsuleKB != null)
+			if (capsuleKB?.quantity == 99 && !XmapController.gI.IsActing)
 			{
-
-				if (capsuleKB.quantity == 99)
-				{
-					// go home and put in storage
-				}
+				XmapController.start(mapIdHome);
 			}
 
-			throw new System.NotImplementedException();
+			if (capsuleKB?.quantity == 99 && TileMap.mapID == mapIdHome)
+			{
+				Service.gI().getItem(1, Utils.getIndexItemBag(ID_CAPSULE_KB));
+			}
+
+			if (TileMap.mapID != mapIdTrain && !XmapController.gI.IsActing)
+			{
+				XmapController.start(mapIdTrain);
+			}
+
+			if (TileMap.mapID == mapIdTrain && TileMap.zoneID != zoneIdTrain)
+			{
+				Service.gI().requestChangeZone(zoneIdTrain, 0);
+			}
 		}
 
-		internal static void Start()
+		static void Start()
 		{
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
-			toggle(true);
+			AutoGoback.mode = AutoGoback.GoBackMode.GoBackToFixedLocation;
+			mapIdTrain = TileMap.mapID;
+			zoneIdTrain = TileMap.zoneID;
+			mapIdHome = XmapUtils.getIdMapHome(Char.myCharz().cgender);
+			GameScr.info1.addInfo("[Up CSKB] start ", 0);
+		}
+
+		static void Stop()
+		{
+			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
+		}
+
+		[HotkeyCommand('p')]
+		internal void toggleActing()
+		{
+			toggle();
+			if (IsActing)
+			{
+				Start();
+			}
+			else
+			{
+				Stop();
+			}
 		}
 	}
 }

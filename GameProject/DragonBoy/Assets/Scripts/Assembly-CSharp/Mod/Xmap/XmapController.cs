@@ -48,8 +48,7 @@ namespace Mod.Xmap
 
 					if (way == null)
 					{
-						MainThreadDispatcher.Dispatch(() =>
-							GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0));
+						MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0));
 						finishXmap();
 						return;
 					}
@@ -58,8 +57,7 @@ namespace Mod.Xmap
 
 			if (TileMap.mapID == way[way.Count - 1].to && !Char.myCharz().IsCharDead())
 			{
-				MainThreadDispatcher.Dispatch(() =>
-					GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0));
+				MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0));
 				finishXmap();
 				return;
 			}

@@ -111,6 +111,16 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "AutoTrainCSKB_Toggle",
+					Title = "Auto Train CSKB",
+					Description = "Auto Train CSKB Description",
+					GetValueFunc = () => UpCSKBController.gI.IsActing,
+					SetValueAction = UpCSKBController.toggle,
+					GetIsDisabled = () => Pk9rPickMob.IsTanSat,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.pickMobTitle) + '!'
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "PickMob_Toggle",
 					Title = Strings.pickMobTitle,
 					Description = Strings.pickMobDescription,

@@ -101,19 +101,6 @@ namespace Mod.Xmap
 				.setChatPopup(string.Format(Strings.xmapChatPopup, TileMap.mapName, TileMap.mapID))
 				.addItem(Strings.xmapUseNormalCapsule + ": " + Strings.OnOffStatus(isUseCapsuleNormal), new MenuAction(ToggleUseCapsuleNormal))
 				.addItem(Strings.xmapUseSpecialCapsule + ": " + Strings.OnOffStatus(isUseCapsuleVip), new MenuAction(ToggleUseCapsuleVip))
-				.addItem(Strings.xmapUseAStar + ": " + Strings.OnOffStatus(isXmapAStar), new MenuAction(() =>
-				{
-					isXmapAStar = !isXmapAStar;
-					GameScr.info1.addInfo(Strings.xmapUseAStar + ": " + Strings.OnOffStatus(isXmapAStar), 0);
-				}))
-				.addItem(Strings.xmapEditTimeout, new MenuAction(() =>
-				{
-					ChatTextField.gI().strChat = Strings.timeout;
-					ChatTextField.gI().tfChat.name = Strings.timeout + " (10-300s)";
-					ChatTextField.gI().tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
-					ChatTextField.gI().startChat2(new XmapChatable(), string.Empty);
-					ChatTextField.gI().tfChat.setText(aStarTimeout.ToString());
-				}))
 				.start();
 		}
 
