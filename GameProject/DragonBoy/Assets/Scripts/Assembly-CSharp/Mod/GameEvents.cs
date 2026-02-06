@@ -1450,40 +1450,11 @@ namespace Mod
 							instance.lastTabIndex[instance.type] = instance.currentTabIndex;
 						}
 					}
-					else if (instance.selected > 0)
-					{
-						if (GameCanvas.keyPressed[8])
-						{
-							if (instance.newSelected == 0)
-								instance.sellectInventory++;
-							else
-								instance.sellectInventory += 5;
-						}
-						else if (GameCanvas.keyPressed[2])
-						{
-							if (instance.newSelected == 0)
-								instance.sellectInventory--;
-							else
-								instance.sellectInventory -= 5;
-						}
-						else if (GameCanvas.keyPressed[4])
-						{
-							if (instance.newSelected == 0)
-								instance.sellectInventory -= 5;
-							else
-								instance.sellectInventory--;
-						}
-						else if (GameCanvas.keyPressed[6])
-						{
-							if (instance.newSelected == 0)
-								instance.sellectInventory += 5;
-							else
-								instance.sellectInventory++;
-						}
-					}
-
-					if (instance.sellectInventory == instance.nTableItem)
+					// sellectInventory is now synced with selected in updateKeyScrollView
+					if (instance.sellectInventory < 0)
 						instance.sellectInventory = 0;
+					if (instance.sellectInventory >= instance.nTableItem)
+						instance.sellectInventory = instance.nTableItem - 1;
 				}
 				else if (!instance.IsTabOption())
 				{
@@ -1623,20 +1594,6 @@ namespace Mod
 
 		internal static void OnAfterPaintPanel(Panel panel, mGraphics g)
 		{
-			bool GetInventorySelect_isbody(int select, int subSelect, Item[] arrItem)
-			{
-				return subSelect == 0 && select - 1 + subSelect * 20 < arrItem.Length;
-			}
-
-			int GetInventorySelect_body(int select, int subSelect)
-			{
-				return select - 1 + subSelect * 20;
-			}
-
-			int GetInventorySelect_bag(int select, int subSelect, Item[] arrItem)
-			{
-				return select - 1 + subSelect * 20 - arrItem.Length;
-			}
 
 			sbyte GetColor_Item_Upgrade(int lv)
 			{
@@ -1731,10 +1688,8 @@ namespace Mod
 								}
 
 							g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-							CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34,
-								panel.ITEM_HEIGHT - 1, item);
-							SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
-								panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+							CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1, item);
+							SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
 						}
 
 						Label: ;
@@ -1874,10 +1829,8 @@ namespace Mod
 							}
 
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 14, 34, panel.ITEM_HEIGHT - 1,
-							item);
-						SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
-							panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 14, 34, panel.ITEM_HEIGHT - 1, item);
+						SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
 					}
 
 					Label: ;
@@ -1987,10 +1940,8 @@ namespace Mod
 							}
 
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
-						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1,
-							item);
-						SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
-							panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1, item);
+						SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2, panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
 					}
 
 					Label: ;
@@ -2008,21 +1959,19 @@ namespace Mod
 			{
 				Item[] arrItemBody = Char.myCharz().arrItemBody;
 				Item[] arrItemBag = Char.myCharz().arrItemBag;
-				int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 1);
+				int totalItems = arrItemBody.Length + arrItemBag.Length;
+				int offset = Math.Max(panel.cmy / panel.ITEM_HEIGHT, 0);
 				for (int i = offset;
-				     i < Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, panel.currentListLength);
+				     i < Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, totalItems);
 				     i++)
 				{
 					int y = panel.yScroll + i * panel.ITEM_HEIGHT;
 					if (y - panel.cmy > panel.yScroll + panel.hScroll ||
 					    y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
 						continue;
-					bool inventorySelect_isbody = GetInventorySelect_isbody(i, panel.newSelected, arrItemBody);
-					int inventorySelect_body = GetInventorySelect_body(i, panel.newSelected);
-					int inventorySelect_bag = GetInventorySelect_bag(i, panel.newSelected, arrItemBody);
-					Item item = !inventorySelect_isbody
-						? arrItemBag[inventorySelect_bag]
-						: arrItemBody[inventorySelect_body];
+					bool isBodyItem = i < arrItemBody.Length;
+					int bagIndex = i - arrItemBody.Length;
+					Item item = isBodyItem ? arrItemBody[i] : bagIndex < arrItemBag.Length ? arrItemBag[bagIndex] : null;
 					if (item == null)
 						continue;
 					if (item.itemOption != null)
@@ -2046,7 +1995,7 @@ namespace Mod
 							goto Label;
 						if (i == panel.selected)
 							g.setColor(0x919600);
-						else if (inventorySelect_isbody)
+						else if (isBodyItem)
 							g.setColor(0x987B55);
 						else
 							g.setColor(0xB49F84);
@@ -2063,7 +2012,7 @@ namespace Mod
 							panel.xScroll + 17 + (panel == GameCanvas.panel2 ? 2 : 0), y + 11, 34,
 							panel.ITEM_HEIGHT - 1, item);
 						SmallImage.drawSmallImage(g, item.template.iconID, panel.xScroll + 34 / 2,
-							panel.yScroll + i * panel.ITEM_HEIGHT + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
+							y + (panel.ITEM_HEIGHT - 1) / 2, 0, 3);
 					}
 
 					Label: ;

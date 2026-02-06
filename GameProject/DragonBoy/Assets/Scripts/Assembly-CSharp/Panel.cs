@@ -25,156 +25,77 @@ public class Panel : IActionListener, IChatable
 
 	public bool isShow;
 
-	public int X;
-
-	public int Y;
-
-	public int W;
-
-	public int H;
-
+	// Panel dimensions
+	public int X, Y, W, H;
 	public int ITEM_HEIGHT;
+	public int TAB_W, TAB_W_NEW;
 
-	public int TAB_W;
-
-	public int TAB_W_NEW;
-
-	public int cmtoY;
-
-	public int cmy;
-
-	public int cmdy;
-
-	public int cmvy;
-
-	public int cmyLim;
-
-	public int xc;
-
+	// Scroll state - vertical
+	public int cmtoY, cmy, cmdy, cmvy, cmyLim;
 	public int[] cmyLast;
 
-	public int cmtoX;
+	// Scroll state - horizontal  
+	public int cmtoX, cmx, cmxLim;
+	public int xc;
 
-	public int cmx;
-
-	public int cmxLim;
-
-	public int cmxMap;
-
-	public int cmyMap;
-
-	public int cmxMapLim;
-
-	public int cmyMapLim;
-
+	// Map scroll
+	public int cmxMap, cmyMap, cmxMapLim, cmyMapLim;
 	public int cmyQuest;
 
-	public static Image imgBantay;
-
-	public static Image imgX;
-
-	public static Image imgMap;
-
+	// Static images
+	public static Image imgBantay, imgX, imgMap;
 	public TabClanIcon tabIcon;
-
 	public MyVector vItemCombine = new MyVector();
+	public int moneyGD, friendMoneyGD;
 
-	public int moneyGD;
-
-	public int friendMoneyGD;
-
-	public bool isLock;
-
-	public bool isFriendLock;
-
-	public bool isAccept;
-
-	public bool isFriendAccep;
-
+	// Trade state
+	public bool isLock, isFriendLock;
+	public bool isAccept, isFriendAccep;
 	public string topName;
-
 	public ChatTextField chatTField;
 
+	// Static resources
 	public static string specialInfo;
-
 	public static short spearcialImage;
+	public static Image imgStar, imgMaxStar, imgStar8, imgStar9, imgStarCuongHoa;
+	public static Image imgNew, imgXu, imgTicket, imgLuong, imgLuongKhoa;
+	internal static Image imgUp, imgDown;
 
-	public static Image imgStar;
-
-	public static Image imgMaxStar;
-
-	public static Image imgStar8;
-
-	public static Image imgStar9;
-
-	public static Image imgStarCuongHoa;
-
-	public static Image imgNew;
-
-	public static Image imgXu;
-
-	public static Image imgTicket;
-
-	public static Image imgLuong;
-
-	public static Image imgLuongKhoa;
-
-	internal static Image imgUp;
-
-	internal static Image imgDown;
-
-	internal int pa1;
-
-	internal int pa2;
-
+	// Internal state
+	internal int pa1, pa2;
 	internal bool trans;
-
-	internal int pX;
-
-	internal int pY;
-
+	internal int pX, pY;
 	internal Command left = new Command(mResources.SELECT, 0);
 
+	// Tab state
 	public int type;
-
 	public int currentTabIndex;
-
 	public int startTabPos;
-
 	public int[] lastTabIndex;
-
 	public string[][] currentTabName;
-
 	internal int[] currClanOption;
-
 	public int mainTabPos = 4;
-
 	public int shopTabPos = 50;
-
 	public int boxTabPos = 50;
-
 	public string[][] mainTabName;
+	public string[] mapNames, planetNames;
 
-	public string[] mapNames;
-
-	public string[] planetNames;
-
-	public static string[] strTool = new string[7]
+	public static string[] strTool =
 	{
 		mResources.gameInfo, mResources.change_flag, mResources.change_zone, mResources.chat_world, mResources.account, mResources.option, mResources.change_account
 	};
 
-	public static string[] strCauhinh = new string[4]
+	public static string[] strCauhinh =
 	{
 		!GameCanvas.isPlaySound ? mResources.turnOnSound : mResources.turnOffSound, mResources.increase_vga, mResources.analog, mGraphics.zoomLevel <= 1 ? mResources.x2Screen : mResources.x1Screen
 	};
 
-	public static string[] strAccount = new string[5]
+	public static string[] strAccount =
 	{
 		mResources.inventory_Pass, mResources.friend, mResources.enemy, mResources.msg, mResources.charger
 	};
 
-	public static string[] strAuto = new string[1]
+	public static string[] strAuto =
 	{
 		mResources.useGem
 	};
@@ -187,430 +108,198 @@ public class Panel : IActionListener, IChatable
 
 	public int[] currPageShop;
 
-	internal static string[][] boxTabName = new string[2][]
+	internal static string[][] boxTabName =
 	{
 		mResources.chestt, mResources.inventory
 	};
 
-	internal static string[][] boxCombine = new string[2][]
+	internal static string[][] boxCombine =
 	{
 		mResources.combine, mResources.inventory
 	};
 
-	internal static string[][] boxZone = new string[1][]
+	internal static string[][] boxZone =
 	{
 		mResources.zonee
 	};
 
-	internal static string[][] boxMap = new string[1][]
+	internal static string[][] boxMap =
 	{
 		mResources.mapp
 	};
 
-	internal static string[][] boxGD = new string[3][]
+	internal static string[][] boxGD =
 	{
 		mResources.inventory, mResources.item_give, mResources.item_receive
 	};
 
 	internal static string[][] boxPet = mResources.petMainTab;
 
-	public string[][][] tabName = new string[27][][]
+	// Helper for empty tab entries
+	static readonly string[][] EmptyTab =
 	{
-		null, null, boxTabName, boxZone, boxMap, null, null, new string[1][]
+		new[]
 		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		boxCombine, boxGD, new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		boxPet, new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
-		},
-		new string[1][]
-		{
-			new string[1]
-			{
-				string.Empty
-			}
+			string.Empty
 		}
 	};
 
-	internal static sbyte BOX_BAG = 0;
+	public string[][][] tabName =
+	{
+		null, null, boxTabName, boxZone, boxMap, null, null, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxCombine, boxGD, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxPet, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab
+	};
 
-	internal static sbyte BAG_BOX = 1;
+	// Inventory transfer constants
+	internal static sbyte BOX_BAG = 0, BAG_BOX = 1;
+	internal static sbyte BOX_BODY = 2, BODY_BOX = 3;
+	internal static sbyte BAG_BODY = 4, BODY_BAG = 5;
+	internal static sbyte BAG_PET = 6, PET_BAG = 7;
 
-	internal static sbyte BOX_BODY = 2;
-
-	internal static sbyte BODY_BOX = 3;
-
-	internal static sbyte BAG_BODY = 4;
-
-	internal static sbyte BODY_BAG = 5;
-
-	internal static sbyte BAG_PET = 6;
-
-	internal static sbyte PET_BAG = 7;
-
-	public int hasUse;
-
-	public int hasUseBag;
-
+	public int hasUse, hasUseBag;
 	public int currentListLength;
 
 	internal int[] lastSelect;
 
-	public static int[] mapIdTraidat = new int[16]
+	public static int[] mapIdTraidat =
 	{
 		21, 0, 1, 2, 24, 3, 4, 5, 6, 27, 28, 29, 30, 42, 47, 46
 	};
-
-	public static int[] mapXTraidat = new int[16]
+	public static int[] mapXTraidat =
 	{
 		39, 42, 105, 93, 61, 93, 142, 165, 210, 100, 165, 220, 233, 10, 125, 125
 	};
-
-	public static int[] mapYTraidat = new int[16]
+	public static int[] mapYTraidat =
 	{
 		28, 60, 48, 96, 88, 131, 136, 95, 32, 200, 189, 167, 120, 110, 20, 20
 	};
 
-	public static int[] mapIdNamek = new int[14]
+	public static int[] mapIdNamek =
 	{
 		22, 7, 8, 9, 25, 11, 12, 13, 10, 31, 32, 33, 34, 43
 	};
-
-	public static int[] mapXNamek = new int[14]
+	public static int[] mapXNamek =
 	{
 		55, 30, 93, 80, 24, 149, 219, 220, 233, 170, 148, 195, 148, 10
 	};
-
-	public static int[] mapYNamek = new int[14]
+	public static int[] mapYNamek =
 	{
 		136, 84, 69, 34, 25, 42, 32, 110, 192, 70, 106, 156, 210, 57
 	};
 
-	public static int[] mapIdSaya = new int[14]
+	public static int[] mapIdSaya =
 	{
 		23, 14, 15, 16, 26, 17, 18, 20, 19, 35, 36, 37, 38, 44
 	};
-
-	public static int[] mapXSaya = new int[14]
+	public static int[] mapXSaya =
 	{
 		90, 95, 144, 234, 231, 122, 176, 158, 205, 54, 105, 159, 231, 27
 	};
-
-	public static int[] mapYSaya = new int[14]
+	public static int[] mapYSaya =
 	{
 		10, 43, 20, 36, 69, 87, 112, 167, 160, 151, 173, 207, 194, 29
 	};
 
-	public static int[][] mapId = new int[3][]
+	public static int[][] mapId =
 	{
 		mapIdTraidat, mapIdNamek, mapIdSaya
 	};
-
-	public static int[][] mapX = new int[3][]
+	public static int[][] mapX =
 	{
 		mapXTraidat, mapXNamek, mapXSaya
 	};
-
-	public static int[][] mapY = new int[3][]
+	public static int[][] mapY =
 	{
 		mapYTraidat, mapYNamek, mapYSaya
 	};
 
+	// Current selection state
 	public Item currItem;
-
 	public Clan currClan;
-
 	public ClanMessage currMess;
-
 	public Member currMem;
-
 	public Clan[] clans;
 
-	public MyVector member;
-
-	public MyVector myMember;
-
+	// Vectors for various lists
+	public MyVector member, myMember;
 	public MyVector logChat = new MyVector();
-
 	public MyVector vPlayerMenu = new MyVector();
-
 	public MyVector vFriend = new MyVector();
-
 	public MyVector vMyGD = new MyVector();
-
 	public MyVector vFriendGD = new MyVector();
-
 	public MyVector vTop = new MyVector();
 
 	public MyVector vEnemy = new MyVector();
-
 	public MyVector vFlag = new MyVector();
-
 	public MyVector vPlayerMenu_id = new MyVector();
 
 	public Command cmdClose;
-
 	public static bool CanNapTien = false;
-
 	public static int WIDTH_PANEL = 240;
 
 	internal int position;
-
 	public string playerChat;
-
 	public Dictionary<string, PlayerChat> chats = new Dictionary<string, PlayerChat>();
-
 	public Char charMenu;
-
 	internal bool isThachDau;
-
 	public int typeShop = -1;
 
-	public int xScroll;
-
-	public int yScroll;
-
-	public int wScroll;
-
-	public int hScroll;
+	// Scroll area
+	public int xScroll, yScroll, wScroll, hScroll;
 
 	public ChatPopup cp;
-
 	public int idIcon;
-
 	public int[] partID;
-
 	internal int timeShow;
-
 	public bool isBoxClan;
-
 	public int w;
-
 	internal int pa;
 
+	// Selection state
 	public int selected;
-
 	internal int cSelected;
-
 	internal int newSelected;
 
+	// Clan state
 	internal bool isClanOption;
-
 	public bool isSearchClan;
-
 	public bool isMessage;
-
 	public bool isViewMember;
 
-	public const int TYPE_MAIN = 0;
-
-	public const int TYPE_SHOP = 1;
-
-	public const int TYPE_BOX = 2;
-
-	public const int TYPE_ZONE = 3;
-
-	public const int TYPE_MAP = 4;
-
-	public const int TYPE_CLANS = 5;
-
-	public const int TYPE_INFOMATION = 6;
-
-	public const int TYPE_BODY = 7;
-
-	public const int TYPE_MESS = 8;
-
-	public const int TYPE_ARCHIVEMENT = 9;
-
+	// Panel type constants
+	public const int TYPE_MAIN = 0, TYPE_SHOP = 1, TYPE_BOX = 2, TYPE_ZONE = 3, TYPE_MAP = 4;
+	public const int TYPE_CLANS = 5, TYPE_INFOMATION = 6, TYPE_BODY = 7, TYPE_MESS = 8, TYPE_ARCHIVEMENT = 9;
 	public const int PLAYER_MENU = 10;
 
-	public const int TYPE_FRIEND = 11;
+	public const int TYPE_FRIEND = 11, TYPE_COMBINE = 12, TYPE_GIAODICH = 13, TYPE_MAPTRANS = 14, TYPE_TOP = 15;
+	public const int TYPE_ENEMY = 16, TYPE_KIGUI = 17, TYPE_FLAG = 18, TYPE_OPTION = 19, TYPE_ACCOUNT = 20;
+	public const int TYPE_PET_MAIN = 21, TYPE_AUTO = 22, TYPE_GAMEINFO = 23, TYPE_GAMEINFOSUB = 24, TYPE_SPEACIALSKILL = 25;
 
-	public const int TYPE_COMBINE = 12;
-
-	public const int TYPE_GIAODICH = 13;
-
-	public const int TYPE_MAPTRANS = 14;
-
-	public const int TYPE_TOP = 15;
-
-	public const int TYPE_ENEMY = 16;
-
-	public const int TYPE_KIGUI = 17;
-
-	public const int TYPE_FLAG = 18;
-
-	public const int TYPE_OPTION = 19;
-
-	public const int TYPE_ACCOUNT = 20;
-
-	public const int TYPE_PET_MAIN = 21;
-
-	public const int TYPE_AUTO = 22;
-
-	public const int TYPE_GAMEINFO = 23;
-
-	public const int TYPE_GAMEINFOSUB = 24;
-
-	public const int TYPE_SPEACIALSKILL = 25;
-
+	// Pointer/touch state
 	internal int pointerDownTime;
-
 	internal int pointerDownFirstX;
-
 	internal int[] pointerDownLastX = new int[3];
-
-	internal bool pointerIsDowning;
-
-	internal bool isDownWhenRunning;
-
-	internal bool wantUpdateList;
-
-	internal int waitToPerform;
-
-	internal int cmRun;
-
-	internal int keyTouchLock = -1;
-
-	internal int keyToundGD = -1;
-
-	internal int keyTouchCombine = -1;
-
-	internal int keyTouchMapButton = -1;
-
+	internal bool pointerIsDowning, isDownWhenRunning, wantUpdateList;
+	internal int waitToPerform, cmRun;
+	internal int keyTouchCombine = -1, keyTouchMapButton = -1;
 	public int indexMouse = -1;
-
 	internal bool justRelease;
-
 	internal int keyTouchTab = -1;
-
 	internal int nTableItem;
 
-	public string[][] clansOption = new string[2][]
+	// Clan options
+	public string[][] clansOption =
 	{
 		mResources.findClan, mResources.createClan
 	};
-
 	public string clanInfo = string.Empty;
-
 	public string clanReport = string.Empty;
-
 	internal bool isHaveClan;
 
 	internal Scroll scroll;
-
-	internal int cmvx;
-
-	internal int cmdx;
-
+	internal int cmvx, cmdx;
 	internal bool isSelectPlayerMenu;
 
-	internal string[] strStatus = new string[6]
+	internal string[] strStatus =
 	{
 		mResources.follow, mResources.defend, mResources.attack, mResources.gohome, mResources.fusion, mResources.fusionForever
 	};
@@ -621,12 +310,12 @@ public class Panel : IActionListener, IChatable
 
 	internal int currentButtonPress;
 
-	public static long[] t_tiemnang = new long[14]
+	public static long[] t_tiemnang =
 	{
 		50000000L, 250000000L, 1250000000L, 5000000000L, 15000000000L, 30000000000L, 45000000000L, 60000000000L, 75000000000L, 90000000000L, 110000000000L, 130000000000L, 150000000000L, 170000000000L
 	};
 
-	internal int[] zoneColor = new int[3]
+	internal int[] zoneColor =
 	{
 		43520, 14743570, 14155776
 	};
@@ -635,12 +324,11 @@ public class Panel : IActionListener, IChatable
 
 	public string[] combineTopInfo;
 
-	public static int[] color1 = new int[3]
+	public static int[] color1 =
 	{
 		2327248, 8982199, 16713222
 	};
-
-	public static int[] color2 = new int[3]
+	public static int[] color2 =
 	{
 		4583423, 16719103, 16714764
 	};
@@ -654,238 +342,111 @@ public class Panel : IActionListener, IChatable
 	internal static FrameImage screenTab6;
 
 	internal bool isUp;
-
 	internal int compare;
-
 	public static string strWantToBuy = string.Empty;
 
-	public int xstart;
+	// Popup state
+	public int xstart, ystart;
+	public int popupW = 140, popupH = 160;
+	public int popupX, popupY;
+	public int cmySK, cmtoYSK, cmdySK, cmvySK, cmyLimSK;
 
-	public int ystart;
+	// Index/selection state
+	public int isborderIndex, isselectedRow;
+	public int indexSize = 28, indexTitle, indexSelect;
+	public int indexRow = -1, indexRowMax, indexMenu;
+	public int columns = 6, rows;
 
-	public int popupW = 140;
-
-	public int popupH = 160;
-
-	public int cmySK;
-
-	public int cmtoYSK;
-
-	public int cmdySK;
-
-	public int cmvySK;
-
-	public int cmyLimSK;
-
-	public int popupY;
-
-	public int popupX;
-
-	public int isborderIndex;
-
-	public int isselectedRow;
-
-	public int indexSize = 28;
-
-	public int indexTitle;
-
-	public int indexSelect;
-
-	public int indexRow = -1;
-
-	public int indexRowMax;
-
-	public int indexMenu;
-
-	public int columns = 6;
-
-	public int rows;
-
-	public int inforX;
-
-	public int inforY;
-
-	public int inforW;
-
-	public int inforH;
-
+	// Info panel
+	public int inforX, inforY, inforW, inforH;
 	internal int yPaint;
 
-	internal int xMap;
-
-	internal int yMap;
-
-	internal int xMapTask;
-
-	internal int yMapTask;
-
-	internal int xMove;
-
-	internal int yMove;
-
+	// Map position
+	internal int xMap, yMap, xMapTask, yMapTask, xMove, yMove;
 	public static bool isPaintMap = true;
 
 	public bool isClose;
-
 	internal int infoSelect;
-
 	public static MyVector vGameInfo = new MyVector(string.Empty);
-
 	public static string[] contenInfo;
 
 	public bool isViewChatServer;
-
 	internal int currInfoItem;
-
 	public Char charInfo;
-
 	internal bool isChangeZone;
-
-	internal bool isKiguiXu;
-
-	internal bool isKiguiLuong;
-
+	internal bool isKiguiXu, isKiguiLuong;
 	internal int delayKigui;
-
 	public sbyte combineSuccess = -1;
-
 	public int idNPC;
 
-	public int xS;
 
-	public int yS;
-
-	internal int rS;
-
-	internal int angleS;
-
-	internal int angleO;
-
-	internal int iAngleS;
-
-	internal int iDotS;
-
-	internal int speed;
-
-	internal int[] xArgS;
-
-	internal int[] yArgS;
-
-	internal int[] xDotS;
-
-	internal int[] yDotS;
-
-	internal int time;
-
-	internal int typeCombine;
-
-	internal int countUpdate;
-
-	internal int countR;
-
-	internal int countWait;
-
+	// Combine animation state
+	public int xS, yS;
+	internal int rS, angleS, angleO, iAngleS, iDotS, speed;
+	internal int[] xArgS, yArgS, xDotS, yDotS;
+	internal int time, typeCombine, countUpdate, countR, countWait;
 	internal bool isSpeedCombine;
-
 	internal bool isCompleteEffCombine = true;
-
 	internal bool isPaintCombine;
-
 	public bool isDoneCombine = true;
 
-	public short iconID1;
-
-	public short iconID2;
-
-	public short iconID3;
-
+	// Icon IDs
+	public short iconID1, iconID2, iconID3;
 	public short[] iconID;
-
 	public string[][] speacialTabName;
 
-	public static int[] sizeUpgradeEff = new int[3]
+	public static int[] sizeUpgradeEff =
 	{
 		2, 1, 1
 	};
-
 	public static int nsize = 1;
 
-	public const sbyte COLOR_WHITE = 0;
+	// Color constants
+	public const sbyte COLOR_WHITE = 0, COLOR_GREEN = 1, COLOR_PURPLE = 2, COLOR_ORANGE = 3;
+	public const sbyte COLOR_BLUE = 4, COLOR_YELLOW = 5, COLOR_RED = 6, COLOR_BLACK = 7;
 
-	public const sbyte COLOR_GREEN = 1;
-
-	public const sbyte COLOR_PURPLE = 2;
-
-	public const sbyte COLOR_ORANGE = 3;
-
-	public const sbyte COLOR_BLUE = 4;
-
-	public const sbyte COLOR_YELLOW = 5;
-
-	public const sbyte COLOR_RED = 6;
-
-	public const sbyte COLOR_BLACK = 7;
-
-	public static int[][] colorUpgradeEffect = new int[7][]
+	public static int[][] colorUpgradeEffect =
 	{
-		new int[6]
+		new[]
 		{
 			16777215, 15000805, 13487823, 11711155, 9671828, 7895160
-		},
-		new int[6]
+		}, // White
+		new[]
 		{
 			61952, 58624, 52224, 45824, 39168, 32768
-		},
-		new int[6]
+		}, // Green
+		new[]
 		{
 			13500671, 12058853, 10682572, 9371827, 7995545, 6684800
-		},
-		new int[6]
+		}, // Purple
+		new[]
 		{
 			16744192, 15037184, 13395456, 11753728, 10046464, 8404992
-		},
-		new int[6]
+		}, // Orange
+		new[]
 		{
 			37119, 33509, 28108, 24499, 21145, 17536
-		},
-		new int[6]
+		}, // Blue
+		new[]
 		{
 			16776192, 15063040, 12635136, 11776256, 10063872, 8290304
-		},
-		new int[6]
+		}, // Yellow
+		new[]
 		{
 			16711680, 15007744, 13369344, 11730944, 10027008, 8388608
-		}
+		} // Red
 	};
 
-	public const int color_item_white = 15987701;
+	// Item color constants
+	public const int color_item_white = 15987701, color_item_green = 2786816;
+	public const int color_item_purple = 7078041, color_item_orange = 12537346;
+	public const int color_item_blue = 1269146, color_item_yellow = 13279744;
+	public const int color_item_red = 11599872, color_item_black = 2039326;
 
-	public const int color_item_green = 2786816;
-
-	public const int color_item_purple = 7078041;
-
-	public const int color_item_orange = 12537346;
-
-	public const int color_item_blue = 1269146;
-
-	public const int color_item_yellow = 13279744;
-
-	public const int color_item_red = 11599872;
-
-	public const int color_item_black = 2039326;
-
-	internal Image imgo_0;
-
-	internal Image imgo_1;
-
-	internal Image imgo_2;
-
-	internal Image imgo_3;
+	internal Image imgo_0, imgo_1, imgo_2, imgo_3;
 
 	public const int numItem = 20;
-
 	public const sbyte INVENTORY_TAB = 1;
-
 	public sbyte size_tab;
 
 	internal bool isnewInventory = false;
@@ -1031,13 +592,6 @@ public class Panel : IActionListener, IChatable
 		cmx = cmtoX = 0;
 	}
 
-	public void setTypeInfomatioin()
-	{
-		type = 6;
-		cmx = wScroll;
-		cmtoX = 0;
-	}
-
 	public void setTypeMap()
 	{
 		if (!GameScr.gI().isMapFize() && isPaintMap)
@@ -1082,28 +636,6 @@ public class Panel : IActionListener, IChatable
 		currentTabIndex = 0;
 	}
 
-	public void setTabChatManager()
-	{
-		currentListLength = chats.Count;
-		ITEM_HEIGHT = 24;
-		selected = GameCanvas.isTouch ? -1 : 0;
-		cmyLim = currentListLength * ITEM_HEIGHT - hScroll;
-		if (cmyLim < 0)
-			cmyLim = 0;
-		if (cmy < 0)
-			cmy = cmtoY = 0;
-		if (cmy > cmyLim)
-			cmy = cmtoY = cmyLim;
-	}
-
-	public void setTabChatPlayer()
-	{
-	}
-
-	public void setTypeChatPlayer()
-	{
-	}
-
 	public void setTabKiGui()
 	{
 		ITEM_HEIGHT = 24;
@@ -1132,25 +664,6 @@ public class Panel : IActionListener, IChatable
 		logChat.insertElementAt(info, 0);
 		if (logChat.size() > 20)
 			logChat.removeElementAt(logChat.size() - 1);
-	}
-
-	internal bool IsNewMessage(string name)
-	{
-		return false;
-	}
-
-	public bool IsHaveNewMessage()
-	{
-		return false;
-	}
-
-	internal void ClearNewMessage(string name)
-	{
-	}
-
-	public void addPlayerMenu(Command pm)
-	{
-		vPlayerMenu.addElement(pm);
 	}
 
 	public void setTabPlayerMenu()
@@ -1285,14 +798,6 @@ public class Panel : IActionListener, IChatable
 		currentTabIndex = 0;
 	}
 
-	public void setTypeLockInventory()
-	{
-		type = 8;
-		setType(0);
-		setTabMessage();
-		currentTabIndex = 0;
-	}
-
 	public void setTypeShop(int typeShop)
 	{
 		type = 1;
@@ -1340,12 +845,12 @@ public class Panel : IActionListener, IChatable
 	{
 		type = 12;
 		if (GameCanvas.w > 2 * WIDTH_PANEL)
-			boxCombine = new string[1][]
+			boxCombine = new string[][]
 			{
 				mResources.combine
 			};
 		else
-			boxCombine = new string[2][]
+			boxCombine = new string[][]
 			{
 				mResources.combine, mResources.inventory
 			};
@@ -2495,76 +2000,68 @@ public class Panel : IActionListener, IChatable
 		if (GameCanvas.keyPressed[!Main.isPC ? 2 : 21])
 		{
 			flag = true;
-			if (isTabInven() && isnewInventory)
+			selected--;
+			if (isnewInventory)
+				sellectInventory = selected;
+			if (type == 24)
 			{
-				if (selected > 0 && sellectInventory == 0)
-					selected--;
+				selected -= 2;
+				if (selected < 0)
+					selected = 0;
 			}
-			else
+			else if (selected < 0)
 			{
-				selected--;
-				if (type == 24)
+				if (Equals(GameCanvas.panel) && typeShop == 2 && currentTabIndex <= 3 && maxPageShop[currentTabIndex] > 1)
 				{
-					selected -= 2;
-					if (selected < 0)
-						selected = 0;
+					InfoDlg.showWait();
+					if (currPageShop[currentTabIndex] <= 0)
+						Service.gI().kigui(4, -1, (sbyte)currentTabIndex, maxPageShop[currentTabIndex] - 1, -1);
+					else
+						Service.gI().kigui(4, -1, (sbyte)currentTabIndex, currPageShop[currentTabIndex] - 1, -1);
+					return;
 				}
-				else if (selected < 0)
-				{
-					if (Equals(GameCanvas.panel) && typeShop == 2 && currentTabIndex <= 3 && maxPageShop[currentTabIndex] > 1)
-					{
-						InfoDlg.showWait();
-						if (currPageShop[currentTabIndex] <= 0)
-							Service.gI().kigui(4, -1, (sbyte)currentTabIndex, maxPageShop[currentTabIndex] - 1, -1);
-						else
-							Service.gI().kigui(4, -1, (sbyte)currentTabIndex, currPageShop[currentTabIndex] - 1, -1);
-						return;
-					}
-					selected = currentListLength - 1;
-					if (isClanOption)
-						selected = -1;
-					if (size_tab > 0)
-						selected = -1;
-				}
-				lastSelect[currentTabIndex] = selected;
-				cSelected = 0;
-				getCurrClanOtion();
+				selected = currentListLength - 1;
+				if (isClanOption)
+					selected = -1;
+				if (size_tab > 0)
+					selected = -1;
+				if (isnewInventory)
+					sellectInventory = selected;
 			}
+			lastSelect[currentTabIndex] = selected;
+			cSelected = 0;
+			getCurrClanOtion();
 		}
 		else if (GameCanvas.keyPressed[!Main.isPC ? 8 : 22])
 		{
 			flag = true;
-			if (isTabInven() && isnewInventory)
+			selected++;
+			if (isnewInventory)
+				sellectInventory = selected;
+			if (type == 24)
 			{
-				if (selected < 1 && sellectInventory == 0)
-					selected++;
+				selected += 2;
+				if (selected > currentListLength - 1)
+					selected = currentListLength - 1;
 			}
-			else
+			else if (selected > currentListLength - 1)
 			{
-				selected++;
-				if (type == 24)
+				if (Equals(GameCanvas.panel) && typeShop == 2 && currentTabIndex <= 3 && maxPageShop[currentTabIndex] > 1)
 				{
-					selected += 2;
-					if (selected > currentListLength - 1)
-						selected = currentListLength - 1;
+					InfoDlg.showWait();
+					if (currPageShop[currentTabIndex] >= maxPageShop[currentTabIndex] - 1)
+						Service.gI().kigui(4, -1, (sbyte)currentTabIndex, 0, -1);
+					else
+						Service.gI().kigui(4, -1, (sbyte)currentTabIndex, currPageShop[currentTabIndex] + 1, -1);
+					return;
 				}
-				else if (selected > currentListLength - 1)
-				{
-					if (Equals(GameCanvas.panel) && typeShop == 2 && currentTabIndex <= 3 && maxPageShop[currentTabIndex] > 1)
-					{
-						InfoDlg.showWait();
-						if (currPageShop[currentTabIndex] >= maxPageShop[currentTabIndex] - 1)
-							Service.gI().kigui(4, -1, (sbyte)currentTabIndex, 0, -1);
-						else
-							Service.gI().kigui(4, -1, (sbyte)currentTabIndex, currPageShop[currentTabIndex] + 1, -1);
-						return;
-					}
-					selected = 0;
-				}
-				lastSelect[currentTabIndex] = selected;
-				cSelected = 0;
-				getCurrClanOtion();
+				selected = 0;
+				if (isnewInventory)
+					sellectInventory = selected;
 			}
+			lastSelect[currentTabIndex] = selected;
+			cSelected = 0;
+			getCurrClanOtion();
 		}
 		if (isnewInventory && GameCanvas.keyPressed[5] && itemInvenNew != null)
 		{
@@ -2632,8 +2129,8 @@ public class Panel : IActionListener, IChatable
 					wantUpdateList = false;
 				if (isnewInventory)
 				{
-					int num3 = GameCanvas.px - xScroll;
-					sellectInventory = (GameCanvas.py - yScroll) / 34 * 5 + num3 / 34;
+					// Use same calculation as selected for list mode
+					sellectInventory = (cmy + GameCanvas.py - yScroll) / ITEM_HEIGHT;
 				}
 			}
 		}
@@ -2650,6 +2147,8 @@ public class Panel : IActionListener, IChatable
 			selected = (cmtoY + GameCanvas.py - yScroll) / ITEM_HEIGHT;
 			if (selected >= currentListLength)
 				selected = -1;
+			if (isnewInventory)
+				sellectInventory = selected;
 			checkOptionSelect();
 			pointerDownTime = 0;
 			waitToPerform = 10;
@@ -2728,41 +2227,11 @@ public class Panel : IActionListener, IChatable
 					lastTabIndex[type] = currentTabIndex;
 				}
 			}
-			else if (selected > 0)
-			{
-				if (GameCanvas.keyPressed[8])
-				{
-					if (newSelected == 0)
-						sellectInventory++;
-					else
-						sellectInventory += 5;
-				}
-				else if (GameCanvas.keyPressed[2])
-				{
-					if (newSelected == 0)
-						sellectInventory--;
-					else
-						sellectInventory -= 5;
-				}
-				else if (GameCanvas.keyPressed[4])
-				{
-					if (newSelected == 0)
-						sellectInventory -= 5;
-					else
-						sellectInventory--;
-				}
-				else if (GameCanvas.keyPressed[6])
-				{
-					if (newSelected == 0)
-						sellectInventory += 5;
-					else
-						sellectInventory++;
-				}
-			}
+			// sellectInventory is now synced with selected in updateKeyScrollView
 			if (sellectInventory < 0)
-				;
-			if (sellectInventory == nTableItem)
 				sellectInventory = 0;
+			if (sellectInventory >= nTableItem)
+				sellectInventory = nTableItem > 0 ? nTableItem - 1 : 0;
 		}
 		else if (!IsTabOption())
 		{
@@ -2931,10 +2400,6 @@ public class Panel : IActionListener, IChatable
 			cmy = cmtoY = 0;
 		if (cmy > cmyLim)
 			cmy = cmtoY = cmyLim;
-	}
-
-	internal void setTabPetSkill()
-	{
 	}
 
 	internal void setTabTool()
@@ -3167,26 +2632,12 @@ public class Panel : IActionListener, IChatable
 
 	internal void setTabInventory(bool resetSelect)
 	{
-		if (isnewInventory)
-		{
-			int num = Char.myCharz().arrItemBody.Length + Char.myCharz().arrItemBag.Length;
-			currentListLength = checkCurrentListLength(num);
-			currentListLength = 3;
-			newSelected = 0;
-			size_tab = (sbyte)(num / 20 + (num % 20 > 0 ? 1 : 0));
-			Res.outz("sizeTab = " + size_tab);
-			return;
-		}
-		currentListLength = checkCurrentListLength(Char.myCharz().arrItemBody.Length + Char.myCharz().arrItemBag.Length);
+		currentListLength = Char.myCharz().arrItemBody.Length + Char.myCharz().arrItemBag.Length;
+		newSelected = 0;
+		size_tab = 1;
 		ITEM_HEIGHT = 24;
-		cmyLim = currentListLength * ITEM_HEIGHT - hScroll;
-		cmy = cmtoY = cmyLast[currentTabIndex];
-		if (cmyLim < 0)
-			cmyLim = 0;
-		if (cmy < 0)
-			cmy = cmtoY = 0;
-		if (cmy > cmyLim)
-			cmy = cmtoY = 0;
+		cmyLim = Math.Max(0, currentListLength * ITEM_HEIGHT - hScroll);
+		cmy = cmtoY = 0;
 		if (resetSelect)
 			selected = GameCanvas.isTouch ? -1 : 0;
 	}
@@ -4956,364 +4407,210 @@ public class Panel : IActionListener, IChatable
 
 	internal void paintInventory(mGraphics g)
 	{
-		bool flag = true;
-		if (flag && isnewInventory)
-		{
-			Item[] arrItemBody = Char.myCharz().arrItemBody;
-			Item[] arrItemBag = Char.myCharz().arrItemBag;
-			g.setColor(16711680);
-			int num = arrItemBody.Length + arrItemBag.Length;
-			int num2 = num / 20 + (num % 20 > 0 ? 1 : 0) + 1;
-			int num3 = 0;
-			TAB_W_NEW = wScroll / num2;
-			for (int i = num3; i < num2; i++)
-			{
-				int num4 = i == newSelected && selected == 0 ? GameCanvas.gameTick % 10 < 7 ? -1 : 0 : 0;
-				g.setColor(i != newSelected ? 15723751 : 16383818);
-				g.fillRect(xScroll + i * TAB_W_NEW, 89 + num4 - 10, TAB_W_NEW - 1, 21);
-				if (i == newSelected)
-				{
-					g.setColor(13524492);
-					g.fillRect(xScroll + i * TAB_W_NEW, 89 + num4 - 10 + 21 - 3, TAB_W_NEW - 1, 3);
-				}
-				mFont.tahoma_7_grey.drawString(g, string.Empty + (i + 1), xScroll + i * TAB_W_NEW + TAB_W_NEW / 2, 91 + num4 - 10, mFont.CENTER);
-			}
-			num3 = 1;
-			int num5 = xScroll;
-			int num6 = yScroll + num3 * ITEM_HEIGHT;
-			int num7 = 34;
-			int num8 = ITEM_HEIGHT - 1;
-			for (int j = 0; j < 4; j++)
-			{
-				num5 = xScroll;
-				num6 = yScroll + (j + num3) * ITEM_HEIGHT;
-				bool flag2 = true;
-				for (int k = 0; k < 5; k++)
-				{
-					Item item = null;
-					int num9 = 0;
-					if (newSelected > 0)
-					{
-						num9 = (newSelected - 1) * 20;
-						if (j * 5 + k + num9 < arrItemBag.Length)
-						{
-							item = arrItemBag[j * 5 + k + num9];
-							num5 = xScroll + num7 * k;
-							int num10 = sellectInventory % 5;
-							int num11 = sellectInventory / 5;
-							if (newSelected > 0)
-								g.setColor(15196114);
-							else
-								g.setColor(9993045);
-							g.drawRect(num5, num6, num7, num8);
-							if (j == num11 && k == num10 && selected > 0)
-							{
-								g.setColor(16383818);
-								itemInvenNew = item;
-							}
-							g.fillRect(num5 + 2, num6 + 2, num7 - 3, num8 - 3);
-							if (item != null)
-							{
-								int x = num5 + imgNew.getWidth() / 2;
-								int y = num6;
-								int num12 = 34;
-								int h = ITEM_HEIGHT - 1;
-								SmallImage.drawSmallImage(g, item.template.iconID, num5 + num7 / 2, num6 + num8 / 2, 0, 3);
-								if (item.quantity > 1)
-									mFont.tahoma_7_yellow.drawString(g, string.Empty + item.quantity, num5, num6 - mFont.tahoma_7_yellow.getHeight(), 1);
-								if (item.newItem && GameCanvas.gameTick % 10 > 5)
-									g.drawImage(imgNew, x, y, 3);
-								for (int l = 0; l < item.itemOption.Length; l++)
-								{
-									paintOptSlotItem(g, item.itemOption[l].optionTemplate.id, item.itemOption[l].param, x, y, num12, h);
-								}
-							}
-							if (!flag2)
-								break;
-							continue;
-						}
-						flag2 = false;
-						break;
-					}
-					if (j * 5 + k < arrItemBody.Length)
-					{
-						item = arrItemBody[j * 5 + k];
-						flag2 = false;
-					}
-					else
-						flag2 = false;
-					break;
-				}
-			}
-			num3 = newSelected != 0 ? 5 : 3;
-			int num13 = yScroll + num3 * ITEM_HEIGHT + 5;
-			int num14 = 2;
-			if (newSelected == 0)
-				num14 = 4;
-			num5 = xScroll;
-			num6 = yScroll + num3 * ITEM_HEIGHT;
-			num7 = 34;
-			num8 = ITEM_HEIGHT - 1;
-			if (newSelected == 0)
-			{
-				g.setColor(15196114);
-				num3 = 1;
-				nTableItem = 10;
-				int num15 = 5;
-				if (eBanner != null)
-				{
-					eBanner.paint(g);
-					eBanner.x = num5 + 34 + 34;
-					eBanner.y = num6 + num8 - 25;
-				}
-				for (int m = 0; m < 10; m++)
-				{
-					Item item2 = null;
-					item2 = arrItemBody[m];
-					if (m < 5)
-					{
-						num15 = 0;
-						num5 = xScroll;
-						num6 = yScroll + (m + num3) * ITEM_HEIGHT;
-					}
-					else
-					{
-						num15 = 5;
-						num5 = xScroll + 4 * num7;
-						num6 = yScroll + (m - num15 + num3) * ITEM_HEIGHT;
-					}
-					g.setColor(15196114);
-					g.drawRect(num5, num6, num7, num8);
-					if (sellectInventory == m)
-					{
-						itemInvenNew = item2;
-						g.setColor(16383818);
-					}
-					else
-						g.setColor(9993045);
-					g.fillRect(num5 + 2, num6 + 2, num7 - 3, num8 - 3);
-					if (item2 == null)
-						screenTab6.drawFrame(m, num5 + num7 / 2 - 8, num6 + num8 / 2 - 8, 0, mGraphics.TOP | mGraphics.LEFT, g);
-					if (item2 != null)
-					{
-						SmallImage.drawSmallImage(g, item2.template.iconID, num5 + num7 / 2, num6 + num8 / 2, 0, 3);
-						if (item2.quantity > 1)
-							mFont.tahoma_7_yellow.drawString(g, string.Empty + item2.quantity, num5 + 4 * num7, num6 - mFont.tahoma_7_yellow.getHeight(), 1);
-					}
-				}
-				num3 = 1;
-				num5 = xScroll + 34;
-				num6 = yScroll + num3 * ITEM_HEIGHT;
-				num7 = 102;
-				num8 = 4 * (ITEM_HEIGHT - 1);
-				Char.myCharz().paintCharBody(g, num5 + 34 + 17, num6 + num8 - 25, 1, 0, true);
-				num3 = 3;
-				num14 = 2;
-				num5 = xScroll + 34;
-				num6 = yScroll + (1 + num3) * ITEM_HEIGHT - 1;
-				num7 = 102;
-				num8 = ITEM_HEIGHT * num14;
-				g.setColor(15196114);
-				g.drawRect(num5, num6, num7, num8);
-				g.setColor(9993045);
-				g.fillRect(num5 + 1, num6 + 1, num7 - 2, num8 - 2);
-				paintItemBodyBagInfo(g, num5 + 3, num6 - 2);
-				int num16 = newSelected != 0 ? 5 : 6;
-				num13 = yScroll + num16 * ITEM_HEIGHT;
-				g.setColor(15196114);
-				if (newSelected == 0)
-					num14 = 1;
-				g.drawRect(xScroll, num13, wScroll, ITEM_HEIGHT * num14);
-				g.setColor(16777215);
-				g.fillRect(xScroll + 1, num13 + 1, wScroll - 2, ITEM_HEIGHT * num14 - 2);
-			}
-			if (itemInvenNew != null && itemInvenNew.itemOption != null)
-			{
-				string text = string.Empty;
-				mFont mFont2 = mFont.tahoma_7_green2;
-				if (itemInvenNew.itemOption != null)
-				{
-					for (int n = 0; n < itemInvenNew.itemOption.Length; n++)
-					{
-						if (itemInvenNew.itemOption[n].optionTemplate.id == 72)
-							text = " [+" + itemInvenNew.itemOption[n].param + "]";
-						if (itemInvenNew.itemOption[n].optionTemplate.id == 41)
-						{
-							if (itemInvenNew.itemOption[n].param == 1)
-								mFont2 = GetFont(0);
-							else if (itemInvenNew.itemOption[n].param == 2)
-							{
-								mFont2 = GetFont(2);
-							}
-							else if (itemInvenNew.itemOption[n].param == 3)
-							{
-								mFont2 = GetFont(8);
-							}
-							else if (itemInvenNew.itemOption[n].param == 4)
-							{
-								mFont2 = GetFont(7);
-							}
-						}
-					}
-				}
-				mFont2.drawString(g, itemInvenNew.template.name + text, xScroll + 5, num13 + 1, 0);
-				string text2 = string.Empty;
-				if (itemInvenNew.itemOption != null)
-				{
-					if (itemInvenNew.itemOption.Length > 0 && itemInvenNew.itemOption[0] != null && itemInvenNew.itemOption[0].optionTemplate.id != 102 && itemInvenNew.itemOption[0].optionTemplate.id != 107)
-						text2 += itemInvenNew.itemOption[0].getOptionString();
-					mFont mFont3 = mFont.tahoma_7_blue;
-					if (itemInvenNew.compare < 0 && itemInvenNew.template.type != 5)
-						mFont3 = mFont.tahoma_7_red;
-					if (itemInvenNew.itemOption.Length > 1)
-					{
-						for (int num17 = 1; num17 < 2; num17++)
-						{
-							if (itemInvenNew.itemOption[num17] != null && itemInvenNew.itemOption[num17].optionTemplate.id != 102 && itemInvenNew.itemOption[num17].optionTemplate.id != 107)
-								text2 = text2 + "," + itemInvenNew.itemOption[num17].getOptionString();
-						}
-					}
-					try
-					{
-						if (mFont3.getWidth(text2) > wScroll)
-							text2 = mFont3.splitFontArray(text2, wScroll)[0];
-					}
-					catch (Exception)
-					{
-					}
-					mFont3.drawString(g, text2, xScroll + 5, num13 + 11, mFont.LEFT);
-				}
-			}
-		}
-		if (flag && isnewInventory)
-			return;
-		g.setColor(16711680);
-		Item[] arrItemBody2 = Char.myCharz().arrItemBody;
-		Item[] arrItemBag2 = Char.myCharz().arrItemBag;
-		currentListLength = checkCurrentListLength(arrItemBody2.Length + arrItemBag2.Length);
-		int num18 = (arrItemBody2.Length + arrItemBag2.Length) / 20 + ((arrItemBody2.Length + arrItemBag2.Length) % 20 > 0 ? 1 : 0);
-		TAB_W_NEW = wScroll / num18;
-		for (int num19 = 0; num19 < num18; num19++)
-		{
-			int num20 = num19 == newSelected && selected == 0 ? GameCanvas.gameTick % 10 < 7 ? -1 : 0 : 0;
-			g.setColor(num19 != newSelected ? 15723751 : 16383818);
-			g.fillRect(xScroll + num19 * TAB_W_NEW, 89 + num20 - 10, TAB_W_NEW - 1, 21);
-			if (num19 == newSelected)
-			{
-				g.setColor(13524492);
-				g.fillRect(xScroll + num19 * TAB_W_NEW, 89 + num20 - 10 + 21 - 3, TAB_W_NEW - 1, 3);
-			}
-			mFont.tahoma_7_grey.drawString(g, string.Empty + (num19 + 1), xScroll + num19 * TAB_W_NEW + TAB_W_NEW / 2, 91 + num20 - 10, mFont.CENTER);
-		}
-		g.setClip(xScroll, yScroll + 21, wScroll, hScroll - 21);
+		Item[] arrItemBody = Char.myCharz().arrItemBody;
+		Item[] arrItemBag = Char.myCharz().arrItemBag;
+		int totalItems = arrItemBody.Length + arrItemBag.Length;
+
+		// Setup scroll parameters
+		size_tab = 1;
+		newSelected = 0;
+		currentListLength = totalItems;
+		nTableItem = totalItems;
+		cmyLim = Math.Max(0, currentListLength * ITEM_HEIGHT - hScroll);
+
+		// Set clip and translate for scrolling
+		g.setClip(xScroll, yScroll, wScroll, hScroll);
 		g.translate(0, -cmy);
+
+		// Draw all items
+		for (int i = 0; i < totalItems; i++)
+		{
+			// Text area position
+			int textX = xScroll + 36;
+			int textY = yScroll + i * ITEM_HEIGHT;
+			int textW = wScroll - 36;
+			int textH = ITEM_HEIGHT - 1;
+
+			// Icon area position
+			int iconX = xScroll;
+			int iconY = yScroll + i * ITEM_HEIGHT;
+			int iconW = 34;
+			int iconH = ITEM_HEIGHT - 1;
+
+			// Skip if outside visible area
+			if (textY - cmy > yScroll + hScroll || textY - cmy < yScroll - ITEM_HEIGHT)
+				continue;
+
+			bool isBodyItem = i < arrItemBody.Length;
+			Item item = isBodyItem ? arrItemBody[i] : arrItemBag[i - arrItemBody.Length];
+			bool isSelected = isnewInventory ? i == sellectInventory : i == selected;
+
+			// Draw text area background
+			g.setColor(isSelected ? 16383818 : isBodyItem ? 15196114 : 15723751);
+			g.fillRect(textX, textY, textW, textH);
+
+			// Set icon area color
+			g.setColor(isSelected ? 9541120 : isBodyItem ? 9993045 : 11837316);
+
+			// Apply upgrade color if applicable
+			if (item != null && item.itemOption != null)
+			{
+				for (int j = 0; j < item.itemOption.Length; j++)
+				{
+					if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
+					{
+						int colorId = GetColor_ItemBg((byte)GetColor_Item_Upgrade(item.itemOption[j].param));
+						if (colorId != -1)
+						{
+							g.setColor(colorId);
+						}
+					}
+				}
+			}
+			g.fillRect(iconX, iconY, iconW, iconH);
+
+			// If item is null, render empty slot and skip
+			if (item == null)
+			{
+				continue;
+			}
+
+			// Highlight selected item for combine
+			if (item.isSelect && GameCanvas.panel.type == 12)
+			{
+				g.setColor(isSelected ? 7040779 : 6047789);
+				g.fillRect(iconX, iconY, iconW, iconH);
+			}
+
+			if (isnewInventory && isSelected)
+			{
+				itemInvenNew = item;
+			}
+
+			// Get item display info
+			string upgradeText = "";
+			mFont nameFont = mFont.tahoma_7_green2;
+			if (item.itemOption != null)
+			{
+				for (int j = 0; j < item.itemOption.Length; j++)
+				{
+					int optId = item.itemOption[j].optionTemplate.id;
+					int optParam = item.itemOption[j].param;
+					if (optId == 72)
+						upgradeText = " [+" + optParam + "]";
+					if (optId == 41)
+						nameFont = GetFontByRarity(optParam);
+				}
+			}
+
+			// Draw item name
+			nameFont.drawString(g, item.template.name + upgradeText, textX + 5, textY + 1, 0);
+
+			// Draw item options
+			string optionText = GetItemOptionText(item);
+			mFont optFont = item.compare < 0 && item.template.type != 5 ? mFont.tahoma_7_red : mFont.tahoma_7_blue;
+			optFont.drawString(g, optionText, textX + 5, textY + 11, mFont.LEFT);
+
+			// Draw icon
+			SmallImage.drawSmallImage(g, item.template.iconID, iconX + iconW / 2, iconY + iconH / 2, 0, 3);
+
+			// Draw item option effects
+			if (item.itemOption != null)
+			{
+				for (int j = 0; j < item.itemOption.Length; j++)
+				{
+					paintOptItem(g, item.itemOption[j].optionTemplate.id, item.itemOption[j].param, iconX, iconY, iconW, iconH);
+					paintOptSlotItem(g, item.itemOption[j].optionTemplate.id, item.itemOption[j].param, iconX, iconY, iconW, iconH);
+				}
+			}
+
+			// Draw quantity
+			if (item.quantity > 1)
+			{
+				mFont.tahoma_7_yellow.drawString(g, item.quantity.ToString(), iconX + iconW, iconY + iconH - mFont.tahoma_7_yellow.getHeight(), 1);
+			}
+		}
+
+		// Reset clip and translation
+		g.translate(0, cmy);
+		g.setClip(0, 0, GameCanvas.w, GameCanvas.h);
+
+		// Draw selected item info panel (for isnewInventory mode)
+		if (isnewInventory && itemInvenNew != null)
+		{
+			int infoY = yScroll + hScroll - ITEM_HEIGHT * 2;
+			g.setColor(15196114);
+			g.drawRect(xScroll, infoY, wScroll, ITEM_HEIGHT * 2);
+			g.setColor(16777215);
+			g.fillRect(xScroll + 1, infoY + 1, wScroll - 2, ITEM_HEIGHT * 2 - 2);
+
+			DrawItemInfoPanel(g, itemInvenNew, xScroll + 5, infoY + 1);
+		}
+
+		paintScrollArrow(g);
+	}
+
+	mFont GetFontByRarity(int rarity)
+	{
+		switch (rarity)
+		{
+		case 1: return GetFont(0);
+		case 2: return GetFont(2);
+		case 3: return GetFont(8);
+		case 4: return GetFont(7);
+		default: return mFont.tahoma_7_green2;
+		}
+	}
+
+	string GetItemOptionText(Item item)
+	{
+		if (item.itemOption == null || item.itemOption.Length == 0)
+			return "";
+
+		string result = "";
+		for (int i = 0; i < Math.Min(2, item.itemOption.Length); i++)
+		{
+			if (item.itemOption[i] == null)
+				continue;
+			int optId = item.itemOption[i].optionTemplate.id;
+			if (optId == 102 || optId == 107)
+				continue;
+			if (result.Length > 0)
+				result += ",";
+			result += item.itemOption[i].getOptionString();
+		}
+		return result;
+	}
+
+	void DrawItemInfoPanel(mGraphics g, Item item, int x, int y)
+	{
+		if (item.itemOption == null)
+			return;
+
+		// Get name with upgrade text and font
+		string upgradeText = "";
+		mFont nameFont = mFont.tahoma_7_green2;
+		for (int i = 0; i < item.itemOption.Length; i++)
+		{
+			int optId = item.itemOption[i].optionTemplate.id;
+			int optParam = item.itemOption[i].param;
+			if (optId == 72)
+				upgradeText = " [+" + optParam + "]";
+			if (optId == 41)
+				nameFont = GetFontByRarity(optParam);
+		}
+		nameFont.drawString(g, item.template.name + upgradeText, x, y, 0);
+
+		// Get option text
+		string optionText = GetItemOptionText(item);
 		try
 		{
-			for (int num21 = 1; num21 < currentListLength; num21++)
-			{
-				int num22 = xScroll + 36;
-				int num23 = yScroll + num21 * ITEM_HEIGHT;
-				int num24 = wScroll - 36;
-				int h2 = ITEM_HEIGHT - 1;
-				int num25 = xScroll;
-				int num26 = yScroll + num21 * ITEM_HEIGHT;
-				int num27 = 34;
-				int num28 = ITEM_HEIGHT - 1;
-				if (num23 - cmy > yScroll + hScroll || num23 - cmy < yScroll - ITEM_HEIGHT)
-					continue;
-				bool inventorySelect_isbody = GetInventorySelect_isbody(num21, newSelected, Char.myCharz().arrItemBody);
-				int inventorySelect_body = GetInventorySelect_body(num21, newSelected);
-				int inventorySelect_bag = GetInventorySelect_bag(num21, newSelected, Char.myCharz().arrItemBody);
-				g.setColor(num21 == selected ? 16383818 : !inventorySelect_isbody ? 15723751 : 15196114);
-				g.fillRect(num22, num23, num24, h2);
-				g.setColor(num21 == selected ? 9541120 : !inventorySelect_isbody ? 11837316 : 9993045);
-				Item item3 = !inventorySelect_isbody ? arrItemBag2[inventorySelect_bag] : arrItemBody2[inventorySelect_body];
-				if (item3 != null)
-				{
-					for (int num29 = 0; num29 < item3.itemOption.Length; num29++)
-					{
-						if (item3.itemOption[num29].optionTemplate.id == 72 && item3.itemOption[num29].param > 0)
-						{
-							byte id = (byte)GetColor_Item_Upgrade(item3.itemOption[num29].param);
-							if (GetColor_ItemBg(id) != -1)
-								g.setColor(num21 != selected ? GetColor_ItemBg(id) : GetColor_ItemBg(id));
-						}
-					}
-				}
-				g.fillRect(num25, num26, num27, num28);
-				if (item3 != null && item3.isSelect && GameCanvas.panel.type == 12)
-				{
-					g.setColor(num21 != selected ? 6047789 : 7040779);
-					g.fillRect(num25, num26, num27, num28);
-				}
-				if (item3 == null)
-					continue;
-				string text3 = string.Empty;
-				mFont mFont4 = mFont.tahoma_7_green2;
-				if (item3.itemOption != null)
-				{
-					for (int num30 = 0; num30 < item3.itemOption.Length; num30++)
-					{
-						if (item3.itemOption[num30].optionTemplate.id == 72)
-							text3 = " [+" + item3.itemOption[num30].param + "]";
-						if (item3.itemOption[num30].optionTemplate.id == 41)
-						{
-							if (item3.itemOption[num30].param == 1)
-								mFont4 = GetFont(0);
-							else if (item3.itemOption[num30].param == 2)
-							{
-								mFont4 = GetFont(2);
-							}
-							else if (item3.itemOption[num30].param == 3)
-							{
-								mFont4 = GetFont(8);
-							}
-							else if (item3.itemOption[num30].param == 4)
-							{
-								mFont4 = GetFont(7);
-							}
-						}
-					}
-				}
-				mFont4.drawString(g, item3.template.name + text3 + " [" + item3.template.id + "]", num22 + 5, num23 + 1, 0);
-				string text4 = string.Empty;
-				if (item3.itemOption != null)
-				{
-					if (item3.itemOption.Length > 0 && item3.itemOption[0] != null && item3.itemOption[0].optionTemplate.id != 102 && item3.itemOption[0].optionTemplate.id != 107)
-						text4 += item3.itemOption[0].getOptionString();
-					mFont mFont5 = mFont.tahoma_7_blue;
-					if (item3.compare < 0 && item3.template.type != 5)
-						mFont5 = mFont.tahoma_7_red;
-					if (item3.itemOption.Length > 1)
-					{
-						for (int num31 = 1; num31 < 2; num31++)
-						{
-							if (item3.itemOption[num31] != null && item3.itemOption[num31].optionTemplate.id != 102 && item3.itemOption[num31].optionTemplate.id != 107)
-								text4 = text4 + "," + item3.itemOption[num31].getOptionString();
-						}
-					}
-					mFont5.drawString(g, text4, num22 + 5, num23 + 11, mFont.LEFT);
-				}
-				SmallImage.drawSmallImage(g, item3.template.iconID, num25 + num27 / 2, num26 + num28 / 2, 0, 3);
-				if (item3.itemOption != null)
-				{
-					for (int num32 = 0; num32 < item3.itemOption.Length; num32++)
-					{
-						paintOptItem(g, item3.itemOption[num32].optionTemplate.id, item3.itemOption[num32].param, num25, num26, num27, num28);
-					}
-					for (int num33 = 0; num33 < item3.itemOption.Length; num33++)
-					{
-						paintOptSlotItem(g, item3.itemOption[num33].optionTemplate.id, item3.itemOption[num33].param, num25, num26, num27, num28);
-					}
-				}
-				if (item3.quantity > 1)
-					mFont.tahoma_7_yellow.drawString(g, string.Empty + item3.quantity, num25 + num27, num26 + num28 - mFont.tahoma_7_yellow.getHeight(), 1);
-			}
+			mFont optFont = item.compare < 0 && item.template.type != 5 ? mFont.tahoma_7_red : mFont.tahoma_7_blue;
+			if (optFont.getWidth(optionText) > wScroll)
+				optionText = optFont.splitFontArray(optionText, wScroll)[0];
+			optFont.drawString(g, optionText, x, y + 11, mFont.LEFT);
 		}
-		catch (Exception)
-		{
-		}
-		paintScrollArrow(g);
+		catch (Exception) { }
 	}
 
 	internal void paintTab(mGraphics g)
@@ -6885,93 +6182,70 @@ public class Panel : IActionListener, IChatable
 
 	internal void doFireInventory()
 	{
-		Res.outz("fire inventory");
 		if (Char.myCharz().statusMe == 14)
+		{
 			GameCanvas.startOKDlg(mResources.can_not_do_when_die);
+			return;
+		}
+
+		if (selected < 0)
+			return;
+
+		Item[] arrItemBody = Char.myCharz().arrItemBody;
+		Item[] arrItemBag = Char.myCharz().arrItemBag;
+		int itemIndex = isnewInventory ? sellectInventory : selected;
+		bool isBodyItem = itemIndex < arrItemBody.Length;
+
+		// Get the selected item
+		currItem = isnewInventory ? itemInvenNew :
+			isBodyItem ? arrItemBody[itemIndex] :
+			itemIndex - arrItemBody.Length < arrItemBag.Length ? arrItemBag[itemIndex - arrItemBody.Length] : null;
+
+		if (currItem == null)
+		{
+			cp = null;
+			return;
+		}
+
+		MyVector myVector = new MyVector();
+
+		// Add context menu options based on item type and panel type
+		if (isBodyItem)
+		{
+			// Body item (equipped) - can be unequipped
+			myVector.addElement(new Command(mResources.GETOUT, this, 2002, currItem));
+		}
+		else if (GameCanvas.panel.type == 12)
+		{
+			myVector.addElement(new Command(mResources.use_for_combine, this, 6000, currItem));
+		}
+		else if (GameCanvas.panel.type == 13)
+		{
+			myVector.addElement(new Command(mResources.use_for_trade, this, 7000, currItem));
+		}
+		else if (currItem.isTypeBody())
+		{
+			myVector.addElement(new Command(mResources.USE, this, 2000, currItem));
+			if (Char.myCharz().havePet)
+				myVector.addElement(new Command(mResources.MOVEFORPET, this, 2005, currItem));
+		}
 		else
 		{
-			if (selected == -1)
-				return;
-			if (selected == 0)
-			{
-				setNewSelected(Char.myCharz().arrItemBody.Length + Char.myCharz().arrItemBag.Length, false);
-				return;
-			}
-			currItem = null;
-			MyVector myVector = new MyVector();
-			if (isnewInventory)
-			{
-				currItem = itemInvenNew;
-				if (newSelected == 0)
-					myVector.addElement(new Command(mResources.GETOUT, this, 2002, currItem));
-				else if (GameCanvas.panel.type == 12)
-				{
-					myVector.addElement(new Command(mResources.use_for_combine, this, 6000, currItem));
-				}
-				else if (GameCanvas.panel.type == 13)
-				{
-					myVector.addElement(new Command(mResources.use_for_trade, this, 7000, currItem));
-				}
-				else if (currItem.isTypeBody())
-				{
-					myVector.addElement(new Command(mResources.USE, this, 2000, currItem));
-					if (Char.myCharz().havePet)
-						myVector.addElement(new Command(mResources.MOVEFORPET, this, 2005, currItem));
-				}
-				else
-				{
-					myVector.addElement(new Command(mResources.USE, this, 2001, currItem));
-				}
-			}
-			else if (!GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody))
-			{
-				Item item = Char.myCharz().arrItemBag[GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody)];
-				if (item != null)
-				{
-					currItem = item;
-					if (GameCanvas.panel.type == 12)
-						myVector.addElement(new Command(mResources.use_for_combine, this, 6000, currItem));
-					else if (GameCanvas.panel.type == 13)
-					{
-						myVector.addElement(new Command(mResources.use_for_trade, this, 7000, currItem));
-					}
-					else if (item.isTypeBody())
-					{
-						myVector.addElement(new Command(mResources.USE, this, 2000, currItem));
-						if (Char.myCharz().havePet)
-							myVector.addElement(new Command(mResources.MOVEFORPET, this, 2005, currItem));
-					}
-					else
-					{
-						myVector.addElement(new Command(mResources.USE, this, 2001, currItem));
-					}
-				}
-			}
-			else
-			{
-				Item item2 = Char.myCharz().arrItemBody[GetInventorySelect_body(selected, newSelected)];
-				if (item2 != null)
-				{
-					currItem = item2;
-					myVector.addElement(new Command(mResources.GETOUT, this, 2002, currItem));
-				}
-			}
-			if (currItem != null)
-			{
-				Char.myCharz().setPartTemp(currItem.headTemp, currItem.bodyTemp, currItem.legTemp, currItem.bagTemp);
-				if (GameCanvas.panel.type != 12 && GameCanvas.panel.type != 13)
-				{
-					if (position == 0)
-						myVector.addElement(new Command(mResources.MOVEOUT, this, 2003, currItem));
-					if (position == 1)
-						myVector.addElement(new Command(mResources.SALE, this, 3002, currItem));
-				}
-				GameCanvas.menu.startAt(myVector, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-				addItemDetail(currItem);
-			}
-			else
-				cp = null;
+			myVector.addElement(new Command(mResources.USE, this, 2001, currItem));
 		}
+
+		// Add common options
+		Char.myCharz().setPartTemp(currItem.headTemp, currItem.bodyTemp, currItem.legTemp, currItem.bagTemp);
+		if (GameCanvas.panel.type != 12 && GameCanvas.panel.type != 13)
+		{
+			if (position == 0)
+				myVector.addElement(new Command(mResources.MOVEOUT, this, 2003, currItem));
+			if (position == 1)
+				myVector.addElement(new Command(mResources.SALE, this, 3002, currItem));
+		}
+
+		GameCanvas.menu.startAt(myVector, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+		addItemDetail(currItem);
 	}
 
 	internal void doRada()
@@ -8102,9 +7376,8 @@ public class Panel : IActionListener, IChatable
 			if (isnewInventory)
 			{
 				b = (sbyte)currItem.indexUI;
-				sbyte where = 0;
-				if (newSelected != 0)
-					where = 1;
+				// Use sellectInventory to determine if body or bag item
+				sbyte where = (sbyte)(sellectInventory < Char.myCharz().arrItemBody.Length ? 0 : 1);
 				Service.gI().useItem(0, where, b, -1);
 			}
 			else
@@ -9554,63 +8827,49 @@ public class Panel : IActionListener, IChatable
 		}
 	}
 
+	// Returns true if the selected index is a body item (equipped)
 	internal bool GetInventorySelect_isbody(int select, int subSelect, Item[] arrItem)
 	{
-		int num = select - 1 + subSelect * 20;
-		return subSelect == 0 && num < arrItem.Length;
+		return select >= 0 && select < arrItem.Length;
 	}
 
+	// Returns the body item index
 	internal int GetInventorySelect_body(int select, int subSelect)
 	{
-		return select - 1 + subSelect * 20;
+		return select;
 	}
 
+	// Returns the bag item index
 	internal int GetInventorySelect_bag(int select, int subSelect, Item[] arrItem)
 	{
-		return select - 1 + subSelect * 20 - arrItem.Length;
+		return select - arrItem.Length;
 	}
 
 	internal bool isTabInven()
 	{
-		if (type == 0 && currentTabIndex == 1 || type == 7 && currentTabIndex == 0)
-			return true;
-		return false;
+		return type == 0 && currentTabIndex == 1 || type == 7 && currentTabIndex == 0;
 	}
 
 	internal void updateKeyInvenTab()
 	{
 		if (selected < 0)
 			return;
-		if (GameCanvas.keyPressed[!Main.isPC ? 4 : 23])
+
+		// Handle panel focus switching
+		if (GameCanvas.keyPressed[Main.isPC ? 23 : 4])
 		{
-			newSelected--;
-			if (isnewInventory)
-				currentListLength = 5;
-			if (newSelected < 0)
+			if (GameCanvas.isFocusPanel2)
 			{
-				newSelected = 0;
-				if (GameCanvas.isFocusPanel2)
-				{
-					GameCanvas.isFocusPanel2 = false;
-					GameCanvas.panel.selected = 0;
-				}
+				GameCanvas.isFocusPanel2 = false;
+				GameCanvas.panel.selected = 0;
 			}
 		}
-		else
+		else if (GameCanvas.keyPressed[Main.isPC ? 24 : 6])
 		{
-			if (!GameCanvas.keyPressed[!Main.isPC ? 6 : 24])
-				return;
-			newSelected++;
-			if (isnewInventory)
-				currentListLength = 5;
-			if (newSelected > size_tab - 1)
+			if (GameCanvas.panel2 != null)
 			{
-				newSelected = size_tab - 1;
-				if (GameCanvas.panel2 != null)
-				{
-					GameCanvas.isFocusPanel2 = true;
-					GameCanvas.panel2.selected = 0;
-				}
+				GameCanvas.isFocusPanel2 = true;
+				GameCanvas.panel2.selected = 0;
 			}
 		}
 	}
@@ -9641,25 +8900,14 @@ public class Panel : IActionListener, IChatable
 
 	internal int checkCurrentListLength(int arrLength)
 	{
-		int num = 20;
-		int num2 = arrLength / 20 + (arrLength % 20 > 0 ? 1 : 0);
-		size_tab = (sbyte)num2;
-		if (newSelected > num2 - 1)
-			newSelected = num2 - 1;
-		if (arrLength % 20 > 0 && newSelected == num2 - 1)
-			num = arrLength % 20;
-		return num + 1;
+		size_tab = 1;
+		newSelected = 0;
+		return arrLength;
 	}
 
 	internal void setNewSelected(int arrLength, bool resetSelect)
 	{
-		int num = arrLength / 20 + (arrLength % 20 > 0 ? 1 : 0);
-		int num2 = xScroll;
-		newSelected = (GameCanvas.px - num2) / TAB_W_NEW;
-		if (newSelected > num - 1)
-			newSelected = num - 1;
-		if (GameCanvas.px < num2)
-			newSelected = 0;
+		newSelected = 0;
 		setTabInventory(resetSelect);
 	}
 }
