@@ -50,7 +50,7 @@ namespace Mod.PickMob
 
 			Item capsuleKB = Utils.getItemInBag(ID_CAPSULE_KB);
 
-			if (capsuleKB?.quantity == 99 && !XmapController.gI.IsActing && TileMap.mapID != mapIdHome)
+			if (capsuleKB?.quantity == 99 && !XmapController.gI.IsActing && TileMap.mapID != mapIdHome && Utils.CanNextMap())
 			{
 				XmapController.start(mapIdHome);
 			}
@@ -60,7 +60,7 @@ namespace Mod.PickMob
 				Service.gI().getItem(1, Utils.getIndexItemBag(ID_CAPSULE_KB));
 			}
 
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99)
+			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99 && Utils.CanNextMap())
 			{
 				XmapController.start(mapIdTrain.Value);
 			}
