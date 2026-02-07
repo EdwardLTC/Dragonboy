@@ -192,9 +192,14 @@ namespace Mod.Xmap
 					else
 					{
 						if (random.Next(27, 29) == 27)
+						{
 							waypoint = XmapUtils.findWaypoint(27);
+						}
 						else
+						{
 							waypoint = XmapUtils.findWaypoint(29);
+						}
+
 					}
 
 					ChangeMap(waypoint);
@@ -216,7 +221,9 @@ namespace Mod.Xmap
 			int selectMenu = mapNext.info[1];
 			int selectPanel = mapNext.info[2];
 			Service.gI().openMenu(idNpc);
+			Thread.Sleep(500);
 			Service.gI().confirmMenu((short)idNpc, (sbyte)selectMenu);
+			Thread.Sleep(500);
 			Service.gI().requestMapSelect(selectPanel);
 		}
 

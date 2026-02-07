@@ -853,7 +853,6 @@ public class GameCanvas : IActionListener
 
 	public static void connect()
 	{
-		Debug.Log(">>connect:" + GameMidlet.IP + ":" + GameMidlet.PORT);
 		if (!Session_ME.gI().isConnected())
 			Session_ME.gI().connect(GameMidlet.IP, GameMidlet.PORT);
 	}

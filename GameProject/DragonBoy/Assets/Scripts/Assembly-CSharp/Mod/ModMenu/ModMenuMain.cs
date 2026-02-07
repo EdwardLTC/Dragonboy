@@ -97,7 +97,7 @@ namespace Mod.ModMenu
 
 		static void LoadModMenuItems()
 		{
-			modMenuItemBools = new ModMenuItemBoolean[]
+			modMenuItemBools = new[]
 			{
 				// Main switches
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
@@ -115,9 +115,7 @@ namespace Mod.ModMenu
 					Title = "Auto Train CSKB",
 					Description = "Auto Train CSKB Description",
 					GetValueFunc = () => UpCSKBController.gI.IsActing,
-					SetValueAction = UpCSKBController.toggle,
-					GetIsDisabled = () => Pk9rPickMob.IsTanSat,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.pickMobTitle) + '!'
+					SetValueAction = UpCSKBController.SetState
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -126,7 +124,7 @@ namespace Mod.ModMenu
 					Description = Strings.pickMobDescription,
 					GetValueFunc = () => Pk9rPickMob.IsTanSat,
 					SetValueAction = Pk9rPickMob.SetSlaughter,
-					GetIsDisabled = () => AutoTrainNewAccount.isEnabled,
+					GetIsDisabled = () => AutoTrainNewAccount.isEnabled || UpCSKBController.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
@@ -137,7 +135,7 @@ namespace Mod.ModMenu
 					GetValueFunc = () => Pk9rPickMob.IsAutoPickItems,
 					SetValueAction = Pk9rPickMob.SetAutoPickItems,
 					RMSName = "pickmob_auto_pick",
-					GetIsDisabled = () => AutoTrainNewAccount.isEnabled,
+					GetIsDisabled = () => AutoTrainNewAccount.isEnabled || UpCSKBController.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
@@ -149,14 +147,6 @@ namespace Mod.ModMenu
 					SetValueAction = AutoTrainNewAccount.SetState,
 					GetIsDisabled = () => Char.myCharz().taskMaint == null || Char.myCharz().taskMaint.taskId > 11,
 					GetDisabledReason = () => Strings.noLongerNewAccount + '!'
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoSellTrashItems_Toggle",
-					Title = Strings.autoSellTrashItemsTitle,
-					Description = Strings.autoSellTrashItemsDescription,
-					GetValueFunc = () => AutoSellTrashItems.isEnabled,
-					SetValueAction = AutoSellTrashItems.SetState
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -224,33 +214,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => AutoPean.isAutoHarvest,
 					SetValueAction = value => AutoPean.isAutoHarvest = value,
 					RMSName = "auto_harvest_peans"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "CustomBg_Toggle",
-					Title = Strings.customBackgroundTitle,
-					Description = Strings.customBackgroundDescription,
-					GetValueFunc = () => CustomBackground.isEnabled,
-					SetValueAction = CustomBackground.SetState,
-					RMSName = "custom_bg"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "HideGameUI_Toggle",
-					Title = Strings.hideGameUITitle,
-					Description = Strings.hideGameUIDescription,
-					GetValueFunc = () => HideGameUI.isEnabled,
-					SetValueAction = HideGameUI.SetState,
-					RMSName = "hide_game_ui"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "Intro_Toggle",
-					Title = Strings.introTitle,
-					Description = Strings.introDescription,
-					GetValueFunc = () => IntroPlayer.isEnabled,
-					SetValueAction = value => IntroPlayer.isEnabled = value,
-					RMSName = "intro_enabled"
 				}),
 				// Auxiliary switches
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
