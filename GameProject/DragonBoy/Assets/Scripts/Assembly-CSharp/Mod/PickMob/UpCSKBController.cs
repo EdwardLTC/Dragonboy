@@ -60,7 +60,7 @@ namespace Mod.PickMob
 				Service.gI().getItem(1, Utils.getIndexItemBag(ID_CAPSULE_KB));
 			}
 
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain)
+			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99)
 			{
 				XmapController.start(mapIdTrain.Value);
 			}
