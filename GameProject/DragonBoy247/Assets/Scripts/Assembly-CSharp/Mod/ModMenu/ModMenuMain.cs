@@ -198,48 +198,12 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "Xmap_UseCapsuleVIP_Toggle",
-					Title = Strings.xmapUseSpecialCapsule,
-					Description = Strings.xmapUseSpecialCapsuleDescription,
-					GetValueFunc = () => Pk9rXmap.isUseCapsuleVip,
-					SetValueAction = value => Pk9rXmap.isUseCapsuleVip = value,
-					RMSName = "xmap_use_capsule_vip"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "Xmap_UseAStar_Toggle",
-					Title = Strings.xmapUseAStar,
-					Description = Strings.xmapUseAStarDescription,
-					GetValueFunc = () => Pk9rXmap.isXmapAStar,
-					SetValueAction = value => Pk9rXmap.isXmapAStar = value,
-					RMSName = "xmap_use_astar"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
 					ID = "PickMob_AvoidSuperMob_Toggle",
 					Title = Strings.pickMobAvoidSuperMobTitle,
 					Description = Strings.avoidSuperMobDescription,
 					GetValueFunc = () => Pk9rPickMob.IsNeSieuQuai,
 					SetValueAction = Pk9rPickMob.SetAvoidSuperMonster,
 					RMSName = "pickmob_avoid_super_mob"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "PickMob_VDH_Toggle",
-					Title = Strings.pickMobVDHTitle,
-					Description = Strings.pickMobVDHDescription,
-					GetValueFunc = () => Pk9rPickMob.IsVuotDiaHinh,
-					SetValueAction = Pk9rPickMob.SetCrossTerrain,
-					RMSName = "pickmob_cross_terrain"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "PickMob_AttackMonsterBySendCommand_Toggle",
-					Title = Strings.pickMobAttackMonsterBySendCommandTitle,
-					Description = Strings.pickMobAttackMonsterBySendCommandDescription,
-					GetValueFunc = () => Pk9rPickMob.IsAttackMonsterBySendCommand,
-					SetValueAction = Pk9rPickMob.SetAttackMonsterBySendCommand,
-					RMSName = "pickmob_attack_monster_by_send_command"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -259,18 +223,6 @@ namespace Mod.ModMenu
 					SetValueAction = Pk9rPickMob.SetPickUpLimited,
 					RMSName = "pickmob_limit_pick_item_times"
 				}),
-				// Development state
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "NotifyBoss_Toggle",
-					Title = Strings.notifyBossTitle,
-					Description = Strings.notifyBossDescription,
-					GetValueFunc = () => Boss.isEnabled,
-					SetValueAction = Boss.setState,
-					RMSName = "notify_boss",
-					GetIsDisabled = () => true,
-					GetDisabledReason = () => "This feature is currently in development state"
-				})
 			};
 			modMenuItemValues = new ModMenuItemValues[]
 			{
