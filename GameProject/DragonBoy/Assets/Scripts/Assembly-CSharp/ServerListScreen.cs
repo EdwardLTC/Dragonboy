@@ -2,7 +2,7 @@ using System;
 
 public class ServerListScreen : mScreen, IActionListener
 {
-    public static string[] nameServer;
+	public static string[] nameServer;
 
 	public static string[] address;
 
@@ -192,7 +192,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			nCmdPlay = 1;
 		}
-		cmd = new Command[(mGraphics.zoomLevel <= 1) ? (4 + nCmdPlay) : (3 + nCmdPlay)];
+		cmd = new Command[mGraphics.zoomLevel <= 1 ? 4 + nCmdPlay : 3 + nCmdPlay];
 		int num = GameCanvas.hh - 15 * cmd.Length + 28;
 		for (int i = 0; i < cmd.Length; i++)
 		{
@@ -317,7 +317,7 @@ public class ServerListScreen : mScreen, IActionListener
 		int num2 = 2;
 		mFont.tahoma_7_white.drawString(g, "v" + GameMidlet.VERSION + "(" + mGraphics.zoomLevel + ")", GameCanvas.w - 2, num2 + 15, 1, mFont.tahoma_7_grey);
 		string empty = string.Empty;
-		empty = ((testConnect != 0) ? (empty + nameServer[ipSelect] + " connected") : (empty + nameServer[ipSelect] + " disconnect"));
+		empty = testConnect != 0 ? empty + nameServer[ipSelect] + " connected" : empty + nameServer[ipSelect] + " disconnect";
 		if (mSystem.isTest)
 			mFont.tahoma_7_white.drawString(g, empty, GameCanvas.w - 2, num2 + 15 + 15, 1, mFont.tahoma_7_grey);
 		if (!isGetData || loadScreen)
@@ -329,7 +329,7 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 		else
 			mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num2, 1, mFont.tahoma_7_grey);
-		int num3 = ((GameCanvas.w < 200) ? 160 : 180);
+		int num3 = GameCanvas.w < 200 ? 160 : 180;
 		if (cmdDeleteRMS != null)
 			mFont.tahoma_7_white.drawString(g, mResources.xoadulieu, GameCanvas.w - 2, GameCanvas.h - 15, 1, mFont.tahoma_7_grey);
 		if (GameCanvas.currentDialog == null)
@@ -445,7 +445,7 @@ public class ServerListScreen : mScreen, IActionListener
 		base.update();
 		if (Char.isLoadingMap || !loadScreen || !isAutoConect || GameCanvas.currentScreen != this || testConnect == 2)
 			return;
-		if (countDieConnect < ((mSystem.clientType != 1) ? 5 : 2))
+		if (countDieConnect < (mSystem.clientType != 1 ? 5 : 2))
 		{
 			if (flagServer <= 0)
 			{
@@ -515,7 +515,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			if (GameCanvas.keyPressed[8])
 			{
-				int num = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num = mGraphics.zoomLevel <= 1 ? 4 : 2;
 				GameCanvas.keyPressed[8] = false;
 				selected++;
 				if (selected > num)
@@ -524,7 +524,7 @@ public class ServerListScreen : mScreen, IActionListener
 			}
 			if (GameCanvas.keyPressed[2])
 			{
-				int num2 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num2 = mGraphics.zoomLevel <= 1 ? 4 : 2;
 				GameCanvas.keyPressed[2] = false;
 				selected--;
 				if (selected < 0)
@@ -566,7 +566,7 @@ public class ServerListScreen : mScreen, IActionListener
 					dataOutputStream.writeByte(0);
 				}
 			}
-			serverPriority = (sbyte)((!mSystem.isTest) ? serverPriority : (serverPriority + 5));
+			serverPriority = (sbyte)(!mSystem.isTest ? serverPriority : serverPriority + 5);
 			dataOutputStream.writeByte(serverPriority);
 			Rms.saveRMS(RMS_NRlink, dataOutputStream.toByteArray());
 			dataOutputStream.close();
@@ -651,7 +651,7 @@ public class ServerListScreen : mScreen, IActionListener
 		isWait = false;
 		GameCanvas.loginScr = null;
 		string text = Rms.loadRMSString("ResVersion");
-		if (((text == null || !(text != string.Empty)) ? (-1) : int.Parse(text)) > 0)
+		if ((text == null || !(text != string.Empty) ? -1 : int.Parse(text)) > 0)
 		{
 			loadScreen = true;
 			GameCanvas.loadBG(0);
@@ -675,7 +675,7 @@ public class ServerListScreen : mScreen, IActionListener
 		isWait = false;
 		GameCanvas.loginScr = null;
 		string text = Rms.loadRMSString("ResVersion");
-		if (((text == null || !(text != string.Empty)) ? (-1) : int.Parse(text)) > 0)
+		if ((text == null || !(text != string.Empty) ? -1 : int.Parse(text)) > 0)
 		{
 			loadScreen = true;
 			GameCanvas.loadBG(0);
@@ -729,13 +729,13 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			stopDownload = false;
 			cmdDownload = new Command(mResources.huy, this, 4, null);
-			cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
+			cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
 			cmdDownload.y = GameCanvas.hh + 65;
 			right = null;
 			if (!GameCanvas.isTouch)
 			{
-				cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
-				cmdDownload.y = GameCanvas.h - mScreen.cmdH - 1;
+				cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
+				cmdDownload.y = GameCanvas.h - cmdH - 1;
 			}
 			center = new Command(string.Empty, this, 4, null);
 			if (!isGetData)
@@ -753,8 +753,7 @@ public class ServerListScreen : mScreen, IActionListener
 		if (idAction == 3)
 		{
 			Res.outz("toi day");
-			if (GameCanvas.loginScr == null)
-				GameCanvas.loginScr = new LoginScr();
+			GameCanvas.loginScr ??= new LoginScr();
 			GameCanvas.loginScr.switchToMe();
 			bool flag = Rms.loadRMSString("acc") != null && !Rms.loadRMSString("acc").Equals(string.Empty);
 			bool flag2 = Rms.loadRMSString("userAo" + ipSelect) != null && !Rms.loadRMSString("userAo" + ipSelect).Equals(string.Empty);
@@ -929,7 +928,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			cmdDownload = new Command(mResources.taidulieu, this, 2, null);
 			cmdDownload.isFocus = true;
-			cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
+			cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
 			cmdDownload.y = GameCanvas.hh + 45;
 			if (cmdDownload.y > GameCanvas.h - 26)
 				cmdDownload.y = GameCanvas.h - 26;

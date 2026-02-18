@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Mod.Xmap
 {
@@ -142,6 +144,7 @@ namespace Mod.Xmap
 
 		internal static void NextMap(MapNext mapNext)
 		{
+			Debug.Log("Start NextMap to " + mapNext.to + " by " + mapNext.type);
 			switch (mapNext.type)
 			{
 			case TypeMapNext.AutoWaypoint:
@@ -174,8 +177,7 @@ namespace Mod.Xmap
 			if (npcId == 38)
 			{
 				bool flag = false;
-				int vNpcSize = GameScr.vNpc.size();
-				for (int i = 0; i < vNpcSize; i++)
+				for (int i = 0; i < GameScr.vNpc.size(); i++)
 				{
 					Npc npc = (Npc)GameScr.vNpc.elementAt(i);
 					if (npc.template.npcTemplateId == npcId)
@@ -308,7 +310,7 @@ namespace Mod.Xmap
 						}
 						Thread.Sleep(500);
 					}
-					catch (Exception ex) { UnityEngine.Debug.LogException(ex); }
+					catch (Exception ex) { Debug.LogException(ex); }
 					isMovingMyChar = false;
 				})
 				{
@@ -412,7 +414,7 @@ namespace Mod.Xmap
 						Thread.Sleep(500);
 						//Utils.requestChangeMap(waypoint);
 					}
-					catch (Exception ex) { UnityEngine.Debug.LogException(ex); }
+					catch (Exception ex) { Debug.LogException(ex); }
 					isChangingMap = false;
 				})
 				{

@@ -553,6 +553,7 @@ namespace Mod
 			if (waypoint != null)
 			{
 				TeleportMyChar(waypoint.GetX(), waypoint.GetY());
+				Thread.Sleep(1000);
 				requestChangeMap(waypoint);
 			}
 		}

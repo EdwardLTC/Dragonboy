@@ -492,12 +492,6 @@ namespace Mod
 		internal static void OnServerListScreenLoaded(ServerListScreen serverListScreen)
 		{
 			ModMenuMain.Initialize();
-
-			//if (GameCanvas.loginScr == null)
-			//    GameCanvas.loginScr = new LoginScr();
-			//GameCanvas.loginScr.switchToMe();
-			//Service.gI().login("", "", GameMidlet.VERSION, 0);
-			//GameCanvas.startWaitDlg();
 			TeleportMenuMain.LoadData();
 			AutoTrainPet.isFirstTimeCheckPet = true;
 			if (!Utils.IsOpenedByExternalAccountManager)

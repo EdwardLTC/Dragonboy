@@ -115,7 +115,7 @@ namespace Mod.ModMenu
 					Title = "Auto Train CSKB",
 					Description = "Auto Train CSKB Description",
 					GetValueFunc = () => UpCSKBController.gI.IsActing,
-					SetValueAction = UpCSKBController.SetState
+					SetValueAction = UpCSKBController.toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{

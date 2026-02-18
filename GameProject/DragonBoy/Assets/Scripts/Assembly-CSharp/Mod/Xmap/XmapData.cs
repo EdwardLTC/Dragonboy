@@ -163,7 +163,7 @@ namespace Mod.Xmap
 		void LoadLinks()
 		{
 			LoadLinksFromResource();
-			LoadLinksFromFile("TextData\\LinkMapsXmap.txt");
+			LoadLinksFromFile("TextData/LinkMapsXmap");
 		}
 
 		internal void LoadLinkMapCapsule()
@@ -187,7 +187,7 @@ namespace Mod.Xmap
 			{
 				int to = XmapUtils.getMapIdFromName(mapNames[select]);
 				if (to != -1)
-					links[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new int[]
+					links[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[]
 					{
 						select
 					}));
@@ -227,7 +227,7 @@ namespace Mod.Xmap
 			}
 			catch (Exception e)
 			{
-				LogMod.writeLine($"[xmap][error] Lỗi đọc links autowaypoint từ resource\n{e}");
+				Debug.Log($"[xmap][error] Lỗi đọc links autowaypoint từ resource\n{e}");
 			}
 		}
 
@@ -240,14 +240,14 @@ namespace Mod.Xmap
 			}
 			catch (Exception e)
 			{
-				LogMod.writeLine($"[xmap][error] Lỗi đọc links autowaypoint từ tệp {path}\n{e}");
+				Debug.Log($"[xmap][error] Lỗi đọc links autowaypoint từ tệp {path}\n{e}");
 			}
 		}
 
 		void LoadLinksAutoWaypoint()
 		{
 			LoadLinksAutoWaypointFromResource();
-			LoadLinksAutoWaypointFromFile("TextData\\AutoLinkMapsWaypoint.txt");
+			LoadLinksAutoWaypointFromFile("TextData/AutoLinkMapsWaypoint");
 		}
 
 		void AddLinksHome()
@@ -265,7 +265,7 @@ namespace Mod.Xmap
 			const int select = 0;
 			int offset = Char.myCharz().cgender;
 			int mapTTVT = XmapUtils.ID_MAP_TTVT_BASE + offset;
-			int[] info = new int[]
+			int[] info =
 			{
 				npcId, select
 			};
@@ -278,7 +278,7 @@ namespace Mod.Xmap
 				return;
 			const int npcId = 12;
 			const int select = 0;
-			int[] info = new int[]
+			int[] info =
 			{
 				npcId, select
 			};

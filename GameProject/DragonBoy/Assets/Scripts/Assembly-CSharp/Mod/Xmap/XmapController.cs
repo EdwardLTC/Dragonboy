@@ -4,6 +4,7 @@ using Mod.R;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 namespace Mod.Xmap
 {
@@ -18,7 +19,6 @@ namespace Mod.Xmap
 
 		protected override void update()
 		{
-			LogMod.writeLine($"[xmap][dbg] update {mapEnd}");
 			if (way == null)
 			{
 				if (!isNextMapFailed)
@@ -27,7 +27,6 @@ namespace Mod.Xmap
 					MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0));
 				}
 
-				LogMod.writeLine($"[xmap][dbg] Đang tạo dữ liệu map");
 				XmapAlgorithm.xmapData = new XmapData();
 				MainThreadDispatcher.Dispatch(XmapAlgorithm.xmapData.Load);
 				while (!XmapAlgorithm.xmapData.isLoaded)
@@ -74,12 +73,10 @@ namespace Mod.Xmap
 					LogMod.writeLine($"[xmap][dbg] nextMap: {way[indexWay].to}");
 				}
 				Thread.Sleep(1000);
-				return;
 			}
 			else if (TileMap.mapID == way[indexWay].to)
 			{
 				indexWay++;
-				return;
 			}
 			else
 			{
@@ -94,16 +91,16 @@ namespace Mod.Xmap
 			if (gI.IsActing)
 			{
 				finishXmap();
-				LogMod.writeLine($"[xmap][info] Hủy xmap tới {TileMap.mapNames[mapEnd]} để thực hiện xmap mới");
+				Debug.Log($"[xmap][info] Hủy xmap tới {TileMap.mapNames[mapEnd]} để thực hiện xmap mới");
 			}
 			mapEnd = mapId;
 			gI.toggle(true);
-			LogMod.writeLine($"[xmap][info] Bắt đầu xmap tới {TileMap.mapNames[mapEnd]}");
+			Debug.Log($"[xmap][info] Bắt đầu xmap tới {TileMap.mapNames[mapEnd]}");
 		}
 
 		internal static void finishXmap()
 		{
-			LogMod.writeLine($"[xmap][info] Kết thúc xmap");
+			Debug.Log("[xmap][info] Kết thúc xmap");
 			way = null;
 			isNextMapFailed = false;
 			gI.toggle(false);
