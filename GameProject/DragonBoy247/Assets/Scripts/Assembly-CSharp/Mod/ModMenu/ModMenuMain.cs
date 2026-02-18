@@ -224,7 +224,7 @@ namespace Mod.ModMenu
 					RMSName = "pickmob_limit_pick_item_times"
 				}),
 			};
-			modMenuItemValues = new ModMenuItemValues[]
+			modMenuItemValues = new []
 			{
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
@@ -391,8 +391,7 @@ namespace Mod.ModMenu
 
 		internal static void ShowPanel()
 		{
-			if (currentPanel == null)
-				currentPanel = new Panel();
+			currentPanel ??= new Panel();
 			CustomPanelMenu.Show(new CustomPanelMenuConfig
 			{
 				SetTabAction = SetTabModMenu,

@@ -171,7 +171,7 @@ public class Rms
 			saveRMS(file, new sbyte[1] { (sbyte)x });
 			if (file == ServerListScreen.RMS_svselect)
 			{
-				Debug.LogError(">>>>>>>>Save saveRMSInt: " + file + "  index:" + x);
+				Debug.Log(">>>>>>>>Save saveRMSInt: " + file + "  index:" + x);
 			}
 		}
 		catch (Exception)
