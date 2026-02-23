@@ -1,6 +1,7 @@
 using System;
 using Assets.src.g;
 using Mod;
+using UnityEngine;
 
 public class Service
 {
@@ -1245,11 +1246,12 @@ public class Service
 		}
 		catch (Exception ex)
 		{
+			Debug.LogException(ex);
 			Cout.println(ex.Message + ex.StackTrace);
 		}
 		finally
 		{
-			message.cleanup();
+			message?.cleanup();
 		}
 	}
 
@@ -1264,11 +1266,12 @@ public class Service
 		}
 		catch (Exception ex)
 		{
+			Debug.LogException(ex);
 			Cout.println(ex.Message + ex.StackTrace);
 		}
 		finally
 		{
-			message.cleanup();
+			message?.cleanup();
 		}
 	}
 

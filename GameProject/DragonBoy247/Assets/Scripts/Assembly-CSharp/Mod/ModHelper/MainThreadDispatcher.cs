@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using UnityEngine;
 
 namespace Mod.ModHelper
 {
-    public class MainThreadDispatcher
-    {
-        static readonly Queue<Action> Queue = new Queue<Action>();
+	public class MainThreadDispatcher : MonoBehaviour
+	{
+		static readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
 
-        /// <summary>
-        /// Thực hiện các hành động trong Thread chính của game tránh xung đột
-        /// </summary>
-        /// <param name="action"></param>
-        public static void Dispatch(Action action)
-        {
-            Queue.Enqueue(action);
-        }
+		void Update()
+		{
+			while (queue.TryDequeue(out Action action))
+			{
+				action();
+			}
+		}
 
-        public static void update()
-        {
-            while (Queue.Count > 0)
-            {
-                Queue.Dequeue().Invoke();
-            }
-        }
-    }
+		public static void Dispatch(Action action)
+		{
+			queue.Enqueue(action);
+		}
+	}
 }

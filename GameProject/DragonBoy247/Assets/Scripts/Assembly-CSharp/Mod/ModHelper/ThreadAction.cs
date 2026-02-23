@@ -2,56 +2,93 @@
 
 namespace Mod.ModHelper
 {
-    /// <summary>
-    /// Kế thừa class này để tạo chức năng sử dụng Thread.
-    /// </summary>
-    public abstract class ThreadAction<T>
-        where T : ThreadAction<T>, new()
-    {
-        public static T gI { get; } = new T();
+	public abstract class ThreadAction<T> where T : ThreadAction<T>, new()
+	{
+		Thread threadAction;
+		volatile bool isActing;
 
-        /// <summary>
-        /// Kiểm tra hành động còn thực hiện.
-        /// </summary>
-        public bool IsActing => threadAction?.IsAlive == true;
+		public static T gI { get; } = new T();
 
-        /// <summary>
-        /// Thread sử dụng để thực thi hành động.
-        /// </summary>
-        protected Thread threadAction;
+		public bool IsActing => isActing;
 
-        /// <summary>
-        /// Hành động cần thực hiện.
-        /// </summary>
-        protected abstract void action();
+		protected virtual bool UseUpdateLoop => false;
 
-        /// <summary>
-        /// Thực thi hành động bằng thread của instance.
-        /// </summary>
-        public void performAction()
-        {
-            if (IsActing)
-                threadAction.Abort();
+		internal virtual int Interval => 0;
 
-            executeAction();
-        }
+		protected virtual void update()
+		{
+		}
 
-        /// <summary>
-        /// Sử dụng thread của instance để thực thi hành động.
-        /// </summary>
-        protected void executeAction()
-        {
-            // Không thực hiện hành động trong luồng khác
-            if (Thread.CurrentThread != threadAction)
-            {
-                threadAction = new Thread(executeAction)
-                {
-                    IsBackground = true
-                };
-                threadAction.Start();
-                return;
-            }
-            action();
-        }
-    }
+		protected abstract void action();
+
+		public void performAction()
+		{
+			onStart();
+		}
+
+		internal void toggle(bool? value = null)
+		{
+			if ((value == null || value == false) && isActing)
+			{
+				onStop();
+			}
+			else if ((value == null || value == true) && !isActing)
+			{
+				onStart();
+			}
+		}
+
+		internal void toggle(bool value)
+		{
+			toggle((bool?)value);
+		}
+
+		protected virtual void onStop()
+		{
+			isActing = false;
+			threadAction?.Interrupt();
+		}
+
+		protected virtual void onStart()
+		{
+			if (threadAction?.IsAlive == true)
+				return;
+
+			isActing = true;
+			threadAction = new Thread(executeAction)
+			{
+				IsBackground = true
+			};
+			threadAction.Start();
+		}
+
+		void executeAction()
+		{
+			try
+			{
+				if (UseUpdateLoop)
+				{
+					while (isActing)
+					{
+						update();
+						try
+						{
+							Thread.Sleep(Interval);
+						}
+						catch (ThreadInterruptedException)
+						{
+							// Interrupted to exit sleep early when stopping.
+						}
+					}
+					return;
+				}
+
+				action();
+			}
+			finally
+			{
+				isActing = false;
+			}
+		}
+	}
 }

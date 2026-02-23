@@ -1,58 +1,36 @@
 using System;
 using System.Collections.Generic;
 using Assets.src.g;
+using Mod;
 using UnityEngine;
 
 public class Panel : IActionListener, IChatable
 {
-	public class PlayerChat
-	{
-		public string name;
 
-		public int charID;
+	// Panel type constants
+	public const int TYPE_MAIN = 0, TYPE_SHOP = 1, TYPE_BOX = 2, TYPE_ZONE = 3, TYPE_MAP = 4;
+	public const int TYPE_CLANS = 5, TYPE_INFOMATION = 6, TYPE_BODY = 7, TYPE_MESS = 8, TYPE_ARCHIVEMENT = 9;
+	public const int PLAYER_MENU = 10;
 
-		public bool isNewMessage;
+	public const int TYPE_FRIEND = 11, TYPE_COMBINE = 12, TYPE_GIAODICH = 13, TYPE_MAPTRANS = 14, TYPE_TOP = 15;
+	public const int TYPE_ENEMY = 16, TYPE_KIGUI = 17, TYPE_FLAG = 18, TYPE_OPTION = 19, TYPE_ACCOUNT = 20;
+	public const int TYPE_PET_MAIN = 21, TYPE_AUTO = 22, TYPE_GAMEINFO = 23, TYPE_GAMEINFOSUB = 24, TYPE_SPEACIALSKILL = 25;
 
-		public List<InfoItem> chats = new List<InfoItem>();
+	// Color constants
+	public const sbyte COLOR_WHITE = 0, COLOR_GREEN = 1, COLOR_PURPLE = 2, COLOR_ORANGE = 3;
+	public const sbyte COLOR_BLUE = 4, COLOR_YELLOW = 5, COLOR_RED = 6, COLOR_BLACK = 7;
 
-		public PlayerChat(string name, int charId)
-		{
-			this.name = name;
-			charID = charId;
-			isNewMessage = true;
-		}
-	}
+	// Item color constants
+	public const int color_item_white = 15987701, color_item_green = 2786816;
+	public const int color_item_purple = 7078041, color_item_orange = 12537346;
+	public const int color_item_blue = 1269146, color_item_yellow = 13279744;
+	public const int color_item_red = 11599872, color_item_black = 2039326;
 
-	public bool isShow;
-
-	// Panel dimensions
-	public int X, Y, W, H;
-	public int ITEM_HEIGHT;
-	public int TAB_W, TAB_W_NEW;
-
-	// Scroll state - vertical
-	public int cmtoY, cmy, cmdy, cmvy, cmyLim;
-	public int[] cmyLast;
-
-	// Scroll state - horizontal  
-	public int cmtoX, cmx, cmxLim;
-	public int xc;
-
-	// Map scroll
-	public int cmxMap, cmyMap, cmxMapLim, cmyMapLim;
-	public int cmyQuest;
+	public const int numItem = 20;
+	public const sbyte INVENTORY_TAB = 1;
 
 	// Static images
 	public static Image imgBantay, imgX, imgMap;
-	public TabClanIcon tabIcon;
-	public MyVector vItemCombine = new MyVector();
-	public int moneyGD, friendMoneyGD;
-
-	// Trade state
-	public bool isLock, isFriendLock;
-	public bool isAccept, isFriendAccep;
-	public string topName;
-	public ChatTextField chatTField;
 
 	// Static resources
 	public static string specialInfo;
@@ -60,25 +38,6 @@ public class Panel : IActionListener, IChatable
 	public static Image imgStar, imgMaxStar, imgStar8, imgStar9, imgStarCuongHoa;
 	public static Image imgNew, imgXu, imgTicket, imgLuong, imgLuongKhoa;
 	internal static Image imgUp, imgDown;
-
-	// Internal state
-	internal int pa1, pa2;
-	internal bool trans;
-	internal int pX, pY;
-	internal Command left = new Command(mResources.SELECT, 0);
-
-	// Tab state
-	public int type;
-	public int currentTabIndex;
-	public int startTabPos;
-	public int[] lastTabIndex;
-	public string[][] currentTabName;
-	internal int[] currClanOption;
-	public int mainTabPos = 4;
-	public int shopTabPos = 50;
-	public int boxTabPos = 50;
-	public string[][] mainTabName;
-	public string[] mapNames, planetNames;
 
 	public static string[] strTool =
 	{
@@ -101,12 +60,6 @@ public class Panel : IActionListener, IChatable
 	};
 
 	public static int graphics = 0;
-
-	public string[][] shopTabName;
-
-	public int[] maxPageShop;
-
-	public int[] currPageShop;
 
 	internal static string[][] boxTabName =
 	{
@@ -144,21 +97,11 @@ public class Panel : IActionListener, IChatable
 		}
 	};
 
-	public string[][][] tabName =
-	{
-		null, null, boxTabName, boxZone, boxMap, null, null, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxCombine, boxGD, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxPet, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab
-	};
-
 	// Inventory transfer constants
 	internal static sbyte BOX_BAG = 0, BAG_BOX = 1;
 	internal static sbyte BOX_BODY = 2, BODY_BOX = 3;
 	internal static sbyte BAG_BODY = 4, BODY_BAG = 5;
 	internal static sbyte BAG_PET = 6, PET_BAG = 7;
-
-	public int hasUse, hasUseBag;
-	public int currentListLength;
-
-	internal int[] lastSelect;
 
 	public static int[] mapIdTraidat =
 	{
@@ -211,118 +154,15 @@ public class Panel : IActionListener, IChatable
 	{
 		mapYTraidat, mapYNamek, mapYSaya
 	};
-
-	// Current selection state
-	public Item currItem;
-	public Clan currClan;
-	public ClanMessage currMess;
-	public Member currMem;
-	public Clan[] clans;
-
-	// Vectors for various lists
-	public MyVector member, myMember;
-	public MyVector logChat = new MyVector();
-	public MyVector vPlayerMenu = new MyVector();
-	public MyVector vFriend = new MyVector();
-	public MyVector vMyGD = new MyVector();
-	public MyVector vFriendGD = new MyVector();
-	public MyVector vTop = new MyVector();
-
-	public MyVector vEnemy = new MyVector();
-	public MyVector vFlag = new MyVector();
-	public MyVector vPlayerMenu_id = new MyVector();
-
-	public Command cmdClose;
 	public static bool CanNapTien = false;
 	public static int WIDTH_PANEL = 240;
 
-	internal int position;
-	public string playerChat;
-	public Dictionary<string, PlayerChat> chats = new Dictionary<string, PlayerChat>();
-	public Char charMenu;
-	internal bool isThachDau;
-	public int typeShop = -1;
-
-	// Scroll area
-	public int xScroll, yScroll, wScroll, hScroll;
-
-	public ChatPopup cp;
-	public int idIcon;
-	public int[] partID;
-	internal int timeShow;
-	public bool isBoxClan;
-	public int w;
-	internal int pa;
-
-	// Selection state
-	public int selected;
-	internal int cSelected;
-	internal int newSelected;
-
-	// Clan state
-	internal bool isClanOption;
-	public bool isSearchClan;
-	public bool isMessage;
-	public bool isViewMember;
-
-	// Panel type constants
-	public const int TYPE_MAIN = 0, TYPE_SHOP = 1, TYPE_BOX = 2, TYPE_ZONE = 3, TYPE_MAP = 4;
-	public const int TYPE_CLANS = 5, TYPE_INFOMATION = 6, TYPE_BODY = 7, TYPE_MESS = 8, TYPE_ARCHIVEMENT = 9;
-	public const int PLAYER_MENU = 10;
-
-	public const int TYPE_FRIEND = 11, TYPE_COMBINE = 12, TYPE_GIAODICH = 13, TYPE_MAPTRANS = 14, TYPE_TOP = 15;
-	public const int TYPE_ENEMY = 16, TYPE_KIGUI = 17, TYPE_FLAG = 18, TYPE_OPTION = 19, TYPE_ACCOUNT = 20;
-	public const int TYPE_PET_MAIN = 21, TYPE_AUTO = 22, TYPE_GAMEINFO = 23, TYPE_GAMEINFOSUB = 24, TYPE_SPEACIALSKILL = 25;
-
-	// Pointer/touch state
-	internal int pointerDownTime;
-	internal int pointerDownFirstX;
-	internal int[] pointerDownLastX = new int[3];
-	internal bool pointerIsDowning, isDownWhenRunning, wantUpdateList;
-	internal int waitToPerform, cmRun;
-	internal int keyTouchCombine = -1, keyTouchMapButton = -1;
-	public int indexMouse = -1;
-	internal bool justRelease;
-	internal int keyTouchTab = -1;
-	internal int nTableItem;
-
-	// Clan options
-	public string[][] clansOption =
-	{
-		mResources.findClan, mResources.createClan
-	};
-	public string clanInfo = string.Empty;
-	public string clanReport = string.Empty;
-	internal bool isHaveClan;
-
-	internal Scroll scroll;
-	internal int cmvx, cmdx;
-	internal bool isSelectPlayerMenu;
-
-	internal string[] strStatus =
-	{
-		mResources.follow, mResources.defend, mResources.attack, mResources.gohome, mResources.fusion, mResources.fusionForever
-	};
-
 	internal static string log;
-
-	internal int tt;
-
-	internal int currentButtonPress;
 
 	public static long[] t_tiemnang =
 	{
 		50000000L, 250000000L, 1250000000L, 5000000000L, 15000000000L, 30000000000L, 45000000000L, 60000000000L, 75000000000L, 90000000000L, 110000000000L, 130000000000L, 150000000000L, 170000000000L
 	};
-
-	internal int[] zoneColor =
-	{
-		43520, 14743570, 14155776
-	};
-
-	public string[] combineInfo;
-
-	public string[] combineTopInfo;
 
 	public static int[] color1 =
 	{
@@ -333,77 +173,17 @@ public class Panel : IActionListener, IChatable
 		4583423, 16719103, 16714764
 	};
 
-	internal int sellectInventory;
-
-	internal Item itemInvenNew;
-
-	internal Effect eBanner;
-
 	internal static FrameImage screenTab6;
-
-	internal bool isUp;
-	internal int compare;
 	public static string strWantToBuy = string.Empty;
-
-	// Popup state
-	public int xstart, ystart;
-	public int popupW = 140, popupH = 160;
-	public int popupX, popupY;
-	public int cmySK, cmtoYSK, cmdySK, cmvySK, cmyLimSK;
-
-	// Index/selection state
-	public int isborderIndex, isselectedRow;
-	public int indexSize = 28, indexTitle, indexSelect;
-	public int indexRow = -1, indexRowMax, indexMenu;
-	public int columns = 6, rows;
-
-	// Info panel
-	public int inforX, inforY, inforW, inforH;
-	internal int yPaint;
-
-	// Map position
-	internal int xMap, yMap, xMapTask, yMapTask, xMove, yMove;
 	public static bool isPaintMap = true;
-
-	public bool isClose;
-	internal int infoSelect;
 	public static MyVector vGameInfo = new MyVector(string.Empty);
 	public static string[] contenInfo;
-
-	public bool isViewChatServer;
-	internal int currInfoItem;
-	public Char charInfo;
-	internal bool isChangeZone;
-	internal bool isKiguiXu, isKiguiLuong;
-	internal int delayKigui;
-	public sbyte combineSuccess = -1;
-	public int idNPC;
-
-
-	// Combine animation state
-	public int xS, yS;
-	internal int rS, angleS, angleO, iAngleS, iDotS, speed;
-	internal int[] xArgS, yArgS, xDotS, yDotS;
-	internal int time, typeCombine, countUpdate, countR, countWait;
-	internal bool isSpeedCombine;
-	internal bool isCompleteEffCombine = true;
-	internal bool isPaintCombine;
-	public bool isDoneCombine = true;
-
-	// Icon IDs
-	public short iconID1, iconID2, iconID3;
-	public short[] iconID;
-	public string[][] speacialTabName;
 
 	public static int[] sizeUpgradeEff =
 	{
 		2, 1, 1
 	};
 	public static int nsize = 1;
-
-	// Color constants
-	public const sbyte COLOR_WHITE = 0, COLOR_GREEN = 1, COLOR_PURPLE = 2, COLOR_ORANGE = 3;
-	public const sbyte COLOR_BLUE = 4, COLOR_YELLOW = 5, COLOR_RED = 6, COLOR_BLACK = 7;
 
 	public static int[][] colorUpgradeEffect =
 	{
@@ -436,20 +216,224 @@ public class Panel : IActionListener, IChatable
 			16711680, 15007744, 13369344, 11730944, 10027008, 8388608
 		} // Red
 	};
+	public int boxTabPos = 50;
+	public Char charInfo;
+	public Char charMenu;
+	public Dictionary<string, PlayerChat> chats = new Dictionary<string, PlayerChat>();
+	public ChatTextField chatTField;
+	public string clanInfo = string.Empty;
+	public string clanReport = string.Empty;
+	public Clan[] clans;
 
-	// Item color constants
-	public const int color_item_white = 15987701, color_item_green = 2786816;
-	public const int color_item_purple = 7078041, color_item_orange = 12537346;
-	public const int color_item_blue = 1269146, color_item_yellow = 13279744;
-	public const int color_item_red = 11599872, color_item_black = 2039326;
+	// Clan options
+	public string[][] clansOption =
+	{
+		mResources.findClan, mResources.createClan
+	};
+
+	public Command cmdClose;
+
+	// Scroll state - horizontal  
+	public int cmtoX, cmx, cmxLim;
+
+	// Scroll state - vertical
+	public int cmtoY, cmy, cmdy, cmvy, cmyLim;
+	internal int cmvx, cmdx;
+
+	// Map scroll
+	public int cmxMap, cmyMap, cmxMapLim, cmyMapLim;
+	public int[] cmyLast;
+	public int cmyQuest;
+	public int cmySK, cmtoYSK, cmdySK, cmvySK, cmyLimSK;
+	public int columns = 6, rows;
+
+	public string[] combineInfo;
+	public sbyte combineSuccess = -1;
+
+	public string[] combineTopInfo;
+	internal int compare;
+
+	public ChatPopup cp;
+	internal int cSelected;
+	public Clan currClan;
+	internal int[] currClanOption;
+
+	internal int currentButtonPress;
+	public int currentListLength;
+	public int currentTabIndex;
+	public string[][] currentTabName;
+	internal int currInfoItem;
+
+	// Current selection state
+	public Item currItem;
+	public Member currMem;
+	public ClanMessage currMess;
+
+	public int[] currPageShop;
+	internal int delayKigui;
+
+	internal Effect eBanner;
+
+	public int hasUse, hasUseBag;
+	public short[] iconID;
+
+	// Icon IDs
+	public short iconID1, iconID2, iconID3;
+	public int idIcon;
+	public int idNPC;
 
 	internal Image imgo_0, imgo_1, imgo_2, imgo_3;
+	public int indexMouse = -1;
+	public int indexRow = -1, indexRowMax, indexMenu;
+	public int indexSize = 28, indexTitle, indexSelect;
 
-	public const int numItem = 20;
-	public const sbyte INVENTORY_TAB = 1;
-	public sbyte size_tab;
+	// Info panel
+	public int inforX, inforY, inforW, inforH;
+	internal int infoSelect;
+	public bool isAccept, isFriendAccep;
+
+	// Index/selection state
+	public int isborderIndex, isselectedRow;
+	public bool isBoxClan;
+	internal bool isChangeZone;
+
+	// Clan state
+	internal bool isClanOption;
+
+	public bool isClose;
+	internal bool isCompleteEffCombine = true;
+	public bool isDoneCombine = true;
+	internal bool isHaveClan;
+	internal bool isKiguiXu, isKiguiLuong;
+
+	// Trade state
+	public bool isLock, isFriendLock;
+	public bool isMessage;
 
 	internal bool isnewInventory = false;
+	internal bool isPaintCombine;
+	public bool isSearchClan;
+	internal bool isSelectPlayerMenu;
+
+	public bool isShow;
+	internal bool isSpeedCombine;
+	internal bool isThachDau;
+
+	internal bool isUp;
+
+	public bool isViewChatServer;
+	public bool isViewMember;
+	public int ITEM_HEIGHT;
+
+	internal Item itemInvenNew;
+	internal bool justRelease;
+	internal int keyTouchCombine = -1, keyTouchMapButton = -1;
+	internal int keyTouchTab = -1;
+
+	internal int[] lastSelect;
+	public int[] lastTabIndex;
+	internal Command left = new Command(mResources.SELECT, 0);
+	public MyVector logChat = new MyVector();
+	public string[][] mainTabName;
+	public int mainTabPos = 4;
+	public string[] mapNames, planetNames;
+
+	public int[] maxPageShop;
+
+	// Vectors for various lists
+	public MyVector member, myMember;
+	public int moneyGD, friendMoneyGD;
+	internal int newSelected;
+	internal int nTableItem;
+	internal int pa;
+
+	// Internal state
+	internal int pa1, pa2;
+	public int[] partID;
+	public string playerChat;
+	internal int pointerDownFirstX;
+	internal int[] pointerDownLastX = new int[3];
+
+	// Pointer/touch state
+	internal int pointerDownTime;
+	internal bool pointerIsDowning, isDownWhenRunning, wantUpdateList;
+	public int popupW = 140, popupH = 160;
+	public int popupX, popupY;
+
+	internal int position;
+	internal int pX, pY;
+	internal int rS, angleS, angleO, iAngleS, iDotS, speed;
+
+	internal Scroll scroll;
+
+	// Selection state
+	public int selected;
+
+	internal int sellectInventory;
+
+	public string[][] shopTabName;
+	public int shopTabPos = 50;
+	public sbyte size_tab;
+	public string[][] speacialTabName;
+	public int startTabPos;
+
+	internal string[] strStatus =
+	{
+		mResources.follow, mResources.defend, mResources.attack, mResources.gohome, mResources.fusion, mResources.fusionForever
+	};
+	public int TAB_W, TAB_W_NEW;
+	public TabClanIcon tabIcon;
+
+	public string[][][] tabName =
+	{
+		null, null, boxTabName, boxZone, boxMap, null, null, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxCombine, boxGD, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab, boxPet, EmptyTab, EmptyTab, EmptyTab, EmptyTab, EmptyTab
+	};
+	internal int time, typeCombine, countUpdate, countR, countWait;
+	internal int timeShow;
+	public string topName;
+	internal bool trans;
+
+	internal int tt;
+
+	// Tab state
+	public int type;
+	public int typeShop = -1;
+
+	public MyVector vEnemy = new MyVector();
+	public MyVector vFlag = new MyVector();
+	public MyVector vFriend = new MyVector();
+	public MyVector vFriendGD = new MyVector();
+	public MyVector vItemCombine = new MyVector();
+	public MyVector vMyGD = new MyVector();
+	public MyVector vPlayerMenu = new MyVector();
+	public MyVector vPlayerMenu_id = new MyVector();
+	public MyVector vTop = new MyVector();
+	public int w;
+	internal int waitToPerform, cmRun;
+
+	// Panel dimensions
+	public int X, Y, W, H;
+	internal int[] xArgS, yArgS, xDotS, yDotS;
+	public int xc;
+
+	// Map position
+	internal int xMap, yMap, xMapTask, yMapTask, xMove, yMove;
+
+
+	// Combine animation state
+	public int xS, yS;
+
+	// Scroll area
+	public int xScroll, yScroll, wScroll, hScroll;
+
+	// Popup state
+	public int xstart, ystart;
+	internal int yPaint;
+
+	internal int[] zoneColor =
+	{
+		43520, 14743570, 14155776
+	};
 
 	public Panel()
 	{
@@ -458,6 +442,865 @@ public class Panel : IActionListener, IChatable
 		cmdClose.img = GameCanvas.loadImage("/mainImage/myTexture2dbtX.png");
 		cmdClose.cmdClosePanel = true;
 		currItem = null;
+
+		tabName = new string[28][][]
+		{
+			null, null, new string[2][]
+			{
+				mResources.chestt, mResources.inventory
+			},
+			new string[1][]
+			{
+				mResources.zonee
+			},
+			new string[1][]
+			{
+				mResources.mapp
+			},
+			null, null, new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[2][]
+			{
+				mResources.combine, mResources.inventory
+			},
+			new string[3][]
+			{
+				mResources.inventory, mResources.item_give, mResources.item_receive
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			mResources.petMainTab, new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			},
+			// thêm 1 phần tử cho CustomPanelMenu
+			new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			}
+		};
+		lastTabIndex = new int[tabName.Length];
+		for (int i = 0; i < lastTabIndex.Length; i++)
+			lastTabIndex[i] = -1;
+	}
+
+	public void perform(int idAction, object p)
+	{
+		if (idAction == 9999)
+		{
+			TopInfo topInfo = (TopInfo)p;
+			Service.gI().sendThachDau(topInfo.pId);
+		}
+		if (idAction == 170391)
+		{
+			Rms.clearAll();
+			if (mGraphics.zoomLevel > 1)
+				Rms.saveRMSInt("levelScreenKN", 1);
+			else
+				Rms.saveRMSInt("levelScreenKN", 0);
+			GameMidlet.instance.exit();
+		}
+		if (idAction == 6001)
+		{
+			Item item = (Item)p;
+			item.isSelect = false;
+			GameCanvas.panel.vItemCombine.removeElement(item);
+			if (GameCanvas.panel.currentTabIndex == 0)
+				GameCanvas.panel.setTabCombine();
+		}
+		if (idAction == 6000)
+		{
+			Item item2 = (Item)p;
+			for (int i = 0; i < GameCanvas.panel.vItemCombine.size(); i++)
+			{
+				if (((Item)GameCanvas.panel.vItemCombine.elementAt(i)).template.id == item2.template.id)
+				{
+					GameCanvas.startOKDlg(mResources.already_has_item);
+					return;
+				}
+			}
+			item2.isSelect = true;
+			GameCanvas.panel.vItemCombine.addElement(item2);
+			if (GameCanvas.panel.currentTabIndex == 0)
+				GameCanvas.panel.setTabCombine();
+		}
+		if (idAction == 7000)
+		{
+			if (isLock)
+			{
+				GameCanvas.startOKDlg(mResources.unlock_item_to_trade);
+				return;
+			}
+			Item item3 = (Item)p;
+			for (int j = 0; j < GameCanvas.panel.vMyGD.size(); j++)
+			{
+				if (((Item)GameCanvas.panel.vMyGD.elementAt(j)).indexUI == item3.indexUI)
+				{
+					GameCanvas.startOKDlg(mResources.already_has_item);
+					return;
+				}
+			}
+			if (item3.quantity > 1)
+			{
+				putQuantily();
+				return;
+			}
+			item3.isSelect = true;
+			Item item4 = new Item();
+			item4.template = item3.template;
+			item4.itemOption = item3.itemOption;
+			item4.indexUI = item3.indexUI;
+			GameCanvas.panel.vMyGD.addElement(item4);
+			Service.gI().giaodich(2, -1, (sbyte)item4.indexUI, item4.quantity);
+		}
+		if (idAction == 7001)
+		{
+			Item item5 = (Item)p;
+			item5.isSelect = false;
+			GameCanvas.panel.vMyGD.removeElement(item5);
+			if (GameCanvas.panel.currentTabIndex == 1)
+				GameCanvas.panel.setTabGiaoDich(true);
+			Service.gI().giaodich(4, -1, (sbyte)item5.indexUI, -1);
+		}
+		if (idAction == 7002)
+		{
+			isAccept = true;
+			GameCanvas.endDlg();
+			Service.gI().giaodich(7, -1, -1, -1);
+			hide();
+		}
+		if (idAction == 8003)
+		{
+			InfoItem infoItem = (InfoItem)p;
+			Service.gI().friend(1, infoItem.charInfo.charID);
+			if (type != 8)
+				;
+		}
+		if (idAction == 8002)
+		{
+			InfoItem infoItem2 = (InfoItem)p;
+			Service.gI().friend(2, infoItem2.charInfo.charID);
+		}
+		if (idAction == 8004)
+		{
+			InfoItem infoItem3 = (InfoItem)p;
+			Service.gI().gotoPlayer(infoItem3.charInfo.charID);
+		}
+		if (idAction == 8001)
+		{
+			Res.outz("chat player");
+			InfoItem infoItem4 = (InfoItem)p;
+			if (chatTField == null)
+			{
+				chatTField = new ChatTextField();
+				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
+				chatTField.initChatTextField();
+				chatTField.parentScreen = GameCanvas.panel;
+			}
+			chatTField.strChat = mResources.chat_player;
+			chatTField.tfChat.name = mResources.chat_with + " " + infoItem4.charInfo.cName;
+			chatTField.to = string.Empty;
+			chatTField.isShow = true;
+			chatTField.tfChat.isFocus = true;
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+			if (Main.isWindowsPhone)
+				chatTField.tfChat.strInfo = chatTField.strChat;
+			if (!Main.isPC)
+				chatTField.startChat2(this, string.Empty);
+		}
+		if (idAction == 1000)
+			Service.gI().getItem(BOX_BAG, (sbyte)GetInventorySelect_body(selected, newSelected));
+		if (idAction == 1001)
+		{
+			sbyte id = (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
+			Service.gI().getItem(BAG_BOX, id);
+		}
+		if (idAction == 1003)
+			hide();
+		if (idAction == 1002)
+			Service.gI().getItem(BODY_BOX, (sbyte)GetInventorySelect_body(selected, newSelected));
+		if (idAction == 2011)
+			Service.gI().useItem(1, 2, (sbyte)GetInventorySelect_body(selected, newSelected), -1);
+		if (idAction == 2010)
+		{
+			Service.gI().useItem(0, 2, (sbyte)GetInventorySelect_body(selected, newSelected), -1);
+			Item item6 = (Item)p;
+			if (item6 != null && (item6.template.id == 193 || item6.template.id == 194))
+				GameCanvas.panel.hide();
+		}
+		if (idAction == 2000)
+		{
+			Item[] arrItemBody = Char.myCharz().arrItemBody;
+			sbyte id2 = (sbyte)GetInventorySelect_bag(selected, newSelected, arrItemBody);
+			if (isnewInventory)
+				id2 = (sbyte)currItem.indexUI;
+			Service.gI().getItem(BAG_BODY, id2);
+		}
+		if (idAction == 2001)
+		{
+			Res.outz("use item");
+			Item item7 = (Item)p;
+			bool inventorySelect_isbody = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
+			sbyte b = 0;
+			b = inventorySelect_isbody ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
+			if (isnewInventory)
+			{
+				b = (sbyte)currItem.indexUI;
+				// Use sellectInventory to determine if body or bag item
+				sbyte where = (sbyte)(sellectInventory < Char.myCharz().arrItemBody.Length ? 0 : 1);
+				Service.gI().useItem(0, where, b, -1);
+			}
+			else
+				Service.gI().useItem(0, !inventorySelect_isbody ? (sbyte)1 : (sbyte)0, b, -1);
+			if (item7.template.id == 193 || item7.template.id == 194)
+				GameCanvas.panel.hide();
+		}
+		if (idAction == 2002)
+		{
+			if (isnewInventory)
+				Service.gI().getItem(BODY_BAG, (sbyte)sellectInventory);
+			else
+				Service.gI().getItem(BODY_BAG, (sbyte)GetInventorySelect_body(selected, newSelected));
+		}
+		if (idAction == 2003)
+		{
+			Res.outz("remove item");
+			bool inventorySelect_isbody2 = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
+			sbyte b2 = 0;
+			b2 = inventorySelect_isbody2 ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
+			Service.gI().useItem(1, !inventorySelect_isbody2 ? (sbyte)1 : (sbyte)0, b2, -1);
+		}
+		if (idAction == 2004)
+		{
+			GameCanvas.endDlg();
+			ItemObject itemObject = (ItemObject)p;
+			sbyte where2 = (sbyte)itemObject.where;
+			sbyte index = (sbyte)itemObject.id;
+			Service.gI().useItem((sbyte)(itemObject.type != 0 ? 2 : 3), where2, index, -1);
+		}
+		if (idAction == 2005)
+		{
+			sbyte id3 = (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
+			Service.gI().getItem(BAG_PET, id3);
+		}
+		if (idAction == 2006)
+		{
+			Item[] arrItemBody2 = Char.myPetz().arrItemBody;
+			sbyte id4 = (sbyte)selected;
+			Service.gI().getItem(PET_BAG, id4);
+		}
+		if (idAction == 30001)
+		{
+			Res.outz("nhan do");
+			Service.gI().buyItem(0, selected, 0);
+		}
+		if (idAction == 30002)
+		{
+			Res.outz("xoa do");
+			Service.gI().buyItem(1, selected, 0);
+		}
+		if (idAction == 30003)
+		{
+			Res.outz("nhan tat");
+			Service.gI().buyItem(2, selected, 0);
+		}
+		if (idAction == 3000)
+		{
+			Res.outz("mua do");
+			Item item8 = (Item)p;
+			Service.gI().buyItem(0, item8.template.id, 0);
+		}
+		if (idAction == 3001)
+		{
+			Item item9 = (Item)p;
+			GameCanvas.msgdlg.pleasewait();
+			Service.gI().buyItem(1, item9.template.id, 0);
+		}
+		if (idAction == 3002)
+		{
+			GameCanvas.endDlg();
+			bool inventorySelect_isbody3 = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
+			sbyte b3 = 0;
+			b3 = inventorySelect_isbody3 ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
+			Service.gI().saleItem(0, !inventorySelect_isbody3 ? (sbyte)1 : (sbyte)0, b3);
+		}
+		if (idAction == 3003)
+		{
+			GameCanvas.endDlg();
+			ItemObject itemObject2 = (ItemObject)p;
+			Service.gI().saleItem(1, (sbyte)itemObject2.type, (short)itemObject2.id);
+		}
+		if (idAction == 3004)
+		{
+			Item item10 = (Item)p;
+			Service.gI().buyItem(3, item10.template.id, 0);
+		}
+		if (idAction == 3005)
+		{
+			Res.outz("mua do");
+			Item item11 = (Item)p;
+			Service.gI().buyItem(3, item11.template.id, 0);
+		}
+		if (idAction == 4000)
+		{
+			Clan clan = (Clan)p;
+			if (clan != null)
+			{
+				GameCanvas.endDlg();
+				Service.gI().clanMessage(2, null, clan.ID);
+			}
+		}
+		if (idAction == 4001)
+		{
+			Clan clan2 = (Clan)p;
+			if (clan2 != null)
+			{
+				InfoDlg.showWait();
+				clanReport = mResources.PLEASEWAIT;
+				Service.gI().clanMember(clan2.ID);
+			}
+		}
+		if (idAction == 4005)
+			GameCanvas.endDlg();
+		if (idAction == 4007)
+			GameCanvas.endDlg();
+		if (idAction == 4006)
+		{
+			ClanMessage clanMessage = (ClanMessage)p;
+			Service.gI().clanDonate(clanMessage.id);
+		}
+		if (idAction == 5001)
+		{
+			Member member = (Member)p;
+			Service.gI().clanRemote(member.ID, 0);
+		}
+		if (idAction == 5002)
+		{
+			Member member2 = (Member)p;
+			Service.gI().clanRemote(member2.ID, 1);
+		}
+		if (idAction == 5003)
+		{
+			Member member3 = (Member)p;
+			Service.gI().clanRemote(member3.ID, 2);
+		}
+		if (idAction == 5004)
+		{
+			Member member4 = (Member)p;
+			Service.gI().clanRemote(member4.ID, -1);
+		}
+		if (idAction == 9000)
+		{
+			Service.gI().upPotential(selected, 1);
+			GameCanvas.endDlg();
+			InfoDlg.showWait();
+		}
+		if (idAction == 9006)
+		{
+			Service.gI().upPotential(selected, 10);
+			GameCanvas.endDlg();
+			InfoDlg.showWait();
+		}
+		if (idAction == 9007)
+		{
+			Service.gI().upPotential(selected, 100);
+			GameCanvas.endDlg();
+			InfoDlg.showWait();
+		}
+		if (idAction == 9002)
+		{
+			Skill skill = (Skill)p;
+			if (skill.template.isSkillSpec())
+				GameCanvas.startOKDlg(mResources.updSkill);
+			else
+				GameCanvas.startOKDlg(mResources.can_buy_from_Uron1 + skill.powRequire + mResources.can_buy_from_Uron2 + skill.moreInfo + mResources.can_buy_from_Uron3);
+		}
+		if (idAction == 9003)
+		{
+			if (GameCanvas.isTouch && !Main.isPC)
+				GameScr.gI().doSetOnScreenSkill((SkillTemplate)p);
+			else
+				GameScr.gI().doSetKeySkill((SkillTemplate)p);
+		}
+		if (idAction == 9004)
+		{
+			Skill skill2 = (Skill)p;
+			if (skill2.template.isSkillSpec())
+				GameCanvas.startOKDlg(mResources.learnSkill);
+			else
+				GameCanvas.startOKDlg(mResources.can_buy_from_Uron1 + skill2.powRequire + mResources.can_buy_from_Uron2 + skill2.moreInfo + mResources.can_buy_from_Uron3);
+		}
+		if (idAction == 10000)
+		{
+			InfoItem infoItem5 = (InfoItem)p;
+			Service.gI().enemy(1, infoItem5.charInfo.charID);
+			GameCanvas.panel.hideNow();
+		}
+		if (idAction == 10001)
+		{
+			InfoItem infoItem6 = (InfoItem)p;
+			Service.gI().enemy(2, infoItem6.charInfo.charID);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10021)
+			;
+		if (idAction == 10012)
+		{
+			if (chatTField == null)
+			{
+				chatTField = new ChatTextField();
+				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
+				chatTField.initChatTextField();
+				chatTField.parentScreen = GameCanvas.panel2 != null ? GameCanvas.panel2 : GameCanvas.panel;
+			}
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
+			chatTField.tfChat.setText(string.Empty);
+			if (currItem.quantity == 1)
+			{
+				chatTField.strChat = mResources.kiguiXuchat;
+				chatTField.tfChat.name = mResources.input_money;
+			}
+			else
+			{
+				chatTField.strChat = mResources.input_quantity + " ";
+				chatTField.tfChat.name = mResources.input_quantity;
+			}
+			chatTField.tfChat.setMaxTextLenght(10);
+			chatTField.to = string.Empty;
+			chatTField.isShow = true;
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
+			if (GameCanvas.isTouch)
+				chatTField.tfChat.doChangeToTextBox();
+			if (Main.isWindowsPhone)
+				chatTField.tfChat.strInfo = chatTField.strChat;
+			if (!Main.isPC)
+				chatTField.startChat2(this, string.Empty);
+		}
+		if (idAction == 10013)
+		{
+			if (chatTField == null)
+			{
+				chatTField = new ChatTextField();
+				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
+				chatTField.initChatTextField();
+				chatTField.parentScreen = GameCanvas.panel2 != null ? GameCanvas.panel2 : GameCanvas.panel;
+			}
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
+			chatTField.tfChat.setText(string.Empty);
+			if (currItem.quantity == 1)
+			{
+				chatTField.strChat = mResources.kiguiLuongchat;
+				chatTField.tfChat.name = mResources.input_money;
+			}
+			else
+			{
+				chatTField.strChat = mResources.input_quantity + "  ";
+				chatTField.tfChat.name = mResources.input_quantity;
+			}
+			chatTField.to = string.Empty;
+			chatTField.isShow = true;
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
+			if (GameCanvas.isTouch)
+				chatTField.tfChat.doChangeToTextBox();
+			if (Main.isWindowsPhone)
+				chatTField.tfChat.strInfo = chatTField.strChat;
+			if (!Main.isPC)
+				chatTField.startChat2(this, string.Empty);
+		}
+		if (idAction == 10014)
+		{
+			Item item12 = (Item)p;
+			Service.gI().kigui(1, item12.itemId, -1, -1, -1);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10015)
+		{
+			Item item13 = (Item)p;
+			Service.gI().kigui(2, item13.itemId, -1, -1, -1);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10016)
+		{
+			Item item14 = (Item)p;
+			Service.gI().kigui(3, item14.itemId, 0, item14.buyCoin, -1);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10017)
+		{
+			Item item15 = (Item)p;
+			Service.gI().kigui(3, item15.itemId, 1, item15.buyGold, -1);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10018)
+		{
+			Item item16 = (Item)p;
+			Service.gI().kigui(5, item16.itemId, -1, -1, -1);
+			InfoDlg.showWait();
+		}
+		if (idAction == 10019)
+		{
+			Session_ME.gI().close();
+			Rms.saveRMSString("acc", string.Empty);
+			Rms.saveRMSString("pass", string.Empty);
+			GameCanvas.loginScr.tfPass.setText(string.Empty);
+			GameCanvas.loginScr.tfUser.setText(string.Empty);
+			GameCanvas.loginScr.isLogin2 = false;
+			GameCanvas.loginScr.switchToMe();
+			GameCanvas.endDlg();
+			hide();
+		}
+		if (idAction == 10020)
+			GameCanvas.endDlg();
+		if (idAction == 10030)
+		{
+			Service.gI().getFlag(1, (sbyte)selected);
+			GameCanvas.panel.hideNow();
+		}
+		if (idAction == 10031)
+			Session_ME.gI().close();
+		if (idAction == 11000)
+		{
+			Service.gI().kigui(0, currItem.itemId, 1, currItem.buyRuby, 1);
+			GameCanvas.endDlg();
+		}
+		if (idAction == 11001)
+		{
+			Service.gI().kigui(0, currItem.itemId, 1, currItem.buyRuby, currItem.quantilyToBuy);
+			GameCanvas.endDlg();
+		}
+		if (idAction == 11002)
+		{
+			chatTField.isShow = false;
+			GameCanvas.endDlg();
+		}
+	}
+
+	public void onChatFromMe(string text, string to)
+	{
+		if (chatTField.tfChat.getText() == null || chatTField.tfChat.getText().Equals(string.Empty) || text.Equals(string.Empty) || text == null)
+		{
+			chatTField.isShow = false;
+			return;
+		}
+		if (chatTField.strChat.Equals(mResources.input_clan_name))
+		{
+			InfoDlg.showWait();
+			chatTField.isShow = false;
+			Service.gI().searchClan(text);
+			return;
+		}
+		if (chatTField.strChat.Equals(mResources.chat_clan))
+		{
+			InfoDlg.showWait();
+			chatTField.isShow = false;
+			Service.gI().clanMessage(0, text, -1);
+			return;
+		}
+		if (chatTField.strChat.Equals(mResources.input_clan_name_to_create))
+		{
+			if (chatTField.tfChat.getText() == string.Empty)
+			{
+				GameScr.info1.addInfo(mResources.clan_name_blank, 0);
+				return;
+			}
+			if (tabIcon == null)
+				tabIcon = new TabClanIcon();
+			tabIcon.text = chatTField.tfChat.getText();
+			tabIcon.show(false);
+			chatTField.isShow = false;
+			return;
+		}
+		if (chatTField.strChat.Equals(mResources.input_clan_slogan))
+		{
+			if (chatTField.tfChat.getText() == string.Empty)
+			{
+				GameScr.info1.addInfo(mResources.clan_slogan_blank, 0);
+				return;
+			}
+			Service.gI().getClan(4, (sbyte)Char.myCharz().clan.imgID, chatTField.tfChat.getText());
+			chatTField.isShow = false;
+			return;
+		}
+		if (chatTField.strChat.Equals(mResources.input_Inventory_Pass))
+			try
+			{
+				int lockInventory = int.Parse(chatTField.tfChat.getText());
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+				hide();
+				if (chatTField.tfChat.getText().Length != 6 || chatTField.tfChat.getText().Equals(string.Empty))
+					GameCanvas.startOKDlg(mResources.input_Inventory_Pass_wrong);
+				else
+				{
+					Service.gI().setLockInventory(lockInventory);
+					chatTField.isShow = false;
+					chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+					hide();
+				}
+				return;
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
+				return;
+			}
+		if (chatTField.strChat.Equals(mResources.world_channel_5_luong))
+		{
+			if (!chatTField.tfChat.getText().Equals(string.Empty))
+			{
+				Service.gI().chatGlobal(chatTField.tfChat.getText());
+				chatTField.isShow = false;
+				hide();
+			}
+		}
+		else if (chatTField.strChat.Equals(mResources.chat_player))
+		{
+			chatTField.isShow = false;
+			InfoItem infoItem = null;
+			if (type == 8)
+				infoItem = (InfoItem)logChat.elementAt(currInfoItem);
+			else if (type == 11)
+			{
+				infoItem = (InfoItem)vFriend.elementAt(currInfoItem);
+			}
+			if (infoItem.charInfo.charID != Char.myCharz().charID)
+				Service.gI().chatPlayer(text, infoItem.charInfo.charID);
+		}
+		else if (chatTField.strChat.Equals(mResources.input_quantity_to_trade))
+		{
+			int num = 0;
+			try
+			{
+				num = int.Parse(chatTField.tfChat.getText());
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+				return;
+			}
+			if (num <= 0 || num > currItem.quantity)
+			{
+				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+				return;
+			}
+			currItem.isSelect = true;
+			Item item = new Item();
+			item.template = currItem.template;
+			item.quantity = num;
+			item.indexUI = currItem.indexUI;
+			item.itemOption = currItem.itemOption;
+			GameCanvas.panel.vMyGD.addElement(item);
+			Service.gI().giaodich(2, -1, (sbyte)item.indexUI, item.quantity);
+			chatTField.isShow = false;
+			chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+		}
+		else if (chatTField.strChat == mResources.input_money_to_trade)
+		{
+			int num2 = 0;
+			try
+			{
+				num2 = int.Parse(chatTField.tfChat.getText());
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_money_wrong);
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+				return;
+			}
+			if (num2 > Char.myCharz().xu)
+			{
+				GameCanvas.startOKDlg(mResources.not_enough_money);
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+			}
+			else
+			{
+				moneyGD = num2;
+				Service.gI().giaodich(2, -1, -1, num2);
+				chatTField.isShow = false;
+				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
+			}
+		}
+		else if (chatTField.strChat.Equals(mResources.kiguiXuchat))
+		{
+			try
+			{
+				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), 1);
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_money_wrong);
+			}
+			chatTField.isShow = false;
+		}
+		else if (chatTField.strChat.Equals(mResources.kiguiXuchat + " "))
+		{
+			try
+			{
+				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), currItem.quantilyToBuy);
+			}
+			catch (Exception)
+			{
+				GameCanvas.startOKDlg(mResources.input_money_wrong);
+			}
+			chatTField.isShow = false;
+		}
+		else if (chatTField.strChat.Equals(mResources.kiguiLuongchat))
+		{
+			doNotiRuby(0);
+			chatTField.isShow = false;
+		}
+		else if (chatTField.strChat.Equals(mResources.kiguiLuongchat + "  "))
+		{
+			doNotiRuby(1);
+			chatTField.isShow = false;
+		}
+		else if (chatTField.strChat.Equals(mResources.input_quantity + " "))
+		{
+			currItem.quantilyToBuy = int.Parse(chatTField.tfChat.getText());
+			if (currItem.quantilyToBuy > currItem.quantity)
+			{
+				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
+				return;
+			}
+			isKiguiXu = true;
+			chatTField.isShow = false;
+		}
+		else if (chatTField.strChat.Equals(mResources.input_quantity + "  "))
+		{
+			currItem.quantilyToBuy = int.Parse(chatTField.tfChat.getText());
+			if (currItem.quantilyToBuy > currItem.quantity)
+			{
+				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
+				return;
+			}
+			isKiguiLuong = true;
+			chatTField.isShow = false;
+		}
+	}
+
+	public void onCancelChat()
+	{
+		chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
 	}
 
 	public static void loadBg()
@@ -845,12 +1688,12 @@ public class Panel : IActionListener, IChatable
 	{
 		type = 12;
 		if (GameCanvas.w > 2 * WIDTH_PANEL)
-			boxCombine = new string[][]
+			boxCombine = new[]
 			{
 				mResources.combine
 			};
 		else
-			boxCombine = new string[][]
+			boxCombine = new[]
 			{
 				mResources.combine, mResources.inventory
 			};
@@ -1327,6 +2170,9 @@ public class Panel : IActionListener, IChatable
 
 	public void updateKey()
 	{
+		if ((tabIcon == null || !tabIcon.isShow) && !isClose && isShow && !cmdClose.isPointerPressInside())
+			GameEvents.OnUpdateTouchPanel(this);
+
 		if (chatTField != null && chatTField.isShow || !GameCanvas.panel.isDoneCombine || InfoDlg.isShow)
 			return;
 		if (tabIcon != null && tabIcon.isShow)
@@ -2193,6 +3039,10 @@ public class Panel : IActionListener, IChatable
 
 	internal void updateKeyInTabBar()
 	{
+		if (GameEvents.OnPanelUpdateKeyInTabBar(this))
+		{
+			return;
+		}
 		if (scroll != null && scroll.pointerIsDowning || pointerIsDowning)
 			return;
 		int num = currentTabIndex;
@@ -2891,6 +3741,149 @@ public class Panel : IActionListener, IChatable
 
 	public void paint(mGraphics g)
 	{
+		if (!GameEvents.OnPaintPanel(this, g))
+		{
+			g.translate(-g.getTranslateX(), -g.getTranslateY() + mGraphics.addYWhenOpenKeyBoard);
+			g.translate(-cmx, 0);
+			g.translate(X, Y);
+			if (GameCanvas.panel.combineSuccess != -1)
+			{
+				if (Equals(GameCanvas.panel))
+					paintCombineEff(g);
+				return;
+			}
+			GameCanvas.paintz.paintFrameSimple(X, Y, W, H, g);
+			try
+			{
+				paintTopInfo(g);
+			}
+			catch (Exception)
+			{
+			}
+			paintBottomMoneyInfo(g);
+			paintTab(g);
+			switch (type)
+			{
+			case 9:
+				paintArchivement(g);
+				break;
+			case 21:
+				if (currentTabIndex == 0)
+					paintPetInventory(g);
+				if (currentTabIndex == 1)
+					paintPetStatus(g);
+				if (currentTabIndex == 2)
+					paintInventory(g);
+				break;
+			case 24:
+				paintGameSubInfo(g);
+				break;
+			case 23:
+				paintGameInfo(g);
+				break;
+			case 0:
+				if (currentTabIndex == 0)
+					paintTask(g);
+				if (currentTabIndex == 1)
+					paintInventory(g);
+				if (currentTabIndex == 2)
+					paintSkill(g);
+				if (currentTabIndex == 3)
+				{
+					if (mainTabName.Length == 4)
+						paintTools(g);
+					else
+						paintClans(g);
+				}
+				if (currentTabIndex == 4)
+					paintTools(g);
+				break;
+			case 2:
+				if (currentTabIndex == 0)
+					paintBox(g);
+				if (currentTabIndex == 1)
+					paintInventory(g);
+				break;
+			case 3:
+				paintZone(g);
+				break;
+			case 1:
+				paintShop(g);
+				break;
+			case 25:
+				paintSpeacialSkill(g);
+				break;
+			case 4:
+				paintMap(g);
+				break;
+			case 7:
+				paintInventory(g);
+				break;
+			case 17:
+				paintShop(g);
+				break;
+			case 8:
+				paintLogChat(g);
+				break;
+			case 10:
+				paintPlayerMenu(g);
+				break;
+			case 11:
+				paintFriend(g);
+				break;
+			case 16:
+				paintEnemy(g);
+				break;
+			case 15:
+				paintTop(g);
+				break;
+			case 12:
+				if (currentTabIndex == 0)
+					paintCombine(g);
+				if (currentTabIndex == 1)
+					paintInventory(g);
+				break;
+			case 13:
+				if (currentTabIndex == 0)
+				{
+					if (Equals(GameCanvas.panel))
+						paintInventory(g);
+					else
+						paintGiaoDich(g, false);
+				}
+				if (currentTabIndex == 1)
+					paintGiaoDich(g, true);
+				if (currentTabIndex == 2)
+					paintGiaoDich(g, false);
+				break;
+			case 14:
+				paintMapTrans(g);
+				break;
+			case 18:
+				paintFlagChange(g);
+				break;
+			case 19:
+				paintOption(g);
+				break;
+			case 20:
+				paintAccount(g);
+				break;
+			case 22:
+				paintAuto(g);
+				break;
+			}
+			GameEvents.OnAfterPaintPanel(this, g);
+			GameScr.resetTranslate(g);
+			paintDetail(g);
+			if (cmx == cmtoX && !GameCanvas.menu.showMenu)
+				cmdClose.paint(g);
+			if (tabIcon != null && tabIcon.isShow)
+				tabIcon.paint(g);
+			g.translate(-g.getTranslateX(), -g.getTranslateY());
+			g.translate(X, Y);
+			g.translate(-cmx, 0);
+		}
+		
 		g.translate(-g.getTranslateX(), -g.getTranslateY() + mGraphics.addYWhenOpenKeyBoard);
 		g.translate(-cmx, 0);
 		g.translate(X, Y);
@@ -3021,15 +4014,16 @@ public class Panel : IActionListener, IChatable
 			break;
 		}
 		//moved to Panel_paint_hook
-		//GameScr.resetTranslate(g);
-		//paintDetail(g);
-		//if (cmx == cmtoX && !GameCanvas.menu.showMenu)
-		//	cmdClose.paint(g);
-		//if (tabIcon != null && tabIcon.isShow)
-		//	tabIcon.paint(g);
-		//g.translate(-g.getTranslateX(), -g.getTranslateY());
-		//g.translate(X, Y);
-		//g.translate(-cmx, 0);
+		GameEvents.OnAfterPaintPanel(this, g);
+		GameScr.resetTranslate(g);
+		paintDetail(g);
+		if (cmx == cmtoX && !GameCanvas.menu.showMenu)
+			cmdClose.paint(g);
+		if (tabIcon != null && tabIcon.isShow)
+			tabIcon.paint(g);
+		g.translate(-g.getTranslateX(), -g.getTranslateY());
+		g.translate(X, Y);
+		g.translate(-cmx, 0);
 	}
 
 	internal void paintShop(mGraphics g)
@@ -4822,6 +5816,10 @@ public class Panel : IActionListener, IChatable
 
 	internal void paintToolInfo(mGraphics g)
 	{
+		if (GameEvents.OnPanelPaintToolInfo(g))
+		{
+			return;
+		}
 		mFont.tahoma_7b_white.drawString(g, mResources.dragon_ball + " " + GameMidlet.VERSION, 60, 4, mFont.LEFT, mFont.tahoma_7b_dark);
 		mFont.tahoma_7_yellow.drawString(g, mResources.character + ": " + Char.myCharz().cName, 60, 16, mFont.LEFT, mFont.tahoma_7_grey);
 		string text = !GameCanvas.loginScr.tfUser.getText().Equals(string.Empty) ? GameCanvas.loginScr.tfUser.getText() : mResources.not_register_yet;
@@ -5709,6 +6707,10 @@ public class Panel : IActionListener, IChatable
 
 	public void update()
 	{
+		if (GameEvents.OnUpdatePanel(this))
+		{
+			return;
+		}
 		if (chatTField != null && chatTField.isShow)
 		{
 			chatTField.update();
@@ -6262,6 +7264,10 @@ public class Panel : IActionListener, IChatable
 
 	internal void doFireTool()
 	{
+		if (GameEvents.OnPanelFireTool(this))
+		{
+			return;
+		}
 		if (selected < 0)
 			return;
 		if (SoundMn.IsDelAcc && selected == strTool.Length - 1)
@@ -6447,6 +7453,21 @@ public class Panel : IActionListener, IChatable
 		InfoDlg.showWait();
 		Service.gI().petInfo();
 		timeShow = 20;
+		if (GameCanvas.w > 2 * WIDTH_PANEL)
+		{
+			GameCanvas.panel2 = new Panel();
+			GameCanvas.panel2.tabName[7] = new string[1][] { new string[1] { string.Empty } };
+			GameCanvas.panel2.setTypeBodyOnly();
+			GameCanvas.panel2.show();
+			GameCanvas.panel.setTypePetMain();
+			GameCanvas.panel.show();
+		}
+		else
+		{
+			GameCanvas.panel.tabName[21] = mResources.petMainTab;
+			GameCanvas.panel.setTypePetMain();
+			GameCanvas.panel.show();
+		}
 	}
 
 	internal void searchClan()
@@ -6630,87 +7651,73 @@ public class Panel : IActionListener, IChatable
 
 	internal void doFireClanOption()
 	{
-		try
+		partID = null;
+		charInfo = null;
+		Res.outz("cSelect= " + cSelected);
+		if (selected < 0)
 		{
-			partID = null;
-			charInfo = null;
-			Res.outz("cSelect= " + cSelected);
-			if (selected < 0)
+			cSelected = -1;
+			return;
+		}
+		if (Char.myCharz().clan == null)
+		{
+			if (selected == 0)
 			{
-				cSelected = -1;
-				return;
-			}
-			if (Char.myCharz().clan == null)
-			{
-				if (selected == 0)
+				if (cSelected == 0)
+					searchClan();
+				else if (cSelected == 1)
 				{
-					if (cSelected == 0)
-						searchClan();
-					else if (cSelected == 1)
+					InfoDlg.showWait();
+					creatClan();
+					Service.gI().getClan(1, -1, null);
+				}
+			}
+			else if (selected != -1)
+			{
+				if (selected == 1)
+				{
+					if (isSearchClan)
+						Service.gI().searchClan(string.Empty);
+					else if (isViewMember && currClan != null)
 					{
-						InfoDlg.showWait();
-						creatClan();
-						Service.gI().getClan(1, -1, null);
+						GameCanvas.startYesNoDlg(mResources.do_u_want_join_clan + currClan.name, new Command(mResources.YES, this, 4000, currClan), new Command(mResources.NO, this, 4005, currClan));
 					}
 				}
-				else if (selected != -1)
+				else if (isSearchClan)
 				{
-					if (selected == 1)
+					currClan = getCurrClan();
+					if (currClan != null)
 					{
-						if (isSearchClan)
-							Service.gI().searchClan(string.Empty);
-						else if (isViewMember && currClan != null)
-						{
-							GameCanvas.startYesNoDlg(mResources.do_u_want_join_clan + currClan.name, new Command(mResources.YES, this, 4000, currClan), new Command(mResources.NO, this, 4005, currClan));
-						}
+						MyVector myVector = new MyVector();
+						myVector.addElement(new Command(mResources.request_join_clan, this, 4000, currClan));
+						myVector.addElement(new Command(mResources.view_clan_member, this, 4001, currClan));
+						GameCanvas.menu.startAt(myVector, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+						addClanDetail(getCurrClan());
 					}
-					else if (isSearchClan)
+				}
+				else if (isViewMember)
+				{
+					currMem = getCurrMember();
+					if (currMem != null)
 					{
-						currClan = getCurrClan();
-						if (currClan != null)
-						{
-							MyVector myVector = new MyVector();
-							myVector.addElement(new Command(mResources.request_join_clan, this, 4000, currClan));
-							myVector.addElement(new Command(mResources.view_clan_member, this, 4001, currClan));
-							GameCanvas.menu.startAt(myVector, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-							addClanDetail(getCurrClan());
-						}
-					}
-					else if (isViewMember)
-					{
-						currMem = getCurrMember();
-						if (currMem != null)
-						{
-							MyVector myVector2 = new MyVector();
-							myVector2.addElement(new Command(mResources.CLOSE, this, 8000, currClan));
-							GameCanvas.menu.startAt(myVector2, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-							GameCanvas.menu.startAt(myVector2, 0, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-							addClanMemberDetail(currMem);
-						}
+						MyVector myVector2 = new MyVector();
+						myVector2.addElement(new Command(mResources.CLOSE, this, 8000, currClan));
+						GameCanvas.menu.startAt(myVector2, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+						GameCanvas.menu.startAt(myVector2, 0, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+						addClanMemberDetail(currMem);
 					}
 				}
 			}
-			else if (selected == 0)
+		}
+		else if (selected == 0)
+		{
+			if (isMessage)
 			{
-				if (isMessage)
+				if (cSelected == 0)
 				{
-					if (cSelected == 0)
-					{
-						if (myMember.size() > 1)
-							chatClan();
-						else
-						{
-							member = null;
-							isSearchClan = false;
-							isViewMember = true;
-							isMessage = false;
-							currentListLength = myMember.size() + 2;
-							initTabClans();
-						}
-					}
-					if (cSelected == 1)
-						Service.gI().clanMessage(1, null, -1);
-					if (cSelected == 2)
+					if (myMember.size() > 1)
+						chatClan();
+					else
 					{
 						member = null;
 						isSearchClan = false;
@@ -6718,130 +7725,137 @@ public class Panel : IActionListener, IChatable
 						isMessage = false;
 						currentListLength = myMember.size() + 2;
 						initTabClans();
-						getCurrClanOtion();
 					}
 				}
-				else if (isViewMember)
+				if (cSelected == 1)
+					Service.gI().clanMessage(1, null, -1);
+				if (cSelected == 2)
 				{
-					if (cSelected == 0)
-					{
-						isSearchClan = false;
-						isViewMember = false;
-						isMessage = true;
-						currentListLength = ClanMessage.vMessage.size() + 2;
-						initTabClans();
-					}
-					if (cSelected == 1)
-					{
-						if (myMember.size() > 1)
-							Service.gI().leaveClan();
-						else
-							chagenSlogan();
-					}
-					if (cSelected == 2)
-					{
-						if (myMember.size() > 1)
-							chagenSlogan();
-						else
-							Service.gI().getClan(3, -1, null);
-					}
-					if (cSelected == 3)
-						Service.gI().getClan(3, -1, null);
-				}
-			}
-			else if (selected == 1)
-			{
-				if (isSearchClan)
-					Service.gI().searchClan(string.Empty);
-			}
-			else if (isSearchClan)
-			{
-				currClan = getCurrClan();
-				if (currClan != null)
-				{
-					MyVector myVector3 = new MyVector();
-					myVector3.addElement(new Command(mResources.view_clan_member, this, 4001, currClan));
-					GameCanvas.menu.startAt(myVector3, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-					addClanDetail(getCurrClan());
+					member = null;
+					isSearchClan = false;
+					isViewMember = true;
+					isMessage = false;
+					currentListLength = myMember.size() + 2;
+					initTabClans();
+					getCurrClanOtion();
 				}
 			}
 			else if (isViewMember)
 			{
-				Res.outz("TOI DAY 1");
-				currMem = getCurrMember();
-				if (currMem != null)
+				if (cSelected == 0)
 				{
-					MyVector myVector4 = new MyVector();
-					Res.outz("TOI DAY 2");
-					if (member != null)
-					{
-						myVector4.addElement(new Command(mResources.CLOSE, this, 8000, null));
-						Res.outz("TOI DAY 3");
-					}
-					else if (myMember != null)
-					{
-						Res.outz("TOI DAY 4");
-						Res.outz("my role= " + Char.myCharz().role);
-						if (Char.myCharz().charID == currMem.ID || Char.myCharz().role == 2)
-							myVector4.addElement(new Command(mResources.CLOSE, this, 8000, currMem));
-						if (Char.myCharz().role < 2 && Char.myCharz().charID != currMem.ID)
-						{
-							Res.outz("TOI DAY");
-							if (currMem.role == 0 || currMem.role == 1)
-								myVector4.addElement(new Command(mResources.CLOSE, this, 8000, currMem));
-							if (currMem.role == 2)
-								myVector4.addElement(new Command(mResources.create_clan_co_leader, this, 5002, currMem));
-							if (Char.myCharz().role == 0)
-							{
-								myVector4.addElement(new Command(mResources.create_clan_leader, this, 5001, currMem));
-								if (currMem.role == 1)
-									myVector4.addElement(new Command(mResources.disable_clan_mastership, this, 5003, currMem));
-							}
-						}
-						if (Char.myCharz().role < currMem.role)
-							myVector4.addElement(new Command(mResources.kick_clan_mem, this, 5004, currMem));
-					}
-					GameCanvas.menu.startAt(myVector4, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-					addClanMemberDetail(currMem);
+					isSearchClan = false;
+					isViewMember = false;
+					isMessage = true;
+					currentListLength = ClanMessage.vMessage.size() + 2;
+					initTabClans();
 				}
-			}
-			else if (isMessage)
-			{
-				currMess = getCurrMessage();
-				if (currMess != null)
+				if (cSelected == 1)
 				{
-					if (currMess.type == 0)
-					{
-						MyVector myVector5 = new MyVector();
-						myVector5.addElement(new Command(mResources.CLOSE, this, 8000, currMess));
-						GameCanvas.menu.startAt(myVector5, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
-						addMessageDetail(currMess);
-					}
-					else if (currMess.type == 1)
-					{
-						if (currMess.playerId != Char.myCharz().charID && cSelected != -1)
-							Service.gI().clanDonate(currMess.id);
-					}
-					else if (currMess.type == 2 && currMess.option != null)
-					{
-						if (cSelected == 0)
-							Service.gI().joinClan(currMess.id, 1);
-						else if (cSelected == 1)
-						{
-							Service.gI().joinClan(currMess.id, 0);
-						}
-					}
+					if (myMember.size() > 1)
+						Service.gI().leaveClan();
+					else
+						chagenSlogan();
 				}
-			}
-			if (GameCanvas.isTouch)
-			{
-				cSelected = -1;
-				selected = -1;
+				if (cSelected == 2)
+				{
+					if (myMember.size() > 1)
+						chagenSlogan();
+					else
+						Service.gI().getClan(3, -1, null);
+				}
+				if (cSelected == 3)
+					Service.gI().getClan(3, -1, null);
 			}
 		}
-		catch (Exception)
+		else if (selected == 1)
 		{
-			throw;
+			if (isSearchClan)
+				Service.gI().searchClan(string.Empty);
+		}
+		else if (isSearchClan)
+		{
+			currClan = getCurrClan();
+			if (currClan != null)
+			{
+				MyVector myVector3 = new MyVector();
+				myVector3.addElement(new Command(mResources.view_clan_member, this, 4001, currClan));
+				GameCanvas.menu.startAt(myVector3, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+				addClanDetail(getCurrClan());
+			}
+		}
+		else if (isViewMember)
+		{
+			Res.outz("TOI DAY 1");
+			currMem = getCurrMember();
+			if (currMem != null)
+			{
+				MyVector myVector4 = new MyVector();
+				Res.outz("TOI DAY 2");
+				if (member != null)
+				{
+					myVector4.addElement(new Command(mResources.CLOSE, this, 8000, null));
+					Res.outz("TOI DAY 3");
+				}
+				else if (myMember != null)
+				{
+					Res.outz("TOI DAY 4");
+					Res.outz("my role= " + Char.myCharz().role);
+					if (Char.myCharz().charID == currMem.ID || Char.myCharz().role == 2)
+						myVector4.addElement(new Command(mResources.CLOSE, this, 8000, currMem));
+					if (Char.myCharz().role < 2 && Char.myCharz().charID != currMem.ID)
+					{
+						Res.outz("TOI DAY");
+						if (currMem.role == 0 || currMem.role == 1)
+							myVector4.addElement(new Command(mResources.CLOSE, this, 8000, currMem));
+						if (currMem.role == 2)
+							myVector4.addElement(new Command(mResources.create_clan_co_leader, this, 5002, currMem));
+						if (Char.myCharz().role == 0)
+						{
+							myVector4.addElement(new Command(mResources.create_clan_leader, this, 5001, currMem));
+							if (currMem.role == 1)
+								myVector4.addElement(new Command(mResources.disable_clan_mastership, this, 5003, currMem));
+						}
+					}
+					if (Char.myCharz().role < currMem.role)
+						myVector4.addElement(new Command(mResources.kick_clan_mem, this, 5004, currMem));
+				}
+				GameCanvas.menu.startAt(myVector4, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+				addClanMemberDetail(currMem);
+			}
+		}
+		else if (isMessage)
+		{
+			currMess = getCurrMessage();
+			if (currMess != null)
+			{
+				if (currMess.type == 0)
+				{
+					MyVector myVector5 = new MyVector();
+					myVector5.addElement(new Command(mResources.CLOSE, this, 8000, currMess));
+					GameCanvas.menu.startAt(myVector5, X, (selected + 1) * ITEM_HEIGHT - cmy + yScroll);
+					addMessageDetail(currMess);
+				}
+				else if (currMess.type == 1)
+				{
+					if (currMess.playerId != Char.myCharz().charID && cSelected != -1)
+						Service.gI().clanDonate(currMess.id);
+				}
+				else if (currMess.type == 2 && currMess.option != null)
+				{
+					if (cSelected == 0)
+						Service.gI().joinClan(currMess.id, 1);
+					else if (cSelected == 1)
+					{
+						Service.gI().joinClan(currMess.id, 0);
+					}
+				}
+			}
+		}
+		if (GameCanvas.isTouch)
+		{
+			cSelected = -1;
+			selected = -1;
 		}
 	}
 
@@ -6987,9 +8001,9 @@ public class Panel : IActionListener, IChatable
 					GameCanvas.startOKDlg(mResources.not_enough_potential_point1 + NinjaUtil.getMoneys(Char.myCharz().cTiemNang) + mResources.not_enough_potential_point2 + NinjaUtil.getMoneys(50000 + Char.myCharz().cDefGoc * 1000));
 					return;
 				}
-				long number = (long)(2 * (cDefGoc + 5)) / 2L * 100000;
-				long number2 = 10L * (long)(2 * (cDefGoc + 5) + 9) / 2 * 100000;
-				long number3 = 100L * (long)(2 * (cDefGoc + 5) + 99) / 2 * 100000;
+				long number = 2 * (cDefGoc + 5) / 2L * 100000;
+				long number2 = 10L * (2 * (cDefGoc + 5) + 9) / 2 * 100000;
+				long number3 = 100L * (2 * (cDefGoc + 5) + 99) / 2 * 100000;
 				mResources.use_potential_point_for1 = mResources.increase_upper;
 				MyVector myVector7 = new MyVector(string.Empty);
 				myVector7.addElement(new Command(mResources.use_potential_point_for1 + "\n1 " + mResources.armor + "\n" + Res.formatNumber2(number), this, 9000, null));
@@ -7212,711 +8226,6 @@ public class Panel : IActionListener, IChatable
 		itemObject.type = type;
 		itemObject.id = id;
 		GameCanvas.startYesNoDlg(info, new Command(mResources.YES, this, 3003, itemObject), new Command(mResources.NO, this, 4005, null));
-	}
-
-	public void perform(int idAction, object p)
-	{
-		if (idAction == 9999)
-		{
-			TopInfo topInfo = (TopInfo)p;
-			Service.gI().sendThachDau(topInfo.pId);
-		}
-		if (idAction == 170391)
-		{
-			Rms.clearAll();
-			if (mGraphics.zoomLevel > 1)
-				Rms.saveRMSInt("levelScreenKN", 1);
-			else
-				Rms.saveRMSInt("levelScreenKN", 0);
-			GameMidlet.instance.exit();
-		}
-		if (idAction == 6001)
-		{
-			Item item = (Item)p;
-			item.isSelect = false;
-			GameCanvas.panel.vItemCombine.removeElement(item);
-			if (GameCanvas.panel.currentTabIndex == 0)
-				GameCanvas.panel.setTabCombine();
-		}
-		if (idAction == 6000)
-		{
-			Item item2 = (Item)p;
-			for (int i = 0; i < GameCanvas.panel.vItemCombine.size(); i++)
-			{
-				if (((Item)GameCanvas.panel.vItemCombine.elementAt(i)).template.id == item2.template.id)
-				{
-					GameCanvas.startOKDlg(mResources.already_has_item);
-					return;
-				}
-			}
-			item2.isSelect = true;
-			GameCanvas.panel.vItemCombine.addElement(item2);
-			if (GameCanvas.panel.currentTabIndex == 0)
-				GameCanvas.panel.setTabCombine();
-		}
-		if (idAction == 7000)
-		{
-			if (isLock)
-			{
-				GameCanvas.startOKDlg(mResources.unlock_item_to_trade);
-				return;
-			}
-			Item item3 = (Item)p;
-			for (int j = 0; j < GameCanvas.panel.vMyGD.size(); j++)
-			{
-				if (((Item)GameCanvas.panel.vMyGD.elementAt(j)).indexUI == item3.indexUI)
-				{
-					GameCanvas.startOKDlg(mResources.already_has_item);
-					return;
-				}
-			}
-			if (item3.quantity > 1)
-			{
-				putQuantily();
-				return;
-			}
-			item3.isSelect = true;
-			Item item4 = new Item();
-			item4.template = item3.template;
-			item4.itemOption = item3.itemOption;
-			item4.indexUI = item3.indexUI;
-			GameCanvas.panel.vMyGD.addElement(item4);
-			Service.gI().giaodich(2, -1, (sbyte)item4.indexUI, item4.quantity);
-		}
-		if (idAction == 7001)
-		{
-			Item item5 = (Item)p;
-			item5.isSelect = false;
-			GameCanvas.panel.vMyGD.removeElement(item5);
-			if (GameCanvas.panel.currentTabIndex == 1)
-				GameCanvas.panel.setTabGiaoDich(true);
-			Service.gI().giaodich(4, -1, (sbyte)item5.indexUI, -1);
-		}
-		if (idAction == 7002)
-		{
-			isAccept = true;
-			GameCanvas.endDlg();
-			Service.gI().giaodich(7, -1, -1, -1);
-			hide();
-		}
-		if (idAction == 8003)
-		{
-			InfoItem infoItem = (InfoItem)p;
-			Service.gI().friend(1, infoItem.charInfo.charID);
-			if (type != 8)
-				;
-		}
-		if (idAction == 8002)
-		{
-			InfoItem infoItem2 = (InfoItem)p;
-			Service.gI().friend(2, infoItem2.charInfo.charID);
-		}
-		if (idAction == 8004)
-		{
-			InfoItem infoItem3 = (InfoItem)p;
-			Service.gI().gotoPlayer(infoItem3.charInfo.charID);
-		}
-		if (idAction == 8001)
-		{
-			Res.outz("chat player");
-			InfoItem infoItem4 = (InfoItem)p;
-			if (chatTField == null)
-			{
-				chatTField = new ChatTextField();
-				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
-				chatTField.initChatTextField();
-				chatTField.parentScreen = GameCanvas.panel;
-			}
-			chatTField.strChat = mResources.chat_player;
-			chatTField.tfChat.name = mResources.chat_with + " " + infoItem4.charInfo.cName;
-			chatTField.to = string.Empty;
-			chatTField.isShow = true;
-			chatTField.tfChat.isFocus = true;
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-			if (Main.isWindowsPhone)
-				chatTField.tfChat.strInfo = chatTField.strChat;
-			if (!Main.isPC)
-				chatTField.startChat2(this, string.Empty);
-		}
-		if (idAction == 1000)
-			Service.gI().getItem(BOX_BAG, (sbyte)GetInventorySelect_body(selected, newSelected));
-		if (idAction == 1001)
-		{
-			sbyte id = (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
-			Service.gI().getItem(BAG_BOX, id);
-		}
-		if (idAction == 1003)
-			hide();
-		if (idAction == 1002)
-			Service.gI().getItem(BODY_BOX, (sbyte)GetInventorySelect_body(selected, newSelected));
-		if (idAction == 2011)
-			Service.gI().useItem(1, 2, (sbyte)GetInventorySelect_body(selected, newSelected), -1);
-		if (idAction == 2010)
-		{
-			Service.gI().useItem(0, 2, (sbyte)GetInventorySelect_body(selected, newSelected), -1);
-			Item item6 = (Item)p;
-			if (item6 != null && (item6.template.id == 193 || item6.template.id == 194))
-				GameCanvas.panel.hide();
-		}
-		if (idAction == 2000)
-		{
-			Item[] arrItemBody = Char.myCharz().arrItemBody;
-			sbyte id2 = (sbyte)GetInventorySelect_bag(selected, newSelected, arrItemBody);
-			if (isnewInventory)
-				id2 = (sbyte)currItem.indexUI;
-			Service.gI().getItem(BAG_BODY, id2);
-		}
-		if (idAction == 2001)
-		{
-			Res.outz("use item");
-			Item item7 = (Item)p;
-			bool inventorySelect_isbody = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
-			sbyte b = 0;
-			b = inventorySelect_isbody ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
-			if (isnewInventory)
-			{
-				b = (sbyte)currItem.indexUI;
-				// Use sellectInventory to determine if body or bag item
-				sbyte where = (sbyte)(sellectInventory < Char.myCharz().arrItemBody.Length ? 0 : 1);
-				Service.gI().useItem(0, where, b, -1);
-			}
-			else
-				Service.gI().useItem(0, !inventorySelect_isbody ? (sbyte)1 : (sbyte)0, b, -1);
-			if (item7.template.id == 193 || item7.template.id == 194)
-				GameCanvas.panel.hide();
-		}
-		if (idAction == 2002)
-		{
-			if (isnewInventory)
-				Service.gI().getItem(BODY_BAG, (sbyte)sellectInventory);
-			else
-				Service.gI().getItem(BODY_BAG, (sbyte)GetInventorySelect_body(selected, newSelected));
-		}
-		if (idAction == 2003)
-		{
-			Res.outz("remove item");
-			bool inventorySelect_isbody2 = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
-			sbyte b2 = 0;
-			b2 = inventorySelect_isbody2 ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
-			Service.gI().useItem(1, !inventorySelect_isbody2 ? (sbyte)1 : (sbyte)0, b2, -1);
-		}
-		if (idAction == 2004)
-		{
-			GameCanvas.endDlg();
-			ItemObject itemObject = (ItemObject)p;
-			sbyte where2 = (sbyte)itemObject.where;
-			sbyte index = (sbyte)itemObject.id;
-			Service.gI().useItem((sbyte)(itemObject.type != 0 ? 2 : 3), where2, index, -1);
-		}
-		if (idAction == 2005)
-		{
-			sbyte id3 = (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
-			Service.gI().getItem(BAG_PET, id3);
-		}
-		if (idAction == 2006)
-		{
-			Item[] arrItemBody2 = Char.myPetz().arrItemBody;
-			sbyte id4 = (sbyte)selected;
-			Service.gI().getItem(PET_BAG, id4);
-		}
-		if (idAction == 30001)
-		{
-			Res.outz("nhan do");
-			Service.gI().buyItem(0, selected, 0);
-		}
-		if (idAction == 30002)
-		{
-			Res.outz("xoa do");
-			Service.gI().buyItem(1, selected, 0);
-		}
-		if (idAction == 30003)
-		{
-			Res.outz("nhan tat");
-			Service.gI().buyItem(2, selected, 0);
-		}
-		if (idAction == 3000)
-		{
-			Res.outz("mua do");
-			Item item8 = (Item)p;
-			Service.gI().buyItem(0, item8.template.id, 0);
-		}
-		if (idAction == 3001)
-		{
-			Item item9 = (Item)p;
-			GameCanvas.msgdlg.pleasewait();
-			Service.gI().buyItem(1, item9.template.id, 0);
-		}
-		if (idAction == 3002)
-		{
-			GameCanvas.endDlg();
-			bool inventorySelect_isbody3 = GetInventorySelect_isbody(selected, newSelected, Char.myCharz().arrItemBody);
-			sbyte b3 = 0;
-			b3 = inventorySelect_isbody3 ? (sbyte)GetInventorySelect_body(selected, newSelected) : (sbyte)GetInventorySelect_bag(selected, newSelected, Char.myCharz().arrItemBody);
-			Service.gI().saleItem(0, !inventorySelect_isbody3 ? (sbyte)1 : (sbyte)0, b3);
-		}
-		if (idAction == 3003)
-		{
-			GameCanvas.endDlg();
-			ItemObject itemObject2 = (ItemObject)p;
-			Service.gI().saleItem(1, (sbyte)itemObject2.type, (short)itemObject2.id);
-		}
-		if (idAction == 3004)
-		{
-			Item item10 = (Item)p;
-			Service.gI().buyItem(3, item10.template.id, 0);
-		}
-		if (idAction == 3005)
-		{
-			Res.outz("mua do");
-			Item item11 = (Item)p;
-			Service.gI().buyItem(3, item11.template.id, 0);
-		}
-		if (idAction == 4000)
-		{
-			Clan clan = (Clan)p;
-			if (clan != null)
-			{
-				GameCanvas.endDlg();
-				Service.gI().clanMessage(2, null, clan.ID);
-			}
-		}
-		if (idAction == 4001)
-		{
-			Clan clan2 = (Clan)p;
-			if (clan2 != null)
-			{
-				InfoDlg.showWait();
-				clanReport = mResources.PLEASEWAIT;
-				Service.gI().clanMember(clan2.ID);
-			}
-		}
-		if (idAction == 4005)
-			GameCanvas.endDlg();
-		if (idAction == 4007)
-			GameCanvas.endDlg();
-		if (idAction == 4006)
-		{
-			ClanMessage clanMessage = (ClanMessage)p;
-			Service.gI().clanDonate(clanMessage.id);
-		}
-		if (idAction == 5001)
-		{
-			Member member = (Member)p;
-			Service.gI().clanRemote(member.ID, 0);
-		}
-		if (idAction == 5002)
-		{
-			Member member2 = (Member)p;
-			Service.gI().clanRemote(member2.ID, 1);
-		}
-		if (idAction == 5003)
-		{
-			Member member3 = (Member)p;
-			Service.gI().clanRemote(member3.ID, 2);
-		}
-		if (idAction == 5004)
-		{
-			Member member4 = (Member)p;
-			Service.gI().clanRemote(member4.ID, -1);
-		}
-		if (idAction == 9000)
-		{
-			Service.gI().upPotential(selected, 1);
-			GameCanvas.endDlg();
-			InfoDlg.showWait();
-		}
-		if (idAction == 9006)
-		{
-			Service.gI().upPotential(selected, 10);
-			GameCanvas.endDlg();
-			InfoDlg.showWait();
-		}
-		if (idAction == 9007)
-		{
-			Service.gI().upPotential(selected, 100);
-			GameCanvas.endDlg();
-			InfoDlg.showWait();
-		}
-		if (idAction == 9002)
-		{
-			Skill skill = (Skill)p;
-			if (skill.template.isSkillSpec())
-				GameCanvas.startOKDlg(mResources.updSkill);
-			else
-				GameCanvas.startOKDlg(mResources.can_buy_from_Uron1 + skill.powRequire + mResources.can_buy_from_Uron2 + skill.moreInfo + mResources.can_buy_from_Uron3);
-		}
-		if (idAction == 9003)
-		{
-			if (GameCanvas.isTouch && !Main.isPC)
-				GameScr.gI().doSetOnScreenSkill((SkillTemplate)p);
-			else
-				GameScr.gI().doSetKeySkill((SkillTemplate)p);
-		}
-		if (idAction == 9004)
-		{
-			Skill skill2 = (Skill)p;
-			if (skill2.template.isSkillSpec())
-				GameCanvas.startOKDlg(mResources.learnSkill);
-			else
-				GameCanvas.startOKDlg(mResources.can_buy_from_Uron1 + skill2.powRequire + mResources.can_buy_from_Uron2 + skill2.moreInfo + mResources.can_buy_from_Uron3);
-		}
-		if (idAction == 10000)
-		{
-			InfoItem infoItem5 = (InfoItem)p;
-			Service.gI().enemy(1, infoItem5.charInfo.charID);
-			GameCanvas.panel.hideNow();
-		}
-		if (idAction == 10001)
-		{
-			InfoItem infoItem6 = (InfoItem)p;
-			Service.gI().enemy(2, infoItem6.charInfo.charID);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10021)
-			;
-		if (idAction == 10012)
-		{
-			if (chatTField == null)
-			{
-				chatTField = new ChatTextField();
-				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
-				chatTField.initChatTextField();
-				chatTField.parentScreen = GameCanvas.panel2 != null ? GameCanvas.panel2 : GameCanvas.panel;
-			}
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
-			chatTField.tfChat.setText(string.Empty);
-			if (currItem.quantity == 1)
-			{
-				chatTField.strChat = mResources.kiguiXuchat;
-				chatTField.tfChat.name = mResources.input_money;
-			}
-			else
-			{
-				chatTField.strChat = mResources.input_quantity + " ";
-				chatTField.tfChat.name = mResources.input_quantity;
-			}
-			chatTField.tfChat.setMaxTextLenght(10);
-			chatTField.to = string.Empty;
-			chatTField.isShow = true;
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
-			if (GameCanvas.isTouch)
-				chatTField.tfChat.doChangeToTextBox();
-			if (Main.isWindowsPhone)
-				chatTField.tfChat.strInfo = chatTField.strChat;
-			if (!Main.isPC)
-				chatTField.startChat2(this, string.Empty);
-		}
-		if (idAction == 10013)
-		{
-			if (chatTField == null)
-			{
-				chatTField = new ChatTextField();
-				chatTField.tfChat.y = GameCanvas.h - 35 - ChatTextField.gI().tfChat.height;
-				chatTField.initChatTextField();
-				chatTField.parentScreen = GameCanvas.panel2 != null ? GameCanvas.panel2 : GameCanvas.panel;
-			}
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
-			chatTField.tfChat.setText(string.Empty);
-			if (currItem.quantity == 1)
-			{
-				chatTField.strChat = mResources.kiguiLuongchat;
-				chatTField.tfChat.name = mResources.input_money;
-			}
-			else
-			{
-				chatTField.strChat = mResources.input_quantity + "  ";
-				chatTField.tfChat.name = mResources.input_quantity;
-			}
-			chatTField.to = string.Empty;
-			chatTField.isShow = true;
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
-			if (GameCanvas.isTouch)
-				chatTField.tfChat.doChangeToTextBox();
-			if (Main.isWindowsPhone)
-				chatTField.tfChat.strInfo = chatTField.strChat;
-			if (!Main.isPC)
-				chatTField.startChat2(this, string.Empty);
-		}
-		if (idAction == 10014)
-		{
-			Item item12 = (Item)p;
-			Service.gI().kigui(1, item12.itemId, -1, -1, -1);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10015)
-		{
-			Item item13 = (Item)p;
-			Service.gI().kigui(2, item13.itemId, -1, -1, -1);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10016)
-		{
-			Item item14 = (Item)p;
-			Service.gI().kigui(3, item14.itemId, 0, item14.buyCoin, -1);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10017)
-		{
-			Item item15 = (Item)p;
-			Service.gI().kigui(3, item15.itemId, 1, item15.buyGold, -1);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10018)
-		{
-			Item item16 = (Item)p;
-			Service.gI().kigui(5, item16.itemId, -1, -1, -1);
-			InfoDlg.showWait();
-		}
-		if (idAction == 10019)
-		{
-			Session_ME.gI().close();
-			Rms.saveRMSString("acc", string.Empty);
-			Rms.saveRMSString("pass", string.Empty);
-			GameCanvas.loginScr.tfPass.setText(string.Empty);
-			GameCanvas.loginScr.tfUser.setText(string.Empty);
-			GameCanvas.loginScr.isLogin2 = false;
-			GameCanvas.loginScr.switchToMe();
-			GameCanvas.endDlg();
-			hide();
-		}
-		if (idAction == 10020)
-			GameCanvas.endDlg();
-		if (idAction == 10030)
-		{
-			Service.gI().getFlag(1, (sbyte)selected);
-			GameCanvas.panel.hideNow();
-		}
-		if (idAction == 10031)
-			Session_ME.gI().close();
-		if (idAction == 11000)
-		{
-			Service.gI().kigui(0, currItem.itemId, 1, currItem.buyRuby, 1);
-			GameCanvas.endDlg();
-		}
-		if (idAction == 11001)
-		{
-			Service.gI().kigui(0, currItem.itemId, 1, currItem.buyRuby, currItem.quantilyToBuy);
-			GameCanvas.endDlg();
-		}
-		if (idAction == 11002)
-		{
-			chatTField.isShow = false;
-			GameCanvas.endDlg();
-		}
-	}
-
-	public void onChatFromMe(string text, string to)
-	{
-		if (chatTField.tfChat.getText() == null || chatTField.tfChat.getText().Equals(string.Empty) || text.Equals(string.Empty) || text == null)
-		{
-			chatTField.isShow = false;
-			return;
-		}
-		if (chatTField.strChat.Equals(mResources.input_clan_name))
-		{
-			InfoDlg.showWait();
-			chatTField.isShow = false;
-			Service.gI().searchClan(text);
-			return;
-		}
-		if (chatTField.strChat.Equals(mResources.chat_clan))
-		{
-			InfoDlg.showWait();
-			chatTField.isShow = false;
-			Service.gI().clanMessage(0, text, -1);
-			return;
-		}
-		if (chatTField.strChat.Equals(mResources.input_clan_name_to_create))
-		{
-			if (chatTField.tfChat.getText() == string.Empty)
-			{
-				GameScr.info1.addInfo(mResources.clan_name_blank, 0);
-				return;
-			}
-			if (tabIcon == null)
-				tabIcon = new TabClanIcon();
-			tabIcon.text = chatTField.tfChat.getText();
-			tabIcon.show(false);
-			chatTField.isShow = false;
-			return;
-		}
-		if (chatTField.strChat.Equals(mResources.input_clan_slogan))
-		{
-			if (chatTField.tfChat.getText() == string.Empty)
-			{
-				GameScr.info1.addInfo(mResources.clan_slogan_blank, 0);
-				return;
-			}
-			Service.gI().getClan(4, (sbyte)Char.myCharz().clan.imgID, chatTField.tfChat.getText());
-			chatTField.isShow = false;
-			return;
-		}
-		if (chatTField.strChat.Equals(mResources.input_Inventory_Pass))
-			try
-			{
-				int lockInventory = int.Parse(chatTField.tfChat.getText());
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-				hide();
-				if (chatTField.tfChat.getText().Length != 6 || chatTField.tfChat.getText().Equals(string.Empty))
-					GameCanvas.startOKDlg(mResources.input_Inventory_Pass_wrong);
-				else
-				{
-					Service.gI().setLockInventory(lockInventory);
-					chatTField.isShow = false;
-					chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-					hide();
-				}
-				return;
-			}
-			catch (Exception)
-			{
-				GameCanvas.startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
-				return;
-			}
-		if (chatTField.strChat.Equals(mResources.world_channel_5_luong))
-		{
-			if (!chatTField.tfChat.getText().Equals(string.Empty))
-			{
-				Service.gI().chatGlobal(chatTField.tfChat.getText());
-				chatTField.isShow = false;
-				hide();
-			}
-		}
-		else if (chatTField.strChat.Equals(mResources.chat_player))
-		{
-			chatTField.isShow = false;
-			InfoItem infoItem = null;
-			if (type == 8)
-				infoItem = (InfoItem)logChat.elementAt(currInfoItem);
-			else if (type == 11)
-			{
-				infoItem = (InfoItem)vFriend.elementAt(currInfoItem);
-			}
-			if (infoItem.charInfo.charID != Char.myCharz().charID)
-				Service.gI().chatPlayer(text, infoItem.charInfo.charID);
-		}
-		else if (chatTField.strChat.Equals(mResources.input_quantity_to_trade))
-		{
-			int num = 0;
-			try
-			{
-				num = int.Parse(chatTField.tfChat.getText());
-			}
-			catch (Exception)
-			{
-				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-				return;
-			}
-			if (num <= 0 || num > currItem.quantity)
-			{
-				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-				return;
-			}
-			currItem.isSelect = true;
-			Item item = new Item();
-			item.template = currItem.template;
-			item.quantity = num;
-			item.indexUI = currItem.indexUI;
-			item.itemOption = currItem.itemOption;
-			GameCanvas.panel.vMyGD.addElement(item);
-			Service.gI().giaodich(2, -1, (sbyte)item.indexUI, item.quantity);
-			chatTField.isShow = false;
-			chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-		}
-		else if (chatTField.strChat == mResources.input_money_to_trade)
-		{
-			int num2 = 0;
-			try
-			{
-				num2 = int.Parse(chatTField.tfChat.getText());
-			}
-			catch (Exception)
-			{
-				GameCanvas.startOKDlg(mResources.input_money_wrong);
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-				return;
-			}
-			if (num2 > Char.myCharz().xu)
-			{
-				GameCanvas.startOKDlg(mResources.not_enough_money);
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-			}
-			else
-			{
-				moneyGD = num2;
-				Service.gI().giaodich(2, -1, -1, num2);
-				chatTField.isShow = false;
-				chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
-			}
-		}
-		else if (chatTField.strChat.Equals(mResources.kiguiXuchat))
-		{
-			try
-			{
-				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), 1);
-			}
-			catch (Exception)
-			{
-				GameCanvas.startOKDlg(mResources.input_money_wrong);
-			}
-			chatTField.isShow = false;
-		}
-		else if (chatTField.strChat.Equals(mResources.kiguiXuchat + " "))
-		{
-			try
-			{
-				Service.gI().kigui(0, currItem.itemId, 0, int.Parse(chatTField.tfChat.getText()), currItem.quantilyToBuy);
-			}
-			catch (Exception)
-			{
-				GameCanvas.startOKDlg(mResources.input_money_wrong);
-			}
-			chatTField.isShow = false;
-		}
-		else if (chatTField.strChat.Equals(mResources.kiguiLuongchat))
-		{
-			doNotiRuby(0);
-			chatTField.isShow = false;
-		}
-		else if (chatTField.strChat.Equals(mResources.kiguiLuongchat + "  "))
-		{
-			doNotiRuby(1);
-			chatTField.isShow = false;
-		}
-		else if (chatTField.strChat.Equals(mResources.input_quantity + " "))
-		{
-			currItem.quantilyToBuy = int.Parse(chatTField.tfChat.getText());
-			if (currItem.quantilyToBuy > currItem.quantity)
-			{
-				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
-				return;
-			}
-			isKiguiXu = true;
-			chatTField.isShow = false;
-		}
-		else if (chatTField.strChat.Equals(mResources.input_quantity + "  "))
-		{
-			currItem.quantilyToBuy = int.Parse(chatTField.tfChat.getText());
-			if (currItem.quantilyToBuy > currItem.quantity)
-			{
-				GameCanvas.startOKDlg(mResources.input_quantity_wrong);
-				return;
-			}
-			isKiguiLuong = true;
-			chatTField.isShow = false;
-		}
-	}
-
-	public void onCancelChat()
-	{
-		chatTField.tfChat.setIputType(TField.INPUT_TYPE_ANY);
 	}
 
 	public void setCombineEff(int type)
@@ -8364,6 +8673,11 @@ public class Panel : IActionListener, IChatable
 
 	internal void doFireOption()
 	{
+		if (GameEvents.OnPanelFireOption(this))
+		{
+			return;
+		}
+
 		if (selected < 0)
 			return;
 		switch (selected)
@@ -8909,5 +9223,22 @@ public class Panel : IActionListener, IChatable
 	{
 		newSelected = 0;
 		setTabInventory(resetSelect);
+	}
+	public class PlayerChat
+	{
+
+		public int charID;
+
+		public List<InfoItem> chats = new List<InfoItem>();
+
+		public bool isNewMessage;
+		public string name;
+
+		public PlayerChat(string name, int charId)
+		{
+			this.name = name;
+			charID = charId;
+			isNewMessage = true;
+		}
 	}
 }

@@ -884,7 +884,6 @@ public class ServerListScreen : mScreen, IActionListener
 				{
 					cmdDownload.isFocus = true;
 					center = new Command(string.Empty, this, 4, null);
-					mSystem.println(">>>>>isGetData: " + isGetData);
 				}
 				isGetData = true;
 			}
@@ -1081,7 +1080,6 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public void show2()
 	{
-		Debug.LogError(">>>>ServerListScreen show2: ");
 		GameScr.cmx = 0;
 		GameScr.cmy = 0;
 		initCommand();

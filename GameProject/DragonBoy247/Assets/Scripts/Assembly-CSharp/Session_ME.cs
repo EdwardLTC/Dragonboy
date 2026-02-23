@@ -325,14 +325,12 @@ public class Session_ME : ISession
 		this.port = port;
 		getKeyComplete = false;
 		close();
-		Debug.Log("connecting...!");
-		Debug.Log("host: " + host);
-		Debug.Log("port: " + port);
+		Debug.Log("connecting... to " + host + ":" + port);
 		initThread = new Thread(NetworkInit);
 		initThread.Start();
 	}
 
-	private void NetworkInit()
+	void NetworkInit()
 	{
 		isCancel = false;
 		connecting = true;

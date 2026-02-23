@@ -55,7 +55,7 @@ namespace Mod.Auto
 				steps = 2;
 				return;
 			}
-			if (mSystem.currentTimeMillis() - lastTimeAttemptLogin < 30000)
+			if (mSystem.currentTimeMillis() - lastTimeAttemptLogin < 35000)
 			{
 				return;
 			}

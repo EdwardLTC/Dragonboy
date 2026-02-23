@@ -9,11 +9,11 @@ namespace Mod.CustomPanel
     {
         internal static readonly int TYPE_CUSTOM_PANEL_MENU = 27;
 
-        internal Panel panel;
+        Panel panel;
         CustomPanelMenuConfig config;
 
-        internal static CustomPanelMenu customPanel = new CustomPanelMenu { panel = GameCanvas.panel };
-        internal static CustomPanelMenu customPanel2 = new CustomPanelMenu { panel = GameCanvas.panel2 };
+        static CustomPanelMenu customPanel = new CustomPanelMenu { panel = GameCanvas.panel };
+        static CustomPanelMenu customPanel2 = new CustomPanelMenu { panel = GameCanvas.panel2 };
 
         internal static void Show(CustomPanelMenuConfig config, Panel panel = null)
         {

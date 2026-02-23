@@ -4,15 +4,15 @@ using Mod.R;
 
 namespace Mod.Auto
 {
-    internal class AutoSendAttack : ThreadActionUpdate<AutoSendAttack>
+    internal class AutoSendAttack : ThreadAction<AutoSendAttack>
     {
         internal override int Interval => 100;
 
-        protected override void update()
+        protected override void action()
         {
-            var vMob = new MyVector();
-            var vChar = new MyVector();
-            var myChar = Char.myCharz();
+            MyVector vMob = new MyVector();
+            MyVector vChar = new MyVector();
+            Char myChar = Char.myCharz();
             if (myChar.mobFocus != null)
                 vMob.addElement(myChar.mobFocus);
             else if (myChar.charFocus != null)

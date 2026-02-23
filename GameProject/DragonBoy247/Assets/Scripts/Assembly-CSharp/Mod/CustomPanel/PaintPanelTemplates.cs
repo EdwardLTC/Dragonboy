@@ -27,7 +27,7 @@ namespace Mod.CustomPanel
                 int num2 = panel.yScroll + i * panel.ITEM_HEIGHT;
                 int num3 = panel.wScroll;
                 int num4 = panel.ITEM_HEIGHT - 1;
-                g.setColor((i != panel.selected) ? 0xE7DFD2 : 0xF9FF4A);
+                g.setColor(i != panel.selected ? 0xE7DFD2 : 0xF9FF4A);
                 g.fillRect(num, num2, num3, num4);
                 string caption = (captionIndex ? $"{i + 1}. " : "") + getCaption(collection.ElementAt(i));
                 string description = getDescription(collection.ElementAt(i));

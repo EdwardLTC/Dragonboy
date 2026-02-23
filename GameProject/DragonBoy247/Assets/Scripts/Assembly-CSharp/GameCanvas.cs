@@ -827,8 +827,9 @@ public class GameCanvas : IActionListener
 			}
 			isPointerSelect = false;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Debug.LogException(ex);
 		}
 	}
 

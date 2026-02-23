@@ -1,16 +1,12 @@
-using System;
 using Mod.Auto;
 using Mod.ModHelper;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.Xmap;
-using UnityEngine;
 
 namespace Mod.PickMob
 {
-	internal class UpCSKBController : ThreadActionUpdate<UpCSKBController>
+	internal class UpCSKBController : CoroutineMainThreadAction<UpCSKBController>
 	{
-
-		internal override int Interval => 1000;
 
 		const int ID_ICON_MD = 2758;
 		const short ID_CAPSULE_MD = 379;
@@ -21,7 +17,9 @@ namespace Mod.PickMob
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
 
-		protected override void update()
+		protected override float Interval => 1f;
+
+		protected override void OnUpdate()
 		{
 			// if (!ItemTime.isExistItem(ID_ICON_MD))
 			// {
@@ -50,7 +48,7 @@ namespace Mod.PickMob
 
 			if (Char.myCharz().IsCharDead())
 			{
-				handleDeath();
+				Service.gI().returnTownFromDead();
 			}
 
 			if (Utils.IsMyCharHome())
@@ -81,14 +79,20 @@ namespace Mod.PickMob
 			}
 		}
 
-		protected override void onStop()
+		[HotkeyCommand('v')]
+		public static void DOSTART()
+		{
+			gI.Toggle();
+		}
+
+		protected override void OnStop()
 		{
 			Pk9rPickMob.SetSlaughter(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
-			base.onStop();
+			base.OnStop();
 		}
 
-		protected override void onStart()
+		protected override void OnStart()
 		{
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
@@ -97,22 +101,7 @@ namespace Mod.PickMob
 			mapIdTrain = TileMap.mapID;
 			zoneIdTrain = TileMap.zoneID;
 			GameScr.info1.addInfo("[Up CSKB]: Map Id Train=" + mapIdTrain + ", Zone Id Train=" + zoneIdTrain, 0);
-			base.onStart();
-		}
-
-		static void handleDeath()
-		{
-			long now = mSystem.currentTimeMillis();
-			long timeSinceDeath = now - lastTimeGoBack;
-			if (timeSinceDeath > 4000)
-			{
-				lastTimeGoBack = now;
-				return;
-			}
-			if (timeSinceDeath > 3000)
-			{
-				Service.gI().returnTownFromDead();
-			}
+			base.OnStart();
 		}
 
 		static void regenHpWhenInHome()

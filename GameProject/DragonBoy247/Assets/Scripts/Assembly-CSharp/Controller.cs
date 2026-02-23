@@ -1778,7 +1778,6 @@ public class Controller : IMessageHandler
 				}
 				InfoDlg.hide();
 				Char.myPetz().head = msg.reader().readShort();
-				Debug.LogWarning(">>>cmd head:" + Char.myPetz().avatarz());
 				Res.outz("tra ve head= " + Char.myCharz().head);
 				Char.myPetz().setDefaultPart();
 				int num53 = msg.reader().readUnsignedByte();
@@ -4461,6 +4460,7 @@ public class Controller : IMessageHandler
 		}
 		catch (Exception ex41)
 		{
+			Debug.LogException(ex41);
 			Res.err("[Controller] [error] " + ex41.StackTrace + " msg: " + ex41.Message + " cause " + ex41.Data);
 		}
 		finally
@@ -6467,7 +6467,6 @@ public class Controller : IMessageHandler
 		try
 		{
 			sbyte b = msg.reader().readByte();
-			mSystem.println(">>---read_cmdExtra-sub:" + b);
 			if (b == 0)
 			{
 				short idHat = msg.reader().readShort();
@@ -6772,7 +6771,6 @@ public class Controller : IMessageHandler
 		try
 		{
 			sbyte b = msg.reader().readByte();
-			mSystem.println(">>---read_cmdExtraBig-sub:" + b);
 			if (b == 0)
 			{
 				loadItemNew(msg.reader(), 1, true);

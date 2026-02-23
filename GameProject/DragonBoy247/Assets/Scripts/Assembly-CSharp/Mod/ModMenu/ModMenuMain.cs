@@ -15,20 +15,6 @@ namespace Mod.ModMenu
 {
 	internal static class ModMenuMain
 	{
-		class ModMenuMainActionListener : IActionListener
-		{
-			public void perform(int idAction, object p)
-			{
-				if (idAction == 1)
-					ShowPanel();
-			}
-		}
-
-		internal static Panel currentPanel
-		{
-			get => GameCanvas.panel2;
-			set => GameCanvas.panel2 = value;
-		}
 
 		internal static ModMenuItemBoolean[] modMenuItemBools;
 		internal static ModMenuItemValues[] modMenuItemValues;
@@ -37,14 +23,20 @@ namespace Mod.ModMenu
 
 		internal static Texture2D imgMenu;
 
-		static ModMenuMainActionListener actionListener = new ModMenuMainActionListener();
+		static readonly ModMenuMainActionListener actionListener = new ModMenuMainActionListener();
 		static sbyte lastLanguage = -1;
-		static GUIStyle style = new GUIStyle
+		static readonly GUIStyle style = new GUIStyle
 		{
 			font = Resources.Load<Font>($"FontSys/x{mGraphics.zoomLevel}/chelthm")
 		};
 
 		internal static Command cmdOpenModMenu;
+
+		internal static Panel currentPanel
+		{
+			get => GameCanvas.panel2;
+			set => GameCanvas.panel2 = value;
+		}
 
 		internal static void Initialize()
 		{
@@ -61,7 +53,6 @@ namespace Mod.ModMenu
 			cmdOpenModMenu.h = cmdOpenModMenu.img.h / mGraphics.zoomLevel;
 			UpdatePosition();
 			LoadModMenuItems();
-			LoadData();
 		}
 
 		internal static void UpdatePosition()
@@ -106,7 +97,7 @@ namespace Mod.ModMenu
 					Title = "Auto Train CSKB",
 					Description = "Auto Train CSKB Description",
 					GetValueFunc = () => UpCSKBController.gI.IsActing,
-					SetValueAction = UpCSKBController.toggle
+					SetValueAction = UpCSKBController.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -125,7 +116,7 @@ namespace Mod.ModMenu
 					Title = Strings.autoAttack,
 					Description = Strings.autoSendAttackDescription,
 					GetValueFunc = () => AutoSendAttack.gI.IsActing,
-					SetValueAction = AutoSendAttack.toggle,
+					SetValueAction = AutoSendAttack.gI.toggle,
 					GetIsDisabled = () => Pk9rPickMob.IsTanSat,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.pickMobTitle) + '!'
 				}),
@@ -222,9 +213,9 @@ namespace Mod.ModMenu
 					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
 					SetValueAction = Pk9rPickMob.SetPickUpLimited,
 					RMSName = "pickmob_limit_pick_item_times"
-				}),
+				})
 			};
-			modMenuItemValues = new []
+			modMenuItemValues = new[]
 			{
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
@@ -327,7 +318,7 @@ namespace Mod.ModMenu
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeEnabled, Strings.setAutoTrainPetTitle)
 				})
 			};
-			modMenuItemFunctions = new ModMenuItemFunction[]
+			modMenuItemFunctions = new[]
 			{
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{
@@ -377,7 +368,7 @@ namespace Mod.ModMenu
 				//new ModMenuItemFunction("Menu Custom Logo", "Mở menu logo tùy chỉnh", CustomLogo.ShowMenu),
 				//new ModMenuItemFunction("Menu Custom Cursor", "Mở menu con trỏ tùy chỉnh", CustomCursor.ShowMenu),
 			};
-			modMenuItemDeveloperFunctions = new ModMenuItemFunction[]
+			modMenuItemDeveloperFunctions = new[]
 			{
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{
@@ -391,7 +382,8 @@ namespace Mod.ModMenu
 
 		internal static void ShowPanel()
 		{
-			currentPanel ??= new Panel();
+			if (currentPanel == null)
+				currentPanel = new Panel();
 			CustomPanelMenu.Show(new CustomPanelMenuConfig
 			{
 				SetTabAction = SetTabModMenu,
@@ -428,9 +420,7 @@ namespace Mod.ModMenu
 			if (GameCanvas.menu.showMenu)
 				return;
 			if (GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
-			{
 				return;
-			}
 			if (GameCanvas.isPointerHoldIn((int)(cmdOpenModMenu.x - cmdOpenModMenu.w * 1.5), cmdOpenModMenu.y, (int)(cmdOpenModMenu.w * 2.5), cmdOpenModMenu.h) && GameCanvas.isPointerClick)
 			{
 				GameCanvas.isPointerJustDown = false;
@@ -462,7 +452,9 @@ namespace Mod.ModMenu
 		static void DoFireModMenuFunctions(Panel panel)
 		{
 			if (modMenuItemFunctions[panel.selected].IsDisabled)
+			{
 				return;
+			}
 			panel.hide();
 			modMenuItemFunctions[panel.selected].Action?.Invoke();
 		}
@@ -624,8 +616,8 @@ namespace Mod.ModMenu
 				else
 				{
 					str = modMenuItem.Description;
-					descWidth = panel.wScroll - 5 - mFont.tahoma_7_blue.getWidth(modMenuItem.SelectedValue.ToString());
-					mFont.tahoma_7b_red.drawString(g, modMenuItem.SelectedValue.ToString(), num + num3 - 2, num2 + panel.ITEM_HEIGHT - 14, mFont.RIGHT);
+					descWidth = panel.wScroll - 5 - mFont.tahoma_7_blue.getWidth(modMenuItem.SelectedValue + "");
+					mFont.tahoma_7b_red.drawString(g, modMenuItem.SelectedValue + "", num + num3 - 2, num2 + panel.ITEM_HEIGHT - 14, mFont.RIGHT);
 				}
 				if (i == panel.selected && mFont.tahoma_7_blue.getWidth(str) > descWidth && !panel.isClose)
 				{
@@ -749,24 +741,6 @@ namespace Mod.ModMenu
 			}
 		}
 
-		internal static void LoadData()
-		{
-			foreach (ModMenuItemBoolean modMenuItem in modMenuItemBools)
-			{
-				if (!string.IsNullOrEmpty(modMenuItem.RMSName) && Utils.TryLoadDataBool(modMenuItem.RMSName, out bool value))
-					modMenuItem.Value = value;
-			}
-			foreach (ModMenuItemValues modMenuItem in modMenuItemValues)
-			{
-				if (string.IsNullOrEmpty(modMenuItem.RMSName))
-					continue;
-				if (modMenuItem.IsFloatingPoint && Utils.TryLoadDataDouble(modMenuItem.RMSName, out double data))
-					modMenuItem.SelectedValue = data;
-				else if (Utils.TryLoadDataLong(modMenuItem.RMSName, out long data2))
-					modMenuItem.SelectedValue = data2;
-			}
-		}
-
 		internal static ModMenuItem GetModMenuItem(string id)
 		{
 			return modMenuItemBools.Concat<ModMenuItem>(modMenuItemValues).Concat(modMenuItemValues).Concat(modMenuItemFunctions).Concat(modMenuItemDeveloperFunctions).FirstOrDefault(item => item.ID == id);
@@ -783,6 +757,14 @@ namespace Mod.ModMenu
 			if (typeof(T) == typeof(ModMenuItemFunction))
 				return modMenuItemDeveloperFunctions.FirstOrDefault(item => item.ID == id) as T;
 			return null;
+		}
+		class ModMenuMainActionListener : IActionListener
+		{
+			public void perform(int idAction, object p)
+			{
+				if (idAction == 1)
+					ShowPanel();
+			}
 		}
 	}
 }

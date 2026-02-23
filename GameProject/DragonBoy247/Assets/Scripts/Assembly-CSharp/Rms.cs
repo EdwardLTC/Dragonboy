@@ -6,15 +6,15 @@ using UnityEngine;
 
 public class Rms
 {
+
+	const int INTERVAL = 5;
+
+	const int MAXTIME = 500;
 	public static int status;
 
 	public static sbyte[] data;
 
 	public static string filename;
-
-	private const int INTERVAL = 5;
-
-	private const int MAXTIME = 500;
 
 	public static void saveRMS(string filename, sbyte[] data)
 	{
@@ -91,7 +91,7 @@ public class Rms
 		GameEvents.OnSaveRMSString(ref filename, ref data);
 	}
 
-	private static void _saveRMS(string filename, sbyte[] data)
+	static void _saveRMS(string filename, sbyte[] data)
 	{
 		if (status != 0)
 		{
@@ -116,7 +116,7 @@ public class Rms
 		}
 	}
 
-	private static sbyte[] _loadRMS(string filename)
+	static sbyte[] _loadRMS(string filename)
 	{
 		if (status != 0)
 		{
@@ -161,18 +161,17 @@ public class Rms
 	public static int loadRMSInt(string file)
 	{
 		sbyte[] array = loadRMS(file);
-		return (array != null) ? array[0] : (-1);
+		return array != null ? array[0] : -1;
 	}
 
 	public static void saveRMSInt(string file, int x)
 	{
 		try
 		{
-			saveRMS(file, new sbyte[1] { (sbyte)x });
-			if (file == ServerListScreen.RMS_svselect)
+			saveRMS(file, new sbyte[1]
 			{
-				Debug.Log(">>>>>>>>Save saveRMSInt: " + file + "  index:" + x);
-			}
+				(sbyte)x
+			});
 		}
 		catch (Exception)
 		{
@@ -186,7 +185,7 @@ public class Rms
 		return Application.persistentDataPath;
 	}
 
-	private static void __saveRMS(string filename, sbyte[] data)
+	static void __saveRMS(string filename, sbyte[] data)
 	{
 		string text = GetiPhoneDocumentsPath() + "/" + filename;
 		FileStream fileStream = new FileStream(text, FileMode.Create);
@@ -196,7 +195,7 @@ public class Rms
 		Main.setBackupIcloud(text);
 	}
 
-	private static sbyte[] __loadRMS(string filename)
+	static sbyte[] __loadRMS(string filename)
 	{
 		try
 		{
@@ -262,7 +261,7 @@ public class Rms
 		}
 		catch (Exception ex)
 		{
-			Cout.println("loi xoa RMS --------------------------" + ex.ToString());
+			Cout.println("loi xoa RMS --------------------------" + ex);
 		}
 	}
 

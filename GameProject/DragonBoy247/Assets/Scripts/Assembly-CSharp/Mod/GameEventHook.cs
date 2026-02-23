@@ -2,18 +2,8 @@
 // using System.Reflection;
 // using System.Runtime.CompilerServices;
 // using Mod.Graphics;
-// using MonoHook;
 // using UnityEngine;
 // using Mod.R;
-//
-// #if UNITY_EDITOR
-// using Mono.Cecil;
-// using Mono.Cecil.Cil;
-// using System.Linq;
-// using System.Reflection.Emit;
-// using OpCodes = Mono.Cecil.Cil.OpCodes;
-// using ROpCodes = System.Reflection.Emit.OpCodes;
-// #endif
 //
 // namespace Mod
 // {
@@ -68,7 +58,7 @@
 //             TryInstallHook<Action, Action>(ServerListScreen.saveIP, ServerListScreen_saveIP_hook);
 //             TryInstallHook<Action, Action>(ServerListScreen.loadIP, ServerListScreen_loadIP_hook);
 //             TryInstallHook<Action<string>, Action<string>>(ServerListScreen.getServerList, ServerListScreen_getServerList_hook, ServerListScreen_getServerList_original);
-//             TryInstallHook(typeof(Panel).GetConstructor(new Type[0]), new Action<Panel>(Panel_ctor_hook).Method, new Action<Panel>(Panel__ctor_original).Method);
+//             // TryInstallHook(typeof(Panel).GetConstructor(new Type[0]), new Action<Panel>(Panel_ctor_hook).Method, new Action<Panel>(Panel__ctor_original).Method);
 //
 //             TryInstallHook<Action, Action<GameScr>>(gameScr.updateKey, GameScr_updateKey_hook, GameScr_updateKey_original);
 //             TryInstallHook<Action<mGraphics>, Action<ChatTextField, mGraphics>>(chatTextField.paint, ChatTextField_paint_hook, ChatTextField_paint_original);
@@ -90,7 +80,7 @@
 //             TryInstallHook<Action<mGraphics>, Action<GameScr, mGraphics>>(gameScr.paint, GameScr_paint_hook, GameScr_paint_original);
 //             TryInstallHook<Action<SkillPaint, int>, Action<Char, SkillPaint, int>>(ch.setSkillPaint, Char_setSkillPaint_hook, Char_setSkillPaint_original);
 //             TryInstallHook<Action<string, int>, Action<InfoMe, string, int>>(infoMe.addInfo, InfoMe_addInfo_hook, InfoMe_addInfo_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.updateKey, Panel_updateKey_hook, Panel_updateKey_original);
+//             // TryInstallHook<Action, Action<Panel>>(panel.updateKey, Panel_updateKey_hook, Panel_updateKey_original);
 //             TryInstallHook<Action<int, int>, Action<ItemMap, int, int>>(itemMap.setPoint, ItemMap_setPoint_hook, ItemMap_setPoint_original);
 //             TryInstallHook<Action<MyVector, int>, Action<Menu, MyVector, int>>(menu.startAt, Menu_startAt_hook, Menu_startAt_original);
 //             TryInstallHook<Action<string>, Action<Char, string>>(ch.addInfo, Char_addInfo_hook, Char_addInfo_original);
@@ -98,27 +88,27 @@
 //             TryInstallHook<Action, Action<Mob>>(mob.startDie, Mob_startDie_hook, Mob_startDie_original);
 //             TryInstallHook<Action, Action<Mob>>(mob.update, Mob_update_hook, Mob_update_original);
 //             TryInstallHook<Action<string>, Action<GameScr, string>>(gameScr.chatVip, GameScr_chatVip_hook, GameScr_chatVip_original);
-//             TryInstallHook<Action<int>, Action<Panel, int>>(panel.updateScroolMouse, Panel_updateScroolMouse_hook, Panel_updateScroolMouse_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.hide, Panel_hide_hook, Panel_hide_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.hideNow, Panel_hideNow_hook, Panel_hideNow_original);
+//             //TryInstallHook<Action<int>, Action<Panel, int>>(panel.updateScroolMouse, Panel_updateScroolMouse_hook, Panel_updateScroolMouse_original);
+//             // TryInstallHook<Action, Action<Panel>>(panel.hide, Panel_hide_hook, Panel_hide_original);
+//             // TryInstallHook<Action, Action<Panel>>(panel.hideNow, Panel_hideNow_hook, Panel_hideNow_original);
 //             TryInstallHook<Action<mGraphics>, Action<GameScr, mGraphics>>(gameScr.paintTouchControl, GameScr_paintTouchControl_hook, GameScr_paintTouchControl_original);
 //             TryInstallHook<Action<mGraphics>, Action<GameScr, mGraphics>>(gameScr.paintGamePad, GameScr_paintGamePad_hook, GameScr_paintGamePad_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.doFireOption, Panel_doFireOption_hook, Panel_doFireOption_original);
+//             //TryInstallHook<Action, Action<Panel>>(panel.doFireOption, Panel_doFireOption_hook, Panel_doFireOption_original);
 //             TryInstallHook<Action, Action<SoundMn>>(soundMn.getStrOption, SoundMn_getStrOption_hook, SoundMn_getStrOption_original);
 //             TryInstallHook<Action, Action>(GameScr.setSkillBarPosition, GameScr_setSkillBarPosition_hook, GameScr_setSkillBarPosition_original);
 //             TryInstallHook(typeof(GamePad).GetConstructors()[0], new Action<GamePad>(GamePad__ctor_hook).Method, new Action<GamePad>(GamePad__ctor_original).Method);
 //             TryInstallHook<Action<mGraphics>, Action<GamePad, mGraphics>>(gamePad.paint, GamePad_paint_hook, GamePad_paint_original);
 //             TryInstallHook<Action<mGraphics>, Action<GameScr, mGraphics>>(gameScr.paintSelectedSkill, GameScr_paintSelectedSkill_hook, GameScr_paintSelectedSkill_original);
-//             TryInstallHook<Action<mGraphics>, Action<Panel, mGraphics>>(panel.paintToolInfo, Panel_paintToolInfo_hook, Panel_paintToolInfo_original);
+//             //TryInstallHook<Action<mGraphics>, Action<Panel, mGraphics>>(panel.paintToolInfo, Panel_paintToolInfo_hook, Panel_paintToolInfo_original);
 //             TryInstallHook<Action<sbyte>, Action<sbyte>>(mResources.loadLanguague, mResources_loadLanguague_hook, mResources_loadLanguague_original);
 //             TryInstallHook<Action, Action<LoginScr>>(loginScr.switchToMe, LoginScr_switchToMe_hook, LoginScr_switchToMe_original);
 //             TryInstallHook<Action<int, int, mGraphics>, Action<Skill, int, int, mGraphics>>(skill.paint, Skill_paint_hook, Skill_paint_original);
 //             TryInstallHook<Action<string>, Action<Service, string>>(service.chat, Service_chat_hook, Service_chat_original);
 //             TryInstallHook<Action<int>, Action<Service, int>>(service.gotoPlayer, Service_gotoPlayer_hook, Service_gotoPlayer_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.updateKeyInTabBar, Panel_updateKeyInTabBar_hook, Panel_updateKeyInTabBar_original);
-//             TryInstallHook<Action<mGraphics>, Action<Panel, mGraphics>>(panel.paint, Panel_paint_hook, Panel_paint_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.update, Panel_update_hook, Panel_update_original);
-//             TryInstallHook<Action<mGraphics>, Action<GameCanvas, mGraphics>>(gameCanvas.paint, GameCanvas_paint_hook, GameCanvas_paint_original);
+//             //TryInstallHook<Action, Action<Panel>>(panel.updateKeyInTabBar, Panel_updateKeyInTabBar_hook, Panel_updateKeyInTabBar_original);
+//             //TryInstallHook<Action<mGraphics>, Action<Panel, mGraphics>>(panel.paint, Panel_paint_hook, Panel_paint_original);
+//             //TryInstallHook<Action, Action<Panel>>(panel.update, Panel_update_hook, Panel_update_original);
+//             //TryInstallHook<Action<mGraphics>, Action<GameCanvas, mGraphics>>(gameCanvas.paint, GameCanvas_paint_hook, GameCanvas_paint_original);
 //             TryInstallHook<Action, Action<Char>>(ch.update, Char_update_hook, Char_update_original);
 //             TryInstallHook<Action, Action<Char>>(ch.removeHoleEff, Char_removeHoleEff_hook, Char_removeHoleEff_original);
 //             TryInstallHook<Action<Char>, Action<Char, Char>>(ch.setHoldChar, Char_setHoldChar_hook, Char_setHoldChar_original);
@@ -161,7 +151,7 @@
 //             TryInstallHook<Action<mGraphics>, Action<Npc, mGraphics>>(npc.paint, Npc_paint_hook, Npc_paint_original);
 //             TryInstallHook<Action<mGraphics>, Action<ServerEffect, mGraphics>>(serverEffect.paint, ServerEffect_paint_hook, ServerEffect_paint_original);
 //             TryInstallHook<Action, Action<ServerListScreen>>(serverListScreen.initCommand, ServerListScreen_initCommand_hook, ServerListScreen_initCommand_original);
-//             TryInstallHook<Action, Action<Panel>>(panel.doFireTool, Panel_doFireTool_hook, Panel_doFireTool_original);
+//             // TryInstallHook<Action, Action<Panel>>(panel.doFireTool, Panel_doFireTool_hook, Panel_doFireTool_original);
 //             TryInstallHook<Action, Action<SoundMn>>(soundMn.getSoundOption, SoundMn_getSoundOption_hook, SoundMn_getSoundOption_original);
 //             TryInstallHook<Action, Action<Panel>>(panel.doFirePet, Panel_doFirePet_hook, Panel_doFirePet_original);
 //             TryInstallHook<Action<Message>, Action<GameScr, Message>>(gameScr.openUIZone, GameScr_openUIZone_hook, GameScr_openUIZone_original);
@@ -1065,8 +1055,8 @@
 //
 //         static void Panel_updateScroolMouse_hook(Panel _this, int a)
 //         {
-//             if (!GameEvents.OnUpdateScrollMousePanel(_this, ref a)) ;
-//             Panel_updateScroolMouse_original(_this, a);
+//             // if (!GameEvents.OnUpdateScrollMousePanel(_this, ref a)) ;
+//             // Panel_updateScroolMouse_original(_this, a);
 //         }
 //         [MethodImpl(MethodImplOptions.NoOptimization)]
 //         static void Panel_updateScroolMouse_original(Panel _this, int a)
@@ -1076,9 +1066,9 @@
 //
 //         static void Panel_hide_hook(Panel _this)
 //         {
-//             if (_this.timeShow <= 0)
-//                 GameEvents.OnPanelHide(_this);
-//             Panel_hide_original(_this);
+//             // if (_this.timeShow <= 0)
+//             //     GameEvents.OnPanelHide(_this);
+//             // Panel_hide_original(_this);
 //         }
 //         [MethodImpl(MethodImplOptions.NoOptimization)]
 //         static void Panel_hide_original(Panel _this)
@@ -1088,9 +1078,9 @@
 //
 //         static void Panel_hideNow_hook(Panel _this)
 //         {
-//             if (_this.timeShow <= 0)
-//                 GameEvents.OnPanelHide(_this);
-//             Panel_hideNow_original(_this);
+//             // if (_this.timeShow <= 0)
+//             //     GameEvents.OnPanelHide(_this);
+//             // Panel_hideNow_original(_this);
 //         }
 //         [MethodImpl(MethodImplOptions.NoOptimization)]
 //         static void Panel_hideNow_original(Panel _this)

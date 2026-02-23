@@ -43,7 +43,6 @@ namespace Mod.AccountManager
         {
             if (LastTimeLogin == DateTime.MinValue)
                 return Strings.haventLoggedInYet;
-            //string result = Strings.lastLogin + ": ";
             string result = "";
             TimeSpan timeSpan = DateTime.Now - LastTimeLogin;
             if (timeSpan.TotalMinutes < 1)

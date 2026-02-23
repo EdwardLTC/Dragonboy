@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Mod
 {
-    internal class ShareInfo : ThreadActionUpdate<ShareInfo>
+    internal class ShareInfo : ThreadAction<ShareInfo>
     {
         internal override int Interval => 1000;
 
-        protected override void update()
+        protected override void action()
         {
             var myChar = Char.myCharz();
             var myPet = Char.myPetz();

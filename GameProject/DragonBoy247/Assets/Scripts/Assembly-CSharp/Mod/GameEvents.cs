@@ -8,7 +8,6 @@ using Mod.Auto.AutoChat;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
-using Mod.ModHelper;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModMenu;
@@ -21,14 +20,6 @@ using CharacterInfo = Mod.AccountManager.CharacterInfo;
 
 namespace Mod
 {
-	/// <summary>
-	///     Định nghĩa các sự kiện của game.
-	/// </summary>
-	/// <remarks>
-	///     - Các hàm bool trả về true thì sự kiện game sẽ không được thực hiện,
-	///     trả về false thì sự kiện sẽ được kích hoạt như bình thường.<br />
-	///     - Các hàm void hỗ trợ thực hiện các lệnh cùng với sự kiện.
-	/// </remarks>
 	internal static class GameEvents
 	{
 		static float _previousWidth = Screen.width;
@@ -53,7 +44,6 @@ namespace Mod
 
 		internal static void OnGameStart()
 		{
-			// Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
 			if (Utils.IsAndroidBuild())
 			{
 				Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -75,6 +65,7 @@ namespace Mod
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
 			GraphicsReducer.InitializeTileMap(true);
+			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
 		}
 
@@ -152,12 +143,12 @@ namespace Mod
 				GameScr.gamePad?.SetGamePadZone();
 				GameScr.loadCamera(false, -1, -1);
 				if (GameCanvas.panel2 != null)
+				{
 					GameCanvas.panel2.EmulateSetTypePanel(1);
+				}
 				ModMenuMain.UpdatePosition();
-				if (!Utils.IsOpenedByExternalAccountManager)
-					InGameAccountManager.UpdateSizeAndPos();
+				InGameAccountManager.UpdateSizeAndPos();
 			}
-			MainThreadDispatcher.update();
 			AutoLogin.Update();
 		}
 
@@ -291,8 +282,7 @@ namespace Mod
 			if (!Utils.IsOpenedByExternalAccountManager && GameCanvas.gameTick % (60 * Time.timeScale) == 0)
 			{
 				Account account = InGameAccountManager.SelectedAccount;
-				if (account != null && account.Server.hostnameOrIPAddress == currentHost &&
-				    account.Server.port == currentPort)
+				if (account != null)
 				{
 					account.Gold = Char.myCharz().xu;
 					account.Gem = Char.myCharz().luong;
@@ -347,7 +337,6 @@ namespace Mod
 			AutoSellTrashItems.Update();
 			AutoLogin.OnGameScrUpdate();
 			Pk9rPickMob.Update();
-			Boss.Update();
 			AutoPean.Update();
 			AutoSkill.Update();
 		}
@@ -735,7 +724,7 @@ namespace Mod
 
 		internal static void OnChatVip(string chatVip)
 		{
-			Boss.AddBoss(chatVip);
+			
 		}
 
 		internal static bool OnUpdateScrollMousePanel(Panel panel, ref int pXYScrollMouse)
@@ -1184,15 +1173,21 @@ namespace Mod
 			}
 
 			if (!GameCanvas.panel.isShow)
+			{
 				if (GameCanvas.panel2 != null)
 				{
 					g.translate(-g.getTranslateX(), -g.getTranslateY());
 					g.setClip(0, 0, GameCanvas.w, GameCanvas.h);
 					if (GameCanvas.panel2.isShow)
+					{
 						GameCanvas.panel2.paint(g);
+					}
 					if (GameCanvas.panel2.chatTField != null && GameCanvas.panel2.chatTField.isShow)
+					{
 						GameCanvas.panel2.chatTField.paint(g);
+					}
 				}
+			}
 
 			g.setColor(new Color(0.2f, 0.2f, 0.2f, 0.6f));
 			double fps = System.Math.Round(1f / Time.smoothDeltaTime * Time.timeScale, 1);

@@ -1,44 +1,59 @@
 ﻿using System.Collections.Generic;
 using Mod.CustomPanel;
+using Mod.ModHelper.Menu;
+using Mod.R;
 
 namespace Mod.Xmap
 {
-    internal static class XmapPanel
-    {
-        static List<int> currentMaps = new List<int>();
+	internal static class XmapPanel
+	{
+		static List<int> currentMaps = new List<int>();
 
-        internal static void Show(List<int> maps)
-        {
-            currentMaps = maps;
-            CustomPanelMenu.Show(new CustomPanelMenuConfig()
-            {
-                SetTabAction = SetTab, 
-                DoFireItemAction = DoFire,
-                PaintTabHeaderAction = PaintTabHeader,
-                PaintAction = Paint
-            });
-        }
+		internal static void Show(List<int> maps)
+		{
+			currentMaps = maps;
+			// CustomPanelMenu.Show(new CustomPanelMenuConfig
+			// {
+			// 	SetTabAction = SetTab,
+			// 	DoFireItemAction = DoFire,
+			// 	PaintTabHeaderAction = PaintTabHeader,
+			// 	PaintAction = Paint
+			// });
 
-        static void Paint(Panel panel, mGraphics g)
-        {
-            PaintPanelTemplates.PaintCollectionCaptionAndDescriptionTemplate(panel, g, currentMaps, mapID => TileMap.mapNames[mapID], mapID => $"ID: {mapID}");
-        }
+			MenuBuilder menu = new MenuBuilder().setChatPopup(string.Format(Strings.xmapChatPopup, TileMap.mapName, TileMap.mapID));
 
-        static void PaintTabHeader(Panel panel, mGraphics g)
-        {
-            PaintPanelTemplates.PaintTabHeaderTemplate(panel, g, "Xmap by Phucprotein");
-        }
+			foreach (int map in maps)
+			{
+				menu.addItem(string.Format(TileMap.mapNames[map], TileMap.mapNames[map], map), new MenuAction(() =>
+				{
+					InfoDlg.hide();
+					XmapController.start(map);
+				}));
+			}
 
-        static void SetTab(Panel panel)
-        {
-            SetTabPanelTemplates.setTabListTemplate(panel, currentMaps);
-        }
+			menu.start();
+		}
 
-        static void DoFire(Panel panel)
-        {
-            InfoDlg.hide();
-            panel.hide();
-            XmapController.start(currentMaps[panel.selected]);
-        }
-    }
+		static void Paint(Panel panel, mGraphics g)
+		{
+			PaintPanelTemplates.PaintCollectionCaptionAndDescriptionTemplate(panel, g, currentMaps, mapID => TileMap.mapNames[mapID], mapID => $"ID: {mapID}");
+		}
+
+		static void PaintTabHeader(Panel panel, mGraphics g)
+		{
+			PaintPanelTemplates.PaintTabHeaderTemplate(panel, g, "Xmap by Phucprotein");
+		}
+
+		static void SetTab(Panel panel)
+		{
+			SetTabPanelTemplates.setTabListTemplate(panel, currentMaps);
+		}
+
+		static void DoFire(Panel panel)
+		{
+			InfoDlg.hide();
+			panel.hide();
+			XmapController.start(currentMaps[panel.selected]);
+		}
+	}
 }

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper.CommandMod.Chat;
@@ -10,6 +9,7 @@ using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModHelper.Menu;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Mod
 {
@@ -45,14 +45,14 @@ namespace Mod
 
 		internal static int channelSyncKey = -1;
 
-		internal static System.Random random = new System.Random();
+		internal static Random random = new Random();
 
 		static bool isOpenedByExternalAccountManager;
 		internal static bool IsOpenedByExternalAccountManager => isOpenedByExternalAccountManager;
 
 
 		/// <summary>
-		/// Kiểm tra xem game đang chạy trên Android hay không.
+		///     Kiểm tra xem game đang chạy trên Android hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên Android, ngược lại trả về false.</returns>
 		internal static bool IsAndroidBuild()
@@ -61,7 +61,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra xem game đang chạy trên Linux hay không.
+		///     Kiểm tra xem game đang chạy trên Linux hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên Linux, ngược lại trả về false.</returns>
 		internal static bool IsLinuxBuild()
@@ -70,7 +70,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra xem game đang chạy trên Windows hay không.
+		///     Kiểm tra xem game đang chạy trên Windows hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên Windows, ngược lại trả về false.</returns>
 		internal static bool IsWindowsBuild()
@@ -79,7 +79,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra xem game có đang chạy trên Unity Editor hay không.
+		///     Kiểm tra xem game có đang chạy trên Unity Editor hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu game đang chạy trên Editor, ngược lại trả về false.</returns>
 		internal static bool IsEditor()
@@ -88,7 +88,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra xem game đang chạy trên điện thoại hay không.
+		///     Kiểm tra xem game đang chạy trên điện thoại hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên điện thoại, ngược lại trả về false.</returns>
 		internal static bool IsMobile()
@@ -97,7 +97,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra xem game đang chạy trên PC hay không.
+		///     Kiểm tra xem game đang chạy trên PC hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên PC, ngược lại trả về false.</returns>
 		internal static bool IsPC()
@@ -140,7 +140,7 @@ namespace Mod
 			GameCanvas.checkBackButton();
 		}
 
-		
+
 		internal static MyVector getMyVectorMe()
 		{
 			MyVector vMe = new MyVector();
@@ -149,7 +149,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra khả năng sử dụng skill Trị thương vào bản thân.
+		///     Kiểm tra khả năng sử dụng skill Trị thương vào bản thân.
 		/// </summary>
 		/// <param name="skillBuff">Skill trị thương.</param>
 		/// <returns>true nếu có thể sử dụng skill trị thương vào bản thân.</returns>
@@ -180,7 +180,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Kiểm tra trạng thái sử dụng TĐLT.
+		///     Kiểm tra trạng thái sử dụng TĐLT.
 		/// </summary>
 		/// <returns>true nếu đang sử dụng tự động luyện tập</returns>
 		internal static bool isUsingTDLT()
@@ -189,7 +189,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Sử dụng một item có id là một trong số các id truyền vào.
+		///     Sử dụng một item có id là một trong số các id truyền vào.
 		/// </summary>
 		/// <param name="templatesId">Mảng chứa các id của các item muốn sử dụng.</param>
 		/// <returns>true nếu có vật phẩm được sử dụng.</returns>
@@ -210,7 +210,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Dịch chuyển tới npc trong map.
+		///     Dịch chuyển tới npc trong map.
 		/// </summary>
 		/// <param name="npc">Npc cần dịch chuyển tới</param>
 		internal static void teleToNpc(Npc npc)
@@ -295,7 +295,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Sử dụng skill Trị thương của namec vào bản thân.
+		///     Sử dụng skill Trị thương của namec vào bản thân.
 		/// </summary>
 		[ChatCommand("hsme"), ChatCommand("buffme"), HotkeyCommand('b')]
 		internal static void buffMe()
@@ -320,7 +320,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Dịch chuyển tới một toạ độ cụ thể trong map.
+		///     Dịch chuyển tới một toạ độ cụ thể trong map.
 		/// </summary>
 		/// <param name="x">Toạ độ x.</param>
 		/// <param name="y">Toạ độ y.</param>
@@ -431,7 +431,7 @@ namespace Mod
 			channelSyncKey = channel;
 			if (channel == -1)
 			{
-				GameScr.info1.addInfo($"Đã tắt đồng bộ phím", 0);
+				GameScr.info1.addInfo("Đã tắt đồng bộ phím", 0);
 				return;
 			}
 
@@ -534,7 +534,7 @@ namespace Mod
 			if (waypoint != null)
 			{
 				TeleportMyChar(waypoint.GetX(), waypoint.GetY());
-				Thread.Sleep(1000);
+				// Thread.Sleep(1000);
 				requestChangeMap(waypoint);
 			}
 		}
@@ -562,9 +562,9 @@ namespace Mod
 
 			if (!isCommon)
 			{
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");	
+				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
 			}
-			
+
 			Directory.CreateDirectory(path);
 
 			string filePath = Path.Combine(path, name);
@@ -675,7 +675,7 @@ namespace Mod
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(new byte[]
+			fileStream.Write(new[]
 			{
 				(byte)(status ? 1 : 0)
 			}, 0, 1);
@@ -711,7 +711,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Dịch chuyển đến đối tượng trong map
+		///     Dịch chuyển đến đối tượng trong map
 		/// </summary>
 		/// <param name="obj">Đối tượng cần dịch chuyển tới</param>
 		internal static void TeleportMyChar(IMapObject obj)
@@ -720,7 +720,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Dịch chuyển đến vị trí trên mặt đất có hoành độ x
+		///     Dịch chuyển đến vị trí trên mặt đất có hoành độ x
 		/// </summary>
 		/// <param name="x">Hoành độ</param>
 		internal static void TeleportMyChar(int x)
@@ -739,7 +739,7 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Lấy tung độ mặt đất từ hoành độ
+		///     Lấy tung độ mặt đất từ hoành độ
 		/// </summary>
 		/// <param name="x">Hoành độ x</param>
 		/// <returns>Tung độ y thỏa mãn (x, y) là mặt đất</returns>
@@ -871,12 +871,16 @@ namespace Mod
 		}
 
 		/// <summary>
-		/// Lấy hệ của đệ tử bằng cách kiểm tra skill 1
+		///     Lấy hệ của đệ tử bằng cách kiểm tra skill 1
 		/// </summary>
 		/// <returns></returns>
 		internal static int GetPetGender()
 		{
-			string skill1Pet = Char.myPetz().arrPetSkill[0].template.name;
+			string skill1Pet = Char.myPetz()?.arrPetSkill[0]?.template?.name;
+			if (skill1Pet == null)
+			{
+				return -1;
+			}
 			if (skill1Pet == GameScr.nClasss[0].skillTemplates[0].name)
 				return GameScr.nClasss[0].classId;
 			if (skill1Pet == GameScr.nClasss[1].skillTemplates[0].name)
@@ -928,7 +932,7 @@ namespace Mod
 
 		internal static string FormatWithSIPrefix(double number)
 		{
-			string[] prefix = 
+			string[] prefix =
 			{
 				"", "k", "M", "B", "T"
 			};

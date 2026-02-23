@@ -1,68 +1,60 @@
-﻿using Mod.ModHelper;
-using Mod.ModHelper.CommandMod.Chat;
-using Mod.R;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using Mod.ModHelper;
+using Mod.R;
 using UnityEngine;
 
 namespace Mod.Xmap
 {
-	internal class XmapController : ThreadActionUpdate<XmapController>
+	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
-		internal override int Interval => 100;
 
 		static int mapEnd;
 		static List<MapNext> way;
 		static int indexWay;
 		static bool isNextMapFailed;
-
-		protected override void update()
+		protected override float Interval => 1.5f;
+		
+		protected override void OnUpdate()
 		{
 			if (way == null)
 			{
 				if (!isNextMapFailed)
 				{
 					string mapName = TileMap.mapNames[mapEnd];
-					MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0));
+					GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
 				}
-
-				XmapAlgorithm.xmapData = new XmapData();
-				MainThreadDispatcher.Dispatch(XmapAlgorithm.xmapData.Load);
-				while (!XmapAlgorithm.xmapData.isLoaded)
+				try
 				{
-					Thread.Sleep(100);
-					XmapAlgorithm.xmapData.LoadLinkMapCapsule();
-					try
-					{
-						way = XmapAlgorithm.findWay(TileMap.mapID, mapEnd);
-					}
-					catch (Exception ex)
-					{
-						Debug.LogError($"[xmap][error] Lỗi tìm đường: {ex}");
-						MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo("Load map err" + '!', 0));
-						finishXmap();
-						return;
-					}
-					indexWay = 0;
-
-					if (way == null)
-					{
-						MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0));
-						finishXmap();
-						return;
-					}
+					way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd);
 				}
+				catch (Exception ex)
+				{
+					Debug.LogError($"[xmap][error] Lỗi tìm đường: {ex}");
+					GameScr.info1.addInfo("Load map err" + '!', 0);
+					finishXmap();
+					return;
+				}
+
+				indexWay = 0;
+
+				if (way == null)
+				{
+					GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+					finishXmap();
+					return;
+				}
+
 			}
 
-			if (TileMap.mapID == way[way.Count - 1].to && !Char.myCharz().IsCharDead())
+			if (TileMap.mapID == way?[^1].to && !Char.myCharz().IsCharDead())
 			{
-				MainThreadDispatcher.Dispatch(() => GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0));
+				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				return;
 			}
 
-			if (TileMap.mapID == way[indexWay].mapStart)
+			if (TileMap.mapID == way?[indexWay].mapStart)
 			{
 				if (Char.myCharz().IsCharDead())
 				{
@@ -72,11 +64,10 @@ namespace Mod.Xmap
 				}
 				else if (Utils.CanNextMap())
 				{
-					MainThreadDispatcher.Dispatch(() => Pk9rXmap.NextMap(way[indexWay]));
+					Pk9rXmap.NextMap(way[indexWay]);
 				}
-				Thread.Sleep(1000);
 			}
-			else if (TileMap.mapID == way[indexWay].to)
+			else if (TileMap.mapID == way?[indexWay].to)
 			{
 				indexWay++;
 			}
@@ -87,25 +78,21 @@ namespace Mod.Xmap
 			}
 		}
 
-		[ChatCommand("xmp")]
 		internal static void start(int mapId)
 		{
 			if (gI.IsActing)
 			{
 				finishXmap();
-				Debug.Log($"[xmap][info] Hủy xmap tới {TileMap.mapNames[mapEnd]} để thực hiện xmap mới");
 			}
 			mapEnd = mapId;
-			gI.toggle(true);
-			Debug.Log($"[xmap][info] Bắt đầu xmap tới {TileMap.mapNames[mapEnd]}");
+			gI.Toggle(true);
 		}
 
 		internal static void finishXmap()
 		{
-			Debug.Log("[xmap][info] Kết thúc xmap");
 			way = null;
 			isNextMapFailed = false;
-			gI.toggle(false);
+			gI.Toggle(false);
 		}
 	}
 }

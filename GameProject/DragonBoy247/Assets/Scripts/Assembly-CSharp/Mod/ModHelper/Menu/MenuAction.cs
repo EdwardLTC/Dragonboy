@@ -4,7 +4,7 @@ namespace Mod.ModHelper.Menu
 {
     public class MenuAction
     {
-        public Action<int, string, string[]> action;
+        Action<int, string, string[]> action;
 
         public MenuAction(Action<int, string, string[]> action)
         {

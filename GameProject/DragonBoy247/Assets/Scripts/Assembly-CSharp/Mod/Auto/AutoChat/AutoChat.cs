@@ -6,11 +6,11 @@ using Mod.R;
 
 namespace Mod.Auto.AutoChat
 {
-    internal class AutoChat : ThreadActionUpdate<AutoChat>
+    internal class AutoChat : ThreadAction<AutoChat>
     {
         internal override int Interval => /*Res.random(5000, 10000)*/ Setup.delayAutoChat;
 
-        protected override void update()
+        protected override void action()
         {
             string filePath = Utils.PathAutoChat;
             string content = File.ReadAllLines(filePath)[0];
@@ -45,7 +45,6 @@ namespace Mod.Auto.AutoChat
                 .addItem(Strings.viewContent, new MenuAction(() =>
                 {
                     using StreamReader reader = new StreamReader(Utils.PathAutoChat);
-                    // Đọc toàn bộ nội dung tệp tin và in ra
                     string content = reader.ReadToEnd();
                     GameCanvas.startOKDlg(Strings.autoChatContent + ":\n" + content);
                 })).start();
