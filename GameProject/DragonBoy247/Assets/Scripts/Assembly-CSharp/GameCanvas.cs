@@ -564,9 +564,6 @@ public class GameCanvas : IActionListener
 				Service.gI().requestIcon(small2.id);
 				SmallImage.vt_images_watingDowload.removeElementAt(0);
 			}
-			if (Effect.dowloadEff.size() <= 0)
-			{
-			}
 		}
 		if (mSystem.currentTimeMillis() > timefps)
 		{
@@ -590,7 +587,7 @@ public class GameCanvas : IActionListener
 			if (TouchScreenKeyboard.visible)
 			{
 				timeOpenKeyBoard++;
-				if (timeOpenKeyBoard > ((!Main.isWindowsPhone) ? 10 : 5))
+				if (timeOpenKeyBoard > (!Main.isWindowsPhone ? 10 : 5))
 				{
 					mGraphics.addYWhenOpenKeyBoard = 94;
 				}
@@ -695,7 +692,7 @@ public class GameCanvas : IActionListener
 					{
 						panel2.chatTFUpdateKey();
 					}
-					else if ((isPointer(panel.X, panel.Y, panel.W, panel.H) && panel2 != null) || panel2 == null)
+					else if (isPointer(panel.X, panel.Y, panel.W, panel.H) && panel2 != null || panel2 == null)
 					{
 						panel.updateKey();
 					}

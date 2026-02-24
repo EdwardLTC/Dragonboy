@@ -59,7 +59,7 @@ namespace Mod.Xmap
 			}
 			return null;
 		}
-
+		
 		internal static List<MapNext> FindWayBFS(int start, int end)
 		{
 			int length = XmapData.links.Length;

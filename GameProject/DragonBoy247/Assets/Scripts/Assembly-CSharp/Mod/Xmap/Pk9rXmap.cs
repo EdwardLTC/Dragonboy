@@ -1,9 +1,7 @@
 ﻿using System.Linq;
-using System.Threading;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModHelper.Menu;
 using Mod.R;
-using UnityEngine;
 using Random = System.Random;
 
 namespace Mod.Xmap

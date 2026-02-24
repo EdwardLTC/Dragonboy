@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mod.ModHelper;
 using Mod.R;
@@ -13,9 +14,9 @@ namespace Mod.Xmap
 		static List<MapNext> way;
 		static int indexWay;
 		static bool isNextMapFailed;
-		protected override float Interval => 1.5f;
+		protected override float Interval => 0.5f;
 		
-		protected override void OnUpdate()
+		protected override IEnumerator OnUpdate()
 		{
 			if (way == null)
 			{
@@ -33,7 +34,6 @@ namespace Mod.Xmap
 					Debug.LogError($"[xmap][error] Lỗi tìm đường: {ex}");
 					GameScr.info1.addInfo("Load map err" + '!', 0);
 					finishXmap();
-					return;
 				}
 
 				indexWay = 0;
@@ -42,7 +42,7 @@ namespace Mod.Xmap
 				{
 					GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
 					finishXmap();
-					return;
+					yield return null;
 				}
 
 			}
@@ -51,7 +51,7 @@ namespace Mod.Xmap
 			{
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
-				return;
+				yield return null;
 			}
 
 			if (TileMap.mapID == way?[indexWay].mapStart)
@@ -63,7 +63,7 @@ namespace Mod.Xmap
 					way = null;
 				}
 				else if (Utils.CanNextMap())
-				{
+				{ 
 					Pk9rXmap.NextMap(way[indexWay]);
 				}
 			}

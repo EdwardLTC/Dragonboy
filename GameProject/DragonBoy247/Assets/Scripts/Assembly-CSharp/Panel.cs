@@ -2145,7 +2145,9 @@ public class Panel : IActionListener, IChatable
 		isClose = false;
 		SoundMn.gI().panelOpen();
 		if (isTypeShop())
+		{
 			Char.myCharz().setPartOld();
+		}
 	}
 
 	public void chatTFUpdateKey()
@@ -2171,7 +2173,9 @@ public class Panel : IActionListener, IChatable
 	public void updateKey()
 	{
 		if ((tabIcon == null || !tabIcon.isShow) && !isClose && isShow && !cmdClose.isPointerPressInside())
+		{
 			GameEvents.OnUpdateTouchPanel(this);
+		}
 
 		if (chatTField != null && chatTField.isShow || !GameCanvas.panel.isDoneCombine || InfoDlg.isShow)
 			return;
@@ -3883,147 +3887,6 @@ public class Panel : IActionListener, IChatable
 			g.translate(X, Y);
 			g.translate(-cmx, 0);
 		}
-		
-		g.translate(-g.getTranslateX(), -g.getTranslateY() + mGraphics.addYWhenOpenKeyBoard);
-		g.translate(-cmx, 0);
-		g.translate(X, Y);
-		if (GameCanvas.panel.combineSuccess != -1)
-		{
-			if (Equals(GameCanvas.panel))
-				paintCombineEff(g);
-			return;
-		}
-		GameCanvas.paintz.paintFrameSimple(X, Y, W, H, g);
-		try
-		{
-			paintTopInfo(g);
-		}
-		catch (Exception)
-		{
-		}
-		paintBottomMoneyInfo(g);
-		paintTab(g);
-		switch (type)
-		{
-		case 9:
-			paintArchivement(g);
-			break;
-		case 21:
-			if (currentTabIndex == 0)
-				paintPetInventory(g);
-			if (currentTabIndex == 1)
-				paintPetStatus(g);
-			if (currentTabIndex == 2)
-				paintInventory(g);
-			break;
-		case 24:
-			paintGameSubInfo(g);
-			break;
-		case 23:
-			paintGameInfo(g);
-			break;
-		case 0:
-			if (currentTabIndex == 0)
-				paintTask(g);
-			if (currentTabIndex == 1)
-				paintInventory(g);
-			if (currentTabIndex == 2)
-				paintSkill(g);
-			if (currentTabIndex == 3)
-			{
-				if (mainTabName.Length == 4)
-					paintTools(g);
-				else
-					paintClans(g);
-			}
-			if (currentTabIndex == 4)
-				paintTools(g);
-			break;
-		case 2:
-			if (currentTabIndex == 0)
-				paintBox(g);
-			if (currentTabIndex == 1)
-				paintInventory(g);
-			break;
-		case 3:
-			paintZone(g);
-			break;
-		case 1:
-			paintShop(g);
-			break;
-		case 25:
-			paintSpeacialSkill(g);
-			break;
-		case 4:
-			paintMap(g);
-			break;
-		case 7:
-			paintInventory(g);
-			break;
-		case 17:
-			paintShop(g);
-			break;
-		case 8:
-			paintLogChat(g);
-			break;
-		case 10:
-			paintPlayerMenu(g);
-			break;
-		case 11:
-			paintFriend(g);
-			break;
-		case 16:
-			paintEnemy(g);
-			break;
-		case 15:
-			paintTop(g);
-			break;
-		case 12:
-			if (currentTabIndex == 0)
-				paintCombine(g);
-			if (currentTabIndex == 1)
-				paintInventory(g);
-			break;
-		case 13:
-			if (currentTabIndex == 0)
-			{
-				if (Equals(GameCanvas.panel))
-					paintInventory(g);
-				else
-					paintGiaoDich(g, false);
-			}
-			if (currentTabIndex == 1)
-				paintGiaoDich(g, true);
-			if (currentTabIndex == 2)
-				paintGiaoDich(g, false);
-			break;
-		case 14:
-			paintMapTrans(g);
-			break;
-		case 18:
-			paintFlagChange(g);
-			break;
-		case 19:
-			paintOption(g);
-			break;
-		case 20:
-			paintAccount(g);
-			break;
-		case 22:
-			paintAuto(g);
-			break;
-		}
-		//moved to Panel_paint_hook
-		GameEvents.OnAfterPaintPanel(this, g);
-		GameScr.resetTranslate(g);
-		paintDetail(g);
-		if (cmx == cmtoX && !GameCanvas.menu.showMenu)
-			cmdClose.paint(g);
-		if (tabIcon != null && tabIcon.isShow)
-			tabIcon.paint(g);
-		g.translate(-g.getTranslateX(), -g.getTranslateY());
-		g.translate(X, Y);
-		g.translate(-cmx, 0);
 	}
 
 	internal void paintShop(mGraphics g)

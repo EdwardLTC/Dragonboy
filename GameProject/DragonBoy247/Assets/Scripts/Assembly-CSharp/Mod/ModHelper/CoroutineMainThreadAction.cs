@@ -27,7 +27,7 @@ namespace Mod.ModHelper
 			}
 		}
 
-		protected abstract void OnUpdate();
+		protected abstract IEnumerator OnUpdate();
 		
 		protected virtual void OnStart() { }
 		
@@ -74,7 +74,8 @@ namespace Mod.ModHelper
 		{
 			while (IsActing)
 			{
-				OnUpdate();
+				yield return StartCoroutine(OnUpdate());
+
 				yield return new WaitForSecondsRealtime(Interval);
 			}
 		}

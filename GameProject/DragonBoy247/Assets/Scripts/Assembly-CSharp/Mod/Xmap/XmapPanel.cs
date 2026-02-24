@@ -11,27 +11,15 @@ namespace Mod.Xmap
 
 		internal static void Show(List<int> maps)
 		{
-			currentMaps = maps;
-			// CustomPanelMenu.Show(new CustomPanelMenuConfig
-			// {
-			// 	SetTabAction = SetTab,
-			// 	DoFireItemAction = DoFire,
-			// 	PaintTabHeaderAction = PaintTabHeader,
-			// 	PaintAction = Paint
-			// });
-
-			MenuBuilder menu = new MenuBuilder().setChatPopup(string.Format(Strings.xmapChatPopup, TileMap.mapName, TileMap.mapID));
-
-			foreach (int map in maps)
+			currentMaps.RemoveRange(0, currentMaps.Count);
+			currentMaps.AddRange(maps);
+			CustomPanelMenu.Show(new CustomPanelMenuConfig
 			{
-				menu.addItem(string.Format(TileMap.mapNames[map], TileMap.mapNames[map], map), new MenuAction(() =>
-				{
-					InfoDlg.hide();
-					XmapController.start(map);
-				}));
-			}
-
-			menu.start();
+				SetTabAction = SetTab,
+				DoFireItemAction = DoFire,
+				PaintTabHeaderAction = PaintTabHeader,
+				PaintAction = Paint
+			});
 		}
 
 		static void Paint(Panel panel, mGraphics g)

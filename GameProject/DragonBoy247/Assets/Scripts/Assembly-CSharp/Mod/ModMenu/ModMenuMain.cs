@@ -380,7 +380,7 @@ namespace Mod.ModMenu
 			};
 		}
 
-		internal static void ShowPanel()
+		static void ShowPanel()
 		{
 			if (currentPanel == null)
 				currentPanel = new Panel();

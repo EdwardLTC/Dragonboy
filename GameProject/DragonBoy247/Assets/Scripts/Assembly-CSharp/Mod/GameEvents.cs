@@ -123,9 +123,16 @@ namespace Mod
 				}
 
 				if (!GameCanvas.panel.isShow && GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
-					if (!GameCanvas.isPointer(GameCanvas.panel2.X, GameCanvas.panel2.Y, GameCanvas.panel2.W,
-						    GameCanvas.panel2.H) && GameCanvas.isPointerJustRelease && GameCanvas.panel2.isDoneCombine)
-						GameCanvas.panel2?.hide();
+				{
+					int panel2DrawX = GameCanvas.panel2.X + GameCanvas.panel2.X - GameCanvas.panel2.cmx;
+					if (!GameCanvas.isPointer(panel2DrawX, GameCanvas.panel2.Y, GameCanvas.panel2.W, GameCanvas.panel2.H) &&
+					    GameCanvas.isPointerJustRelease && GameCanvas.panel2.isDoneCombine &&
+					    !GameCanvas.panel2.pointerIsDowning)
+					{
+						GameCanvas.panel2.hide();
+						GameCanvas.clearAllPointerEvent();
+					}
+				}
 			}
 		}
 
@@ -537,6 +544,30 @@ namespace Mod
 
 		internal static bool OnUpdateTouchGameScr(GameScr instance)
 		{
+			// If panel2 (mod menu/custom panel on the right) is handling touch, block gameplay touch behind it.
+			if (!GameCanvas.panel.isShow && GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
+			{
+				int panel2DrawX = GameCanvas.panel2.X + GameCanvas.panel2.X - GameCanvas.panel2.cmx;
+				if (GameCanvas.isPointerJustRelease &&
+				    !GameCanvas.isPointer(panel2DrawX, GameCanvas.panel2.Y, GameCanvas.panel2.W, GameCanvas.panel2.H) &&
+				    GameCanvas.panel2.isDoneCombine && !GameCanvas.panel2.pointerIsDowning)
+				{
+					GameCanvas.panel2.hide();
+					GameCanvas.clearAllPointerEvent();
+					return true;
+				}
+
+				if (GameCanvas.panel2.pointerIsDowning ||
+				    GameCanvas.isPointer(panel2DrawX, GameCanvas.panel2.Y, GameCanvas.panel2.W,
+					    GameCanvas.panel2.H))
+				{
+					instance.isPointerDowning = false;
+					if (Char.myCharz() != null)
+						Char.myCharz().currentMovePoint = null;
+					return true;
+				}
+			}
+
 			ModMenuMain.UpdateTouch();
 			if (GameCanvas.isTouchControl)
 			{
@@ -1196,20 +1227,21 @@ namespace Mod
 			mFont.tahoma_7b_red.drawString(g, fpsStr, 2, 0, 0);
 		}
 
-		internal static bool OnUpdatePanel(Panel instance)
-		{
-			if (instance == GameCanvas.panel)
+			internal static bool OnUpdatePanel(Panel instance)
 			{
-				ModMenuMain.UpdateTouch();
-				Panel panel = ModMenuMain.currentPanel;
-				if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
-				    !GameCanvas.isPointer(instance.X, instance.Y, instance.W, instance.H) &&
-				    !GameCanvas.isPointer(panel.X, panel.Y, panel.W, panel.H) && !instance.pointerIsDowning)
+				if (instance == GameCanvas.panel)
 				{
-					instance.hide();
-					return false;
+					Panel panel = ModMenuMain.currentPanel;
+					int instanceDrawX = instance.X + instance.X - instance.cmx;
+					if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
+					    !GameCanvas.isPointer(instanceDrawX, instance.Y, instance.W, instance.H) &&
+					    !GameCanvas.isPointer(panel.X + panel.X - panel.cmx, panel.Y, panel.W, panel.H) &&
+					    !instance.pointerIsDowning)
+					{
+						instance.hide();
+						return false;
+					}
 				}
-			}
 
 			if (instance.type == CustomPanelMenu.TYPE_CUSTOM_PANEL_MENU)
 				if ((instance.chatTField == null || !instance.chatTField.isShow) && !instance.isKiguiXu &&

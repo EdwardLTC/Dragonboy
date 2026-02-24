@@ -45,9 +45,18 @@ namespace Mod.CustomPanel
             if (config.SetTabAction.Method == new Action<Panel>(ModMenuMain.SetTabModMenu).Method) //Mod menu main
             {
                 panel.mainTabName = panel.tabName[TYPE_CUSTOM_PANEL_MENU] = Strings.modMenuPanelTabName;
-                panel.currentTabName = panel.tabName[TYPE_CUSTOM_PANEL_MENU];
                 panel.currentTabIndex = Mathf.Clamp(panel.currentTabIndex, 0, Strings.modMenuPanelTabName.Length - 1);
-                //panel.EmulateSetTypePanel(panel == GameCanvas.panel ? 0 : 1);
+            }
+            else
+            {
+                panel.tabName[TYPE_CUSTOM_PANEL_MENU] = new[]
+                {
+                    new[]
+                    {
+                        string.Empty
+                    }
+                };
+                panel.currentTabIndex = 0;
             }
             panel.setType(panel == GameCanvas.panel ? 0 : 1);
             SetTab(panel);

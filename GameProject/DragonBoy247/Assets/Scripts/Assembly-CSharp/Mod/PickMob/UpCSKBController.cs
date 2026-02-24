@@ -1,7 +1,8 @@
+using System.Collections;
 using Mod.Auto;
 using Mod.ModHelper;
-using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.Xmap;
+using UnityEngine;
 
 namespace Mod.PickMob
 {
@@ -16,10 +17,12 @@ namespace Mod.PickMob
 		static long lastTimeGoBack;
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
+		
+		static bool isChecked = false;
 
 		protected override float Interval => 1f;
 
-		protected override void OnUpdate()
+		protected override IEnumerator OnUpdate()
 		{
 			// if (!ItemTime.isExistItem(ID_ICON_MD))
 			// {
@@ -48,6 +51,7 @@ namespace Mod.PickMob
 
 			if (Char.myCharz().IsCharDead())
 			{
+				yield return new WaitForSecondsRealtime(4f);
 				Service.gI().returnTownFromDead();
 			}
 
@@ -61,28 +65,35 @@ namespace Mod.PickMob
 			if (capsuleKB?.quantity == 99 && !XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
 			{
 				XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
+				yield return null;
 			}
 
 			if (capsuleKB?.quantity == 99 && Utils.IsMyCharHome())
 			{
 				Service.gI().getItem(1, Utils.getIndexItemBag(ID_CAPSULE_KB));
+				yield return null;
 			}
 
 			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99 && Utils.CanNextMap() && Char.myCharz().cHP > 1000)
 			{
-				XmapController.start(mapIdTrain.Value);
+				if (!isChecked)
+				{
+					XmapController.start(mapIdTrain.Value);
+					isChecked = true;
+				}
+				else
+				{
+					Debug.Log($"[Up CSKB] Đã kiểm tra đi lại về map train, không thực hiện xmap nữa. Map hiện tại: {TileMap.mapID}, Map train: {mapIdTrain}");
+					Debug.Log($"State: isChecked={isChecked}, isActing={XmapController.gI.IsActing}, canNextMap={Utils.CanNextMap()}, charHP={Char.myCharz().cHP}");
+				}
+				yield return null;
 			}
 
 			if (TileMap.mapID == mapIdTrain && zoneIdTrain != null && TileMap.zoneID != zoneIdTrain)
 			{
 				Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
+				yield return  null;
 			}
-		}
-
-		[HotkeyCommand('v')]
-		public static void DOSTART()
-		{
-			gI.Toggle();
 		}
 
 		protected override void OnStop()
