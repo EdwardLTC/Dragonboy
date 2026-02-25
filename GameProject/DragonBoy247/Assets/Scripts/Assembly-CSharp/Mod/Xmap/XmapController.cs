@@ -21,11 +21,17 @@ namespace Mod.Xmap
 		
 		protected override IEnumerator OnUpdate()
 		{
+			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || GameCanvas.isLoading || Controller.isStopReadMessage;
+
 			if (TileMap.mapID != lastProgressMapId || indexWay != lastProgressStepIndex)
 			{
 				MarkProgress();
 			}
-			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds && Utils.CanNextMap())
+			else if (isMapTransitioning)
+			{
+				lastProgressRealtime = Time.realtimeSinceStartup;
+			}
+			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds)
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
 				finishXmap();
