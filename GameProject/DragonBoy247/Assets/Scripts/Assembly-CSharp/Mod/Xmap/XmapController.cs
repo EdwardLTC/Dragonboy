@@ -25,7 +25,7 @@ namespace Mod.Xmap
 			{
 				MarkProgress();
 			}
-			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds)
+			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds && Utils.CanNextMap())
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
 				finishXmap();
