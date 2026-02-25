@@ -39,7 +39,9 @@ namespace Mod
 
 		internal static void OnAwake()
 		{
-			Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+			Application.targetFrameRate = 60;
+			Application.runInBackground = true;
+			Time.timeScale = 2f;
 		}
 
 		internal static void OnGameStart()

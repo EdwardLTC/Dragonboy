@@ -34,12 +34,16 @@ namespace Mod.PickMob
 		public static void Update()
 		{
 			if (IsWaiting() || XmapController.gI.IsActing)
+			{
 				return;
+			}
 
 			Char myChar = Char.myCharz();
 
 			if (myChar.statusMe == 14 || myChar.cHP <= 0)
+			{
 				return;
+			}
 
 			bool isUseTDLT = ItemTime.isExistItem(ID_ICON_ITEM_TDLT);
 			bool isTanSatTDLT = Pk9rPickMob.IsTanSat && isUseTDLT;
@@ -377,15 +381,14 @@ namespace Mod.PickMob
 			return true;
 		}
 
-		static Skill GetSkillAttack()
+		public static Skill GetSkillAttack()
 		{
 			Skill skill = null;
-			Skill nextSkill;
 			SkillTemplate skillTemplate = new SkillTemplate();
 			foreach (sbyte id in Pk9rPickMob.IdSkillsTanSat)
 			{
 				skillTemplate.id = id;
-				nextSkill = Char.myCharz().getSkill(skillTemplate);
+				Skill nextSkill = Char.myCharz().getSkill(skillTemplate);
 				if (IsSkillBetter(nextSkill, skill)) skill = nextSkill;
 			}
 

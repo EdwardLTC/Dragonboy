@@ -2,6 +2,7 @@ using System;
 using Assets.src.g;
 using Mod;
 using Mod.Graphics;
+using Mod.PickMob;
 
 public class GameScr : mScreen, IChatable
 {
@@ -4032,26 +4033,27 @@ public class GameScr : mScreen, IChatable
 		Skill skill = null;
 		if (GameCanvas.isTouch)
 		{
-			for (int l = 0; l < onScreenSkill.Length; l++)
-			{
-				if (onScreenSkill[l] == null || onScreenSkill[l].paintCanNotUseSkill || onScreenSkill[l].template.id == 10 || onScreenSkill[l].template.id == 11 || onScreenSkill[l].template.id == 14 || onScreenSkill[l].template.id == 23 || onScreenSkill[l].template.id == 7 || Char.myCharz().skillInfoPaint() != null || onScreenSkill[l].template.isSkillSpec())
-				{
-					continue;
-				}
-				long num = 0L;
-				num = ((onScreenSkill[l].template.manaUseType == 2) ? 1 : ((onScreenSkill[l].template.manaUseType == 1) ? (onScreenSkill[l].manaUse * Char.myCharz().cMPFull / 100) : onScreenSkill[l].manaUse));
-				if (Char.myCharz().cMP >= num)
-				{
-					if (skill == null)
-					{
-						skill = onScreenSkill[l];
-					}
-					else if (skill.coolDown < onScreenSkill[l].coolDown)
-					{
-						skill = onScreenSkill[l];
-					}
-				}
-			}
+			// for (int l = 0; l < onScreenSkill.Length; l++)
+			// {
+			// 	if (onScreenSkill[l] == null || onScreenSkill[l].paintCanNotUseSkill || onScreenSkill[l].template.id == 10 || onScreenSkill[l].template.id == 11 || onScreenSkill[l].template.id == 14 || onScreenSkill[l].template.id == 23 || onScreenSkill[l].template.id == 7 || Char.myCharz().skillInfoPaint() != null || onScreenSkill[l].template.isSkillSpec())
+			// 	{
+			// 		continue;
+			// 	}
+			// 	long num = 0L;
+			// 	num = ((onScreenSkill[l].template.manaUseType == 2) ? 1 : ((onScreenSkill[l].template.manaUseType == 1) ? (onScreenSkill[l].manaUse * Char.myCharz().cMPFull / 100) : onScreenSkill[l].manaUse));
+			// 	if (Char.myCharz().cMP >= num)
+			// 	{
+			// 		if (skill == null)
+			// 		{
+			// 			skill = onScreenSkill[l];
+			// 		}
+			// 		else if (skill.coolDown < onScreenSkill[l].coolDown)
+			// 		{
+			// 			skill = onScreenSkill[l];
+			// 		}
+			// 	}
+			// }
+			skill = PickMobController.GetSkillAttack();
 			if (skill != null)
 			{
 				doSelectSkill(skill, true);

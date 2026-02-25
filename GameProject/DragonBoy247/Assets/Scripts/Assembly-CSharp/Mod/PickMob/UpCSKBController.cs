@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Mod.Auto;
 using Mod.ModHelper;
@@ -17,47 +18,47 @@ namespace Mod.PickMob
 		static long lastTimeGoBack;
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
-		
-		static bool isChecked = false;
 
 		protected override float Interval => 1f;
 
 		protected override IEnumerator OnUpdate()
 		{
-			// if (!ItemTime.isExistItem(ID_ICON_MD))
-			// {
-			// 	if (notUsingMDTime == 0L)
-			// 	{
-			// 		notUsingMDTime = DateTime.Now.Ticks;
-			// 	}
-			// }
-			// else
-			// {
-			// 	notUsingMDTime = 0L;
-			// }
-			//
-			// if (notUsingMDTime > 0 && DateTime.Now.Ticks - notUsingMDTime > 2 * 60 * 10000000L)
-			// {
-			// 	bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
-			//
-			// 	if (!isUseMDSuccess)
-			// 	{
-			// 		onStop();
-			// 		return;
-			// 	}
-			//
-			// 	notUsingMDTime = 0L;
-			// }
+			if (!ItemTime.isExistItem(ID_ICON_MD))
+			{
+				if (notUsingMDTime == 0L)
+				{
+					notUsingMDTime = DateTime.Now.Ticks;
+				}
+			}
+			else
+			{
+				notUsingMDTime = 0L;
+			}
+			
+			if (notUsingMDTime > 0 && DateTime.Now.Ticks - notUsingMDTime > 2 * 60 * 10000000L)
+			{
+				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
+			
+				if (!isUseMDSuccess)
+				{
+					gI.Toggle(false);
+					GameScr.info1.addInfo("[Up CSKB] Không thể sử dụng MD, đã tắt auto", 0);
+					yield break;
+				}
+			
+				notUsingMDTime = 0L;
+			}
 
 			if (Char.myCharz().IsCharDead())
 			{
-				yield return new WaitForSecondsRealtime(4f);
-				Service.gI().returnTownFromDead();
+				yield return new WaitForSecondsRealtime(1f);
+				ReviveWhenDead();
 			}
 
-			if (Utils.IsMyCharHome())
+			if (Utils.IsMyCharHome() && Char.myCharz().cHP < 1000)
 			{
-				regenHpWhenInHome();
+				RegenHpWhenInHome();
+				yield return new WaitForSecondsRealtime(1f);
 			}
 
 			Item capsuleKB = Utils.getItemInBag(ID_CAPSULE_KB);
@@ -74,25 +75,15 @@ namespace Mod.PickMob
 				yield return null;
 			}
 
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99 && Utils.CanNextMap() && Char.myCharz().cHP > 1000)
+			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain)
 			{
-				if (!isChecked)
-				{
-					XmapController.start(mapIdTrain.Value);
-					isChecked = true;
-				}
-				else
-				{
-					Debug.Log($"[Up CSKB] Đã kiểm tra đi lại về map train, không thực hiện xmap nữa. Map hiện tại: {TileMap.mapID}, Map train: {mapIdTrain}");
-					Debug.Log($"State: isChecked={isChecked}, isActing={XmapController.gI.IsActing}, canNextMap={Utils.CanNextMap()}, charHP={Char.myCharz().cHP}");
-				}
+				XmapController.start(mapIdTrain.Value);
 				yield return null;
 			}
 
-			if (TileMap.mapID == mapIdTrain && zoneIdTrain != null && TileMap.zoneID != zoneIdTrain)
+			if (TileMap.mapID == mapIdTrain && TileMap.zoneID != zoneIdTrain && zoneIdTrain != null)
 			{
 				Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
-				yield return  null;
 			}
 		}
 
@@ -111,13 +102,33 @@ namespace Mod.PickMob
 			AutoLogin.SetState(true);
 			mapIdTrain = TileMap.mapID;
 			zoneIdTrain = TileMap.zoneID;
+			if (!ItemTime.isExistItem(ID_ICON_MD))
+			{
+				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
+				if (!isUseMDSuccess)
+				{
+					gI.Toggle(false);
+					GameScr.info1.addInfo("[Up CSKB] Không thể sử dụng MD, đã tắt auto", 0);
+					return;
+				}
+			}
 			GameScr.info1.addInfo("[Up CSKB]: Map Id Train=" + mapIdTrain + ", Zone Id Train=" + zoneIdTrain, 0);
 			base.OnStart();
 		}
 
-		static void regenHpWhenInHome()
+		static void RegenHpWhenInHome()
 		{
 			Service.gI().pickItem(-1);
+		}
+		
+		static void ReviveWhenDead()
+		{
+			Service.gI().returnTownFromDead();
+		}
+
+		public override string ToString()
+		{
+			return "State: " + (gI.IsActing ? "Running" : "Stopped") + ", Map: " + mapIdTrain + ", ZoneIdTrain: " + zoneIdTrain;
 		}
 	}
 }

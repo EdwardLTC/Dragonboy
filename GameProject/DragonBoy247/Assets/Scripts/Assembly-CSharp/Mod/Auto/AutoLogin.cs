@@ -39,7 +39,7 @@ namespace Mod.Auto
 
 		static void CheckForDisconnected()
 		{
-			if (GameCanvas.currentScreen is not GameScr || !Session_ME.gI().isConnected())
+			if ((GameCanvas.currentScreen is not GameScr && !Char.isLoadingMap && !Char.ischangingMap) || !Session_ME.gI().isConnected())
 			{
 				lastTimeAttemptLogin = mSystem.currentTimeMillis();
 				GameCanvas.serverScreen.switchToMe();

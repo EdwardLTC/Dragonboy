@@ -1,13 +1,16 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModHelper.Menu;
 using Mod.R;
+using UnityEngine;
 using Random = System.Random;
 
 namespace Mod.Xmap
 {
 	internal static class Pk9rXmap
 	{
+		const float ServiceCallDelaySeconds = 0.2f;
 		internal static bool isUseCapsuleNormal;
 		static bool isUseCapsuleVip = true;
 		static bool isChangingMap;
@@ -100,85 +103,110 @@ namespace Mod.Xmap
 			return int.Parse(mapName.Split(':')[0]);
 		}
 
-		internal static void NextMap(MapNext mapNext)
+		internal static IEnumerator NextMap(MapNext mapNext)
 		{
 			switch (mapNext.type)
 			{
 			case TypeMapNext.AutoWaypoint:
-				NextMapAutoWaypoint(mapNext);
+				yield return NextMapAutoWaypoint(mapNext);
 				break;
 			case TypeMapNext.NpcMenu:
-				NextMapNpcMenu(mapNext);
+				yield return NextMapNpcMenu(mapNext);
 				break;
 			case TypeMapNext.NpcPanel:
-				NextMapNpcPanel(mapNext);
+				yield return NextMapNpcPanel(mapNext);
 				break;
 			case TypeMapNext.Position:
-				NextMapPosition(mapNext);
+				yield return NextMapPosition(mapNext);
 				break;
 			case TypeMapNext.Capsule:
-				NextMapCapsule(mapNext);
+				yield return NextMapCapsule(mapNext);
 				break;
 			}
 		}
 
-		static void NextMapAutoWaypoint(MapNext mapNext)
+		static IEnumerator NextMapAutoWaypoint(MapNext mapNext)
 		{
 			Waypoint waypoint = XmapUtils.findWaypoint(mapNext.to);
-			ChangeMap(waypoint);
+			yield return ChangeMap(waypoint);
 		}
 
-		static void NextMapNpcMenu(MapNext mapNext)
+		static IEnumerator NextMapNpcMenu(MapNext mapNext)
 		{
 			int npcId = mapNext.info[0];
 			if (npcId == 38)
 			{
-				bool flag = false;
-				for (int i = 0; i < GameScr.vNpc.size(); i++)
+				int retryCount = 0;
+				while (true)
 				{
-					Npc npc = (Npc)GameScr.vNpc.elementAt(i);
-					if (npc.template.npcTemplateId == npcId)
+					if (retryCount >= 30)
 					{
-						flag = true;
+						GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+						yield break;
+					}
+					bool foundNpc = false;
+					for (int i = 0; i < GameScr.vNpc.size(); i++)
+					{
+						Npc npc = (Npc)GameScr.vNpc.elementAt(i);
+						if (npc.template.npcTemplateId == npcId)
+						{
+							foundNpc = true;
+							break;
+						}
+					}
+
+					if (foundNpc)
+					{
 						break;
 					}
-				}
-				if (!flag)
-				{
+
 					Waypoint waypoint;
 					if (TileMap.mapID == 27 || TileMap.mapID == 29)
 					{
-						waypoint = XmapUtils.findWaypoint(28);	
+						waypoint = XmapUtils.findWaypoint(28);
 					}
 					else
 					{
-						waypoint = random.Next(27, 29) == 27 ?  XmapUtils.findWaypoint(27) : XmapUtils.findWaypoint(29);
+						waypoint = random.Next(27, 29) == 27 ? XmapUtils.findWaypoint(27) : XmapUtils.findWaypoint(29);
 					}
-
-					ChangeMap(waypoint);
-					return;
+					yield return ChangeMap(waypoint);
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+					retryCount++;
 				}
 			}
+
+			Utils.TeleportToNPC(npcId);
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().openMenu(npcId);
+			if (mapNext.info.Length > 1)
+			{
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+			}
 			for (int i = 1; i < mapNext.info.Length; i++)
 			{
 				int select = mapNext.info[i];
 				Service.gI().confirmMenu((short)npcId, (sbyte)select);
+				if (i < mapNext.info.Length - 1)
+				{
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+				}
 			}
 			Char.chatPopup = null;
 		}
 
-		static void NextMapNpcPanel(MapNext mapNext)
+		static IEnumerator NextMapNpcPanel(MapNext mapNext)
 		{
 			int idNpc = mapNext.info[0];
 			int selectMenu = mapNext.info[1];
 			int selectPanel = mapNext.info[2];
 			Service.gI().openMenu(idNpc);
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().confirmMenu((short)idNpc, (sbyte)selectMenu);
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().requestMapSelect(selectPanel);
 		}
 
-		static void NextMapPosition(MapNext mapNext)
+		static IEnumerator NextMapPosition(MapNext mapNext)
 		{
 			int xPos = mapNext.info[0];
 			int yPos = mapNext.info[1];
@@ -186,15 +214,17 @@ namespace Mod.Xmap
 			if (Utils.Distance(Char.myCharz().cx, Char.myCharz().cy, xPos, yPos) <= TileMap.size)
 			{
 				Service.gI().requestChangeMap();
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Service.gI().getMapOffline();
 			}
 		}
 
-		static void NextMapCapsule(MapNext mapNext)
+		static IEnumerator NextMapCapsule(MapNext mapNext)
 		{
 			XmapUtils.mapCapsuleReturn = TileMap.mapID;
 			int select = mapNext.info[0];
 			Service.gI().requestMapSelect(select);
+			yield break;
 		}
 
 		static void MoveMyChar(int x, int y)
@@ -202,9 +232,14 @@ namespace Mod.Xmap
 			Utils.TeleportMyChar(x, y);
 		}
 
-		static void ChangeMap(Waypoint waypoint)
+		static IEnumerator ChangeMap(Waypoint waypoint)
 		{
-			Utils.ChangeMap(waypoint);
+			if (waypoint != null)
+			{
+				Utils.TeleportMyChar(waypoint.GetX(), waypoint.GetY());
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+				Utils.requestChangeMap(waypoint);
+			}
 		}
 	}
 }

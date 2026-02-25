@@ -9,89 +9,151 @@ namespace Mod.Xmap
 {
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
-
-		static int mapEnd;
-		static List<MapNext> way;
-		static int indexWay;
-		static bool isNextMapFailed;
+		const float MaxStuckSeconds = 15f;
+		int mapEnd;
+		List<MapNext> way;
+		int indexWay;
+		bool isNextMapFailed;
+		float lastProgressRealtime;
+		int lastProgressMapId;
+		int lastProgressStepIndex;
 		protected override float Interval => 0.5f;
 		
 		protected override IEnumerator OnUpdate()
 		{
-			if (way == null)
+			if (TileMap.mapID != lastProgressMapId || indexWay != lastProgressStepIndex)
 			{
-				if (!isNextMapFailed)
-				{
-					string mapName = TileMap.mapNames[mapEnd];
-					GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
-				}
-				try
-				{
-					way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd);
-				}
-				catch (Exception ex)
-				{
-					Debug.LogError($"[xmap][error] Lỗi tìm đường: {ex}");
-					GameScr.info1.addInfo("Load map err" + '!', 0);
-					finishXmap();
-				}
-
-				indexWay = 0;
-
-				if (way == null)
-				{
-					GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
-					finishXmap();
-					yield return null;
-				}
-
+				MarkProgress();
+			}
+			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds)
+			{
+				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
+				finishXmap();
+				yield return null;
+				yield break;
 			}
 
-			if (TileMap.mapID == way?[^1].to && !Char.myCharz().IsCharDead())
+			if (isNextMapFailed)
+			{
+				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+				finishXmap();
+				yield return null;
+				yield break;
+			}
+
+			if (way == null || way.Count == 0)
+			{
+				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+				finishXmap();
+				yield return null;
+				yield break;
+			}
+			
+			if (TileMap.mapID == mapEnd && !Char.myCharz().IsCharDead())
 			{
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				yield return null;
+				yield break;
 			}
 
-			if (TileMap.mapID == way?[indexWay].mapStart)
-			{
-				if (Char.myCharz().IsCharDead())
-				{
-					Service.gI().returnTownFromDead();
-					isNextMapFailed = true;
-					way = null;
-				}
-				else if (Utils.CanNextMap())
-				{ 
-					Pk9rXmap.NextMap(way[indexWay]);
-				}
-			}
-			else if (TileMap.mapID == way?[indexWay].to)
-			{
-				indexWay++;
-			}
-			else
+			if (indexWay < 0 || indexWay >= way.Count)
 			{
 				isNextMapFailed = true;
 				way = null;
+				yield return null;
+				yield break;
 			}
+
+			MapNext currentStep = way[indexWay];
+			if (TileMap.mapID == currentStep.to)
+			{
+				indexWay++;
+				MarkProgress();
+				yield return null;
+				yield break;
+			}
+
+			if (Char.myCharz().IsCharDead())
+			{
+				Service.gI().returnTownFromDead();
+				isNextMapFailed = true;
+				way = null;
+				yield return null;
+				yield break;
+			}
+
+			if (Utils.CanNextMap())
+			{
+				yield return Pk9rXmap.NextMap(currentStep);
+			}
+		}
+		
+		protected override void OnStart()
+		{
+			way = null;
+			indexWay = 0;
+			isNextMapFailed = false;
+			MarkProgress();
+
+			string mapName = TileMap.mapNames[mapEnd];
+			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
+			try
+			{
+				way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd);
+			}
+			catch (Exception ex)
+			{
+				GameScr.info1.addInfo("Load map err" + '!', 0);
+				finishXmap();
+			}
+
+			if (way == null)
+			{
+				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+				finishXmap();
+			}
+			base.OnStart();
+		}
+
+		protected override void OnStop()
+		{
+			way = null;
+			indexWay = 0;
+			isNextMapFailed = false;
+			MarkProgress();
+			base.OnStop();
+		}
+
+		void MarkProgress()
+		{
+			lastProgressRealtime = Time.realtimeSinceStartup;
+			lastProgressMapId = TileMap.mapID;
+			lastProgressStepIndex = indexWay;
 		}
 
 		internal static void start(int mapId)
 		{
+			if (gI == null)
+			{
+				return;
+			}
+
 			if (gI.IsActing)
 			{
 				finishXmap();
 			}
-			mapEnd = mapId;
+			gI.mapEnd = mapId;
 			gI.Toggle(true);
 		}
 
 		internal static void finishXmap()
 		{
-			way = null;
-			isNextMapFailed = false;
+			if (gI == null)
+			{
+				return;
+			}
+
 			gI.Toggle(false);
 		}
 	}

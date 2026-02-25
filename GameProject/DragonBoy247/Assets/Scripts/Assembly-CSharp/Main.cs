@@ -1,3 +1,4 @@
+using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using Mod;
@@ -85,8 +86,6 @@ public class Main : MonoBehaviour
 
 	void Start()
 	{
-		Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
-		Time.timeScale = 2f;
 		if (started)
 		{
 			return;
@@ -98,19 +97,18 @@ public class Main : MonoBehaviour
 		mainThreadName = Thread.CurrentThread.Name;
 		isPC = true;
 		started = true;
-		if (isPC)
-		{
-			// level = Rms.loadRMSInt("levelScreenKN");
-			// if (level == 1)
-			// {
-			// 	Screen.SetResolution(720, 320, false);
-			// }
-			// else
-			// {
-			// 	Screen.SetResolution(1024, 600, false);
-			// }
-			Screen.SetResolution(1024, 600, false);
-		}
+		// if (isPC)
+		// {
+		// 	level = Rms.loadRMSInt("levelScreenKN");
+		// 	if (level == 1)
+		// 	{
+		// 		Screen.SetResolution(720, 320, false);
+		// 	}
+		// 	else
+		// 	{
+		// 		Screen.SetResolution(1024, 600, false);
+		// 	}
+		// }
 		GameEvents.OnMainStart();
 	}
 

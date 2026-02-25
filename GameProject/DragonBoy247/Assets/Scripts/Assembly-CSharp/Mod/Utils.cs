@@ -342,6 +342,20 @@ namespace Mod
 			Service.gI().charMove();
 		}
 
+		internal static void TeleportToNPC(int npcId)
+		{
+			for (int i = 0; i < GameScr.vNpc.size(); i++)
+			{
+				Npc npc = (Npc)GameScr.vNpc.elementAt(i);
+				if (npc.template.npcTemplateId == npcId)
+				{
+					TeleportMyChar(npc.cx, npc.ySd - npc.ySd % 24);
+					Char.myCharz().npcFocus = npc;
+					return;
+				}
+			}
+		}
+
 		[HotkeyCommand('n')]
 		internal static void showMenuTeleNpc()
 		{
