@@ -75,7 +75,7 @@ namespace Mod.PickMob
 				yield return null;
 			}
 
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain)
+			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99)
 			{
 				XmapController.start(mapIdTrain.Value);
 				yield return null;
