@@ -2,6 +2,7 @@
 using System.Linq;
 using Mod.Constants;
 using Mod.Xmap;
+using UnityEngine;
 
 namespace Mod.PickMob
 {
@@ -389,7 +390,10 @@ namespace Mod.PickMob
 			{
 				skillTemplate.id = id;
 				Skill nextSkill = Char.myCharz().getSkill(skillTemplate);
-				if (IsSkillBetter(nextSkill, skill)) skill = nextSkill;
+				if (IsSkillBetter(nextSkill, skill))
+				{
+					skill = nextSkill;
+				}
 			}
 
 			return skill;
@@ -413,6 +417,7 @@ namespace Mod.PickMob
 
 		static bool CanUseSkill(Skill skill)
 		{
+			Debug.Log($"Skill name: {skill.template.name}, last time use: {skill.lastTimeUseThisSkill}, cool down: {skill.coolDown}, mana use: {GetManaUseSkill(skill)}, current mana: {Char.myCharz().cMP}");
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
 

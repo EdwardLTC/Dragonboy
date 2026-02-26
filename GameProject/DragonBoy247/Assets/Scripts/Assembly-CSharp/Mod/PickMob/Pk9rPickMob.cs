@@ -15,7 +15,7 @@ namespace Mod.PickMob
 		const int DEFAULT_MP_BUFF = 20;
 		static readonly sbyte[] IdSkillsBase =
 		{
-			0, 2, 17, 4, 13, 19, 6, 21
+			0, 2, 17, 4, 13, 19, 6, 21, 24, 25
 		};
 		static readonly short[] IdItemBlockBase =
 		{
@@ -71,10 +71,6 @@ namespace Mod.PickMob
 		internal static void SetPickUpLimited(bool newState)
 		{
 			IsLimitTimesPickItem = newState;
-		}
-		internal static void SetAttackMonsterBySendCommand(bool newState)
-		{
-			IsAttackMonsterBySendCommand = newState;
 		}
 
 		[ChatCommand("ts")]
