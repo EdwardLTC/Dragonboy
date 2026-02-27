@@ -66,6 +66,12 @@ namespace Mod.R
             "",  //I don't know what this string is in World server
             ""  //I don't know what this string is in Indonaga server
         };
+        internal static LocalizedString outOfStamina = new string[3]
+        {
+            "Hết thể lực",
+            "",
+            ""
+        };
         internal static LocalizedString errorOccurred = new string[3]
         {
             "Có lỗi xảy ra vui lòng thử lại sau.",

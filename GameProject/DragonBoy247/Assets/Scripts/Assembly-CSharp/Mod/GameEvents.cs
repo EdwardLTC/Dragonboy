@@ -702,9 +702,15 @@ namespace Mod
 
 		internal static void OnAddInfoChar(Char c, string info)
 		{
-			if (LocalizedString.saoMayLuoiThe.ContainsReversed(info.ToLower()) &&
-			    AutoTrainPet.Mode > AutoTrainPetMode.Disabled && c.charID == -Char.myCharz().charID)
+			if (LocalizedString.saoMayLuoiThe.ContainsReversed(info.ToLower()) && AutoTrainPet.Mode > AutoTrainPetMode.Disabled && c.charID == -Char.myCharz().charID)
+			{
 				AutoTrainPet.saoMayLuoiThe = true;
+			}
+
+			if (LocalizedString.outOfStamina.ContainsReversed(info.ToLower()))
+			{
+				AutoUseGrape.doUseGrape();
+			}
 		}
 
 		internal static bool OnPaintBgGameScr(mGraphics g)
@@ -1817,9 +1823,10 @@ namespace Mod
 				     i++)
 				{
 					int y = panel.yScroll + i * panel.ITEM_HEIGHT;
-					if (y - panel.cmy > panel.yScroll + panel.hScroll ||
-					    y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+					if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll)
+					{
 						continue;
+					}
 					bool isBodyItem = i < arrItemBody.Length;
 					int bagIndex = i - arrItemBody.Length;
 					Item item = isBodyItem ? arrItemBody[i] : bagIndex < arrItemBag.Length ? arrItemBag[bagIndex] : null;
@@ -1878,7 +1885,7 @@ namespace Mod
 			string text = Rms.loadRMSString("acc");
 			sbyte[] userAo = Rms.loadRMS("userAo" + ServerListScreen.ipSelect);
 			if (text == null)
-			{
+				{
 				if (userAo != null)
 					screen.nCmdPlay = 1;
 			}
