@@ -417,7 +417,6 @@ namespace Mod.PickMob
 
 		static bool CanUseSkill(Skill skill)
 		{
-			Debug.Log($"Skill name: {skill.template.name}, last time use: {skill.lastTimeUseThisSkill}, cool down: {skill.coolDown}, mana use: {GetManaUseSkill(skill)}, current mana: {Char.myCharz().cMP}");
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
 
@@ -426,7 +425,10 @@ namespace Mod.PickMob
 
 			if (IdSkillsCanNotAttack.Contains(skill.template.id))
 				return false;
-
+			
+			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown)
+				return false;
+			
 			if (Char.myCharz().cMP < GetManaUseSkill(skill))
 				return false;
 
