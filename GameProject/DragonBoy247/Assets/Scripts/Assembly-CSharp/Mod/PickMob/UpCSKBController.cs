@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Mod.Auto;
 using Mod.ModHelper;
 using Mod.Xmap;
@@ -13,6 +14,7 @@ namespace Mod.PickMob
 		const int ID_ICON_MD = 2758;
 		const short ID_CAPSULE_MD = 379;
 		const short ID_CAPSULE_KB = 380;
+		static readonly int[] mapCanTrain = {92, 93, 94, 95, 96, 97, 98, 99, 100};
 
 		static long notUsingMDTime;
 		static long lastTimeGoBack;
@@ -96,6 +98,12 @@ namespace Mod.PickMob
 
 		protected override void OnStart()
 		{
+			if (!mapCanTrain.Contains(TileMap.mapID))
+			{
+				gI.Toggle(false);
+				GameScr.info1.addInfo("[Up CSKB] Map hiện tại không thể train, đã tắt auto", 0);
+				return;
+			}
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);

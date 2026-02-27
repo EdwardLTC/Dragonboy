@@ -384,7 +384,7 @@ namespace Mod
 			//}));
 		}
 
-		[ChatCommand("csb"), HotkeyCommand('c')]
+		[HotkeyCommand('c')]
 		internal static void useCapsule()
 		{
 			sbyte index = getIndexItemBag(193, 194);
@@ -775,34 +775,6 @@ namespace Mod
 		internal static int Distance(IMapObject mapObject1, IMapObject mapObject2)
 		{
 			return Res.distance(mapObject1.getX(), mapObject1.getY(), mapObject2.getX(), mapObject2.getY());
-		}
-
-		[HotkeyCommand('w')]
-		internal static void KhinhCong()
-		{
-			Char.myCharz().cy -= 50;
-			Service.gI().charMove();
-		}
-
-		[HotkeyCommand('s')]
-		internal static void DonTho()
-		{
-			Char.myCharz().cy += 50;
-			Service.gI().charMove();
-		}
-
-		[HotkeyCommand('a')]
-		internal static void DichTrai()
-		{
-			Char.myCharz().cx -= 50;
-			Service.gI().charMove();
-		}
-
-		[HotkeyCommand('d')]
-		internal static void DichPhai()
-		{
-			Char.myCharz().cx += 50;
-			Service.gI().charMove();
 		}
 
 		internal static short getNRSDId()

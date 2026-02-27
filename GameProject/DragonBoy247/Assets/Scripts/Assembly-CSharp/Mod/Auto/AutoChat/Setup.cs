@@ -22,7 +22,7 @@ namespace Mod.Auto.AutoChat
                 sw.WriteLine(Strings.communityMod);
                 sw.WriteLine("6500");
             }
-            // Cập nhật thời gian delay
+       
             delayAutoChat = int.Parse(File.ReadAllLines(Utils.PathAutoChat)[1]);
         }
 

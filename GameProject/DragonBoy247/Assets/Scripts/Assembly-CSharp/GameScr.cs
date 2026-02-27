@@ -3989,24 +3989,24 @@ public class GameScr : mScreen, IChatable
 		{
 			return;
 		}
-		bool flag2 = false;
-		for (int j = 0; j < Char.myCharz().arrItemBag.Length; j++)
-		{
-			Item item = Char.myCharz().arrItemBag[j];
-			if (item != null && item.template.type == 6)
-			{
-				flag2 = true;
-				break;
-			}
-		}
-		if (!flag2 && GameCanvas.gameTick % 150 == 0)
-		{
-			Service.gI().requestPean();
-		}
-		if (Char.myCharz().cHP <= Char.myCharz().cHPFull * 20 / 100 || Char.myCharz().cMP <= Char.myCharz().cMPFull * 20 / 100)
-		{
-			doUseHP();
-		}
+		// bool flag2 = false;
+		// for (int j = 0; j < Char.myCharz().arrItemBag.Length; j++)
+		// {
+		// 	Item item = Char.myCharz().arrItemBag[j];
+		// 	if (item != null && item.template.type == 6)
+		// 	{
+		// 		flag2 = true;
+		// 		break;
+		// 	}
+		// }
+		// if (!flag2 && GameCanvas.gameTick % 150 == 0)
+		// {
+		// 	Service.gI().requestPean();
+		// }
+		// if (Char.myCharz().cHP <= Char.myCharz().cHPFull * 20 / 100 || Char.myCharz().cMP <= Char.myCharz().cMPFull * 20 / 100)
+		// {
+		// 	doUseHP();
+		// }
 		if (Char.myCharz().mobFocus == null || (Char.myCharz().mobFocus != null && Char.myCharz().mobFocus.isMobMe))
 		{
 			for (int k = 0; k < vMob.size(); k++)

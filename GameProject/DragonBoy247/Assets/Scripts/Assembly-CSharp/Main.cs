@@ -380,6 +380,26 @@ public class Main : MonoBehaviour
 		}
 		if (isPC)
 		{
+			bool canMoveByWASD = GameCanvas.currentDialog == null && GameCanvas.currentScreen == GameScr.instance && !ChatTextField.gI().isShow;
+			if (canMoveByWASD)
+			{
+				if (Input.GetKeyDown(KeyCode.W))
+					GameMidlet.gameCanvas.keyPressedz(-1);
+				if (Input.GetKeyUp(KeyCode.W))
+					GameMidlet.gameCanvas.keyReleasedz(-1);
+				if (Input.GetKeyDown(KeyCode.S))
+					GameMidlet.gameCanvas.keyPressedz(-2);
+				if (Input.GetKeyUp(KeyCode.S))
+					GameMidlet.gameCanvas.keyReleasedz(-2);
+				if (Input.GetKeyDown(KeyCode.A))
+					GameMidlet.gameCanvas.keyPressedz(-3);
+				if (Input.GetKeyUp(KeyCode.A))
+					GameMidlet.gameCanvas.keyReleasedz(-3);
+				if (Input.GetKeyDown(KeyCode.D))
+					GameMidlet.gameCanvas.keyPressedz(-4);
+				if (Input.GetKeyUp(KeyCode.D))
+					GameMidlet.gameCanvas.keyReleasedz(-4);
+			}
 			GameMidlet.gameCanvas.scrollMouse((int)(Input.GetAxis("Mouse ScrollWheel") * 10f));
 			float x = Input.mousePosition.x;
 			float y = Input.mousePosition.y;

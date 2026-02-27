@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NROL/NROL.unity
-    guid: 825b468e7b1a3944eb5bb0b2982b2884
+    path: Assets/NROL.unity
+    guid: 62ad7a168d2822b44bb71bdbc89fb0f8
   m_configObjects: {}
