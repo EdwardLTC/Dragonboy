@@ -1,3 +1,5 @@
+using Mod.R;
+
 namespace Mod.Auto
 {
 	public static class AutoUseGrape
@@ -5,7 +7,15 @@ namespace Mod.Auto
 		const short GREEN_GRAPE_ID = 212;
 		const short PURPLE_GRAPE_ID = 211;
 		
-		public static void doUseGrape()
+		internal static void Info(string text)
+		{
+			if (LocalizedString.outOfStamina.ContainsReversed(text.ToLower()))
+			{
+				doUseGrape();
+			}
+		}
+		
+		static void doUseGrape()
 		{
 			Item green = Utils.getItemInBag(GREEN_GRAPE_ID);
 			Item purple = Utils.getItemInBag(PURPLE_GRAPE_ID);

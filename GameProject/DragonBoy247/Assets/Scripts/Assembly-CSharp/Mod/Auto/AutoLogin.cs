@@ -31,7 +31,7 @@ namespace Mod.Auto
 				AttemptLogin();
 				break;
 			case 2:
-				// if (mSystem.currentTimeMillis() - lastTimeUpdate <= 750) return;
+				if (mSystem.currentTimeMillis() - lastTimeUpdate <= 750) return;
 				lastTimeUpdate = mSystem.currentTimeMillis();
 				break;
 			}
@@ -43,7 +43,6 @@ namespace Mod.Auto
 			{
 				lastTimeAttemptLogin = mSystem.currentTimeMillis();
 				GameCanvas.serverScreen.switchToMe();
-				GameCanvas.startOKDlg(string.Format(Strings.autoLoginReattemptLoginIn, 30) + '!');
 				steps = 1;
 			}
 		}
@@ -55,6 +54,7 @@ namespace Mod.Auto
 				steps = 2;
 				return;
 			}
+			GameCanvas.startOKDlg(string.Format(Strings.autoLoginReattemptLoginIn, 35 - (mSystem.currentTimeMillis() - lastTimeAttemptLogin) / 1000) + '!');
 			if (mSystem.currentTimeMillis() - lastTimeAttemptLogin < 35000)
 			{
 				return;
@@ -62,15 +62,9 @@ namespace Mod.Auto
 			lastTimeAttemptLogin = mSystem.currentTimeMillis();
 			if (GameCanvas.currentScreen is ServerListScreen)
 			{
-				Debug.Log("Currently in ServerListScreen, switching to it again to reset state...");
-				GameCanvas.serverScreen.switchToMe();
+				Session_ME.gI().close();
+				Session_ME2.gI().close();
 				GameCanvas.serverScreen.perform(3, null);
-				GameCanvas.serverScreen.switchToMe();
-			}
-			else
-			{
-				isEnabled = false;
-				Debug.Log("Not in ServerListScreen, cannot attempt login. Disabling AutoLogin.");
 			}
 		}
 

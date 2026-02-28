@@ -542,6 +542,7 @@ namespace Mod
 		internal static void OnAddInfoMe(string str)
 		{
 			Pk9rXmap.Info(str);
+			AutoUseGrape.Info(str);
 		}
 
 		internal static bool OnUpdateTouchGameScr(GameScr instance)
@@ -705,11 +706,6 @@ namespace Mod
 			if (LocalizedString.saoMayLuoiThe.ContainsReversed(info.ToLower()) && AutoTrainPet.Mode > AutoTrainPetMode.Disabled && c.charID == -Char.myCharz().charID)
 			{
 				AutoTrainPet.saoMayLuoiThe = true;
-			}
-
-			if (LocalizedString.outOfStamina.ContainsReversed(info.ToLower()))
-			{
-				AutoUseGrape.doUseGrape();
 			}
 		}
 

@@ -34,7 +34,7 @@ namespace Mod.PickMob
 		internal static List<int> TypeMobsTanSat = new List<int>();
 		internal static List<sbyte> IdSkillsTanSat = new List<sbyte>(IdSkillsBase);
 
-		internal static int TimesAutoPickItemMax = 7;
+		internal static int TimesAutoPickItemMax = 14;
 		internal static List<short> IdItemPicks = new List<short>();
 		internal static List<short> IdItemBlocks = new List<short>(IdItemBlockBase);
 		internal static List<sbyte> TypeItemPicks = new List<sbyte>();

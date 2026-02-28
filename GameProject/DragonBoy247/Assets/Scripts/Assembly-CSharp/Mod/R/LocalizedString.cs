@@ -68,7 +68,7 @@ namespace Mod.R
         };
         internal static LocalizedString outOfStamina = new string[3]
         {
-            "Hết thể lực",
+            "Thể lực đã cạn, hãy nghỉ ngơi lấy lại sức",
             "",
             ""
         };

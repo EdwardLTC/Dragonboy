@@ -120,7 +120,6 @@ namespace Mod.PickMob
 					return;
 				}
 			}
-			GameScr.info1.addInfo("[Up CSKB]: Map Id Train=" + mapIdTrain + ", Zone Id Train=" + zoneIdTrain, 0);
 			base.OnStart();
 		}
 
