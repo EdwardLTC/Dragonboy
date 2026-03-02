@@ -91,42 +91,56 @@ final class Launcher {
     }
 
 
-     /// Launches the executable directly, passing environment variables or arguments. Returns the PID of the launched process.
+    /// Launches the application via NSWorkspace, returning the real PID of the launched app.
+    /// Must be called from a background thread (uses a semaphore internally).
     static func launch(bundlePath: String, args: [String] = []) throws -> Int {
-        
+        dispatchPrecondition(condition: .notOnQueue(.main))
+
         guard isAppInstalled(at: bundlePath) else {
             throw LauncherError.appNotFound(path: bundlePath)
         }
-        
-        let openURL = URL(fileURLWithPath: "/usr/bin/open")
-        
-        guard FileManager.default.isExecutableFile(atPath: openURL.path) else {
-            throw LauncherError.executableNotFound(path: openURL.path)
+
+        let appURL = URL(fileURLWithPath: bundlePath)
+        let config = NSWorkspace.OpenConfiguration()
+        config.arguments = args
+        config.createsNewApplicationInstance = true
+
+        var resultApp: NSRunningApplication?
+        var resultError: Error?
+        let semaphore = DispatchSemaphore(value: 0)
+
+        NSWorkspace.shared.openApplication(at: appURL, configuration: config) { app, error in
+            resultApp = app
+            resultError = error
+            semaphore.signal()
         }
-        
-        var launchArgs = ["-n", bundlePath]
-        if !args.isEmpty {
-            launchArgs.append("--args")
-            launchArgs.append(contentsOf: args)
+
+        let timeout = semaphore.wait(timeout: .now() + 30)
+
+        if timeout == .timedOut {
+            throw LauncherError.launchFailed(NSError(domain: "Launcher", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "Timed out waiting for app to launch"
+            ]))
         }
-        
-        do {
-            let pid = try spawnExecutable(
-                at: openURL,
-                args: launchArgs
-            )
-            
-            if pid <= 0 {
-                throw LauncherError.launchFailed(NSError(domain: "Launcher", code: -1, userInfo: [
-                    NSLocalizedDescriptionKey: "Invalid PID returned from spawn"
-                ]))
-            }
-            
-            return pid
-            
-        } catch {
+
+        if let error = resultError {
             throw LauncherError.launchFailed(error)
         }
+
+        guard let app = resultApp else {
+            throw LauncherError.launchFailed(NSError(domain: "Launcher", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "No running application returned"
+            ]))
+        }
+
+        let pid = Int(app.processIdentifier)
+        if pid <= 0 {
+            throw LauncherError.launchFailed(NSError(domain: "Launcher", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "Invalid PID returned: \(pid)"
+            ]))
+        }
+
+        return pid
     }
 
     /// Attempt to find running PIDs for a bundle identifier or process name.

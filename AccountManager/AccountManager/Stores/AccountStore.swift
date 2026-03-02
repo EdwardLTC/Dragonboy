@@ -1,11 +1,12 @@
 import Foundation
 import Combine
+import Darwin
 
 final class AccountStore: ObservableObject {
     @Published private(set) var accounts: [Account] = []
+    @Published var launching: Set<UUID> = []
 
     private let fileURL: URL
-    private var monitors: [UUID: DispatchSourceProcess] = [:]
 
     init() {
         let fm = FileManager.default
@@ -17,7 +18,9 @@ final class AccountStore: ObservableObject {
             let dir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
             self.fileURL = dir.appendingPathComponent("accounts.json")
         }
-        // Load persisted accounts on initialization
+        
+        ProcessManager.shared.store = self
+
         load()
     }
 
@@ -48,7 +51,6 @@ final class AccountStore: ObservableObject {
     }
 
     func save() {
-        // Capture a snapshot of accounts on the main thread to avoid races
         let snapshot: [Account]
         if Thread.isMainThread {
             snapshot = accounts
@@ -58,7 +60,6 @@ final class AccountStore: ObservableObject {
             snapshot = s
         }
 
-        // Write the snapshot to disk asynchronously
         DispatchQueue.global(qos: .utility).async {
             do {
                 let encoder = JSONEncoder()
@@ -72,7 +73,6 @@ final class AccountStore: ObservableObject {
         }
     }
 
-    // MARK: - CRUD
     func addAccount(_ account: Account) throws {
         var exists = false
         if Thread.isMainThread {
@@ -126,82 +126,26 @@ final class AccountStore: ObservableObject {
         }
     }
 
-    @discardableResult
-    func launch(account: Account) throws -> Int {
-        var args: [String] = []
-        args.append("--username")
-        args.append(account.username)
-        args.append("--server")
-        args.append(account.server)
-        args.append("--password")
-        args.append(account.password)
-
-        let pid = try Launcher.launch(bundlePath: Launcher.defaultBundlePath, args: args)
-        registerLaunched(pid: pid, for: account.id)
-        return pid
-    }
-
-    func registerLaunched(pid: Int, for accountID: UUID) {
+    // MARK: - Account state helpers
+    func markLaunched(accountID: UUID, pid: Int) {
         DispatchQueue.main.async {
             if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
                 self.accounts[idx].isRunning = true
                 self.accounts[idx].pid = pid
+                self.launching.remove(accountID)
                 self.save()
             }
         }
-
-        let source = DispatchSource.makeProcessSource(identifier: pid_t(pid), eventMask: .exit, queue: DispatchQueue.global())
-        source.setEventHandler { [weak self] in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
-                    self.accounts[idx].isRunning = false
-                    self.accounts[idx].pid = nil
-                    self.save()
-                }
-                self.monitors[accountID]?.cancel()
-                self.monitors.removeValue(forKey: accountID)
-            }
-        }
-        source.resume()
-        if Thread.isMainThread {
-            monitors[accountID] = source
-        } else {
-            DispatchQueue.main.async { self.monitors[accountID] = source }
-        }
     }
 
-    func detectRunningInstances() {
-        // Capture accounts snapshot on main, then perform detection in background
-        let accountsSnapshot: [Account] = Thread.isMainThread ? self.accounts : {
-            var s: [Account] = []
-            DispatchQueue.main.sync { s = self.accounts }
-            return s
-        }()
-
-        DispatchQueue.global().async {
-            for account in accountsSnapshot {
-                var matchKey: String = ""
-                if let bundle = Bundle(path: Launcher.defaultBundlePath), let bid = bundle.bundleIdentifier {
-                    matchKey = bid
-                } else if let name = URL(fileURLWithPath: Launcher.defaultBundlePath).deletingPathExtension().lastPathComponent.split(separator: ".").first {
-                    matchKey = String(name)
-                }
-
-                let pids = Launcher.findRunningPIDs(matching: matchKey)
-                DispatchQueue.main.async {
-                    if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
-                        if let pid = pids.first {
-                            self.accounts[idx].isRunning = true
-                            self.accounts[idx].pid = pid
-                        } else {
-                            self.accounts[idx].isRunning = false
-                            self.accounts[idx].pid = nil
-                        }
-                    }
-                }
+    func markStopped(accountID: UUID) {
+        DispatchQueue.main.async {
+            if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
+                self.accounts[idx].isRunning = false
+                self.accounts[idx].pid = nil
+                self.save()
             }
-            self.save()
+            self.launching.remove(accountID)
         }
     }
 }

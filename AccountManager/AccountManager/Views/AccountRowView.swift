@@ -3,8 +3,13 @@ import SwiftUI
 struct AccountRowView: View {
     @EnvironmentObject var store: AccountStore
     var account: Account
-
-    @State private var isLaunching: Bool = false
+    private var liveAccount: Account {
+        if let idx = store.accounts.firstIndex(where: { $0.id == account.id }) {
+            return store.accounts[idx]
+        }
+        return account
+    }
+    
     @State private var showDetail: Bool = false
     @State private var errorMessage: String?
     @State private var infoMessage: String?
@@ -15,32 +20,28 @@ struct AccountRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(account.isRunning ? Color.green.opacity(0.85) : Color.gray.opacity(0.4))
+                .fill(liveAccount.isRunning ? Color.green.opacity(0.85) : Color.gray.opacity(0.4))
                 .frame(width: 44, height: 44)
-                .overlay(Text(String(account.username.prefix(1)).uppercased()).font(.headline).foregroundColor(.white))
+                .overlay(Text(String(liveAccount.username.prefix(1)).uppercased()).font(.headline).foregroundColor(.white))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(account.username).font(.headline)
-                Text(account.server).font(.subheadline).foregroundColor(.secondary)
+                Text(liveAccount.username).font(.headline)
+                Text(liveAccount.server).font(.subheadline).foregroundColor(.secondary)
             }
 
             Spacer()
 
-            if account.isRunning {
-                Text("Running").font(.caption).padding(8).background(Color.green.opacity(0.13)).cornerRadius(8)
-            } else {
-                Text("Stopped").font(.caption).padding(8).background(Color.gray.opacity(0.06)).cornerRadius(8)
-            }
-
-            if isLaunching {
+            if store.launching.contains(account.id) {
                 ProgressView().progressViewStyle(.circular)
             } else {
                 Button(action: {
                     launchTapped()
                 }) {
-                    Text(account.isRunning ? "Stop" : "Launch")
+                    Text(liveAccount.isRunning ? "Stop" : "Launch")
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(liveAccount.isRunning ? Color.red : Color.accentColor)
+                .disabled(store.launching.contains(account.id))
             }
 
             if isRemoving {
@@ -61,8 +62,8 @@ struct AccountRowView: View {
                 Image(systemName: "gearshape")
             }
             .buttonStyle(.plain)
-            .sheet(isPresented: $showDetail) {
-                AccountDetailView(account: account).environmentObject(store)
+                .sheet(isPresented: $showDetail) {
+                AccountDetailView(account: liveAccount).environmentObject(store)
             }
         }
         .contentShape(Rectangle())
@@ -116,26 +117,20 @@ struct AccountRowView: View {
     }
 
     private func launchTapped() {
-        DispatchQueue.main.async {
-            isLaunching = true
-            errorMessage = nil
-        }
-
         DispatchQueue.global(qos: .userInitiated).async {
-            if account.isRunning {
-                DispatchQueue.main.async {
-                    isLaunching = false
-                    errorMessage = "Stopping processes is not implemented in this prototype."
-                }
-                return
-            }
-
+            DispatchQueue.main.async { store.launching.insert(account.id) }
             do {
-                let pid = try store.launch(account: account)
-                print("Launched \(account.username) pid=\(pid)")
-                DispatchQueue.main.async {
-                    isLaunching = false
-                    infoMessage = "Launched (pid: \(pid))"
+                if account.isRunning {
+                    try ProcessManager.shared.stop(account: account)
+                    DispatchQueue.main.async {
+                        infoMessage = "Stopped"
+                    }
+                } else {
+                    let pid = try ProcessManager.shared.launch(account: account)
+                    print("Launched \(account.username) pid=\(pid)")
+                    DispatchQueue.main.async {
+                        infoMessage = "Launched (pid: \(pid))"
+                    }
                 }
             } catch {
                 let message: String
@@ -145,8 +140,8 @@ struct AccountRowView: View {
                     message = error.localizedDescription
                 }
                 DispatchQueue.main.async {
-                    isLaunching = false
                     errorMessage = message
+                    store.launching.remove(account.id)
                 }
             }
         }
