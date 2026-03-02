@@ -547,7 +547,6 @@ namespace Mod
 
 		internal static bool OnUpdateTouchGameScr(GameScr instance)
 		{
-			// If panel2 (mod menu/custom panel on the right) is handling touch, block gameplay touch behind it.
 			if (!GameCanvas.panel.isShow && GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
 			{
 				int panel2DrawX = GameCanvas.panel2.X + GameCanvas.panel2.X - GameCanvas.panel2.cmx;

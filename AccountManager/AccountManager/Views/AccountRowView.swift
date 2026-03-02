@@ -43,7 +43,6 @@ struct AccountRowView: View {
                 .buttonStyle(.borderedProminent)
             }
 
-            // Remove account button
             if isRemoving {
                 ProgressView().progressViewStyle(.circular).frame(width: 28, height: 28)
             } else {
@@ -137,7 +136,6 @@ struct AccountRowView: View {
                 DispatchQueue.main.async {
                     isLaunching = false
                     infoMessage = "Launched (pid: \(pid))"
-                    checkConnectivityForLaunchedApp(account: account)
                 }
             } catch {
                 let message: String
@@ -146,43 +144,9 @@ struct AccountRowView: View {
                 } else {
                     message = error.localizedDescription
                 }
-                print("Failed to launch app for account \(account.username): \(message)")
                 DispatchQueue.main.async {
                     isLaunching = false
                     errorMessage = message
-                }
-            }
-        }
-    }
-
-    /// After launching, probe the account.server to verify the game can reach
-    /// the network. Retries a few times with a delay before reporting failure.
-    private func checkConnectivityForLaunchedApp(account: Account, attempts: Int = 3, delay: TimeInterval = 3.0) {
-        guard attempts > 0 else {
-            DispatchQueue.main.async {
-                errorMessage = "Launched but cannot connect to \(account.server)"
-            }
-            return
-        }
-
-        Launcher.checkConnectivity(to: account.server, timeout: 5.0) { success, reason in
-            if success {
-                DispatchQueue.main.async {
-                    infoMessage = "Game connected to \(account.server)"
-                }
-            } else {
-                if attempts > 1 {
-                    DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
-                        self.checkConnectivityForLaunchedApp(
-                            account: account,
-                            attempts: attempts - 1,
-                            delay: delay
-                        )
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        errorMessage = "Launched but cannot connect to \(account.server): \(reason ?? "Unknown")"
-                    }
                 }
             }
         }

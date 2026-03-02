@@ -128,10 +128,6 @@ final class AccountStore: ObservableObject {
 
     @discardableResult
     func launch(account: Account) throws -> Int {
-        var env: [String: String] = [:]
-        env["DB_USERNAME"] = account.username
-        env["DB_SERVER"] = account.server
-
         var args: [String] = []
         args.append("--username")
         args.append(account.username)
@@ -140,7 +136,7 @@ final class AccountStore: ObservableObject {
         args.append("--password")
         args.append(account.password)
 
-        let pid = try Launcher.launch(bundlePath: Launcher.defaultBundlePath, args: args, env: env)
+        let pid = try Launcher.launch(bundlePath: Launcher.defaultBundlePath, args: args)
         registerLaunched(pid: pid, for: account.id)
         return pid
     }

@@ -9,11 +9,6 @@ struct VisualEffectView: NSViewRepresentable {
 
     private class PassthroughVisualEffectView: NSVisualEffectView {
         override func hitTest(_ point: NSPoint) -> NSView? {
-            // Avoid forcing a nil response here — let AppKit resolve the hit test
-            // normally. Returning nil unconditionally can break event routing in
-            // some hosting scenarios. If you need passthrough behavior, prefer
-            // disabling SwiftUI hit-testing with `.allowsHitTesting(false)` or
-            // implement conditional passthrough logic based on point transparency.
             return super.hitTest(point)
         }
     }

@@ -9,7 +9,7 @@ namespace Mod.Auto
 		
 		internal static void Info(string text)
 		{
-			if (LocalizedString.outOfStamina.ContainsReversed(text.ToLower()))
+			if (LocalizedString.outOfStamina.Contains(text))
 			{
 				doUseGrape();
 			}
