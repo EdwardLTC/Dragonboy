@@ -127,7 +127,6 @@ struct AccountRowView: View {
                     }
                 } else {
                     let pid = try ProcessManager.shared.launch(account: account)
-                    print("Launched \(account.username) pid=\(pid)")
                     DispatchQueue.main.async {
                         infoMessage = "Launched (pid: \(pid))"
                     }

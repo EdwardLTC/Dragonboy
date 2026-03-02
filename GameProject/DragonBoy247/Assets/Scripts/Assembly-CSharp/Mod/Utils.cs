@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,7 +48,7 @@ namespace Mod
 		internal static Random random = new Random();
 
 		static bool isOpenedByExternalAccountManager;
-		internal static bool IsOpenedByExternalAccountManager => isOpenedByExternalAccountManager;
+		internal static bool IsOpenedByExternalAccountManager { get; set; }
 
 
 		/// <summary>

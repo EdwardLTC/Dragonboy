@@ -13,7 +13,8 @@ final class ProcessManager {
 
     weak var store: AccountStore?
 
-    private var monitors: [UUID: DispatchSourceProcess] = [:] 
+    private var monitors: [UUID: DispatchSourceProcess] = [:]
+    private var socketServers: [UUID: SocketServer] = [:]
 
     private var matchKey: String {
         if let bundle = Bundle(path: Launcher.defaultBundlePath), let bid = bundle.bundleIdentifier {
@@ -68,17 +69,30 @@ final class ProcessManager {
     }
 
     func launch(account: Account) throws -> Int {
+        // Start a local socket server for this account
+        let server = SocketServer(accountID: account.id,
+                                  username: account.username,
+                                  password: account.password)
+        let port = try server.start()
+
         var args: [String] = []
-        args.append("--username")
+        args.append("-port")
+        args.append(String(port))
+        args.append("-username")
         args.append(account.username)
-        args.append("--server")
-        args.append(account.server)
-        args.append("--password")
+        args.append("-password")
         args.append(account.password)
 
-        let pid = try Launcher.launch(bundlePath: Launcher.defaultBundlePath, args: args)
-        
+        let pid: Int
+        do {
+            pid = try Launcher.launch(bundlePath: Launcher.defaultBundlePath, args: args)
+        } catch {
+            server.stop()
+            throw error
+        }
+
         DispatchQueue.main.async { [weak self] in
+            self?.socketServers[account.id] = server
             self?.registerLaunched(pid: pid, for: account.id)
         }
 
@@ -112,6 +126,9 @@ final class ProcessManager {
                 if let newPid = newPids.first {
                     self.registerLaunched(pid: newPid, for: accountID)
                 } else {
+                    // Game exited – tear down socket server
+                    self.socketServers[accountID]?.stop()
+                    self.socketServers.removeValue(forKey: accountID)
                     self.store?.markStopped(accountID: accountID)
                     self.monitors[accountID]?.cancel()
                     self.monitors.removeValue(forKey: accountID)
@@ -165,26 +182,27 @@ final class ProcessManager {
         do {
             try ProcessManager.terminate(pid: pid, timeout: 2.0)
         } catch ProcessManagerError.permissionDenied {
-            terminateViaNSRunningApplication(matchKey: key, timeout: 2.0)
-        }
-
-        let runningPids = Launcher.findRunningPIDs(matching: key)
-        for runningPid in runningPids {
-            if runningPid == pid { continue }
-            do {
-                try ProcessManager.terminate(pid: runningPid, timeout: 1.0)
-            } catch {
-                if case ProcessManagerError.permissionDenied = error {
-                    terminateViaNSRunningApplication(matchKey: key, timeout: 1.0)
-                }
+            // Fall back to NSRunningApplication for just this PID
+            let apps = NSRunningApplication.runningApplications(withBundleIdentifier: key)
+            for app in apps where Int(app.processIdentifier) == pid {
+                if !app.terminate() { _ = app.forceTerminate() }
             }
         }
 
         DispatchQueue.main.async {
+            // Stop socket server for this account
+            self.socketServers[account.id]?.stop()
+            self.socketServers.removeValue(forKey: account.id)
+
             store.markStopped(accountID: account.id)
             self.monitors[account.id]?.cancel()
             self.monitors.removeValue(forKey: account.id)
         }
+    }
+
+    /// Returns the socket server for a given account, if one is running.
+    func socketServer(for accountID: UUID) -> SocketServer? {
+        return socketServers[accountID]
     }
 
     private func terminateViaNSRunningApplication(matchKey: String, timeout: TimeInterval) {

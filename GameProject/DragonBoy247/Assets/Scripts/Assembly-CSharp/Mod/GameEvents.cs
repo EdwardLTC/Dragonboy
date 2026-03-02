@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,6 +8,7 @@ using Mod.Auto.AutoChat;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
+using Mod.ModHelper;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Mod.ModMenu;
@@ -69,6 +70,13 @@ namespace Mod
 			GraphicsReducer.InitializeTileMap(true);
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
+			
+			GameLauncherClient launcher = GameLauncherClient.Instance;
+			launcher.ParseStartupArgs();
+			if (launcher.IsLaunchedByLauncher())
+			{
+				launcher.Connect();
+			}
 		}
 
 		internal static void OnMainStart()
@@ -104,6 +112,12 @@ namespace Mod
 			ModMenuMain.SaveData();
 			Setup.clearStringTrash();
 			TeleportMenuMain.SaveData();
+			
+			if (GameLauncherClient.Instance.IsConnected)
+			{
+				GameLauncherClient.Instance.Close();
+			}
+
 			if (!Utils.IsOpenedByExternalAccountManager)
 			{
 				InGameAccountManager.OnCloseAndPause();
@@ -399,13 +413,20 @@ namespace Mod
 			ModMenuMain.Initialize();
 			TeleportMenuMain.LoadData();
 			AutoTrainPet.isFirstTimeCheckPet = true;
-			if (!Utils.IsOpenedByExternalAccountManager)
+			if (Utils.IsOpenedByExternalAccountManager)
 			{
-				if (string.IsNullOrEmpty(nameCustomServer))
-					return;
-				serverListScreen.cmd[2 + serverListScreen.nCmdPlay].caption =
-					mResources.server + ": [custom] " + nameCustomServer;
+				if (GameLauncherClient.Instance.IsConnected)
+				{
+					GameLauncherClient.Instance.TryAutoLogin();
+				}
+				return;
 			}
+			if (string.IsNullOrEmpty(nameCustomServer))
+			{
+				return;
+			}
+			serverListScreen.cmd[2 + serverListScreen.nCmdPlay].caption =
+				mResources.server + ": [custom] " + nameCustomServer;
 		}
 
 		internal static void OnSessionConnecting(ref string host, ref int port)
