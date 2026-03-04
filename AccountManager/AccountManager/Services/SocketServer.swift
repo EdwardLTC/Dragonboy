@@ -259,30 +259,72 @@ final class SocketServer {
     // MARK: - Engine.IO packet dispatch
 
     private func handlePacket(_ packet: String, from connection: NWConnection) {
-        guard let firstChar = packet.first,
-              let eioType = EIOPacketType(rawValue: Int(String(firstChar)) ?? -1) else {
-            print("[SocketServer:\(port)] Unknown packet: \(packet.prefix(40))")
+        guard let firstChar = packet.first else { return }
+
+        // Try Engine.IO packet (starts with a digit 0-6)
+        if let eioType = EIOPacketType(rawValue: Int(String(firstChar)) ?? -1) {
+            switch eioType {
+            case .ping:
+                let body = String(packet.dropFirst())
+                sendText("\(EIOPacketType.pong.rawValue)\(body)", to: connection)
+
+            case .pong:
+                break
+
+            case .message:
+                let sioPayload = String(packet.dropFirst())
+                handleSIOPacket(sioPayload, from: connection)
+
+            case .close:
+                removeConnection(connection)
+
+            default:
+                break
+            }
             return
         }
 
-        switch eioType {
-        case .ping:
-            // Client ping → reply pong
-            let body = String(packet.dropFirst())
-            sendText("\(EIOPacketType.pong.rawValue)\(body)", to: connection)
+        // Fallback: raw JSON message (game sends {"action":"updateInfo", ...})
+        if firstChar == "{" || firstChar == "[" {
+            handleRawJSON(packet, from: connection)
+            return
+        }
 
-        case .pong:
-            // Response to our server-initiated ping – nothing to do
-            break
+        print("[SocketServer:\(port)] Unknown packet: \(packet.prefix(80))")
+    }
 
-        case .message:
-            // Contains a Socket.IO packet
-            let sioPayload = String(packet.dropFirst())
-            handleSIOPacket(sioPayload, from: connection)
+    // MARK: - Raw JSON handling (non–Socket.IO messages)
 
-        case .close:
-            removeConnection(connection)
+    /// The game may send plain JSON objects over WebSocket instead of
+    /// using the Engine.IO / Socket.IO wire protocol.  We detect them
+    /// here and route them through the same notification path.
+    private func handleRawJSON(_ text: String, from connection: NWConnection) {
+        guard let data = text.data(using: .utf8),
+              let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            print("[SocketServer:\(port)] Failed to parse raw JSON: \(text.prefix(80))")
+            return
+        }
 
+        let action = dict["action"] as? String ?? "unknown"
+
+        print("[SocketServer:\(port)] Raw JSON action '\(action)'")
+
+        NotificationCenter.default.post(
+            name: .socketMessageReceived, object: nil,
+            userInfo: ["accountID": accountID,
+                       "event": action,
+                       "args": [dict]])
+
+        // Built-in handlers for raw JSON
+        switch action {
+        case "get_credentials":
+            let payload: [String: Any] = ["action": "credentials",
+                                           "username": username,
+                                           "password": password]
+            if let jsonData = try? JSONSerialization.data(withJSONObject: payload),
+               let jsonStr = String(data: jsonData, encoding: .utf8) {
+                sendText(jsonStr, to: connection)
+            }
         default:
             break
         }
@@ -343,6 +385,9 @@ final class SocketServer {
                       to: connection)
         case "ping":
             emitEvent("pong", data: [:], to: connection)
+        case "updateInfo":
+            // Character info update – already forwarded via notification above
+            break
         default:
             break
         }

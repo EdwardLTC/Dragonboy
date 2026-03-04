@@ -13,7 +13,9 @@ struct AccountManagerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AccountListView().environmentObject(store)
+            AccountListView()
+                .environmentObject(store)
+                .preferredColorScheme(.dark)
         }
     }
 }

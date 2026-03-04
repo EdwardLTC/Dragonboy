@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -122,6 +122,9 @@ namespace Mod
 			{
 				InGameAccountManager.OnCloseAndPause();
 			}
+			
+			Session_ME.gI().close();
+			Session_ME2.gI().close();
 		}
 
 		internal static void OnFixedUpdateMain()
@@ -362,6 +365,7 @@ namespace Mod
 			Pk9rPickMob.Update();
 			AutoPean.Update();
 			AutoSkill.Update();
+			DelayedAction.Tick();
 		}
 
 		internal static void OnLogin(ref string username, ref string pass, ref sbyte type)

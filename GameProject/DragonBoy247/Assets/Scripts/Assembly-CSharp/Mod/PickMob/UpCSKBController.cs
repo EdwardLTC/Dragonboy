@@ -93,6 +93,7 @@ namespace Mod.PickMob
 		{
 			Pk9rPickMob.SetSlaughter(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
+			Utils.status = "Đã kết nối";
 			base.OnStop();
 		}
 
@@ -120,6 +121,7 @@ namespace Mod.PickMob
 					return;
 				}
 			}
+			Utils.status = "Up CSKB";
 			base.OnStart();
 		}
 

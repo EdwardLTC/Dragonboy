@@ -49,8 +49,7 @@ namespace Mod.ModHelper
 							break;
 					}
 				}
-
-				WriteLog($"Parsed startup args: username={Username}, wsPort={WsPort}");
+				
 			}
 			catch (Exception ex)
 			{
@@ -84,12 +83,10 @@ namespace Mod.ModHelper
 		{
 			try
 			{
-				WriteLog($"Attempting to connect to launcher WebSocket at ws://127.0.0.1:{WsPort}...");
 				_ws = new ClientWebSocket();
 				Uri uri = new Uri($"ws://127.0.0.1:{WsPort}");
 				
 				var sw = Stopwatch.StartNew();
-				WriteLog("ConnectAsync started...");
 				
 				const int timeoutMs = 10_000;
 				System.Threading.Tasks.Task connectTask = _ws.ConnectAsync(uri, _cts.Token);
@@ -123,7 +120,6 @@ namespace Mod.ModHelper
 				}
 				
 				IsConnected = true;
-				WriteLog($"Connected to launcher WebSocket at ws://127.0.0.1:{WsPort} in {sw.ElapsedMilliseconds}ms");
 				
 				SendMessage(new
 				{
@@ -285,47 +281,8 @@ namespace Mod.ModHelper
 				{
 					return;
 				}
-
-				SendMessage(new
-				{
-					action = "updateInfo",
-					Utils.status,
-					myChar.cName,
-					myChar.cgender,
-					TileMap.mapName,
-					TileMap.mapID,
-					TileMap.zoneID,
-					myChar.cx,
-					myChar.cy,
-					myChar.cHP,
-					myChar.cHPFull,
-					myChar.cMP,
-					myChar.cMPFull,
-					myChar.cStamina,
-					myChar.cPower,
-					myChar.cTiemNang,
-					myChar.cHPGoc,
-					myChar.cMPGoc,
-					myChar.cDefGoc,
-					myChar.cDamGoc,
-					myChar.cCriticalGoc,
-					myChar.cDamFull,
-					myChar.cDefull,
-					myChar.cCriticalFull,
-					cPetHP = myPet.cHP,
-					cPetHPFull = myPet.cHPFull,
-					cPetMP = myPet.cMP,
-					cPetMPFull = myPet.cMPFull,
-					cPetStamina = myPet.cStamina,
-					cPetPower = myPet.cPower,
-					cPetTiemNang = myPet.cTiemNang,
-					cPetDamFull = myPet.cDamFull,
-					cPetDefull = myPet.cDefull,
-					cPetCriticalFull = myPet.cCriticalFull,
-					myChar.xu,
-					myChar.luong,
-					myChar.luongKhoa
-				});
+				
+				SendMessage(CharacterInfoMessage.Create(myChar, myPet));
 			}
 			catch (Exception ex)
 			{
@@ -344,13 +301,13 @@ namespace Mod.ModHelper
 			if (GameCanvas.currentScreen is ServerListScreen && GameCanvas.serverScreen != null)
 			{
 				_autoLoginDone = true;
-				WriteLog($"Auto-login triggered for user: {Utils.username}");
 				Rms.saveRMSString("acc", Utils.username);
 				if (!string.IsNullOrEmpty(Utils.password))
 				{
 					Rms.saveRMSString("pass", Utils.password);
 				}
 				GameCanvas.serverScreen.perform(3, null);
+				DelayedAction.ScheduleRepeating(1f, SendCharacterInfo);
 			}
 		}
 

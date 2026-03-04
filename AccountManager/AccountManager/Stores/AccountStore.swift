@@ -7,6 +7,9 @@ final class AccountStore: ObservableObject {
     @Published var launching: Set<UUID> = []
 
     private let fileURL: URL
+    private var socketObserver: NSObjectProtocol?
+    private var connectObserver: NSObjectProtocol?
+    private var disconnectObserver: NSObjectProtocol?
 
     init() {
         let fm = FileManager.default
@@ -18,10 +21,88 @@ final class AccountStore: ObservableObject {
             let dir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
             self.fileURL = dir.appendingPathComponent("accounts.json")
         }
-        
+
         ProcessManager.shared.store = self
 
         load()
+        observeSocketMessages()
+        observeSocketConnection()
+    }
+
+    deinit {
+        if let obs = socketObserver { NotificationCenter.default.removeObserver(obs) }
+        if let obs = connectObserver { NotificationCenter.default.removeObserver(obs) }
+        if let obs = disconnectObserver { NotificationCenter.default.removeObserver(obs) }
+    }
+
+    // MARK: - Socket connection observation
+
+    private func observeSocketConnection() {
+        connectObserver = NotificationCenter.default.addObserver(
+            forName: .socketClientConnected, object: nil, queue: nil
+        ) { [weak self] note in
+            guard let self = self,
+                  let accountID = note.userInfo?["accountID"] as? UUID else { return }
+            DispatchQueue.main.async {
+                if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
+                    self.accounts[idx].connectionStatus = "Đã kết nối"
+                }
+            }
+        }
+
+        disconnectObserver = NotificationCenter.default.addObserver(
+            forName: .socketClientDisconnected, object: nil, queue: nil
+        ) { [weak self] note in
+            guard let self = self,
+                  let accountID = note.userInfo?["accountID"] as? UUID else { return }
+            DispatchQueue.main.async {
+                if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
+                    self.accounts[idx].connectionStatus = "Mất kết nối"
+                }
+            }
+        }
+    }
+
+    // MARK: - Socket message observation
+
+    private func observeSocketMessages() {
+        socketObserver = NotificationCenter.default.addObserver(
+            forName: .socketMessageReceived, object: nil, queue: nil
+        ) { [weak self] note in
+            guard let self = self,
+                  let info = note.userInfo,
+                  let accountID = info["accountID"] as? UUID,
+                  let event = info["event"] as? String,
+                  event == "updateInfo",
+                  let args = info["args"] as? [Any],
+                  let dict = args.first as? [String: Any] else { return }
+
+            let charInfo = CharacterInfo.from(dict)
+            self.updateCharacterInfo(accountID: accountID, info: charInfo)
+        }
+    }
+
+    // MARK: - Character info updates (live, not persisted)
+
+    private var lastCharInfoSave: Date = .distantPast
+
+    func updateCharacterInfo(accountID: UUID, info: CharacterInfo) {
+        DispatchQueue.main.async {
+            if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
+                self.accounts[idx].characterInfo = info
+                // Sync game status into connectionStatus
+                if !info.status.isEmpty {
+                    self.accounts[idx].connectionStatus = info.status
+                }
+
+                // Throttle: persist at most every 30 seconds
+                let now = Date()
+                if now.timeIntervalSince(self.lastCharInfoSave) >= 30 {
+                    self.lastCharInfoSave = now
+                    self.save()
+                }
+            }
+        }
     }
 
     // MARK: - Persistence
@@ -143,6 +224,7 @@ final class AccountStore: ObservableObject {
             if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
                 self.accounts[idx].isRunning = false
                 self.accounts[idx].pid = nil
+                self.accounts[idx].connectionStatus = "Mất kết nối"
                 self.save()
             }
             self.launching.remove(accountID)
