@@ -1507,7 +1507,9 @@ namespace Mod
 			}
 
 			if (GameCanvas.panel.combineSuccess != -1)
+			{
 				return;
+			}
 			g.translate(-(panel.cmx - panel.cmtoX), -panel.cmy);
 			if (panel.type == 13) //trade
 			{
@@ -1710,7 +1712,7 @@ namespace Mod
 					CustomGraphics.PaintItemOptions(g, panel, item, y);
 				}
 			}
-			else if (panel.type == 2 && panel.currentTabIndex == 0) //box
+			else if (panel.type == 2) //box
 			{
 				Item[] arrItemBox = Char.myCharz().arrItemBox;
 				int offset = Math.max(panel.cmy / panel.ITEM_HEIGHT - 1, 0);
@@ -1718,15 +1720,21 @@ namespace Mod
 				     i < Mathf.Clamp(offset + panel.hScroll / panel.ITEM_HEIGHT + 2, 0, arrItemBox.Length);
 				     i++)
 				{
-					int y = panel.yScroll + (i + 1) * panel.ITEM_HEIGHT;
+					int y = panel.yScroll + i * panel.ITEM_HEIGHT;
 					if (y - panel.cmy > panel.yScroll + panel.hScroll ||
 					    y - panel.cmy < panel.yScroll - panel.ITEM_HEIGHT)
+					{
 						continue;
+					}
 					if (i == 0)
+					{
 						continue;
+					}
 					Item item = arrItemBox[i];
 					if (item == null)
+					{
 						continue;
+					}
 					if (item.itemOption != null)
 					{
 						ItemOption itemOption = item.GetBestItemOption();
@@ -1747,14 +1755,18 @@ namespace Mod
 						if (param <= 0)
 							goto Label;
 						g.setColor(i == panel.selected ? 0x919600 : 0x987B55);
-						for (int j = 0; j < item.itemOption.Length; j++)
-							if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
+						foreach (ItemOption option in item.itemOption)
+						{
+							if (option.optionTemplate.id == 72 && option.param > 0)
 							{
-								byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+								byte id_ = (byte)GetColor_Item_Upgrade(option.param);
 								if (GetColor_ItemBg(id_) != -1)
+								{
 									g.setColor(GetColor_ItemBg(id_));
+								}
 							}
-
+						}
+						
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
 						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1,
 							item);
@@ -1847,7 +1859,9 @@ namespace Mod
 					int bagIndex = i - arrItemBody.Length;
 					Item item = isBodyItem ? arrItemBody[i] : bagIndex < arrItemBag.Length ? arrItemBag[bagIndex] : null;
 					if (item == null)
+					{
 						continue;
+					}
 					if (item.itemOption != null)
 					{
 						ItemOption itemOption = item.GetBestItemOption();
@@ -1860,26 +1874,44 @@ namespace Mod
 						if (id == 107)
 						{
 							if (param > 1)
+							{
 								param = (int)System.Math.Ceiling((double)param / 2);
+							}
 							else if (param == 1)
+							{
 								goto Label;
+							}
 						}
 
 						if (param <= 0)
+						{
 							goto Label;
+						}
 						if (i == panel.selected)
+						{
 							g.setColor(0x919600);
+						}
 						else if (isBodyItem)
+						{
 							g.setColor(0x987B55);
+						}
 						else
+						{
 							g.setColor(0xB49F84);
-						for (int j = 0; j < item.itemOption.Length; j++)
-							if (item.itemOption[j].optionTemplate.id == 72 && item.itemOption[j].param > 0)
+						}
+						
+						foreach (ItemOption option in item.itemOption)
+						{
+							
+							if (option.optionTemplate.id == 72 && option.param > 0)
 							{
-								byte id_ = (byte)GetColor_Item_Upgrade(item.itemOption[j].param);
+								byte id_ = (byte)GetColor_Item_Upgrade(option.param);
 								if (GetColor_ItemBg(id_) != -1)
+								{
 									g.setColor(GetColor_ItemBg(id_));
+								}
 							}
+						}
 
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
 						CustomGraphics.PaintItemEffectInPanel(g,
@@ -1901,7 +1933,7 @@ namespace Mod
 			string text = Rms.loadRMSString("acc");
 			sbyte[] userAo = Rms.loadRMS("userAo" + ServerListScreen.ipSelect);
 			if (text == null)
-				{
+			{
 				if (userAo != null)
 					screen.nCmdPlay = 1;
 			}

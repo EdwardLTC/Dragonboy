@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System.Linq;
 using JetBrains.Annotations;
 using Mod.R;
 
@@ -44,14 +44,14 @@ namespace Mod.Xmap
 		[CanBeNull]
 		internal static Waypoint findWaypoint(int idMap)
 		{
-			Waypoint waypoint;
-			string textPopup;
 			for (int i = 0; i < TileMap.vGo.size(); i++)
 			{
-				waypoint = (Waypoint)TileMap.vGo.elementAt(i);
-				textPopup = Utils.getTextPopup(waypoint.popup);
+				Waypoint waypoint = (Waypoint)TileMap.vGo.elementAt(i);
+				string textPopup = Utils.getTextPopup(waypoint.popup);
 				if (textPopup.Equals(TileMap.mapNames[idMap]))
+				{
 					return waypoint;
+				}
 			}
 			return null;
 		}
@@ -60,20 +60,32 @@ namespace Mod.Xmap
 		{
 			int offset = Char.myCharz().cgender;
 			if (mapName.Equals(LocalizedString.goHome))
+			{
 				return ID_MAP_HOME_BASE + offset;
+			}
 			if (mapName.Equals(LocalizedString.spaceshipStation))
+			{
 				return ID_MAP_TTVT_BASE + offset;
+			}
 			if (LocalizedString.backTo.ContainsReversed(mapName))
 			{
 				mapName = LocalizedString.backTo.Replace(mapName, "");
 				if (TileMap.mapNames[mapCapsuleReturn].Equals(mapName))
+				{
 					return mapCapsuleReturn;
+				}
 				if (mapName == LocalizedString.stoneForest)
+				{
 					return -1;
+				}
 			}
 			for (int i = 0; i < TileMap.mapNames.Length; i++)
+			{
 				if (mapName.Equals(TileMap.mapNames[i]))
+				{
 					return i;
+				}
+			}
 			return -1;
 		}
 
@@ -90,19 +102,14 @@ namespace Mod.Xmap
 		internal static bool hasItemCapsuleVip()
 		{
 			Item[] items = Char.myCharz().arrItemBag;
-			for (int i = 0; i < items.Length; i++)
-				if (items[i] != null && items[i].template.id == ID_ITEM_CAPSULE_VIP)
-					return true;
-			return false;
+			
+			return items.FirstOrDefault(item => item != null && item.template.id == ID_ITEM_CAPSULE_VIP) != null;
 		}
 
 		internal static bool hasItemCapsuleNormal()
 		{
 			Item[] items = Char.myCharz().arrItemBag;
-			for (int i = 0; i < items.Length; i++)
-				if (items[i] != null && items[i].template.id == ID_ITEM_CAPSULE_NORMAL)
-					return true;
-			return false;
+			return items.FirstOrDefault(item => item != null && item.template.id == ID_ITEM_CAPSULE_NORMAL && item.quantity > 10) != null;
 		}
 	}
 }

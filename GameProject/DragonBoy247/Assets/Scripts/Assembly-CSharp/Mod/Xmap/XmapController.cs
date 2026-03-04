@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Mod.ModHelper;
 using Mod.R;
@@ -14,6 +13,7 @@ namespace Mod.Xmap
 		List<MapNext> way;
 		int indexWay;
 		bool isNextMapFailed;
+		bool isInitializing;
 		float lastProgressRealtime;
 		int lastProgressMapId;
 		int lastProgressStepIndex;
@@ -21,6 +21,11 @@ namespace Mod.Xmap
 		
 		protected override IEnumerator OnUpdate()
 		{
+			if (isInitializing)
+			{
+				yield break;
+			}
+			
 			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || GameCanvas.isLoading || Controller.isStopReadMessage;
 
 			if (TileMap.mapID != lastProgressMapId || indexWay != lastProgressStepIndex)
@@ -35,23 +40,13 @@ namespace Mod.Xmap
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
 				finishXmap();
-				yield return null;
 				yield break;
 			}
-
-			if (isNextMapFailed)
+			
+			if (way == null || way.Count == 0 ||isNextMapFailed)
 			{
 				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
 				finishXmap();
-				yield return null;
-				yield break;
-			}
-
-			if (way == null || way.Count == 0)
-			{
-				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
-				finishXmap();
-				yield return null;
 				yield break;
 			}
 			
@@ -59,7 +54,6 @@ namespace Mod.Xmap
 			{
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
-				yield return null;
 				yield break;
 			}
 
@@ -67,7 +61,6 @@ namespace Mod.Xmap
 			{
 				isNextMapFailed = true;
 				way = null;
-				yield return null;
 				yield break;
 			}
 
@@ -76,7 +69,6 @@ namespace Mod.Xmap
 			{
 				indexWay++;
 				MarkProgress();
-				yield return null;
 				yield break;
 			}
 
@@ -85,7 +77,6 @@ namespace Mod.Xmap
 				Service.gI().returnTownFromDead();
 				isNextMapFailed = true;
 				way = null;
-				yield return null;
 				yield break;
 			}
 
@@ -100,26 +91,29 @@ namespace Mod.Xmap
 			way = null;
 			indexWay = 0;
 			isNextMapFailed = false;
+			isInitializing = true;
 			MarkProgress();
 
 			string mapName = TileMap.mapNames[mapEnd];
 			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
-			try
-			{
-				way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd);
-			}
-			catch (Exception ex)
-			{
-				GameScr.info1.addInfo("Load map err" + '!', 0);
-				finishXmap();
-			}
+			StartCoroutine(InitializeWay());
+			base.OnStart();
+		}
 
+		IEnumerator InitializeWay()
+		{
+			List<MapNext>[] graph = (List<MapNext>[])XmapData.links.Clone();
+
+			yield return StartCoroutine(AddCapsuleLinkIfPossible(graph));
+		
+			way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd, graph);
+			
 			if (way == null)
 			{
 				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
 				finishXmap();
 			}
-			base.OnStart();
+			isInitializing = false;
 		}
 
 		protected override void OnStop()
@@ -127,6 +121,7 @@ namespace Mod.Xmap
 			way = null;
 			indexWay = 0;
 			isNextMapFailed = false;
+			isInitializing = false;
 			MarkProgress();
 			base.OnStop();
 		}
@@ -161,6 +156,47 @@ namespace Mod.Xmap
 			}
 
 			gI.Toggle(false);
+		}
+
+		static IEnumerator AddCapsuleLinkIfPossible(List<MapNext>[] graph)
+		{
+			string[] oldMapNames = GameCanvas.panel.mapNames;
+			
+			if (Pk9rXmap.CanUseCapsuleVip())
+			{
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
+			}
+			else if (Pk9rXmap.CanUseCapsuleNormal())
+			{
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
+			}
+			else
+			{
+				yield break;
+			}
+			
+			float deadline = Time.realtimeSinceStartup + 5f;
+			while (GameCanvas.panel.mapNames == oldMapNames || GameCanvas.panel.mapNames == null || GameCanvas.panel.mapNames.Length == 0)
+			{
+				if (Time.realtimeSinceStartup >= deadline)
+				{
+					yield break;
+				}
+				yield return null;
+			}
+
+			int mapStart = TileMap.mapID;
+			string[] mapNames = GameCanvas.panel.mapNames;
+			
+			int length = mapNames.Length;
+			for (int select = 0; select < length; select++)
+			{
+				int to = XmapUtils.getMapIdFromName(mapNames[select]);
+				if (to != -1)
+				{
+					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));
+				}
+			}
 		}
 	}
 }

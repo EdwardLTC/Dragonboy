@@ -11,7 +11,7 @@ namespace Mod.Xmap
 	internal static class Pk9rXmap
 	{
 		const float ServiceCallDelaySeconds = 0.2f;
-		internal static bool isUseCapsuleNormal;
+		internal static bool isUseCapsuleNormal = true;
 		static bool isUseCapsuleVip = true;
 		static bool isChangingMap;
 		static bool isMovingMyChar;
@@ -223,8 +223,8 @@ namespace Mod.Xmap
 		{
 			XmapUtils.mapCapsuleReturn = TileMap.mapID;
 			int select = mapNext.info[0];
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().requestMapSelect(select);
-			yield break;
 		}
 
 		static void MoveMyChar(int x, int y)

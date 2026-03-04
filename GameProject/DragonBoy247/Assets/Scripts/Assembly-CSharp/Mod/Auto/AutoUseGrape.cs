@@ -9,7 +9,9 @@ namespace Mod.Auto
 		
 		internal static void Info(string text)
 		{
-			if (LocalizedString.outOfStamina.Contains(text))
+			if (string.IsNullOrEmpty(text)) return;
+
+			if (LocalizedString.outOfStamina.Contains(text) && Char.myChar.cStamina <= 0)
 			{
 				doUseGrape();
 			}
