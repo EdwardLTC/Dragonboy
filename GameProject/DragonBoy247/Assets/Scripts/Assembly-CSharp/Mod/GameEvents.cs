@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -366,6 +366,7 @@ namespace Mod
 			AutoPean.Update();
 			AutoSkill.Update();
 			DelayedAction.Tick();
+			AutoUseItem.Update();
 		}
 
 		internal static void OnLogin(ref string username, ref string pass, ref sbyte type)

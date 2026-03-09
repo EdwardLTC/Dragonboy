@@ -39,8 +39,12 @@ namespace Mod.Auto
 
 		static void CheckForDisconnected()
 		{
-			if ((GameCanvas.currentScreen is not GameScr && !Char.isLoadingMap && !Char.ischangingMap) || !Session_ME.gI().isConnected())
+			if (GameCanvas.currentScreen is not GameScr || !Session_ME.gI().isConnected() || !Session_ME2.gI().isConnected())
 			{
+				if (Char.isLoadingMap || Char.ischangingMap)
+				{
+					return;
+				}
 				lastTimeAttemptLogin = mSystem.currentTimeMillis();
 				GameCanvas.serverScreen.switchToMe();
 				steps = 1;
@@ -60,11 +64,21 @@ namespace Mod.Auto
 				return;
 			}
 			lastTimeAttemptLogin = mSystem.currentTimeMillis();
-			if (GameCanvas.currentScreen is ServerListScreen)
+			if (GameCanvas.currentScreen is LoginScr)
 			{
-				Session_ME.gI().close();
-				Session_ME2.gI().close();
+				GameCanvas.loginScr.doLogin();
+			}
+			else if (GameCanvas.currentScreen is ServerListScreen)
+			{
 				GameCanvas.serverScreen.perform(3, null);
+			}
+			else if (GameCanvas.currentScreen is ServerScr)
+			{
+				
+			}
+			else
+			{
+				GameCanvas.serverScreen.switchToMe();
 			}
 		}
 

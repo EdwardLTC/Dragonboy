@@ -57,9 +57,6 @@ final class Launcher {
         return nil
     }
 
-    /// Spawn the executable directly, set working directory to the executable's
-    /// directory, merge environment, and capture stdout/stderr to post
-    /// notifications (useful for debugging child output). Returns the PID.
     static func spawnExecutable(at execURL: URL, args: [String]) throws -> Int {
         let proc = Process()
         proc.executableURL = execURL
@@ -90,9 +87,7 @@ final class Launcher {
         return Int(proc.processIdentifier)
     }
 
-
-    /// Launches the application via NSWorkspace, returning the real PID of the launched app.
-    /// Must be called from a background thread (uses a semaphore internally).
+    @discardableResult
     static func launch(bundlePath: String, args: [String] = []) throws -> Int {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
@@ -143,45 +138,4 @@ final class Launcher {
         return pid
     }
 
-    /// Attempt to find running PIDs for a bundle identifier or process name.
-    static func findRunningPIDs(matching bundleIdentifierOrProcessName: String) -> [Int] {
-        var pids: [Int] = []
-
-        let apps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifierOrProcessName)
-        if !apps.isEmpty {
-            for app in apps {
-                pids.append(Int(app.processIdentifier))
-            }
-            return pids
-        }
-
-        let task = Process()
-        let pipe = Pipe()
-        task.launchPath = "/bin/ps"
-        task.arguments = ["-ax", "-o", "pid=,comm="]
-        task.standardOutput = pipe
-        do {
-            try task.run()
-        } catch {
-            return []
-        }
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        guard let output = String(data: data, encoding: .utf8) else { return [] }
-
-        for line in output.split(separator: "\n") {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            // format: "<pid> <path>"
-            let comps = trimmed.split(separator: " ", maxSplits: 1).map(String.init)
-            if comps.count >= 2 {
-                let pidStr = comps[0]
-                let cmd = comps[1]
-                if cmd.lowercased().contains(bundleIdentifierOrProcessName.lowercased()) || cmd.lowercased().hasSuffix("/\(bundleIdentifierOrProcessName.lowercased())") {
-                    if let pid = Int(pidStr) { pids.append(pid) }
-                }
-            }
-        }
-
-        return pids
-    }
 }

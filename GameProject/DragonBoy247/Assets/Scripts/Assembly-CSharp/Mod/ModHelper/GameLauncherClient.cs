@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 namespace Mod.ModHelper
 {
@@ -147,7 +148,6 @@ namespace Mod.ModHelper
 				{
 					try
 					{
-						// Reassemble fragmented WebSocket messages
 						var ms = new MemoryStream();
 						WebSocketReceiveResult result;
 						do
@@ -168,27 +168,26 @@ namespace Mod.ModHelper
 						byte[] raw = ms.ToArray();
 						string message = Encoding.UTF8.GetString(raw);
 						
-						// Log raw data for debugging
-						string hexDump = raw.Length > 0
-							? BitConverter.ToString(raw, 0, System.Math.Min(raw.Length, 32))
-							: "(empty)";
-						WriteLog($"Received {raw.Length} bytes, hex: {hexDump}");
-						WriteLog($"Received text: {message}");
-						
-						int jsonStart = message.IndexOf('{');
-						if (jsonStart < 0)
+						if (message.StartsWith("42"))
 						{
-							WriteLog("No JSON object found in received message, skipping.");
-							continue;
+							string json = message.Substring(2);
+
+							JArray arr = JArray.Parse(json);
+
+							string eventName = arr[0].ToString();
+							JObject data = arr[1] as JObject;
+
+							WriteLog($"Event: {eventName}");
+
+							if (data != null)
+							{
+								MainThreadDispatcher.Dispatch(() => HandleMessage(data));
+							}
 						}
-						if (jsonStart > 0)
+						else
 						{
-							WriteLog($"Stripping {jsonStart} leading non-JSON chars.");
-							message = message.Substring(jsonStart);
+							WriteLog("Received non-42 message: " + message);
 						}
-						
-						JObject msg = JObject.Parse(message);
-						MainThreadDispatcher.Dispatch(() => HandleMessage(msg));
 					}
 					catch (OperationCanceledException)
 					{
@@ -227,38 +226,11 @@ namespace Mod.ModHelper
 
 			switch (action)
 			{
-				case "test":
+				case "stop":
 				{
-					GameScr.info1.addInfo((string)msg["text"], 0);
-					break;
-				}
-				case "chat":
-				{
-					string text = (string)msg["text"];
-					if (!string.IsNullOrEmpty(text))
-					{
-						Service.gI().chat(text);
-					}
-					break;
-				}
-				case "setStatus":
-				{
-					string status = (string)msg["status"];
-					if (!string.IsNullOrEmpty(status))
-					{
-						Utils.status = status;
-					}
-					break;
-				}
-				case "requestInfo":
-				{
-					SendCharacterInfo();
-					break;
-				}
-				case "disconnect":
-				{
-					WriteLog("Launcher requested disconnect.");
+					WriteLog("Launcher requested stop game.");
 					Close();
+					Application.Quit();
 					break;
 				}
 				default:

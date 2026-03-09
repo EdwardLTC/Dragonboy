@@ -19,7 +19,6 @@ struct AccountDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                // ── Account Settings ──
                 GroupBox(label: Label("Account Settings", systemImage: "person.crop.circle")) {
                     VStack(spacing: 8) {
                         TextField("Username", text: $accountCopy.username)
@@ -39,25 +38,22 @@ struct AccountDetailView: View {
                     .padding(.top, 4)
                 }
 
-                // ...existing character info sections...
                 if let info = liveAccount.characterInfo {
-                    // ── Character Info ──
                     GroupBox(label: Label("Character", systemImage: "person.fill")) {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 6) {
                             infoRow("Name", info.cName)
                             infoRow("Gender", info.genderString)
                             HStack(spacing: 4) {
                                 Text("Status:").font(.caption).foregroundColor(.secondary)
-                                Text(liveAccount.connectionStatus.isEmpty ? info.status : liveAccount.connectionStatus)
+                                Text(liveAccount.connectionStatus == .idle ? info.status : liveAccount.connectionStatus.displayText)
                                     .font(.caption).fontWeight(.medium)
-                                    .foregroundColor(liveAccount.connectionStatus == "Mất kết nối" ? .red : .green)
+                                    .foregroundColor(liveAccount.connectionStatus.displayColor)
                             }
                             infoRow("Position", "(\(info.cx), \(info.cy))")
                         }
                         .padding(.top, 4)
                     }
 
-                    // ── Map Info ──
                     GroupBox(label: Label("Map", systemImage: "map")) {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 6) {
                             infoRow("Map", info.mapName)
@@ -67,7 +63,6 @@ struct AccountDetailView: View {
                         .padding(.top, 4)
                     }
 
-                    // ── Character Stats ──
                     GroupBox(label: Label("Stats", systemImage: "heart.fill")) {
                         VStack(spacing: 8) {
                             statBar(label: "HP", current: info.cHP, max: info.cHPFull, color: .red)
@@ -85,7 +80,6 @@ struct AccountDetailView: View {
                         .padding(.top, 4)
                     }
 
-                    // ── Pet Stats ──
                     GroupBox(label: Label("Pet", systemImage: "hare.fill")) {
                         VStack(spacing: 8) {
                             statBar(label: "Pet HP", current: info.cPetHP, max: info.cPetHPFull, color: .red)
@@ -103,7 +97,6 @@ struct AccountDetailView: View {
                         .padding(.top, 4)
                     }
 
-                    // ── Currency ──
                     GroupBox(label: Label("Currency", systemImage: "dollarsign.circle")) {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 6) {
                             infoRow("Vàng", formatNumber(info.xu))
@@ -116,7 +109,7 @@ struct AccountDetailView: View {
                     Text("Last updated: \(info.lastUpdated, formatter: timeFormatter)")
                         .font(.caption2)
                         .foregroundColor(.secondary)
-                } else if liveAccount.isRunning {
+                } else if liveAccount.connectionStatus.isConnected {
                     GroupBox {
                         VStack(spacing: 8) {
                             HStack {
@@ -124,11 +117,9 @@ struct AccountDetailView: View {
                                 Text("Waiting for game data…")
                                     .foregroundColor(.secondary)
                             }
-                            if !liveAccount.connectionStatus.isEmpty {
-                                Text(liveAccount.connectionStatus)
-                                    .font(.caption).fontWeight(.medium)
-                                    .foregroundColor(liveAccount.connectionStatus == "Mất kết nối" ? .red : .green)
-                            }
+                            Text(liveAccount.connectionStatus.displayText)
+                                .font(.caption).fontWeight(.medium)
+                                .foregroundColor(liveAccount.connectionStatus.displayColor)
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding()
@@ -138,10 +129,10 @@ struct AccountDetailView: View {
                         VStack(spacing: 8) {
                             Text("Launch the game to see live character info.")
                                 .foregroundColor(.secondary)
-                            if !liveAccount.connectionStatus.isEmpty {
-                                Text(liveAccount.connectionStatus)
+                            if liveAccount.connectionStatus != .idle {
+                                Text(liveAccount.connectionStatus.displayText)
                                     .font(.caption).fontWeight(.medium)
-                                    .foregroundColor(liveAccount.connectionStatus == "Mất kết nối" ? .red : .green)
+                                    .foregroundColor(liveAccount.connectionStatus.displayColor)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .center)

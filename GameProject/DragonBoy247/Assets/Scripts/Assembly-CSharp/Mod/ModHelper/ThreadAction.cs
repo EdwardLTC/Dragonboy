@@ -14,11 +14,7 @@ namespace Mod.ModHelper
 		protected virtual bool UseUpdateLoop => false;
 
 		internal virtual int Interval => 0;
-
-		protected virtual void update()
-		{
-		}
-
+		
 		protected abstract void action();
 
 		public void performAction()
@@ -70,7 +66,7 @@ namespace Mod.ModHelper
 				{
 					while (isActing)
 					{
-						update();
+						action();
 						try
 						{
 							Thread.Sleep(Interval);
@@ -80,10 +76,7 @@ namespace Mod.ModHelper
 							// Interrupted to exit sleep early when stopping.
 						}
 					}
-					return;
 				}
-
-				action();
 			}
 			finally
 			{

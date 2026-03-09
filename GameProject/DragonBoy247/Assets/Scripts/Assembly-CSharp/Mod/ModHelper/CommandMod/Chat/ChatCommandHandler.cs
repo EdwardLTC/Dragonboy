@@ -1,9 +1,10 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Mod.ModHelper.CommandMod.Chat
 {
@@ -27,11 +28,11 @@ namespace Mod.ModHelper.CommandMod.Chat
                 {
                     if (attribute is ChatCommandAttribute cca)
                     {
-                        chatCommands.Add(new ChatCommand()
+                        chatCommands.Add(new ChatCommand
                         {
                             command = cca.command,
                             delimiter = cca.delimiter,
-                            fullCommand = method.DeclaringType.FullName + "." + method.Name,
+                            fullCommand = method.DeclaringType?.FullName + "." + method.Name,
                             method = method,
                             parameterInfos = method.GetParameters()
                         });
@@ -66,11 +67,14 @@ namespace Mod.ModHelper.CommandMod.Chat
                 if (commandLength != -1)
                 {
                     string args = command.Substring(commandLength);
+                    Debug.Log($"[ChatCommand] Matched command '{chatCommand.command}' with args '{args}'");
 
                     if (chatCommand.execute(args))
                     {
+                        Debug.Log($"[ChatCommand] Command '{chatCommand.command}' executed successfully");
                         return true;
                     }
+                    Debug.Log($"[ChatCommand] Command '{chatCommand.command}' failed to execute with args '{args}'");
                 }
             }
 

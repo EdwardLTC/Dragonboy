@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Assets.src.g;
 using Mod;
+using Mod.Auto;
+using Mod.R;
 using UnityEngine;
 
 public class Panel : IActionListener, IChatable
@@ -3025,8 +3027,7 @@ public class Panel : IActionListener, IChatable
 				cmRun = -(num4 > 10 ? 10 : num4 < -10 ? -10 : 0) * 100;
 			}
 		}
-		int num5 = 0;
-		if ((isTabInven() || type == 13) && GameCanvas.py < yScroll + 21)
+		if ((isTabInven() || type == 13) && GameCanvas.py < yScroll + 21 && cmy < ITEM_HEIGHT)
 		{
 			selected = 0;
 			updateKeyInvenTab();
@@ -7082,7 +7083,6 @@ public class Panel : IActionListener, IChatable
 		// Add context menu options based on item type and panel type
 		if (isBodyItem)
 		{
-			// Body item (equipped) - can be unequipped
 			myVector.addElement(new Command(mResources.GETOUT, this, 2002, currItem));
 		}
 		else if (GameCanvas.panel.type == 12)
@@ -7097,11 +7097,21 @@ public class Panel : IActionListener, IChatable
 		{
 			myVector.addElement(new Command(mResources.USE, this, 2000, currItem));
 			if (Char.myCharz().havePet)
+			{
 				myVector.addElement(new Command(mResources.MOVEFORPET, this, 2005, currItem));
+			}
 		}
 		else
 		{
 			myVector.addElement(new Command(mResources.USE, this, 2001, currItem));
+			if (AutoUseItem.isAutoUse(currItem.template.id))
+			{
+				myVector.addElement(new Command("Ngưng Auto\nSử Dụng", AutoUseItem.getInstance(), 2, (int)currItem.template.id));
+			}
+			else
+			{
+				myVector.addElement(new Command("Auto\nSử Dụng", AutoUseItem.getInstance(), 1, new AutoUseItem.Item(currItem.template.id, currItem.template.name)));
+			}
 		}
 
 		// Add common options
@@ -8008,11 +8018,9 @@ public class Panel : IActionListener, IChatable
 		MyVector myVector = new MyVector();
 		if (currentTabIndex == 0 && !Equals(GameCanvas.panel2))
 		{
-			if (selected == 0)
-				setNewSelected(Char.myCharz().arrItemBox.Length, false);
-			else
+			sbyte b = (sbyte)GetInventorySelect_body(selected, newSelected);
+			if (b >= 0 && b < Char.myCharz().arrItemBox.Length)
 			{
-				sbyte b = (sbyte)GetInventorySelect_body(selected, newSelected);
 				Item item = Char.myCharz().arrItemBox[b];
 				if (item != null)
 				{
@@ -8035,14 +8043,12 @@ public class Panel : IActionListener, IChatable
 		}
 		if (currentTabIndex == 1 || Equals(GameCanvas.panel2))
 		{
-			if (selected == 0)
-				setNewSelected(Char.myCharz().arrItemBody.Length + Char.myCharz().arrItemBag.Length, true);
-			else
+			Item[] arrItemBody = Char.myCharz().arrItemBody;
+			if (!GetInventorySelect_isbody(selected, newSelected, arrItemBody))
 			{
-				Item[] arrItemBody = Char.myCharz().arrItemBody;
-				if (!GetInventorySelect_isbody(selected, newSelected, arrItemBody))
+				sbyte b2 = (sbyte)GetInventorySelect_bag(selected, newSelected, arrItemBody);
+				if (b2 >= 0 && b2 < Char.myCharz().arrItemBag.Length)
 				{
-					sbyte b2 = (sbyte)GetInventorySelect_bag(selected, newSelected, arrItemBody);
 					Item item2 = Char.myCharz().arrItemBag[b2];
 					if (item2 != null)
 					{
@@ -8054,14 +8060,14 @@ public class Panel : IActionListener, IChatable
 						currItem = item2;
 					}
 				}
-				else
+			}
+			else
+			{
+				Item item3 = Char.myCharz().arrItemBody[GetInventorySelect_body(selected, newSelected)];
+				if (item3 != null)
 				{
-					Item item3 = Char.myCharz().arrItemBody[GetInventorySelect_body(selected, newSelected)];
-					if (item3 != null)
-					{
-						myVector.addElement(new Command(mResources.move_to_chest2, this, 1002, item3));
-						currItem = item3;
-					}
+					myVector.addElement(new Command(mResources.move_to_chest2, this, 1002, item3));
+					currItem = item3;
 				}
 			}
 		}

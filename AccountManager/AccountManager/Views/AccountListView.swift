@@ -7,7 +7,6 @@ struct AccountListView: View {
 
     var body: some View {
         HSplitView {
-            // ── Left: Account list ──
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Dragonboy Launcher").font(.largeTitle).bold()
@@ -37,7 +36,6 @@ struct AccountListView: View {
             }
             .frame(minWidth: 380, idealWidth: 420)
 
-            // ── Right: Detail pane ──
             Group {
                 if let selectedID = selectedAccountID,
                    let account = store.accounts.first(where: { $0.id == selectedID }) {

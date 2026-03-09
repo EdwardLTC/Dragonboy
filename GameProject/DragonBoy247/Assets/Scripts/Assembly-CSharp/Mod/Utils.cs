@@ -78,6 +78,11 @@ namespace Mod
 			return Application.platform == RuntimePlatform.WindowsPlayer;
 		}
 
+		internal static bool IsMacBuild()
+		{
+			return Application.platform == RuntimePlatform.OSXPlayer;
+		}
+		
 		/// <summary>
 		///     Kiểm tra xem game có đang chạy trên Unity Editor hay không.
 		/// </summary>
@@ -532,6 +537,7 @@ namespace Mod
 		[ChatCommand("k")]
 		internal static void changeZone(int zone)
 		{
+			Debug.Log($"Request change zone to {zone}");
 			Service.gI().requestChangeZone(zone, -1);
 		}
 

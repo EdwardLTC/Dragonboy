@@ -44,6 +44,7 @@ namespace Mod.PickMob
 				if (!isUseMDSuccess)
 				{
 					gI.Toggle(false);
+					XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
 					GameScr.info1.addInfo("[Up CSKB] Không thể sử dụng MD, đã tắt auto", 0);
 					yield break;
 				}

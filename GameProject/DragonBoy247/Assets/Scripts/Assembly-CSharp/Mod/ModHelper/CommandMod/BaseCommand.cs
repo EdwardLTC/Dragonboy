@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -50,7 +50,15 @@ namespace Mod.ModHelper.CommandMod
             if (!canExecute(args, out object[] parameters))
                 return false;
 
-            method.Invoke(null, parameters);
+            try
+            {
+                method.Invoke(null, parameters);
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"[ChatCommand] Error invoking {method.DeclaringType?.FullName}.{method.Name}: {ex}");
+                return false;
+            }
             return true;
         }
 
@@ -119,9 +127,9 @@ namespace Mod.ModHelper.CommandMod
 
                 return true; // Tất cả đối số đều đúng type
             }
-            catch (InvalidCastException)
+            catch (Exception)
             {
-                return false; // Có đối số không đúng type
+                return false; // Có đối số không đúng type (InvalidCastException, FormatException, OverflowException)
             }
         }
     }

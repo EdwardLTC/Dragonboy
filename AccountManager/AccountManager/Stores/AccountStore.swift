@@ -1,6 +1,5 @@
 import Foundation
 import Combine
-import Darwin
 
 final class AccountStore: ObservableObject {
     @Published private(set) var accounts: [Account] = []
@@ -45,8 +44,9 @@ final class AccountStore: ObservableObject {
                   let accountID = note.userInfo?["accountID"] as? UUID else { return }
             DispatchQueue.main.async {
                 if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
-                    self.accounts[idx].connectionStatus = "Đã kết nối"
+                    self.accounts[idx].connectionStatus = .connected
                 }
+                self.launching.remove(accountID)
             }
         }
 
@@ -57,8 +57,9 @@ final class AccountStore: ObservableObject {
                   let accountID = note.userInfo?["accountID"] as? UUID else { return }
             DispatchQueue.main.async {
                 if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
-                    self.accounts[idx].connectionStatus = "Mất kết nối"
+                    self.accounts[idx].connectionStatus = .disconnected
                 }
+                self.launching.remove(accountID)
             }
         }
     }
@@ -82,20 +83,15 @@ final class AccountStore: ObservableObject {
         }
     }
 
-    // MARK: - Character info updates (live, not persisted)
-
     private var lastCharInfoSave: Date = .distantPast
 
     func updateCharacterInfo(accountID: UUID, info: CharacterInfo) {
         DispatchQueue.main.async {
             if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
                 self.accounts[idx].characterInfo = info
-                // Sync game status into connectionStatus
                 if !info.status.isEmpty {
-                    self.accounts[idx].connectionStatus = info.status
+                    self.accounts[idx].connectionStatus = .gameStatus(info.status)
                 }
-
-                // Throttle: persist at most every 30 seconds
                 let now = Date()
                 if now.timeIntervalSince(self.lastCharInfoSave) >= 30 {
                     self.lastCharInfoSave = now
@@ -104,8 +100,7 @@ final class AccountStore: ObservableObject {
             }
         }
     }
-
-    // MARK: - Persistence
+    
     func load() {
         let fm = FileManager.default
         var loadedAccounts: [Account] = []
@@ -206,25 +201,11 @@ final class AccountStore: ObservableObject {
             DispatchQueue.main.sync { work() }
         }
     }
-
-    // MARK: - Account state helpers
-    func markLaunched(accountID: UUID, pid: Int) {
-        DispatchQueue.main.async {
-            if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
-                self.accounts[idx].isRunning = true
-                self.accounts[idx].pid = pid
-                self.launching.remove(accountID)
-                self.save()
-            }
-        }
-    }
-
+    
     func markStopped(accountID: UUID) {
         DispatchQueue.main.async {
             if let idx = self.accounts.firstIndex(where: { $0.id == accountID }) {
-                self.accounts[idx].isRunning = false
-                self.accounts[idx].pid = nil
-                self.accounts[idx].connectionStatus = "Mất kết nối"
+                self.accounts[idx].connectionStatus = .disconnected
                 self.save()
             }
             self.launching.remove(accountID)

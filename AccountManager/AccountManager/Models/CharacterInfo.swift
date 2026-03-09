@@ -85,8 +85,6 @@ struct CharacterInfo: Codable, Equatable {
         cPetMPFull > 0 ? Double(cPetMP) / Double(cPetMPFull) * 100 : 0
     }
 
-    // MARK: - Parse from JSON dictionary
-
     static func from(_ dict: [String: Any]) -> CharacterInfo {
         var info = CharacterInfo()
         info.lastUpdated = Date()

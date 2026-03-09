@@ -13,9 +13,13 @@ struct AccountRowView: View {
         return account
     }
 
+    /// Socket connection is the source of truth for "active" state.
+    private var isConnected: Bool {
+        liveAccount.connectionStatus.isConnected
+    }
+
     @State private var errorMessage: String?
     @State private var infoMessage: String?
-    @State private var childErrorObserver: NSObjectProtocol?
     @State private var isRemoving: Bool = false
     @State private var showDeleteConfirm: Bool = false
 
@@ -29,7 +33,7 @@ struct AccountRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             Circle()
-                .fill(liveAccount.isRunning ? Color.green.opacity(0.85) : Color.gray.opacity(0.4))
+                .fill(isConnected ? Color.green.opacity(0.85) : Color.gray.opacity(0.4))
                 .frame(width: 44, height: 44)
                 .overlay(Text(String(displayName.prefix(1)).uppercased()).font(.headline).foregroundColor(.white))
 
@@ -38,10 +42,10 @@ struct AccountRowView: View {
                 if displayName != liveAccount.username {
                     Text(liveAccount.username).font(.caption2).foregroundColor(.secondary.opacity(0.7))
                 }
-                if !liveAccount.connectionStatus.isEmpty {
-                    Text(liveAccount.connectionStatus)
+                if liveAccount.connectionStatus != .idle {
+                    Text(liveAccount.connectionStatus.displayText)
                         .font(.caption)
-                        .foregroundColor(liveAccount.connectionStatus == "Mất kết nối" ? .red : .green)
+                        .foregroundColor(liveAccount.connectionStatus.displayColor)
                 }
                 if let info = liveAccount.characterInfo, !info.cName.isEmpty {
                     HStack(spacing: 6) {
@@ -60,10 +64,10 @@ struct AccountRowView: View {
                 Button(action: {
                     launchTapped()
                 }) {
-                    Text(liveAccount.isRunning ? "Stop" : "Launch")
+                    Text(isConnected ? "Stop" : "Launch")
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(liveAccount.isRunning ? Color.red : Color.accentColor)
+                .tint(isConnected ? Color.red : Color.accentColor)
                 .disabled(store.launching.contains(account.id))
             }
 
@@ -93,22 +97,11 @@ struct AccountRowView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.clear)
-                .shadow(color: account.isRunning ? Color.green.opacity(0.18) : Color.clear, radius: 12)
+                .shadow(color: isConnected ? Color.green.opacity(0.18) : Color.clear, radius: 12)
                 .allowsHitTesting(false)
         )
-        .animation(.easeInOut, value: account.isRunning)
+        .animation(.easeInOut, value: isConnected)
         .animation(.easeInOut(duration: 0.15), value: isSelected)
-        .onAppear {
-            childErrorObserver = NotificationCenter.default.addObserver(forName: .launcherChildOutput, object: nil, queue: .main) { note in
-                guard let info = note.userInfo as? [String: Any], let type = info["type"] as? String, type == "stderr", let msg = info["message"] as? String else { return }
-                if msg.contains("could not be found") || msg.contains("failed to connect") || msg.contains("getaddrinfo") || msg.contains("A server with the specified hostname could not be found") {
-                    errorMessage = "Launched but game reported network errors: \(msg)"
-                }
-            }
-        }
-        .onDisappear {
-            if let obs = childErrorObserver { NotificationCenter.default.removeObserver(obs); childErrorObserver = nil }
-        }
         .alert(isPresented: $showDeleteConfirm) {
             Alert(title: Text("Remove account"), message: Text("Are you sure you want to remove account \(account.username) on \(account.server)?"), primaryButton: .destructive(Text("Remove"), action: {
                 DispatchQueue.main.async {
@@ -138,15 +131,15 @@ struct AccountRowView: View {
         DispatchQueue.global(qos: .userInitiated).async {
             DispatchQueue.main.async { store.launching.insert(account.id) }
             do {
-                if account.isRunning {
-                    try ProcessManager.shared.stop(account: account)
+                if isConnected {
+                    ProcessManager.shared.stop(account: account)
                     DispatchQueue.main.async {
-                        infoMessage = "Stopped"
+                        infoMessage = "Stopping…"
                     }
                 } else {
-                    let pid = try ProcessManager.shared.launch(account: account)
+                    try ProcessManager.shared.launch(account: account)
                     DispatchQueue.main.async {
-                        infoMessage = "Launched (pid: \(pid))"
+                        infoMessage = "Launched"
                     }
                 }
             } catch {
