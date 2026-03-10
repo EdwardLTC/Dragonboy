@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.Xmap;
 using UnityEngine;
@@ -382,6 +383,7 @@ namespace Mod.PickMob
 			return true;
 		}
 
+		[CanBeNull]
 		public static Skill GetSkillAttack()
 		{
 			Skill skill = null;
@@ -417,6 +419,13 @@ namespace Mod.PickMob
 
 		static bool CanUseSkill(Skill skill)
 		{
+			int coolDown = skill.coolDown;
+
+			if (!IdSkillsMelee.Contains(skill.template.id))
+			{
+				coolDown += 5000;
+			}
+			
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
 
@@ -426,7 +435,7 @@ namespace Mod.PickMob
 			if (IdSkillsCanNotAttack.Contains(skill.template.id))
 				return false;
 			
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown)
+			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < coolDown)
 				return false;
 			
 			if (Char.myCharz().cMP < GetManaUseSkill(skill))

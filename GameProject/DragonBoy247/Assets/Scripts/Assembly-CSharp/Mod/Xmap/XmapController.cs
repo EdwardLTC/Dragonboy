@@ -92,11 +92,11 @@ namespace Mod.Xmap
 			indexWay = 0;
 			isNextMapFailed = false;
 			isInitializing = true;
-			MarkProgress();
-
+			
 			string mapName = TileMap.mapNames[mapEnd];
 			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
 			StartCoroutine(InitializeWay());
+			MarkProgress();
 			base.OnStart();
 		}
 
@@ -108,7 +108,7 @@ namespace Mod.Xmap
 		
 			way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd, graph);
 			
-			if (way == null)
+			if (way == null || way.Count == 0)
 			{
 				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
 				finishXmap();
@@ -192,6 +192,7 @@ namespace Mod.Xmap
 			for (int select = 0; select < length; select++)
 			{
 				int to = XmapUtils.getMapIdFromName(mapNames[select]);
+				Debug.Log("Capsule link: " + mapStart + " -> " + to + " (" + mapNames[select] + ")");
 				if (to != -1)
 				{
 					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));

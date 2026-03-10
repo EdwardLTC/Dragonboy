@@ -70,13 +70,9 @@ namespace Mod.Xmap
 			if (LocalizedString.backTo.ContainsReversed(mapName))
 			{
 				mapName = LocalizedString.backTo.Replace(mapName, "");
-				if (TileMap.mapNames[mapCapsuleReturn].Equals(mapName))
+				if (TileMap.mapNames[mapCapsuleReturn].Equals(mapName.Trim()))
 				{
 					return mapCapsuleReturn;
-				}
-				if (mapName == LocalizedString.stoneForest)
-				{
-					return -1;
 				}
 			}
 			for (int i = 0; i < TileMap.mapNames.Length; i++)

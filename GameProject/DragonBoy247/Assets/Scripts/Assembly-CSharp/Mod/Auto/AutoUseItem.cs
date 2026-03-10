@@ -45,7 +45,7 @@ namespace Mod.Auto
 
 		public void onChatFromMe(string text, string to)
 		{
-			if (ChatTextField.gI().tfChat.getText() == null || ChatTextField.gI().tfChat.getText().Equals(string.Empty) || text.Equals(string.Empty) || text == null)
+			if (ChatTextField.gI().tfChat.getText() == null || ChatTextField.gI().tfChat.getText().Equals(string.Empty) || text.Equals(string.Empty))
 			{
 				ChatTextField.gI().isShow = false;
 			}

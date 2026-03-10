@@ -93,6 +93,7 @@ namespace Mod.PickMob
 		protected override void OnStop()
 		{
 			Pk9rPickMob.SetSlaughter(false);
+			AutoLogin.SetState(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
 			Utils.status = "Đã kết nối";
 			base.OnStop();
