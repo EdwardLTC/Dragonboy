@@ -430,6 +430,23 @@ namespace Mod
 
 			return null;
 		}
+		
+		[CanBeNull]
+		internal static Item getItemInBox(short itemTemplateId)
+		{
+			Char myChar = Char.myCharz();
+			int length = myChar.arrItemBox.Length;
+			for (sbyte i = 0; i < length; i++)
+			{
+				Item item = myChar.arrItemBox[i];
+				if (item != null && item.template.id == itemTemplateId)
+				{
+					return item;
+				}
+			}
+
+			return null;
+		}
 
 		[ChatCommand("bt"), HotkeyCommand('f')]
 		internal static void usePorata()

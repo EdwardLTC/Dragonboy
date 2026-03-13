@@ -172,6 +172,20 @@ namespace Mod.Auto
 				}
 			}
 		}
+		
+		public void AddItemAutoUse(Item item)
+		{
+			if (isAutoUse(item.Id))
+			{
+				GameScr.info1.addInfo("Đã Tồn Tại " + item.Name + " Trong Danh Sách Auto!", 0);
+				return;
+			}
+			if (item.Delay <= 0)
+			{
+				item.Delay = 100;
+			}
+			listItemAuto.Add(item);
+		}
 
 		static void OpenTFAutoUseItem(Item item)
 		{
@@ -257,6 +271,13 @@ namespace Mod.Auto
 			{
 				Id = id;
 				Name = name;
+			}
+
+			public Item(int id, int delay)
+			{
+				Id = id;
+				Delay = delay;
+				LastTimeUse = 0L;
 			}
 
 			public Item(int id, short isGold, bool index, bool isSell)
