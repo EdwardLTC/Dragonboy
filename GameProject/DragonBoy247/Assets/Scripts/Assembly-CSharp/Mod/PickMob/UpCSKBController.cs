@@ -43,9 +43,7 @@ namespace Mod.PickMob
 			
 				if (!isUseMDSuccess)
 				{
-					gI.Toggle(false);
-					XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
-					GameScr.info1.addInfo("[Up CSKB] Không thể sử dụng MD, đã tắt auto", 0);
+					StopAndGoHome("Không thể sử dụng MD");
 					yield break;
 				}
 			
@@ -64,21 +62,29 @@ namespace Mod.PickMob
 				yield return new WaitForSecondsRealtime(1f);
 			}
 
-			Item capsuleKB = Utils.getItemInBag(ID_CAPSULE_KB);
+			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
+			
+			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
 
-			if (capsuleKB?.quantity == 99 && !XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
+			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
+			{
+				StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
+				yield break;
+			}
+			
+			if (capsuleInBag?.quantity == 99 && !XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
 			{
 				XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
 				yield return null;
 			}
 
-			if (capsuleKB?.quantity == 99 && Utils.IsMyCharHome())
+			if (capsuleInBag?.quantity == 99 && Utils.IsMyCharHome())
 			{
 				Service.gI().getItem(1, Utils.getIndexItemBag(ID_CAPSULE_KB));
 				yield return null;
 			}
 
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleKB?.quantity != 99)
+			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleInBag?.quantity != 99)
 			{
 				XmapController.start(mapIdTrain.Value);
 				yield return null;
@@ -113,6 +119,18 @@ namespace Mod.PickMob
 			AutoLogin.SetState(true);
 			mapIdTrain = TileMap.mapID;
 			zoneIdTrain = TileMap.zoneID;
+			
+			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
+			
+			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
+
+			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
+			{
+				gI.Toggle(false);
+				GameScr.info1.addInfo("[Up CSKB] Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi, đã tắt auto", 0);
+				return;
+			}
+			
 			if (!ItemTime.isExistItem(ID_ICON_MD))
 			{
 				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
@@ -137,6 +155,13 @@ namespace Mod.PickMob
 			Service.gI().returnTownFromDead();
 		}
 
+		static void StopAndGoHome(String message)
+		{
+			gI.Toggle(false);
+			XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
+			GameScr.info1.addInfo("[Up CSKB] " + message + ", đã tắt auto và về nhà", 0);
+		}
+		
 		public override string ToString()
 		{
 			return "State: " + (gI.IsActing ? "Running" : "Stopped") + ", Map: " + mapIdTrain + ", ZoneIdTrain: " + zoneIdTrain;
