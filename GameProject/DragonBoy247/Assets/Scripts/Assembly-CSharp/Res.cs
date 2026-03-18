@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Globalization;
 
 public class Res
 {

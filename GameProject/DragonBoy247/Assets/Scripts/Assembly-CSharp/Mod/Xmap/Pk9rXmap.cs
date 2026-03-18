@@ -175,6 +175,7 @@ namespace Mod.Xmap
 				}
 			}
 
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Utils.TeleportToNPC(npcId);
 			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().openMenu(npcId);
@@ -221,7 +222,6 @@ namespace Mod.Xmap
 
 		static IEnumerator NextMapCapsule(MapNext mapNext)
 		{
-			XmapUtils.mapCapsuleReturn = TileMap.mapID;
 			int select = mapNext.info[0];
 			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().requestMapSelect(select);
@@ -236,6 +236,7 @@ namespace Mod.Xmap
 		{
 			if (waypoint != null)
 			{
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Utils.TeleportMyChar(waypoint.GetX(), waypoint.GetY());
 				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Utils.requestChangeMap(waypoint);

@@ -242,6 +242,9 @@ namespace Mod.PickMob
 			if (!FilterItemPick(itemMap))
 				return TypePickItem.CanNotPickItem;
 
+			if (Pk9rPickMob.IsSkipPickEventItems && itemMap.template.description.Contains("Vật phẩm sự kiện"))
+				return TypePickItem.CanNotPickItem;
+
 			if (Res.abs(myChar.cx - itemMap.xEnd) < 60 && Res.abs(myChar.cy - itemMap.yEnd) < 60)
 				return TypePickItem.PickItemNormal;
 
@@ -420,11 +423,6 @@ namespace Mod.PickMob
 		static bool CanUseSkill(Skill skill)
 		{
 			int coolDown = skill.coolDown;
-
-			if (!IdSkillsMelee.Contains(skill.template.id))
-			{
-				coolDown += 5000;
-			}
 			
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;

@@ -6,8 +6,6 @@ namespace Mod.Xmap
 {
 	internal class XmapUtils
 	{
-		internal static int mapCapsuleReturn = -1;
-
 		internal static readonly short ID_ITEM_CAPSULE_VIP = 194;
 		internal static readonly short ID_ITEM_CAPSULE_NORMAL = 193;
 
@@ -66,14 +64,6 @@ namespace Mod.Xmap
 			if (mapName.Equals(LocalizedString.spaceshipStation))
 			{
 				return ID_MAP_TTVT_BASE + offset;
-			}
-			if (LocalizedString.backTo.ContainsReversed(mapName))
-			{
-				mapName = LocalizedString.backTo.Replace(mapName, "");
-				if (TileMap.mapNames[mapCapsuleReturn].Equals(mapName.Trim()))
-				{
-					return mapCapsuleReturn;
-				}
 			}
 			for (int i = 0; i < TileMap.mapNames.Length; i++)
 			{

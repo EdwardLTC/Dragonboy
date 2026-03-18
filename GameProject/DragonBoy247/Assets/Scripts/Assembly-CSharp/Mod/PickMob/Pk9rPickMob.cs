@@ -29,6 +29,7 @@ namespace Mod.PickMob
 		internal static bool IsItemMe { get; set; } = true;
 		internal static bool IsLimitTimesPickItem { get; set; } = true;
 		internal static bool IsAttackMonsterBySendCommand { get; set; }
+		internal static bool IsSkipPickEventItems { get; set; } = true;
 
 		internal static List<int> IdMobsTanSat = new List<int>();
 		internal static List<int> TypeMobsTanSat = new List<int>();

@@ -527,7 +527,8 @@ namespace Mod
 
 		internal static bool OnChatPopupMultiLine(string chat)
 		{
-			return false;
+			GameScr.info1.addInfo(chat, 0);
+			return true;
 		}
 
 		internal static bool OnAddBigMessage(string chat, Npc npc)
@@ -2164,7 +2165,6 @@ namespace Mod
 				if (isOpenZoneUI)
 				{
 					isOpenZoneUI = false;
-					return false;
 				}
 
 				return true;
