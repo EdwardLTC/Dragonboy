@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -361,47 +361,6 @@ namespace Mod
 			}
 		}
 
-		[HotkeyCommand('n')]
-		internal static void showMenuTeleNpc()
-		{
-			int vNpcSize = GameScr.vNpc.size();
-			if (vNpcSize == 0)
-			{
-				GameScr.info1.addInfo("Không có NPC nào", 0);
-				return;
-			}
-
-			new MenuBuilder()
-				.map<Npc>(GameScr.vNpc, npc =>
-				{
-					string npcName = string.IsNullOrEmpty(npc.template.name.Trim()) ? "(no name)" : npc.template.name;
-					return new MenuItem(npcName, new MenuAction(() => teleToNpc(npc)));
-				}).start();
-
-			//OpenMenu.start(new(menuItems =>
-			//{
-			//    for (int i = 0; i < vNpcSize; i++)
-			//    {
-			//        var npc = (Npc)GameScr.vNpc.elementAt(i);
-			//        var npcName = string.IsNullOrEmpty(npc.template.name.Trim()) ? "(no name)" : npc.template.name;
-			//        menuItems.Add(new(npcName, new(() => teleToNpc(npc))));
-			//    }
-			//}));
-		}
-
-		[HotkeyCommand('c')]
-		internal static void useCapsule()
-		{
-			sbyte index = getIndexItemBag(193, 194);
-			if (index == -1)
-			{
-				GameScr.info1.addInfo("Không tìm thấy capsule", 0);
-				return;
-			}
-
-			Service.gI().useItem(0, 1, index, -1);
-		}
-
 		internal static bool useItem(short itemTemplateId)
 		{
 			sbyte index = getIndexItemBag(itemTemplateId);
@@ -447,125 +406,14 @@ namespace Mod
 
 			return null;
 		}
-
-		[ChatCommand("bt"), HotkeyCommand('f')]
-		internal static void usePorata()
-		{
-			sbyte index = getIndexItemBag(921, 454);
-			if (index == -1)
-			{
-				GameScr.info1.addInfo("Không tìm thấy bông tai", 0);
-				return;
-			}
-
-			Service.gI().useItem(0, 1, index, -1);
-		}
-
-		[ChatCommand("skey")]
-		internal static void syncKey(int channel)
-		{
-			channelSyncKey = channel;
-			if (channel == -1)
-			{
-				GameScr.info1.addInfo("Đã tắt đồng bộ phím", 0);
-				return;
-			}
-
-			GameScr.info1.addInfo($"Đồng bộ phím với kênh {channel}", 0);
-		}
-
-		[HotkeyCommand('j')]
-		internal static void ChangeMapLeft()
-		{
-			if (IsMeInNRDMap() || waypointLeft == null)
-				TeleportMyChar(60);
-			else
-				ChangeMap(waypointLeft);
-		}
-
-		[HotkeyCommand('k')]
-		internal static void ChangeMapMiddle()
-		{
-			if (IsMeInNRDMap())
-			{
-				if (Char.myCharz().bag >= 0 && ClanImage.idImages.containsKey(Char.myCharz().bag.ToString()))
-				{
-					ClanImage clanImage = (ClanImage)ClanImage.idImages.get(Char.myCharz().bag.ToString());
-					if (clanImage.idImage != null)
-					{
-						for (int i = 0; i < clanImage.idImage.Length; i++)
-						{
-							if (clanImage.idImage[i] == 2322)
-							{
-								for (int j = 0; j < GameScr.vNpc.size(); j++)
-								{
-									Npc npc = (Npc)GameScr.vNpc.elementAt(j);
-									if (npc.template.npcTemplateId >= 30 && npc.template.npcTemplateId <= 36)
-									{
-										Char.myCharz().npcFocus = npc;
-										TeleportMyChar(npc.cx, npc.cy - 3);
-										return;
-									}
-								}
-							}
-						}
-					}
-				}
-				for (int k = 0; k < GameScr.vItemMap.size(); k++)
-				{
-					ItemMap itemMap = (ItemMap)GameScr.vItemMap.elementAt(k);
-					if (itemMap != null && itemMap.IsNRD())
-					{
-						Char.myCharz().itemFocus = itemMap;
-						TeleportMyChar(itemMap.x, itemMap.y);
-						return;
-					}
-				}
-			}
-			else if (waypointMiddle == null)
-				TeleportMyChar(TileMap.pxw / 2);
-			else
-				ChangeMap(waypointMiddle);
-		}
-
-		[HotkeyCommand('l')]
-		internal static void ChangeMapRight()
-		{
-			if (IsMeInNRDMap() || waypointRight == null)
-				TeleportMyChar(TileMap.pxw - 60);
-			else
-				ChangeMap(waypointRight);
-		}
-
-		[HotkeyCommand('g')]
-		internal static void sendGiaoDichToCharFocusing()
-		{
-			Char charFocus = Char.myCharz().charFocus;
-			if (charFocus == null)
-			{
-				GameScr.info1.addInfo("Trỏ vào nhân vật để giao dịch", 0);
-				return;
-			}
-
-			Service.gI().giaodich(0, charFocus.charID, -1, -1);
-			GameScr.info1.addInfo("Đã gửi lời mời giao dịch đến " + charFocus.cName, 0);
-		}
-
-		[ChatCommand("k")]
-		internal static void changeZone(int zone)
-		{
-			Debug.Log($"Request change zone to {zone}");
-			Service.gI().requestChangeZone(zone, -1);
-		}
-
-		[HotkeyCommand('m')]
+		
 		internal static void menuZone()
 		{
 			Service.gI().openUIZone();
 			GameCanvas.panel.setTypeZone();
 			GameCanvas.panel.show();
 		}
-
+		
 		internal static void ChangeMap(Waypoint waypoint)
 		{
 			if (waypoint != null)

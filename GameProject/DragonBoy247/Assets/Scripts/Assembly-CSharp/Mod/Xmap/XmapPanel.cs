@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Mod.CustomPanel;
-using Mod.ModHelper.Menu;
-using Mod.R;
 
 namespace Mod.Xmap
 {

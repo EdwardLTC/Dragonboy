@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,10 +11,7 @@ namespace Mod.ModHelper.CommandMod.Chat
     public class ChatCommandHandler
     {
         public static List<ChatCommand> chatCommands = new List<ChatCommand>();
-
-        /// <summary>
-        /// Tải lệnh chat mặc định. (các lệnh được định nghĩa trên code)
-        /// </summary>
+        
         public static void loadDefault()
         {
             var methods = CommandUtils.GetMethods();
@@ -143,12 +140,7 @@ namespace Mod.ModHelper.CommandMod.Chat
         /// <returns>true nếu có lệnh được thực hiện thành công.</returns>
         public static bool handleChatText(string text)
         {
-            // Lệnh chat phải bắt đầu bằng / để phân biệt với chat bình thường
-            if (!text.StartsWith("/"))
-                return false;
-
             return text
-                .Substring(1)
                 .Split(',')
                 .Aggregate(false, (acc, command) => execute(command.ToString()) || acc);
         }
