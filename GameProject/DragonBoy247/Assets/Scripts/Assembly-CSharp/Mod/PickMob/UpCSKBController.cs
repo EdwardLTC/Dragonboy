@@ -37,10 +37,20 @@ namespace Mod.PickMob
 				notUsingMDTime = 0L;
 			}
 			
+			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
+			
+			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
+			
 			if (notUsingMDTime > 0 && DateTime.Now.Ticks - notUsingMDTime > 2 * 60 * 10000000L)
 			{
+				if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
+				{
+					StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
+					yield break;
+				}
+				
 				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
-			
+				
 				if (!isUseMDSuccess)
 				{
 					StopAndGoHome("Không thể sử dụng MD");
@@ -60,16 +70,6 @@ namespace Mod.PickMob
 			{
 				RegenHpWhenInHome();
 				yield return new WaitForSecondsRealtime(1f);
-			}
-
-			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
-			
-			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
-
-			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
-			{
-				StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
-				yield break;
 			}
 			
 			if (capsuleInBag?.quantity == 99 && !XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
