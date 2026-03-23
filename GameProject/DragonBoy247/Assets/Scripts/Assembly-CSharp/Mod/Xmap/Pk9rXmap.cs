@@ -205,6 +205,7 @@ namespace Mod.Xmap
 			Service.gI().confirmMenu((short)idNpc, (sbyte)selectMenu);
 			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().requestMapSelect(selectPanel);
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 		}
 
 		static IEnumerator NextMapPosition(MapNext mapNext)
@@ -225,6 +226,7 @@ namespace Mod.Xmap
 			int select = mapNext.info[0];
 			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().requestMapSelect(select);
+			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 		}
 
 		static void MoveMyChar(int x, int y)
@@ -240,6 +242,7 @@ namespace Mod.Xmap
 				Utils.TeleportMyChar(waypoint.GetX(), waypoint.GetY());
 				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Utils.requestChangeMap(waypoint);
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			}
 		}
 	}

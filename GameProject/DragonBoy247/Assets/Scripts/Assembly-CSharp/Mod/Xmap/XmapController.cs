@@ -160,25 +160,39 @@ namespace Mod.Xmap
 
 		static IEnumerator AddCapsuleLinkIfPossible(List<MapNext>[] graph)
 		{
+			if (!Pk9rXmap.CanUseCapsuleVip() && !Pk9rXmap.CanUseCapsuleNormal())
+			{
+				yield break;	
+			}
+			
+			float deadlineUseCapsule = Time.realtimeSinceStartup + 2f;
+			
 			string[] oldMapNames = GameCanvas.panel.mapNames;
 			
-			if (Pk9rXmap.CanUseCapsuleVip())
+			while (GameCanvas.panel.type != Panel.TYPE_MAPTRANS)
 			{
-				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
-			}
-			else if (Pk9rXmap.CanUseCapsuleNormal())
-			{
-				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
-			}
-			else
-			{
-				yield break;
+				if (Time.realtimeSinceStartup >= deadlineUseCapsule)
+				{
+					yield break;
+				}
+				if (Pk9rXmap.CanUseCapsuleVip())
+				{
+					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
+				}
+				else if (Pk9rXmap.CanUseCapsuleNormal())
+				{
+					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
+				}
+				else
+				{
+					yield break;
+				}	
 			}
 			
-			float deadline = Time.realtimeSinceStartup + 5f;
+			float deadlineLoadMapNames = Time.realtimeSinceStartup + 3f;
 			while (GameCanvas.panel.mapNames == oldMapNames || GameCanvas.panel.mapNames == null || GameCanvas.panel.mapNames.Length == 0)
 			{
-				if (Time.realtimeSinceStartup >= deadline)
+				if (Time.realtimeSinceStartup >= deadlineLoadMapNames)
 				{
 					yield break;
 				}
