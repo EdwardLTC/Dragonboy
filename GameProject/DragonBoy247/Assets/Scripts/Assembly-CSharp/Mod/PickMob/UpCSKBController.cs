@@ -92,6 +92,7 @@ namespace Mod.PickMob
 
 			if (TileMap.mapID == mapIdTrain && TileMap.zoneID != zoneIdTrain && zoneIdTrain != null)
 			{
+				yield return new WaitForSecondsRealtime(2f);
 				Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
 			}
 		}
