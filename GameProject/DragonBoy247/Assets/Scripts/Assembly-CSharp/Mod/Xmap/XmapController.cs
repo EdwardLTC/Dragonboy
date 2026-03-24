@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mod.ModHelper;
 using Mod.R;
@@ -9,48 +10,61 @@ namespace Mod.Xmap
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
 		const float MaxStuckSeconds = 15f;
+
+		static readonly int[] MAP_FUTURE =
+		{
+			102, 92, 93, 94, 96, 97, 98, 99, 100, 103
+		};
+
+		static readonly int[] MAP_COLD =
+		{
+			109, 108, 107, 110, 106, 105
+		};
+		int indexWay;
+		bool isInitializing;
+		bool isNextMapFailed;
+		int lastProgressMapId;
+		float lastProgressRealtime;
+		int lastProgressStepIndex;
 		int mapEnd;
 		List<MapNext> way;
-		int indexWay;
-		bool isNextMapFailed;
-		bool isInitializing;
-		float lastProgressRealtime;
-		int lastProgressMapId;
-		int lastProgressStepIndex;
+
 		protected override float Interval => 0.5f;
-		
+
 		protected override IEnumerator OnUpdate()
 		{
 			if (isInitializing)
 			{
 				yield break;
 			}
-			
+
+			int currentMapId = TileMap.mapID;
+			float now = Time.realtimeSinceStartup;
 			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || GameCanvas.isLoading || Controller.isStopReadMessage;
 
-			if (TileMap.mapID != lastProgressMapId || indexWay != lastProgressStepIndex)
+			if (currentMapId != lastProgressMapId || indexWay != lastProgressStepIndex)
 			{
 				MarkProgress();
 			}
 			else if (isMapTransitioning)
 			{
-				lastProgressRealtime = Time.realtimeSinceStartup;
+				lastProgressRealtime = now;
 			}
-			else if (Time.realtimeSinceStartup - lastProgressRealtime >= MaxStuckSeconds)
+			else if (now - lastProgressRealtime >= MaxStuckSeconds)
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
 				finishXmap();
 				yield break;
 			}
-			
-			if (way == null || way.Count == 0 ||isNextMapFailed)
+
+			if (way == null || way.Count == 0 || isNextMapFailed)
 			{
 				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
 				finishXmap();
 				yield break;
 			}
-			
-			if (TileMap.mapID == mapEnd && !Char.myCharz().IsCharDead())
+
+			if (currentMapId == mapEnd && !Char.myCharz().IsCharDead())
 			{
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
@@ -65,7 +79,7 @@ namespace Mod.Xmap
 			}
 
 			MapNext currentStep = way[indexWay];
-			if (TileMap.mapID == currentStep.to)
+			if (currentMapId == currentStep.to)
 			{
 				indexWay++;
 				MarkProgress();
@@ -85,14 +99,14 @@ namespace Mod.Xmap
 				yield return Pk9rXmap.NextMap(currentStep);
 			}
 		}
-		
+
 		protected override void OnStart()
 		{
 			way = null;
 			indexWay = 0;
 			isNextMapFailed = false;
 			isInitializing = true;
-			
+
 			string mapName = TileMap.mapNames[mapEnd];
 			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
 			StartCoroutine(InitializeWay());
@@ -102,12 +116,24 @@ namespace Mod.Xmap
 
 		IEnumerator InitializeWay()
 		{
+			int startMapId = TileMap.mapID;
 			List<MapNext>[] graph = (List<MapNext>[])XmapData.links.Clone();
+			way = XmapAlgorithm.FindWayBFS(startMapId, mapEnd, XmapData.links);
 
-			yield return StartCoroutine(AddCapsuleLinkIfPossible(graph));
-		
-			way = XmapAlgorithm.FindWayBFS(TileMap.mapID, mapEnd, graph);
-			
+			if (way == null || way.Count == 0)
+			{
+				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
+				finishXmap();
+				isInitializing = false;
+				yield break;
+			}
+
+			if (way.Count > 5 && (!IsStartAndDestinationInFuture() || !IsStartAndDestinationInCold()))
+			{
+				yield return AddCapsuleLinkIfPossible(graph);
+				way = XmapAlgorithm.FindWayBFS(startMapId, mapEnd, graph);
+			}
+
 			if (way == null || way.Count == 0)
 			{
 				GameScr.info1.addInfo(Strings.xmapCantFindWay + '!', 0);
@@ -160,37 +186,23 @@ namespace Mod.Xmap
 
 		static IEnumerator AddCapsuleLinkIfPossible(List<MapNext>[] graph)
 		{
-			if (!Pk9rXmap.CanUseCapsuleVip() && !Pk9rXmap.CanUseCapsuleNormal())
+			GameCanvas.panel.mapNames = null;
+
+			if (Pk9rXmap.CanUseCapsuleVip())
 			{
-				yield break;	
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
 			}
-			
-			float deadlineUseCapsule = Time.realtimeSinceStartup + 2f;
-			
-			string[] oldMapNames = GameCanvas.panel.mapNames;
-			
-			while (GameCanvas.panel.type != Panel.TYPE_MAPTRANS)
+			else if (Pk9rXmap.CanUseCapsuleNormal())
 			{
-				if (Time.realtimeSinceStartup >= deadlineUseCapsule)
-				{
-					yield break;
-				}
-				if (Pk9rXmap.CanUseCapsuleVip())
-				{
-					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
-				}
-				else if (Pk9rXmap.CanUseCapsuleNormal())
-				{
-					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
-				}
-				else
-				{
-					yield break;
-				}	
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
 			}
-			
+			else
+			{
+				yield break;
+			}
+
 			float deadlineLoadMapNames = Time.realtimeSinceStartup + 3f;
-			while (GameCanvas.panel.mapNames == oldMapNames || GameCanvas.panel.mapNames == null || GameCanvas.panel.mapNames.Length == 0)
+			while (GameCanvas.panel.mapNames == null || GameCanvas.panel.mapNames.Length == 0)
 			{
 				if (Time.realtimeSinceStartup >= deadlineLoadMapNames)
 				{
@@ -201,17 +213,39 @@ namespace Mod.Xmap
 
 			int mapStart = TileMap.mapID;
 			string[] mapNames = GameCanvas.panel.mapNames;
-			
+
 			int length = mapNames.Length;
 			for (int select = 0; select < length; select++)
 			{
 				int to = XmapUtils.getMapIdFromName(mapNames[select]);
-				Debug.Log("Capsule link: " + mapStart + " -> " + to + " (" + mapNames[select] + ")");
 				if (to != -1)
 				{
-					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));
+					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[]
+					{
+						select
+					}));
 				}
 			}
+		}
+
+		static bool IsStartAndDestinationInFuture()
+		{
+			return IsFutureMap(TileMap.mapID) && IsFutureMap(gI.mapEnd);
+		}
+
+		static bool IsStartAndDestinationInCold()
+		{
+			return IsColdMap(TileMap.mapID) && IsColdMap(gI.mapEnd);
+		}
+
+		static bool IsFutureMap(int mapId)
+		{
+			return Array.IndexOf(MAP_FUTURE, mapId) != -1;
+		}
+
+		static bool IsColdMap(int mapId)
+		{
+			return Array.IndexOf(MAP_COLD, mapId) != -1;
 		}
 	}
 }

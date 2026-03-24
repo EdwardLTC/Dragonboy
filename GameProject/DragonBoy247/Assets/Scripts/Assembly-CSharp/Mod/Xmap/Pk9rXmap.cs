@@ -13,8 +13,6 @@ namespace Mod.Xmap
 		const float ServiceCallDelaySeconds = 0.2f;
 		internal static bool isUseCapsuleNormal = true;
 		static bool isUseCapsuleVip = true;
-		static bool isChangingMap;
-		static bool isMovingMyChar;
 
 		static readonly Random random = new Random();
 
