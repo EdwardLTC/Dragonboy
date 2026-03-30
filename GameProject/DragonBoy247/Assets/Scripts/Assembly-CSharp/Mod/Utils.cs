@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
-using Mod.ModHelper.Menu;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Random = System.Random;
@@ -82,7 +81,7 @@ namespace Mod
 		{
 			return Application.platform == RuntimePlatform.OSXPlayer;
 		}
-		
+
 		/// <summary>
 		///     Kiểm tra xem game có đang chạy trên Unity Editor hay không.
 		/// </summary>
@@ -214,14 +213,36 @@ namespace Mod
 			return -1;
 		}
 
-		/// <summary>
-		///     Dịch chuyển tới npc trong map.
-		/// </summary>
-		/// <param name="npc">Npc cần dịch chuyển tới</param>
 		internal static void teleToNpc(Npc npc)
 		{
 			TeleportMyChar(npc.cx, npc.ySd - npc.ySd % 24);
 			Char.myCharz().npcFocus = npc;
+		}
+
+		internal static Npc findNpc(int npcId)
+		{
+			for (int i = 0; i < GameScr.vNpc.size(); i++)
+			{
+				Npc npc = (Npc)GameScr.vNpc.elementAt(i);
+				if (npc.template.npcTemplateId == npcId)
+				{
+					return npc;
+				}
+			}
+			return null;
+		}
+
+		internal static void teleToNpc(int npcId)
+		{
+			for (int i = 0; i < GameScr.vNpc.size(); i++)
+			{
+				Npc npc = (Npc)GameScr.vNpc.elementAt(i);
+				if (npc.template.npcTemplateId == npcId)
+				{
+					teleToNpc(npc);
+					return;
+				}
+			}
 		}
 
 		internal static void requestChangeMap(Waypoint waypoint)
@@ -389,7 +410,7 @@ namespace Mod
 
 			return null;
 		}
-		
+
 		[CanBeNull]
 		internal static Item getItemInBox(short itemTemplateId)
 		{
@@ -406,14 +427,14 @@ namespace Mod
 
 			return null;
 		}
-		
+
 		internal static void menuZone()
 		{
 			Service.gI().openUIZone();
 			GameCanvas.panel.setTypeZone();
 			GameCanvas.panel.show();
 		}
-		
+
 		internal static void ChangeMap(Waypoint waypoint)
 		{
 			if (waypoint != null)

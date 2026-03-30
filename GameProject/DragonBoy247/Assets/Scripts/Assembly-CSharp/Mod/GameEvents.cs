@@ -70,7 +70,7 @@ namespace Mod
 			GraphicsReducer.InitializeTileMap(true);
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
-			
+
 			GameLauncherClient launcher = GameLauncherClient.Instance;
 			launcher.ParseStartupArgs();
 			if (launcher.IsLaunchedByLauncher())
@@ -112,7 +112,7 @@ namespace Mod
 			ModMenuMain.SaveData();
 			Setup.clearStringTrash();
 			TeleportMenuMain.SaveData();
-			
+
 			if (GameLauncherClient.Instance.IsConnected)
 			{
 				GameLauncherClient.Instance.Close();
@@ -122,7 +122,7 @@ namespace Mod
 			{
 				InGameAccountManager.OnCloseAndPause();
 			}
-			
+
 			Session_ME.gI().close();
 			Session_ME2.gI().close();
 		}
@@ -785,7 +785,7 @@ namespace Mod
 
 		internal static void OnChatVip(string chatVip)
 		{
-			
+
 		}
 
 		internal static bool OnUpdateScrollMousePanel(Panel panel, ref int pXYScrollMouse)
@@ -1257,21 +1257,21 @@ namespace Mod
 			mFont.tahoma_7b_red.drawString(g, fpsStr, 2, 0, 0);
 		}
 
-			internal static bool OnUpdatePanel(Panel instance)
+		internal static bool OnUpdatePanel(Panel instance)
+		{
+			if (instance == GameCanvas.panel)
 			{
-				if (instance == GameCanvas.panel)
+				Panel panel = ModMenuMain.currentPanel;
+				int instanceDrawX = instance.X + instance.X - instance.cmx;
+				if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
+				    !GameCanvas.isPointer(instanceDrawX, instance.Y, instance.W, instance.H) &&
+				    !GameCanvas.isPointer(panel.X + panel.X - panel.cmx, panel.Y, panel.W, panel.H) &&
+				    !instance.pointerIsDowning)
 				{
-					Panel panel = ModMenuMain.currentPanel;
-					int instanceDrawX = instance.X + instance.X - instance.cmx;
-					if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
-					    !GameCanvas.isPointer(instanceDrawX, instance.Y, instance.W, instance.H) &&
-					    !GameCanvas.isPointer(panel.X + panel.X - panel.cmx, panel.Y, panel.W, panel.H) &&
-					    !instance.pointerIsDowning)
-					{
-						instance.hide();
-						return false;
-					}
+					instance.hide();
+					return false;
 				}
+			}
 
 			if (instance.type == CustomPanelMenu.TYPE_CUSTOM_PANEL_MENU)
 				if ((instance.chatTField == null || !instance.chatTField.isShow) && !instance.isKiguiXu &&
@@ -1772,7 +1772,7 @@ namespace Mod
 								}
 							}
 						}
-						
+
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
 						CustomGraphics.PaintItemEffectInPanel(g, panel.xScroll + 17, y + 11, 34, panel.ITEM_HEIGHT - 1,
 							item);
@@ -1905,10 +1905,10 @@ namespace Mod
 						{
 							g.setColor(0xB49F84);
 						}
-						
+
 						foreach (ItemOption option in item.itemOption)
 						{
-							
+
 							if (option.optionTemplate.id == 72 && option.param > 0)
 							{
 								byte id_ = (byte)GetColor_Item_Upgrade(option.param);

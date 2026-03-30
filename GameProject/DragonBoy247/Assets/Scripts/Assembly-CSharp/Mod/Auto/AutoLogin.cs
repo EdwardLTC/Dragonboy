@@ -7,7 +7,6 @@ namespace Mod.Auto
 	internal class AutoLogin
 	{
 		internal static bool isEnabled;
-		internal static bool IsRunning => isEnabled && steps > 0;
 		static long lastTimeAttemptLogin;
 		static long lastTimeUpdate;
 		static int lastMapID;
@@ -15,6 +14,7 @@ namespace Mod.Auto
 		static int lastX;
 		static int lastY;
 		static int steps;
+		internal static bool IsRunning => isEnabled && steps > 0;
 
 		internal static void Update()
 		{
@@ -39,12 +39,17 @@ namespace Mod.Auto
 
 		static void CheckForDisconnected()
 		{
-			if ((GameCanvas.currentScreen is not GameScr && !Char.isLoadingMap && !Char.ischangingMap && !GameCanvas.isLoading) || !Session_ME.gI().isConnected())
+			if (!IsLoginSuccess() || !Session_ME.gI().isConnected())
 			{
 				lastTimeAttemptLogin = mSystem.currentTimeMillis();
 				GameCanvas.serverScreen.switchToMe();
 				steps = 1;
 			}
+		}
+
+		static bool IsLoginSuccess()
+		{
+			return GameCanvas.currentScreen is not ServerListScreen && GameCanvas.currentScreen is not LoginScr;
 		}
 
 		static void AttemptLogin()

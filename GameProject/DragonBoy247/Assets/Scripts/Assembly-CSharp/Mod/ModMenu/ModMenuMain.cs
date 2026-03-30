@@ -187,16 +187,6 @@ namespace Mod.ModMenu
 					SetValueAction = value => AutoPean.isAutoHarvest = value,
 					RMSName = "auto_harvest_peans"
 				}),
-				// Auxiliary switches
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "Xmap_UseNormalCapsule_Toggle",
-					Title = Strings.xmapUseNormalCapsule,
-					Description = Strings.xmapUseNormalCapsuleDescription,
-					GetValueFunc = () => Pk9rXmap.isUseCapsuleNormal,
-					SetValueAction = value => Pk9rXmap.isUseCapsuleNormal = value,
-					RMSName = "xmap_use_normal_capsule"
-				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
 					ID = "PickMob_AvoidSuperMob_Toggle",

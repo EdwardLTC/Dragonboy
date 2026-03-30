@@ -104,4 +104,9 @@ public class MyVector
 	{
 		return a[a.Count - 1];
 	}
+
+	public override string ToString()
+	{
+		return string.Join(", ", a.ToArray());
+	}
 }
