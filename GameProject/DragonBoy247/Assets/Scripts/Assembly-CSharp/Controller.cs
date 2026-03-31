@@ -5129,7 +5129,6 @@ public class Controller : IMessageHandler
 			GameCanvas.endDlg();
 		}
 		GameCanvas.isLoading = false;
-		GameEvents.OnInfoMapLoaded();
 	}
 
 	public void keyValueAction(string key, string value)

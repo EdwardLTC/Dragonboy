@@ -44,8 +44,6 @@ public class Image
 
 	public static Image createImage(string filename)
 	{
-		if (GameEvents.OnCreateImage(filename, out Image image))
-			return image;
 		return __createImage(filename);
 	}
 

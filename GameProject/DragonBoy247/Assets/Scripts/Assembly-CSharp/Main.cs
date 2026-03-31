@@ -109,13 +109,11 @@ public class Main : MonoBehaviour
 		// 		Screen.SetResolution(1024, 600, false);
 		// 	}
 		// }
-		GameEvents.OnMainStart();
 	}
 
 	void Update()
 	{
 		Res.outz("Some dummy code here");
-		GameEvents.OnUpdateMain();
 	}
 
 	void FixedUpdate()
@@ -153,7 +151,6 @@ public class Main : MonoBehaviour
 				int num = 1 / a;
 			}
 		}
-		GameEvents.OnFixedUpdateMain();
 	}
 
 	void OnGUI()
@@ -206,12 +203,10 @@ public class Main : MonoBehaviour
 		{
 			Application.Quit();
 		}
-		GameEvents.OnGamePause(paused);
 	}
 
 	void OnApplicationQuit()
 	{
-		GameEvents.OnGameClosing();
 		GameCanvas.bRun = false;
 		Session_ME.gI().close();
 		Session_ME2.gI().close();

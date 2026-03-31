@@ -305,7 +305,6 @@ public class Session_ME : ISession
 
 	public void connect(string host, int port)
 	{
-		GameEvents.OnSessionConnecting(ref host, ref port);
 		if (connected || connecting)
 		{
 			Debug.Log(">>>return connect ...!" + connected + "  ::  " + connecting);

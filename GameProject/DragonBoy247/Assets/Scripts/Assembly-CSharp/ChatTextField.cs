@@ -160,10 +160,6 @@ public class ChatTextField : IActionListener
 
 	public void startChat(int firstCharacter, IChatable parentScreen, string to)
 	{
-		if (GameEvents.OnStartChatTextField(this, parentScreen))
-		{
-			return;
-		}
 		right.caption = mResources.CLOSE;
 		this.to = to;
 		if (Main.isWindowsPhone)
@@ -244,7 +240,6 @@ public class ChatTextField : IActionListener
 	{
 		if (!isShow)
 		{
-			GameEvents.OnUpdateChatTextField(this);
 			return;
 		}
 		tfChat.update();
@@ -290,7 +285,6 @@ public class ChatTextField : IActionListener
 
 	public void paint(mGraphics g)
 	{
-		GameEvents.OnPaintChatTextField(this, g);
 		if (isShow && !Main.isIPhone)
 		{
 			int num = ((!Main.isWindowsPhone) ? (y - KC) : (tfChat.y - 5));

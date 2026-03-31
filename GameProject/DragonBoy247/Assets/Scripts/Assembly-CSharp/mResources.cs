@@ -1180,7 +1180,6 @@ public class mResources
 			ServerListScreen.linkweb = "http://dragonball.indonaga.com";
 			break;
 		}
-		GameEvents.OnLoadLanguage(newLanguage);
 	}
 
 	public static string replace(string str, string replacement)

@@ -536,7 +536,6 @@ public class Mob : IMapObject
 
 	public virtual void update()
 	{
-		GameEvents.OnUpdateMob(this);
 		if (isMafuba)
 		{
 			return;
@@ -1507,7 +1506,6 @@ public class Mob : IMapObject
 
 	public void startDie()
 	{
-		GameEvents.OnMobStartDie(this);
 		hp = 0L;
 		injureThenDie = true;
 		hp = 0L;

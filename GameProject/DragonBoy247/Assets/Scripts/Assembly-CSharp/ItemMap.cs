@@ -95,7 +95,6 @@ public class ItemMap : IMapObject
 
 	public void setPoint(int xEnd, int yEnd)
 	{
-		GameEvents.OnSetPointItemMap(xEnd, yEnd);
 		this.xEnd = xEnd;
 		this.yEnd = yEnd;
 		vx = xEnd - x >> 2;

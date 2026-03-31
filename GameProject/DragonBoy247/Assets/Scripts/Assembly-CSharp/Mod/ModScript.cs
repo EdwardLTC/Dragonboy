@@ -6,6 +6,7 @@ namespace Mod
 	{
 		void Awake()
 		{
+			GameHarmony.Initialize();
 			GameEvents.OnAwake();
 		}
 

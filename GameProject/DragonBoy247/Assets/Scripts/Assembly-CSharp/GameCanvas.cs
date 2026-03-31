@@ -1246,10 +1246,6 @@ public class GameCanvas : IActionListener
 
 	public static void paintBGGameScr(mGraphics g)
 	{
-		if (GameEvents.OnPaintBgGameScr(g))
-		{
-			return;	
-		}
 		if (!isLoadBGok)
 		{
 			g.setColor(0);
@@ -1984,10 +1980,6 @@ public class GameCanvas : IActionListener
 
 	public void keyPressedz(int keyCode)
 	{
-		if (GameEvents.OnKeyPressed(keyCode, false))
-		{
-			return;
-		}
 		lastTimePress = mSystem.currentTimeMillis();
 		if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 122) || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 32 || keyCode == 31)
 		{
@@ -2166,10 +2158,6 @@ public class GameCanvas : IActionListener
 
 	public void keyReleasedz(int keyCode)
 	{
-		if (GameEvents.OnKeyReleased(keyCode, false))
-		{
-			return;
-		}
 		keyAsciiPress = 0;
 		mapKeyRelease(keyCode);
 	}
@@ -2546,7 +2534,6 @@ public class GameCanvas : IActionListener
 		catch (Exception)
 		{
 		}
-		GameEvents.OnPaintGameCanvas(this, g);
 	}
 
 	public static void endDlg()
@@ -2561,10 +2548,6 @@ public class GameCanvas : IActionListener
 
 	public static void startOKDlg(string info)
 	{
-		if (GameEvents.OnStartOKDlg(info))
-		{
-			return;
-		}
 		closeKeyBoard();
 		msgdlg.setInfo(info, null, new Command(mResources.OK, instance, 8882, null), null);
 		currentDialog = msgdlg;

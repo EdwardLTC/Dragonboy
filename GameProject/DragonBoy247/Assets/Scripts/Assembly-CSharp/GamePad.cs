@@ -261,10 +261,6 @@ public class GamePad
 
 	public void paint(mGraphics g)
 	{
-		if (GameEvents.OnGamepadPaint(this, g))
-		{
-			return;
-		}
 		if (GameScr.isAnalog != 0)
 		{
 			xZone = 0;

@@ -148,10 +148,6 @@ public class SoundMn
 
 	public void getSoundOption()
 	{
-		if (GameEvents.OnGetSoundOption())
-		{
-			return;
-		}
 		if (GameCanvas.loginScr.isLogin2 && Char.myCharz().taskMaint != null && Char.myCharz().taskMaint.taskId >= 2)
 		{
 			Panel.strTool = new string[10]
@@ -230,10 +226,6 @@ public class SoundMn
 
 	public void getStrOption()
 	{
-		if (GameEvents.OnSoundMnGetStrOption())
-		{
-			return;
-		}
 		string text = "[x]   ";
 		string text2 = "[  ]   ";
 		if (Main.isPC)

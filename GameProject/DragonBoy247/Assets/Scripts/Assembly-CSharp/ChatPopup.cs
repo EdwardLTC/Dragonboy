@@ -114,10 +114,6 @@ public class ChatPopup : Effect2, IActionListener
 
 	public static void addBigMessage(string chat, int howLong, Npc c)
 	{
-		if (GameEvents.OnAddBigMessage(chat, c))
-		{
-			return;
-		}
 		string[] array = new string[1] { chat };
 		if (c.charID != 5 && GameScr.info1.isDone)
 		{
@@ -138,10 +134,6 @@ public class ChatPopup : Effect2, IActionListener
 
 	public static void addChatPopupMultiLine(string chat, int howLong, Npc c)
 	{
-		if (GameEvents.OnChatPopupMultiLine(chat))
-		{
-			return;	
-		}
 		string[] array = Res.split(chat, "\n", 0);
 		Char.isLockKey = true;
 		currChatPopup = addChatPopup(array[0], howLong, c);

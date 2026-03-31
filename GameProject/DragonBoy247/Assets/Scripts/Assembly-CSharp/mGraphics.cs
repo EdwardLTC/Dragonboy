@@ -924,15 +924,10 @@ public class mGraphics
 
 	public void drawImage(Image image, int x, int y, int anchor)
 	{
-		if (GameEvents.OnMGraphicsDrawImage(image, x, y, anchor))
-		{
-			return;
-		}
 		if (image != null)
 		{
 			drawRegion(image, 0, 0, getImageWidth(image), getImageHeight(image), 0, x, y, anchor);
 		}
-		GameEvents.AfterMGraphicsDrawImage(image, x, y, anchor);
 	}
 
 	public void drawImageFog(Image image, int x, int y, int anchor)

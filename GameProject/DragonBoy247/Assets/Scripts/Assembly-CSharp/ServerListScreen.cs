@@ -214,10 +214,6 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public void initCommand()
 	{
-		if (GameEvents.OnServerListScreenInitCommand(this))
-		{
-			return;
-		}
 		nCmdPlay = 0;
 		string text = Rms.loadRMSString("acc");
 		if (text == null)
@@ -715,7 +711,6 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static void loadIP()
 	{
-		GameEvents.OnLoadIP();
 		// sbyte[] array = Rms.loadRMS(RMS_NRlink);
 		// if (array == null)
 		// {
@@ -797,7 +792,6 @@ public class ServerListScreen : mScreen, IActionListener
 		mSystem.resetCurInapp();
 		base.switchToMe();
 		cmd[1 + nCmdPlay].caption = Strings.accounts;
-		GameEvents.OnServerListScreenLoaded(this);
 	}
 
 	public void switchToMe2()
@@ -1093,7 +1087,6 @@ public class ServerListScreen : mScreen, IActionListener
 		Char.isLoadingMap = false;
 		init();
 		base.switchToMe();
-		GameEvents.OnScreenDownloadDataShow();
 	}
 
 	public void setLinkDefault(sbyte language)

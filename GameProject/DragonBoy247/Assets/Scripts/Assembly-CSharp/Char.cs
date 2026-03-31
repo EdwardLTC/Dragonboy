@@ -1442,7 +1442,6 @@ public class Char : IMapObject
 
 	public void addInfo(string info)
 	{
-		GameEvents.OnAddInfoChar(this, info);
 		if (chatInfo == null)
 		{
 			chatInfo = new Info();
@@ -1787,7 +1786,6 @@ public class Char : IMapObject
 
 	public virtual void update()
 	{
-		GameEvents.OnUpdateChar(this);
 		if (isMafuba)
 		{
 			cf = 23;
@@ -5057,10 +5055,6 @@ public class Char : IMapObject
 
 	public void setSkillPaint(SkillPaint skillPaint, int sType)
 	{
-		if (GameEvents.OnUseSkill(this))
-		{
-			return;
-		}
 		hasSendAttack = false;
 		if (stone || (me && myskill.template.id == 9 && cHP <= cHPFull / 10))
 		{
@@ -7104,7 +7098,6 @@ public class Char : IMapObject
 		}
 		charHold = r;
 		holder = true; 
-		GameEvents.OnCharSetHoldChar(this, r);
 	}
 
 	public void setHoldMob(Mob r)
@@ -7119,7 +7112,6 @@ public class Char : IMapObject
 		}
 		mobHold = r;
 		holder = true;
-		GameEvents.OnCharSetHoldMob(this);
 	}
 
 	public void findNextFocusByKey()
@@ -7659,7 +7651,6 @@ public class Char : IMapObject
 			charHold = null;
 			mobHold = null;
 		}
-		GameEvents.OnCharRemoveHoldEff(this);
 	}
 
 	public void removeProtectEff()

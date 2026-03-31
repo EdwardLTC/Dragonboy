@@ -1967,10 +1967,6 @@ public class GameScr : mScreen, IChatable
 
 	public static void setSkillBarPosition()
 	{
-		if (GameEvents.OnSetSkillBarPosition())
-		{
-			return;
-		}
 		Skill[] array = ((!GameCanvas.isTouch) ? keySkill : onScreenSkill);
 		xS = new int[array.Length];
 		yS = new int[array.Length];
@@ -2681,15 +2677,10 @@ public class GameScr : mScreen, IChatable
 			{
 				if (!isNotPaintTouchControl())
 				{
-					if (GameEvents.OnUpdateTouchGameScr(this))
-						return;
 				}
 			}
 			if ((!ChatTextField.gI().isShow || GameCanvas.keyAsciiPress == 0) && !isLockKey && !GameCanvas.menu.showMenu && !isOpenUI() && !Char.isLockKey && Char.myCharz().skillPaint == null && GameCanvas.keyAsciiPress != 0 && mobCapcha == null && TField.isQwerty)
 			{
-				GameEvents.OnGameScrPressHotkeys();
-				if (!GameCanvas.keyPressed[1] && !GameCanvas.keyPressed[2] && !GameCanvas.keyPressed[3] && !GameCanvas.keyPressed[4] && !GameCanvas.keyPressed[5] && !GameCanvas.keyPressed[6] && !GameCanvas.keyPressed[7] && !GameCanvas.keyPressed[8] && !GameCanvas.keyPressed[9] && !GameCanvas.keyPressed[0] && GameCanvas.keyAsciiPress != 114 && GameCanvas.keyAsciiPress != 47)
-					GameEvents.OnGameScrPressHotkeysUnassigned();
 			}
 		}
 		
@@ -4756,7 +4747,6 @@ public class GameScr : mScreen, IChatable
 
 	public override void update()
 	{
-		GameEvents.OnUpdateGameScr();
 		if (GameCanvas.keyPressed[16])
 		{
 			GameCanvas.keyPressed[16] = false;
@@ -5625,7 +5615,6 @@ public class GameScr : mScreen, IChatable
 			string text = mResources.WAIT + "  " + nUSER_CT + "/" + nUSER_MAX_CT;
 			mFont.tahoma_7b_dark.drawString(g, mResources.WAIT + "  " + nUSER_CT + "/" + nUSER_MAX_CT, GameCanvas.w - 10, 40, 1);
 		}
-		GameEvents.OnPaintGameScr(g);
 	}
 
 	public void paintXoSo(mGraphics g)
@@ -5933,10 +5922,6 @@ public class GameScr : mScreen, IChatable
 
 	public void paintTouchControl(mGraphics g)
 	{
-		if (GameEvents.OnPaintTouchControl(this,g))
-		{
-			return;
-		}
 		if (isNotPaintTouchControl())
 		{
 			return;
@@ -6063,7 +6048,6 @@ public class GameScr : mScreen, IChatable
 				g.setClip(0, 0, GameCanvas.w, GameCanvas.h);
 			}
 		}
-		GameEvents.OnPaintImageBar(g, isLeft, c);
 	}
 
 	public void getInjure()
@@ -6200,7 +6184,6 @@ public class GameScr : mScreen, IChatable
 	{
 		if (Char.myCharz().IsCharDead())
 			return;
-		GameEvents.OnGameScrPaintSelectedSkill(this, g);
 		if (mobCapcha != null)
 		{
 			paintCapcha(g);
@@ -6391,7 +6374,6 @@ public class GameScr : mScreen, IChatable
 			}
 			paintGamePad(g);
 		}
-		GameEvents.AfterGameScrPaintSelectedSkill(this, g);
 	}
 
 	public void paintOpen(mGraphics g)
@@ -6879,10 +6861,6 @@ public class GameScr : mScreen, IChatable
 
 	public void openUIZone(Message message)
 	{
-		if (GameEvents.OnOpenUIZone(this, message))
-		{
-			return;
-		}
 		InfoDlg.hide();
 		try
 		{
@@ -7321,10 +7299,6 @@ public class GameScr : mScreen, IChatable
 
 	public void paintGamePad(mGraphics g)
 	{
-		if (GameEvents.OnGameScrPaintGamePad(g))
-		{
-			return;
-		}
 		if (isAnalog != 0 && Char.myCharz().statusMe != 14)
 		{
 			g.drawImage((mScreen.keyTouch != 5 && mScreen.keyMouse != 5) ? imgFire0 : imgFire1, xF + 20, yF + 20, mGraphics.HCENTER | mGraphics.VCENTER);
@@ -7361,7 +7335,6 @@ public class GameScr : mScreen, IChatable
 
 	public void chatVip(string chatVip)
 	{
-		GameEvents.OnChatVip(chatVip);
 		if (!startChat)
 		{
 			currChatWidth = mFont.tahoma_7b_yellowSmall.getWidth(chatVip);

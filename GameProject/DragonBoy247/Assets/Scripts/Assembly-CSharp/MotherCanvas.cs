@@ -27,10 +27,6 @@ public class MotherCanvas
 
 	public void checkZoomLevel(int w, int h)
 	{
-		if (GameEvents.OnCheckZoomLevel(w, h))
-		{
-			return;
-		}
 		if (Main.isWindowsPhone)
 		{
 			mGraphics.zoomLevel = 2;

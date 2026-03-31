@@ -88,7 +88,6 @@ public class Rms
 		{
 			Cout.println(ex.StackTrace);
 		}
-		GameEvents.OnSaveRMSString(ref filename, ref data);
 	}
 
 	static void _saveRMS(string filename, sbyte[] data)
@@ -180,8 +179,6 @@ public class Rms
 
 	public static string GetiPhoneDocumentsPath()
 	{
-		if (GameEvents.OnGetRMSPath(out string result))
-			return result;
 		return Application.persistentDataPath;
 	}
 
@@ -214,10 +211,6 @@ public class Rms
 
 	public static void clearAll()
 	{
-		if (GameEvents.OnClearAllRMS())
-		{
-			return;
-		}
 		FileInfo[] files = new DirectoryInfo(GetiPhoneDocumentsPath() + "/").GetFiles();
 		foreach (FileInfo fileInfo in files)
 		{
