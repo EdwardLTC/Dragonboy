@@ -102,26 +102,25 @@ namespace Mod.PickMob
 
 				if (TileMap.mapID == MAP_MARKET_ID && !XmapController.gI.IsActing)
 				{
-					Utils.teleToNpc(28);
 					Npc npc28 = Utils.findNpc(28);
-					
-					Item itemCSKBForDeposit = Char.myCharz().arrItemShop[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB);
 					
 					if (Char.myCharz().cx != npc28.cx || Char.myCharz().cy != npc28.ySd - npc28.ySd % 24)
 					{
 						Utils.teleToNpc(28);
 					}
+					
+					Item itemCSKBForDeposit = Char.myCharz().arrItemShop[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB);
 
 					if (Char.myCharz().cx == npc28.cx && Char.myCharz().cy == npc28.ySd - npc28.ySd % 24 && GameCanvas.panel is not null && !GameCanvas.panel.isShow)
 					{
-						yield return new WaitForSecondsRealtime(1f);
+						yield return new WaitForSecondsRealtime(0.5f);
 						Service.gI().openMenu(28);
-						yield return new WaitForSecondsRealtime(1f);
+						yield return new WaitForSecondsRealtime(0.5f);
 						Service.gI().confirmMenu(28,1);
 						Debug.Log("Đã mở menu gửi đồ");
 					}
 
-					if (GameCanvas.panel is not null && GameCanvas.panel.isShow && itemCSKBForDeposit  is not null)
+					if (GameCanvas.panel is not null && GameCanvas.panel.isShow && itemCSKBForDeposit is not null)
 					{
 						yield return new WaitForSecondsRealtime(1f);
 						Service.gI().kigui(0, itemCSKBForDeposit.itemId, 0, UpCSKB.moneyToDeposit, capsuleInBag.quantity);
