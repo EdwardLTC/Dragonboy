@@ -25,6 +25,7 @@ namespace Mod.PickMob
 		static int? zoneIdTrain;
 		
 		static bool isMenuDepositOpen;
+		static bool isTeleToNpc28;
 
 		protected override float Interval => 1f;
 
@@ -103,22 +104,22 @@ namespace Mod.PickMob
 				if (TileMap.mapID == MAP_MARKET_ID && !XmapController.gI.IsActing)
 				{
 					Npc npc28 = Utils.findNpc(28);
-					
-					if (Char.myCharz().cx != npc28.cx || Char.myCharz().cy != npc28.ySd - npc28.ySd % 24)
+					if (!isTeleToNpc28)
 					{
 						Utils.teleToNpc(28);
-					}
-					
-					Item itemCSKBForDeposit = Char.myCharz().arrItemShop[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB);
-
-					if (Char.myCharz().cx == npc28.cx && Char.myCharz().cy == npc28.ySd - npc28.ySd % 24 && GameCanvas.panel is not null && !GameCanvas.panel.isShow)
-					{
+						isTeleToNpc28 = true;
 						yield return new WaitForSecondsRealtime(0.5f);
+					}
+
+					if (isTeleToNpc28 && GameCanvas.panel is not null && !GameCanvas.panel.isShow)
+					{
+						Char.myCharz().npcFocus = npc28;
 						Service.gI().openMenu(28);
 						yield return new WaitForSecondsRealtime(0.5f);
 						Service.gI().confirmMenu(28,1);
-						Debug.Log("Đã mở menu gửi đồ");
 					}
+					
+					Item itemCSKBForDeposit = Char.myCharz().arrItemShop[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB);
 
 					if (GameCanvas.panel is not null && GameCanvas.panel.isShow && itemCSKBForDeposit is not null)
 					{
