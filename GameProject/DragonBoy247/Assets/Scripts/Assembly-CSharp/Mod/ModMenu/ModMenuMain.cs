@@ -149,15 +149,6 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "SkipSpaceship_Toggle",
-					Title = Strings.skipSpaceshipTitle,
-					Description = Strings.skipSpaceshipDescription,
-					GetValueFunc = () => SpaceshipSkip.isEnabled,
-					SetValueAction = value => SpaceshipSkip.isEnabled = value,
-					RMSName = "skip_spaceship"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
 					ID = "AutoAskForPeans_Toggle",
 					Title = Strings.autoAskForPeansTitle,
 					Description = Strings.autoAskForPeansDescription,
@@ -186,15 +177,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => AutoPean.isAutoHarvest,
 					SetValueAction = value => AutoPean.isAutoHarvest = value,
 					RMSName = "auto_harvest_peans"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "PickMob_AvoidSuperMob_Toggle",
-					Title = Strings.pickMobAvoidSuperMobTitle,
-					Description = Strings.avoidSuperMobDescription,
-					GetValueFunc = () => Pk9rPickMob.IsNeSieuQuai,
-					SetValueAction = Pk9rPickMob.SetAvoidSuperMonster,
-					RMSName = "pickmob_avoid_super_mob"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -235,6 +217,23 @@ namespace Mod.ModMenu
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, "VSync"),
 					TextFieldTitle = Strings.inputFPS,
 					TextFieldHint = "FPS"
+				}),
+				new ModMenuItemValues( new ModMenuItemValuesConfig
+				{
+					ID = "UpCSKB_PriceForDeposit",
+					Title = "Giá cskb kí gửi",
+					Description ="Khi túi đầy, thì sẽ kí gửi cskb (có tác dụng khi thao tác khi full là <kí gửi>)",
+					IsFloatingPoint = false,
+					GetValueFunc =  () => UpCSKB.moneyToDeposit / 1000f,
+					SetValueAction = value =>
+					{ 
+						UpCSKB.SetMoneyToDeposit((int)value);
+					},
+					MaxValue = 99_999_999,
+					MinValue = 10_000_000,
+					RMSName = "upcskb_price_for_deposit",
+					TextFieldTitle = "Giá cskb kí gửi",
+					TextFieldHint = "Nhập số tiền sẽ bán khi túi đầy (10 triệu - 99 triệu)"
 				}),
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
@@ -336,6 +335,13 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{
+					ID = "OpenUpCSKBMobMenu",
+					Title = "UP CSKB",
+					Description = "Thao tác UP CSKB (kí gửi, bán khi túi đầy, v.v.)",
+					Action = UpCSKB.ShowMenu
+				}),
+				new ModMenuItemFunction(new ModMenuItemFunctionConfig
+				{
 					ID = "OpenTeleportMenu",
 					Title = Strings.openTeleportMenuTitle,
 					Description = Strings.openTeleportMenuDescription,
@@ -364,9 +370,6 @@ namespace Mod.ModMenu
 						return Strings.accountAlreadyRegistered + '!';
 					}
 				})
-				//new ModMenuItemFunction("Menu AutoItem", "Mở menu AutoItem (lệnh \"item\" hoặc bấm nút I)", AutoItem.ShowMenu),
-				//new ModMenuItemFunction("Menu Custom Logo", "Mở menu logo tùy chỉnh", CustomLogo.ShowMenu),
-				//new ModMenuItemFunction("Menu Custom Cursor", "Mở menu con trỏ tùy chỉnh", CustomCursor.ShowMenu),
 			};
 			modMenuItemDeveloperFunctions = new[]
 			{
