@@ -224,7 +224,7 @@ namespace Mod.ModMenu
 					Title = "Giá cskb kí gửi",
 					Description ="Khi túi đầy, thì sẽ kí gửi cskb (có tác dụng khi thao tác khi full là <kí gửi>)",
 					IsFloatingPoint = false,
-					GetValueFunc =  () => UpCSKB.moneyToDeposit / 1000f,
+					GetValueFunc =  () => UpCSKB.moneyToDeposit / 1_000_000f,
 					SetValueAction = value =>
 					{ 
 						UpCSKB.SetMoneyToDeposit((int)value);

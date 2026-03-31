@@ -788,19 +788,6 @@ namespace Mod
 
 		}
 
-		internal static bool OnUpdateScrollMousePanel(Panel panel, ref int pXYScrollMouse)
-		{
-			return false;
-		}
-
-		internal static void OnPanelHide(Panel instance)
-		{
-		}
-
-		internal static void OnUpdateKeyPanel(Panel instance)
-		{
-		}
-
 		internal static void OnUpdateChar(Char ch)
 		{
 			CharEffectMain.UpdateChar(ch);

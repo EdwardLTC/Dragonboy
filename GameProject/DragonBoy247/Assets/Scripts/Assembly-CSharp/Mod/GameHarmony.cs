@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -29,7 +30,7 @@ namespace Mod
 			{
 				if (!TryBindHarmony())
 				{
-					Debug.LogWarning("GameHarmony: 0Harmony was not found. Falling back to inline GameEvents calls.");
+					Debug.LogWarning("GameHarmony: Harmony was not found. Patches were not installed.");
 					return;
 				}
 
@@ -46,12 +47,7 @@ namespace Mod
 
 		static bool TryBindHarmony()
 		{
-			Assembly harmonyAssembly = AppDomain.CurrentDomain.GetAssemblies()
-				.FirstOrDefault(assembly =>
-				{
-					string name = assembly.GetName().Name;
-					return name == "0Harmony" || name == "HarmonyLib";
-				});
+			Assembly harmonyAssembly = FindLoadedHarmonyAssembly() ?? LoadHarmonyAssemblyFromDisk();
 
 			if (harmonyAssembly == null)
 				return false;
@@ -68,6 +64,39 @@ namespace Mod
 
 			_harmonyInstance = Activator.CreateInstance(harmonyType, HarmonyId);
 			return _harmonyInstance != null;
+		}
+
+		static Assembly FindLoadedHarmonyAssembly()
+		{
+			return AppDomain.CurrentDomain.GetAssemblies()
+				.FirstOrDefault(assembly => assembly.GetType("HarmonyLib.Harmony") != null);
+		}
+
+		static Assembly LoadHarmonyAssemblyFromDisk()
+		{
+			string[] candidatePaths =
+			{
+				Path.Combine(Application.dataPath, "Plugins", "0Harmony.dll")
+			};
+
+			foreach (string candidatePath in candidatePaths)
+			{
+				if (!File.Exists(candidatePath))
+					continue;
+
+				try
+				{
+					Assembly assembly = Assembly.LoadFrom(candidatePath);
+					if (assembly.GetType("HarmonyLib.Harmony") != null)
+						return assembly;
+				}
+				catch (Exception ex)
+				{
+					Debug.LogWarning($"GameHarmony: failed to load Harmony from {candidatePath}.\n{ex}");
+				}
+			}
+
+			return null;
 		}
 
 		static void ApplyPatches()
@@ -125,7 +154,7 @@ namespace Mod
 			Patch(typeof(Char), "setSkillPaint", new[] { typeof(SkillPaint), typeof(int) }, prefix: nameof(Prefix_Char_SetSkillPaint));
 			Patch(typeof(Char), "setHoldChar", new[] { typeof(Char) }, postfix: nameof(Postfix_Char_SetHoldChar));
 			Patch(typeof(Char), "setHoldMob", new[] { typeof(Mob) }, postfix: nameof(Postfix_Char_SetHoldMob));
-			Patch(typeof(Char), "removeHoldEff", NoArguments, postfix: nameof(Postfix_Char_RemoveHoldEff));
+			Patch(typeof(Char), "removeHoleEff", NoArguments, postfix: nameof(Postfix_Char_RemoveHoldEff));
 
 			Patch(typeof(GamePad), "paint", new[] { typeof(mGraphics) }, prefix: nameof(Prefix_GamePad_Paint));
 			Patch(typeof(Skill), "paint", new[] { typeof(int), typeof(int), typeof(mGraphics) }, prefix: nameof(Prefix_Skill_Paint));
@@ -151,7 +180,10 @@ namespace Mod
 		{
 			MethodBase originalMethod = originalType.GetMethod(originalMethodName, BindingFlagsAll, null, parameterTypes, null);
 			if (originalMethod == null)
-				throw new MissingMethodException(originalType.FullName, originalMethodName);
+			{
+				Debug.LogWarning($"GameHarmony: skipped missing method {originalType.FullName}.{originalMethodName}");
+				return;
+			}
 
 			object prefixMethod = CreateHarmonyMethod(prefix);
 			object postfixMethod = CreateHarmonyMethod(postfix);
@@ -173,21 +205,21 @@ namespace Mod
 		static void Postfix_Main_Start() => GameEvents.OnMainStart();
 		static void Postfix_Main_Update() => GameEvents.OnUpdateMain();
 		static void Postfix_Main_FixedUpdate() => GameEvents.OnFixedUpdateMain();
-		static void Postfix_Main_OnApplicationPause(bool paused) => GameEvents.OnGamePause(paused);
+		static void Postfix_Main_OnApplicationPause(bool __0) => GameEvents.OnGamePause(__0);
 		static void Prefix_Main_OnApplicationQuit() => GameEvents.OnGameClosing();
 
-		static bool Prefix_MotherCanvas_CheckZoomLevel(int w, int h) => !GameEvents.OnCheckZoomLevel(w, h);
+		static bool Prefix_MotherCanvas_CheckZoomLevel(int __0, int __1) => !GameEvents.OnCheckZoomLevel(__0, __1);
 
-		static bool Prefix_Image_CreateImage(string filename, ref Image __result)
+		static bool Prefix_Image_CreateImage(string __0, ref Image __result)
 		{
-			if (!GameEvents.OnCreateImage(filename, out Image image))
+			if (!GameEvents.OnCreateImage(__0, out Image image))
 				return true;
 
 			__result = image;
 			return false;
 		}
 
-		static void Prefix_Rms_SaveRMSString(ref string filename, ref string data) => GameEvents.OnSaveRMSString(ref filename, ref data);
+		static void Prefix_Rms_SaveRMSString(ref string __0, ref string __1) => GameEvents.OnSaveRMSString(ref __0, ref __1);
 
 		static bool Prefix_Rms_GetIPhoneDocumentsPath(ref string __result)
 		{
@@ -204,13 +236,13 @@ namespace Mod
 		static void Postfix_ServerListScreen_SwitchToMe(ServerListScreen __instance) => GameEvents.OnServerListScreenLoaded(__instance);
 		static void Postfix_ServerListScreen_Show2() => GameEvents.OnScreenDownloadDataShow();
 
-		static bool Prefix_Service_GotoPlayer(int id) => !GameEvents.OnGotoPlayer(id);
-		static void Prefix_Service_Login(ref string username, ref string pass, string version, ref sbyte type) => GameEvents.OnLogin(ref username, ref pass, ref type);
+		static bool Prefix_Service_GotoPlayer(int __0) => !GameEvents.OnGotoPlayer(__0);
+		static void Prefix_Service_Login(ref string __0, ref string __1, string __2, ref sbyte __3) => GameEvents.OnLogin(ref __0, ref __1, ref __3);
 		static bool Prefix_Service_RequestChangeMap() => !GameEvents.OnRequestChangeMap();
-		static bool Prefix_Service_Chat(string text) => !GameEvents.OnSendChat(text);
+		static bool Prefix_Service_Chat(string __0) => !GameEvents.OnSendChat(__0);
 		static bool Prefix_Service_GetMapOffline() => !GameEvents.OnGetMapOffline();
 
-		static void Prefix_SessionME_Connect(ref string host, ref int port) => GameEvents.OnSessionConnecting(ref host, ref port);
+		static void Prefix_SessionME_Connect(ref string __0, ref int __1) => GameEvents.OnSessionConnecting(ref __0, ref __1);
 		static void Postfix_Controller_LoadInfoMap() => GameEvents.OnInfoMapLoaded();
 
 		static bool Prefix_GameScr_SetSkillBarPosition() => !GameEvents.OnSetSkillBarPosition();
@@ -252,17 +284,17 @@ namespace Mod
 		}
 
 		static void Prefix_GameScr_Update() => GameEvents.OnUpdateGameScr();
-		static void Postfix_GameScr_Paint(mGraphics g) => GameEvents.OnPaintGameScr(g);
-		static bool Prefix_GameScr_PaintTouchControl(GameScr __instance, mGraphics g) => !GameEvents.OnPaintTouchControl(__instance, g);
-		static void Postfix_GameScr_PaintImageBar(mGraphics g, bool isLeft, Char c) => GameEvents.OnPaintImageBar(g, isLeft, c);
+		static void Postfix_GameScr_Paint(mGraphics __0) => GameEvents.OnPaintGameScr(__0);
+		static bool Prefix_GameScr_PaintTouchControl(GameScr __instance, mGraphics __0) => !GameEvents.OnPaintTouchControl(__instance, __0);
+		static void Postfix_GameScr_PaintImageBar(mGraphics __0, bool __1, Char __2) => GameEvents.OnPaintImageBar(__0, __1, __2);
 
-		static void Prefix_GameScr_PaintSelectedSkill(GameScr __instance, mGraphics g)
+		static void Prefix_GameScr_PaintSelectedSkill(GameScr __instance, mGraphics __0)
 		{
 			if (!Char.myCharz().IsCharDead())
-				GameEvents.OnGameScrPaintSelectedSkill(__instance, g);
+				GameEvents.OnGameScrPaintSelectedSkill(__instance, __0);
 		}
 
-		static void Postfix_GameScr_PaintSelectedSkill(GameScr __instance, mGraphics g)
+		static void Postfix_GameScr_PaintSelectedSkill(GameScr __instance, mGraphics __0)
 		{
 			if (Char.myCharz().IsCharDead())
 				return;
@@ -280,14 +312,14 @@ namespace Mod
 				return;
 			}
 
-			GameEvents.AfterGameScrPaintSelectedSkill(__instance, g);
+			GameEvents.AfterGameScrPaintSelectedSkill(__instance, __0);
 		}
 
-		static bool Prefix_GameScr_OpenUIZone(GameScr __instance, Message message) => !GameEvents.OnOpenUIZone(__instance, message);
-		static bool Prefix_GameScr_PaintGamePad(mGraphics g) => !GameEvents.OnGameScrPaintGamePad(g);
-		static void Prefix_GameScr_ChatVip(string chatVip) => GameEvents.OnChatVip(chatVip);
+		static bool Prefix_GameScr_OpenUIZone(GameScr __instance, Message __0) => !GameEvents.OnOpenUIZone(__instance, __0);
+		static bool Prefix_GameScr_PaintGamePad(mGraphics __0) => !GameEvents.OnGameScrPaintGamePad(__0);
+		static void Prefix_GameScr_ChatVip(string __0) => GameEvents.OnChatVip(__0);
 
-		static bool Prefix_ChatTextField_StartChat(ChatTextField __instance, int firstCharacter, IChatable parentScreen, string to) => !GameEvents.OnStartChatTextField(__instance, parentScreen);
+		static bool Prefix_ChatTextField_StartChat(ChatTextField __instance, int __0, IChatable __1, string __2) => !GameEvents.OnStartChatTextField(__instance, __1);
 
 		static void Prefix_ChatTextField_Update(ChatTextField __instance)
 		{
@@ -295,33 +327,33 @@ namespace Mod
 				GameEvents.OnUpdateChatTextField(__instance);
 		}
 
-		static void Prefix_ChatTextField_Paint(ChatTextField __instance, mGraphics g) => GameEvents.OnPaintChatTextField(__instance, g);
+		static void Prefix_ChatTextField_Paint(ChatTextField __instance, mGraphics __0) => GameEvents.OnPaintChatTextField(__instance, __0);
 
-		static bool Prefix_GameCanvas_PaintBGGameScr(mGraphics g) => !GameEvents.OnPaintBgGameScr(g);
-		static bool Prefix_GameCanvas_KeyPressed(int keyCode) => !GameEvents.OnKeyPressed(keyCode, false);
-		static bool Prefix_GameCanvas_KeyReleased(int keyCode) => !GameEvents.OnKeyReleased(keyCode, false);
-		static void Postfix_GameCanvas_Paint(GameCanvas __instance, mGraphics g) => GameEvents.OnPaintGameCanvas(__instance, g);
-		static bool Prefix_GameCanvas_StartOKDlg(string info) => !GameEvents.OnStartOKDlg(info);
+		static bool Prefix_GameCanvas_PaintBGGameScr(mGraphics __0) => !GameEvents.OnPaintBgGameScr(__0);
+		static bool Prefix_GameCanvas_KeyPressed(int __0) => !GameEvents.OnKeyPressed(__0, false);
+		static bool Prefix_GameCanvas_KeyReleased(int __0) => !GameEvents.OnKeyReleased(__0, false);
+		static void Postfix_GameCanvas_Paint(GameCanvas __instance, mGraphics __0) => GameEvents.OnPaintGameCanvas(__instance, __0);
+		static bool Prefix_GameCanvas_StartOKDlg(string __0) => !GameEvents.OnStartOKDlg(__0);
 
 		static void Prefix_Mob_Update(Mob __instance) => GameEvents.OnUpdateMob(__instance);
 		static void Prefix_Mob_StartDie(Mob __instance) => GameEvents.OnMobStartDie(__instance);
 		static void Prefix_Teleport_Update(Teleport __instance) => GameEvents.OnTeleportUpdate(__instance);
 
-		static void Prefix_Char_AddInfo(Char __instance, string info) => GameEvents.OnAddInfoChar(__instance, info);
+		static void Prefix_Char_AddInfo(Char __instance, string __0) => GameEvents.OnAddInfoChar(__instance, __0);
 		static void Prefix_Char_Update(Char __instance) => GameEvents.OnUpdateChar(__instance);
 		static bool Prefix_Char_SetSkillPaint(Char __instance) => !GameEvents.OnUseSkill(__instance);
-		static void Postfix_Char_SetHoldChar(Char __instance, Char r) => GameEvents.OnCharSetHoldChar(__instance, r);
+		static void Postfix_Char_SetHoldChar(Char __instance, Char __0) => GameEvents.OnCharSetHoldChar(__instance, __0);
 		static void Postfix_Char_SetHoldMob(Char __instance) => GameEvents.OnCharSetHoldMob(__instance);
 		static void Postfix_Char_RemoveHoldEff(Char __instance) => GameEvents.OnCharRemoveHoldEff(__instance);
 
-		static bool Prefix_GamePad_Paint(GamePad __instance, mGraphics g) => !GameEvents.OnGamepadPaint(__instance, g);
-		static bool Prefix_Skill_Paint(Skill __instance, int x, int y, mGraphics g) => !GameEvents.OnSkillPaint(__instance, x, y, g);
-		static void Postfix_InfoMe_AddInfo(string s) => GameEvents.OnAddInfoMe(s);
+		static bool Prefix_GamePad_Paint(GamePad __instance, mGraphics __0) => !GameEvents.OnGamepadPaint(__instance, __0);
+		static bool Prefix_Skill_Paint(Skill __instance, int __0, int __1, mGraphics __2) => !GameEvents.OnSkillPaint(__instance, __0, __1, __2);
+		static void Postfix_InfoMe_AddInfo(string __0) => GameEvents.OnAddInfoMe(__0);
 
-		static bool Prefix_mGraphics_DrawImage(Image image, int x, int y, int anchor) => !GameEvents.OnMGraphicsDrawImage(image, x, y, anchor);
-		static void Postfix_mGraphics_DrawImage(Image image, int x, int y, int anchor) => GameEvents.AfterMGraphicsDrawImage(image, x, y, anchor);
-		static void Postfix_mResources_LoadLanguage(sbyte newLanguage) => GameEvents.OnLoadLanguage(newLanguage);
-		static bool Prefix_Menu_StartAt(MyVector menuItems) => !GameEvents.OnMenuStartAt(menuItems);
+		static bool Prefix_mGraphics_DrawImage(Image __0, int __1, int __2, int __3) => !GameEvents.OnMGraphicsDrawImage(__0, __1, __2, __3);
+		static void Postfix_mGraphics_DrawImage(Image __0, int __1, int __2, int __3) => GameEvents.AfterMGraphicsDrawImage(__0, __1, __2, __3);
+		static void Postfix_mResources_LoadLanguage(sbyte __0) => GameEvents.OnLoadLanguage(__0);
+		static bool Prefix_Menu_StartAt(MyVector __0) => !GameEvents.OnMenuStartAt(__0);
 
 		static void Prefix_Panel_UpdateKey(Panel __instance)
 		{
@@ -330,21 +362,21 @@ namespace Mod
 		}
 
 		static bool Prefix_Panel_UpdateKeyInTabBar(Panel __instance) => !GameEvents.OnPanelUpdateKeyInTabBar(__instance);
-		static bool Prefix_Panel_Paint(Panel __instance, mGraphics g) => !GameEvents.OnPaintPanel(__instance, g);
+		static bool Prefix_Panel_Paint(Panel __instance, mGraphics __0) => !GameEvents.OnPaintPanel(__instance, __0);
 
-		static void Postfix_Panel_Paint(Panel __instance, mGraphics g)
+		static void Postfix_Panel_Paint(Panel __instance, mGraphics __0)
 		{
 			if (GameCanvas.panel.combineSuccess == -1)
-				GameEvents.OnAfterPaintPanel(__instance, g);
+				GameEvents.OnAfterPaintPanel(__instance, __0);
 		}
 
-		static bool Prefix_Panel_PaintToolInfo(mGraphics g) => !GameEvents.OnPanelPaintToolInfo(g);
+		static bool Prefix_Panel_PaintToolInfo(mGraphics __0) => !GameEvents.OnPanelPaintToolInfo(__0);
 		static bool Prefix_Panel_Update(Panel __instance) => !GameEvents.OnUpdatePanel(__instance);
 		static bool Prefix_Panel_DoFireTool(Panel __instance) => !GameEvents.OnPanelFireTool(__instance);
 		static bool Prefix_Panel_DoFireOption(Panel __instance) => !GameEvents.OnPanelFireOption(__instance);
 
-		static void Prefix_ItemMap_SetPoint(int xEnd, int yEnd) => GameEvents.OnSetPointItemMap(xEnd, yEnd);
-		static bool Prefix_ChatPopup_AddBigMessage(string chat, int howLong, Npc c) => !GameEvents.OnAddBigMessage(chat, c);
-		static bool Prefix_ChatPopup_AddChatPopupMultiLine(string chat) => !GameEvents.OnChatPopupMultiLine(chat);
+		static void Prefix_ItemMap_SetPoint(int __0, int __1) => GameEvents.OnSetPointItemMap(__0, __1);
+		static bool Prefix_ChatPopup_AddBigMessage(string __0, int __1, Npc __2) => !GameEvents.OnAddBigMessage(__0, __2);
+		static bool Prefix_ChatPopup_AddChatPopupMultiLine(string __0) => !GameEvents.OnChatPopupMultiLine(__0);
 	}
 }
