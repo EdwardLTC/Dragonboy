@@ -186,48 +186,59 @@ namespace Mod.Xmap
 
 		static IEnumerator AddCapsuleLinkIfPossible(List<MapNext>[] graph)
 		{
-			GameCanvas.panel.mapNames = null;
-
-			if (Pk9rXmap.CanUseCapsuleVip())
-			{
-				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
-			}
-			else if (Pk9rXmap.CanUseCapsuleNormal())
-			{
-				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
-			}
-			else
+			if (!Pk9rXmap.CanUseCapsuleVip() && !Pk9rXmap.CanUseCapsuleNormal())
 			{
 				yield break;
 			}
+			
+			GameCanvas.panel.mapNames = null;
 
-			float deadlineLoadMapNames = Time.realtimeSinceStartup + 3f;
-			while (GameCanvas.panel.mapNames == null || GameCanvas.panel.mapNames.Length == 0)
+			float deadline = Time.realtimeSinceStartup + 5f;
+			float retryDelay = 1f;
+			float nextRetry = 0f;
+
+			while (Time.realtimeSinceStartup < deadline)
 			{
-				if (Time.realtimeSinceStartup >= deadlineLoadMapNames)
+				if (GameCanvas.panel is { isShow: true, mapNames: { Length: > 0 } })
 				{
-					yield break;
+					break;
 				}
+				
+				if (Time.realtimeSinceStartup >= nextRetry)
+				{
+					if (Pk9rXmap.CanUseCapsuleVip())
+					{
+						Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
+					}
+					else if (Pk9rXmap.CanUseCapsuleNormal())
+					{
+						Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
+					}
+
+					nextRetry = Time.realtimeSinceStartup + retryDelay;
+				}
+
 				yield return null;
+			}
+			
+			if (GameCanvas.panel is not { isShow: true, mapNames: { Length: > 0 } })
+			{
+				yield break;
 			}
 
 			int mapStart = TileMap.mapID;
 			string[] mapNames = GameCanvas.panel.mapNames;
 
-			int length = mapNames.Length;
-			for (int select = 0; select < length; select++)
+			for (int select = 0; select < mapNames?.Length; select++)
 			{
 				int to = XmapUtils.getMapIdFromName(mapNames[select]);
 				if (to != -1)
 				{
-					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[]
-					{
-						select
-					}));
+					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));
 				}
 			}
 		}
-
+		
 		static bool IsStartAndDestinationInFuture()
 		{
 			return IsFutureMap(TileMap.mapID) && IsFutureMap(gI.mapEnd);

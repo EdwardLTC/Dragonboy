@@ -14,56 +14,30 @@ namespace Mod.PickMob
 		const short ID_CAPSULE_MD = 379;
 		const short ID_CAPSULE_KB = 380;
 		const short MAP_MARKET_ID = 84;
+		const long MD_IDLE_TIMEOUT_TICKS = 2 * 60 * 10000000L;
 		static readonly int[] mapCanTrain =
 		{
 			92, 93, 94, 95, 96, 97, 98, 99, 100
 		};
 
 		static long notUsingMDTime;
-		static long lastTimeGoBack;
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
 		
-		static bool isMenuDepositOpen;
 		static bool isTeleToNpc28;
 
 		protected override float Interval => 1f;
 
 		protected override IEnumerator OnUpdate()
 		{
-			if (!ItemTime.isExistItem(ID_ICON_MD))
-			{
-				if (notUsingMDTime == 0L)
-				{
-					notUsingMDTime = DateTime.Now.Ticks;
-				}
-			}
-			else
-			{
-				notUsingMDTime = 0L;
-			}
+			UpdateNotUsingMdTime();
 
 			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
-
 			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
 
-			if (notUsingMDTime > 0 && DateTime.Now.Ticks - notUsingMDTime > 2 * 60 * 10000000L)
+			if (ShouldRecoverMd() && !TryRecoverMd(capsuleInBag, capsuleInBox))
 			{
-				if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
-				{
-					StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
-					yield break;
-				}
-			
-				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
-			
-				if (!isUseMDSuccess)
-				{
-					StopAndGoHome("Không thể sử dụng MD");
-					yield break;
-				}
-			
-				notUsingMDTime = 0L;
+				yield break;
 			}
 
 			if (Char.myCharz().IsCharDead())
@@ -78,77 +52,13 @@ namespace Mod.PickMob
 				yield return new WaitForSecondsRealtime(1f);
 			}
 
-			if (capsuleInBag?.quantity == 99 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
+			if (capsuleInBag?.quantity == 99)
 			{
-				if (!XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
-				{
-					XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
-					yield return null;
-				}
-
-				if (Utils.IsMyCharHome())
-				{
-					PutCSKBIntoBox();
-					yield return null;
-				}
+				yield return HandleFullBag(capsuleInBag);
 			}
 
-			if (capsuleInBag?.quantity == 99 && UpCSKB.actionOnFullBag == ActionOnFullBag.Deposit)
-			{
-				if (!XmapController.gI.IsActing && TileMap.mapID != MAP_MARKET_ID)
-				{
-					XmapController.start(MAP_MARKET_ID);
-					yield return null;
-				}
-
-				if (TileMap.mapID == MAP_MARKET_ID && !XmapController.gI.IsActing)
-				{
-					Npc npc28 = Utils.findNpc(28);
-					if (!isTeleToNpc28)
-					{
-						Utils.teleToNpc(28);
-						isTeleToNpc28 = true;
-						yield return new WaitForSecondsRealtime(0.5f);
-					}
-
-					if (isTeleToNpc28 && GameCanvas.panel is not null && !GameCanvas.panel.isShow)
-					{
-						Char.myCharz().npcFocus = npc28;
-						Service.gI().openMenu(28);
-						yield return new WaitForSecondsRealtime(0.5f);
-						Service.gI().confirmMenu(28,1);
-					}
-					
-					Item itemCSKBForDeposit = Char.myCharz().arrItemShop[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB);
-
-					if (GameCanvas.panel is not null && GameCanvas.panel.isShow && itemCSKBForDeposit is not null)
-					{
-						yield return new WaitForSecondsRealtime(1f);
-						Service.gI().kigui(0, itemCSKBForDeposit.itemId, 0, UpCSKB.moneyToDeposit, capsuleInBag.quantity);
-					}
-				}
-			}
-
-			if (mapIdTrain != null && !XmapController.gI.IsActing && TileMap.mapID != mapIdTrain && capsuleInBag?.quantity != 99)
-			{
-				if (GameCanvas.panel is not null && GameCanvas.panel.isShow)
-				{
-					GameCanvas.panel.isShow = false;
-				}
-				if (GameCanvas.panel2 is not null && GameCanvas.panel2.isShow)
-				{
-					GameCanvas.panel2.isShow = false;
-				}
-				
-				XmapController.start(mapIdTrain.Value);
-				yield return null;
-			}
-
-			if (TileMap.mapID == mapIdTrain && TileMap.zoneID != zoneIdTrain && zoneIdTrain != null)
-			{
-				yield return new WaitForSecondsRealtime(2f);
-				Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
-			}
+			yield return ReturnToTrainMapIfNeeded(capsuleInBag);
+			yield return ChangeToTrainZoneIfNeeded();
 		}
 
 		protected override void OnStop()
@@ -164,10 +74,10 @@ namespace Mod.PickMob
 		{
 			if (!mapCanTrain.Contains(TileMap.mapID))
 			{
-				gI.Toggle(false);
-				GameScr.info1.addInfo("[Up CSKB] Map hiện tại không thể train, đã tắt auto", 0);
+				Stop("Map hiện tại không thể train");
 				return;
 			}
+
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
@@ -181,8 +91,7 @@ namespace Mod.PickMob
 			
 			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
 			{
-				gI.Toggle(false);
-				GameScr.info1.addInfo("[Up CSKB] Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi, đã tắt auto", 0);
+				Stop("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
 				return;
 			}
 			
@@ -191,13 +100,187 @@ namespace Mod.PickMob
 				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
 				if (!isUseMDSuccess)
 				{
-					gI.Toggle(false);
-					GameScr.info1.addInfo("[Up CSKB] Không thể sử dụng MD, đã tắt auto", 0);
+					Stop("Không thể sử dụng MD");
 					return;
 				}
 			}
+
+			isTeleToNpc28 = false;
+			notUsingMDTime = 0L;
 			Utils.status = "Up CSKB";
 			base.OnStart();
+		}
+
+		static void UpdateNotUsingMdTime()
+		{
+			if (ItemTime.isExistItem(ID_ICON_MD))
+			{
+				notUsingMDTime = 0L;
+				return;
+			}
+
+			if (notUsingMDTime == 0L)
+			{
+				notUsingMDTime = DateTime.Now.Ticks;
+			}
+		}
+
+		static bool ShouldRecoverMd()
+		{
+			return notUsingMDTime > 0 && DateTime.Now.Ticks - notUsingMDTime > MD_IDLE_TIMEOUT_TICKS;
+		}
+
+		static bool TryRecoverMd(Item capsuleInBag, Item capsuleInBox)
+		{
+			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
+			{
+				StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
+				return false;
+			}
+
+			if (!Utils.useItem(ID_CAPSULE_MD))
+			{
+				StopAndGoHome("Không thể sử dụng MD");
+				return false;
+			}
+
+			notUsingMDTime = 0L;
+			return true;
+		}
+
+		static IEnumerator HandleFullBag(Item capsuleInBag)
+		{
+			if (UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
+			{
+				yield return PutFullBagIntoBox();
+				yield break;
+			}
+
+			if (UpCSKB.actionOnFullBag == ActionOnFullBag.Deposit)
+			{
+				yield return DepositFullBag(capsuleInBag);
+			}
+		}
+
+		static IEnumerator PutFullBagIntoBox()
+		{
+			if (!XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
+			{
+				XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
+				yield return null;
+			}
+
+			if (Utils.IsMyCharHome())
+			{
+				PutCSKBIntoBox();
+				yield return null;
+			}
+		}
+
+		static IEnumerator DepositFullBag(Item capsuleInBag)
+		{
+			if (!XmapController.gI.IsActing && TileMap.mapID != MAP_MARKET_ID)
+			{
+				XmapController.start(MAP_MARKET_ID);
+				yield return null;
+			}
+
+			if (TileMap.mapID != MAP_MARKET_ID || XmapController.gI.IsActing)
+			{
+				yield break;
+			}
+
+			Npc npc28 = Utils.findNpc(28);
+			if (!isTeleToNpc28)
+			{
+				Utils.teleToNpc(28);
+				isTeleToNpc28 = true;
+				yield return new WaitForSecondsRealtime(0.5f);
+			}
+
+			if (ShouldOpenDepositMenu(npc28))
+			{
+				yield return OpenDepositMenu(npc28);
+			}
+
+			if (TryGetDepositItem(out Item itemCSKBForDeposit))
+			{
+				yield return new WaitForSecondsRealtime(1f);
+				Service.gI().kigui(0, itemCSKBForDeposit.itemId, 0, UpCSKB.moneyToDeposit, capsuleInBag.quantity);
+			}
+		}
+
+		static bool ShouldOpenDepositMenu(Npc npc28)
+		{
+			return isTeleToNpc28 && npc28 != null && GameCanvas.panel is not null && !GameCanvas.panel.isShow;
+		}
+
+		static IEnumerator OpenDepositMenu(Npc npc28)
+		{
+			Char.myCharz().arrItemShop = null;
+			Char.myCharz().npcFocus = npc28;
+			Service.gI().openMenu(28);
+			yield return new WaitForSecondsRealtime(1f);
+			Service.gI().confirmMenu(28, 1);
+			yield return new WaitUntil(() =>
+			{
+				Char c = Char.myCharz();
+				return c is { arrItemShop: { Length: > 4 } arr } && arr[4] != null;
+			});
+		}
+
+		static bool TryGetDepositItem(out Item itemCSKBForDeposit)
+		{
+			itemCSKBForDeposit = null;
+			if (GameCanvas.panel is null || !GameCanvas.panel.isShow)
+			{
+				return false;
+			}
+
+			Item[][] itemShops = Char.myCharz().arrItemShop;
+			if (itemShops == null || itemShops.Length <= 4 || itemShops[4] == null)
+			{
+				return false;
+			}
+
+			itemCSKBForDeposit = itemShops[4].FirstOrDefault(i => i.template.id == ID_CAPSULE_KB && i.buyType == 0);
+			return itemCSKBForDeposit is not null;
+		}
+
+		static IEnumerator ReturnToTrainMapIfNeeded(Item capsuleInBag)
+		{
+			if (mapIdTrain == null || XmapController.gI.IsActing || TileMap.mapID == mapIdTrain || capsuleInBag?.quantity == 99)
+			{
+				yield break;
+			}
+
+			ClosePanels();
+			XmapController.start(mapIdTrain.Value);
+			yield return null;
+		}
+
+		static void ClosePanels()
+		{
+			if (GameCanvas.panel is not null && GameCanvas.panel.isShow)
+			{
+				GameCanvas.panel.isShow = false;
+			}
+
+			if (GameCanvas.panel2 is not null && GameCanvas.panel2.isShow)
+			{
+				GameCanvas.panel2.isShow = false;
+			}
+		}
+
+		static IEnumerator ChangeToTrainZoneIfNeeded()
+		{
+			if (TileMap.mapID != mapIdTrain || zoneIdTrain == null || TileMap.zoneID == zoneIdTrain)
+			{
+				yield break;
+			}
+
+			yield return new WaitForSecondsRealtime(2f);
+			Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
 		}
 
 		static void RegenHpWhenInHome()
@@ -220,6 +303,12 @@ namespace Mod.PickMob
 			gI.Toggle(false);
 			XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
 			GameScr.info1.addInfo("[Up CSKB] " + message + ", đã tắt auto và về nhà", 0);
+		}
+
+		static void Stop(string message)
+		{
+			gI.Toggle(false);
+			GameScr.info1.addInfo("[Up CSKB] " + message + ", đã tắt auto", 0);
 		}
 
 		public override string ToString()
