@@ -190,6 +190,20 @@ namespace Mod
 			_patchMethod.Invoke(_harmonyInstance, new[] { originalMethod, prefixMethod, postfixMethod, null, null });
 		}
 
+		static void PatchConstructor(Type originalType, Type[] parameterTypes, string prefix = null, string postfix = null)
+		{
+			ConstructorInfo originalConstructor = originalType.GetConstructor(BindingFlagsAll, null, parameterTypes, null);
+			if (originalConstructor == null)
+			{
+				Debug.LogWarning($"GameHarmony: skipped missing constructor {originalType.FullName}({FormatParameterTypes(parameterTypes)})");
+				return;
+			}
+
+			object prefixMethod = CreateHarmonyMethod(prefix);
+			object postfixMethod = CreateHarmonyMethod(postfix);
+			_patchMethod.Invoke(_harmonyInstance, new object[] { originalConstructor, prefixMethod, postfixMethod, null, null });
+		}
+
 		static object CreateHarmonyMethod(string patchMethodName)
 		{
 			if (string.IsNullOrEmpty(patchMethodName))
@@ -200,6 +214,14 @@ namespace Mod
 				throw new MissingMethodException(typeof(GameHarmony).FullName, patchMethodName);
 
 			return _harmonyMethodCtor.Invoke(new object[] { patchMethod });
+		}
+
+		static string FormatParameterTypes(Type[] parameterTypes)
+		{
+			if (parameterTypes == null || parameterTypes.Length == 0)
+				return string.Empty;
+
+			return string.Join(", ", parameterTypes.Select(type => type?.Name ?? "null").ToArray());
 		}
 
 		static void Postfix_Main_Start() => GameEvents.OnMainStart();

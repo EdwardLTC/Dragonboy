@@ -66,7 +66,7 @@ namespace Mod.Constants
         internal static readonly sbyte Backpack = 11;
 
         /// <summary>
-        /// Dragonball 1–7 stars, which can be used to summon Shenron.
+        /// Dragonball 1ï¿½7 stars, which can be used to summon Shenron.
         /// </summary>
         internal static readonly sbyte DragonBall = 12;
 
@@ -136,7 +136,7 @@ namespace Mod.Constants
         internal static readonly sbyte Crystal = 30;
 
         /// <summary>
-        /// Event items that, when consumed, will increase your stats (Bánh Chýng, Bánh Tét, Bunny Moon Cake, Moon Cake, etc.).
+        /// Event items that, when consumed, will increase your stats (Bï¿½nh Chï¿½ng, Bï¿½nh Tï¿½t, Bunny Moon Cake, Moon Cake, etc.).
         /// </summary>
         internal static readonly sbyte VietnameseCake = 31;
 
