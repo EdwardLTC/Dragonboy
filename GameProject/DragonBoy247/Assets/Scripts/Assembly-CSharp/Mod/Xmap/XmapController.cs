@@ -40,7 +40,7 @@ namespace Mod.Xmap
 
 			int currentMapId = TileMap.mapID;
 			float now = Time.realtimeSinceStartup;
-			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || GameCanvas.isLoading || Controller.isStopReadMessage;
+			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || Controller.isStopReadMessage;
 
 			if (currentMapId != lastProgressMapId || indexWay != lastProgressStepIndex)
 			{
