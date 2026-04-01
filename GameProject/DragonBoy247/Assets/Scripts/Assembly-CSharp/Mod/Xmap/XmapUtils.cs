@@ -57,17 +57,17 @@ namespace Mod.Xmap
 		internal static int getMapIdFromName(string mapName)
 		{
 			int offset = Char.myCharz().cgender;
-			if (mapName.Equals(LocalizedString.goHome))
+			if (mapName.Contains(LocalizedString.goHome))
 			{
 				return ID_MAP_HOME_BASE + offset;
 			}
-			if (mapName.Equals(LocalizedString.spaceshipStation))
+			if (mapName.Contains(LocalizedString.spaceshipStation))
 			{
 				return ID_MAP_TTVT_BASE + offset;
 			}
 			for (int i = 0; i < TileMap.mapNames.Length; i++)
 			{
-				if (mapName.Equals(TileMap.mapNames[i]))
+				if (mapName.Contains(TileMap.mapNames[i]))
 				{
 					return i;
 				}

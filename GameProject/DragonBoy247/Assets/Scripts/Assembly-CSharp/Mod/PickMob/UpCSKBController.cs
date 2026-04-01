@@ -191,10 +191,9 @@ namespace Mod.PickMob
 			}
 
 			Npc npc28 = Utils.findNpc(28);
-			if (!isTeleToNpc28)
+			if (!IsMyCharInNpc28Position(npc28))
 			{
 				Utils.teleToNpc(28);
-				isTeleToNpc28 = true;
 				yield return new WaitForSecondsRealtime(0.5f);
 			}
 
@@ -212,7 +211,12 @@ namespace Mod.PickMob
 
 		static bool ShouldOpenDepositMenu(Npc npc28)
 		{
-			return isTeleToNpc28 && npc28 != null && GameCanvas.panel is not null && !GameCanvas.panel.isShow;
+			return IsMyCharInNpc28Position(npc28) && GameCanvas.panel is not null && !GameCanvas.panel.isShow;
+		}
+		
+		static bool IsMyCharInNpc28Position(Npc npc28)
+		{
+			return npc28 != null && Char.myCharz().cx == npc28.cx && Char.myCharz().cy == npc28.ySd - npc28.ySd % 24;
 		}
 
 		static IEnumerator OpenDepositMenu(Npc npc28)
