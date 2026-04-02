@@ -70,7 +70,7 @@ namespace Mod.Auto
         
         static IEnumerable GotoCoordinates()
         {
-            if (lastX == null || lastY == null)
+            if (lastX == null || lastY == null || XmapController.gI.IsActing || TileMap.mapID != mapGoBackId)
             {
                 yield break;
             }
