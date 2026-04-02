@@ -358,7 +358,6 @@ namespace Mod
 			Time.timeScale = Utils.timeScale;
 			CharEffectMain.Update();
 			TeleportMenuMain.Update();
-			AutoGoback.Update();
 			AutoTrainPet.Update();
 			AutoSellTrashItems.Update();
 			AutoLogin.OnGameScrUpdate();
@@ -548,6 +547,15 @@ namespace Mod
 			{
 				ModMenuMain.Paint(g);
 				CharEffectMain.Paint(g);
+				g.setColor(Color.red);
+				for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+				{
+					Char @char = (Char)GameScr.vCharInMap.elementAt(i);
+					if (@char.cTypePk == 5)
+					{
+						g.drawLineToBoss(Char.myCharz().cx - GameScr.cmx, Char.myCharz().cy - GameScr.cmy, @char.cx - GameScr.cmx, @char.cy  - GameScr.cmy);
+					}
+				}
 			}
 			catch (Exception e)
 			{

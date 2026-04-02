@@ -126,5 +126,20 @@ namespace Mod
 		{
 			Utils.useItem(521);
 		}
+
+		[HotkeyCommand('s')]
+		internal static void FocusBoss()
+		{ 
+			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+			{
+				Char @char = (Char)GameScr.vCharInMap.elementAt(i);
+				
+				char name = char.Parse(@char.cName.Substring(0, 1));
+				if (name >= 'A' && name <= 'Z' && !@char.cName.StartsWith("Đệ tử"))
+				{
+					Char.myCharz().charFocus = @char;
+				}
+			}
+		}
 	}
 }

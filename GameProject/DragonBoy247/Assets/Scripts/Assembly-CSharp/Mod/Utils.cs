@@ -717,7 +717,7 @@ namespace Mod
 
 		internal static bool CanNextMap()
 		{
-			return !Char.isLoadingMap && !Char.ischangingMap && !Controller.isStopReadMessage;
+			return !Char.isLoadingMap && !Char.ischangingMap && !Controller.isStopReadMessage && GameCanvas.currentScreen is not TransportScr;
 		}
 
 		internal static bool HasStarOption(Item item, out uint star, out uint starE)

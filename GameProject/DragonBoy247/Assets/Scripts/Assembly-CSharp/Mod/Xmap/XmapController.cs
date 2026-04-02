@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Mod.ModHelper;
 using Mod.R;
@@ -10,16 +9,6 @@ namespace Mod.Xmap
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
 		const float MaxStuckSeconds = 15f;
-
-		static readonly int[] MAP_FUTURE =
-		{
-			102, 92, 93, 94, 96, 97, 98, 99, 100, 103
-		};
-
-		static readonly int[] MAP_COLD =
-		{
-			109, 108, 107, 110, 106, 105
-		};
 		int indexWay;
 		bool isInitializing;
 		bool isNextMapFailed;
@@ -118,7 +107,7 @@ namespace Mod.Xmap
 		{
 			int startMapId = TileMap.mapID;
 			List<MapNext>[] graph = (List<MapNext>[])XmapData.links.Clone();
-			way = XmapAlgorithm.FindWayBFS(startMapId, mapEnd, XmapData.links);
+			way = XmapAlgorithm.FindWayDijkstra(startMapId, mapEnd, XmapData.links);
 
 			if (way == null || way.Count == 0)
 			{
@@ -128,10 +117,10 @@ namespace Mod.Xmap
 				yield break;
 			}
 
-			if (way.Count > 5 && (!IsStartAndDestinationInFuture() || !IsStartAndDestinationInCold()))
+			if (way.Count > 5)
 			{
 				yield return AddCapsuleLinkIfPossible(graph);
-				way = XmapAlgorithm.FindWayBFS(startMapId, mapEnd, graph);
+				way = XmapAlgorithm.FindWayDijkstra(startMapId, mapEnd, graph);
 			}
 
 			if (way == null || way.Count == 0)
@@ -237,26 +226,6 @@ namespace Mod.Xmap
 					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));
 				}
 			}
-		}
-		
-		static bool IsStartAndDestinationInFuture()
-		{
-			return IsFutureMap(TileMap.mapID) && IsFutureMap(gI.mapEnd);
-		}
-
-		static bool IsStartAndDestinationInCold()
-		{
-			return IsColdMap(TileMap.mapID) && IsColdMap(gI.mapEnd);
-		}
-
-		static bool IsFutureMap(int mapId)
-		{
-			return Array.IndexOf(MAP_FUTURE, mapId) != -1;
-		}
-
-		static bool IsColdMap(int mapId)
-		{
-			return Array.IndexOf(MAP_COLD, mapId) != -1;
 		}
 	}
 }

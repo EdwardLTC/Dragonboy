@@ -4,59 +4,67 @@ namespace Mod.Xmap
 {
 	internal static class XmapAlgorithm
 	{
-		internal static List<MapNext> FindWayBFS(int start, int end, List<MapNext>[] graph )
+		internal static List<MapNext> FindWayDijkstra(int start, int end, List<MapNext>[] graph )
 		{
 			int length = graph.Length;
-
-			if (start == end)
+			MapNext[] prev = new MapNext[length];
+			bool[] visited = new bool[length];
+			int[] dist = new int[length];
+			
+			for (int i = 0; i < length; i++)
 			{
-				return new List<MapNext>();
+				dist[i] = int.MaxValue;
 			}
 			
-			bool[] visited = new bool[length];
-			MapNext?[] prev = new MapNext?[length];
+			dist[start] = 0;
 
-			Queue<int> queue = new Queue<int>();
-			queue.Enqueue(start);
-			visited[start] = true;
-
-			while (queue.Count > 0)
+			for (int _ = 0; _ < length; _++)
 			{
-				int current = queue.Dequeue();
+				int cmap = -1;
+				for (int i = 0; i < length; i++)
+					if (!visited[i] && (cmap == -1 || dist[i] < dist[cmap]))
+						cmap = i;
 
-				if (current == end)
-				{
+				if (cmap == -1)
 					break;
-				}
 
-				foreach (MapNext next in graph[current])
+				List<MapNext> neighbors = graph[cmap];
+				int count = neighbors.Count;
+				
+				for (int i = 0; i < count; i++)
 				{
-					if (!visited[next.to])
+					MapNext mapNext = neighbors[i];
+					int cost = 1;
+					if (mapNext.type == TypeMapNext.NpcMenu && mapNext.info[0] == 38)
 					{
-						visited[next.to] = true;
-						prev[next.to] = next;
-						queue.Enqueue(next.to);
+						cost = 100;
+					}
+
+					int tentative = dist[cmap] + cost;
+					if (tentative < dist[mapNext.to])
+					{
+						dist[mapNext.to] = tentative;
+						prev[mapNext.to] = mapNext;
 					}
 				}
+
+				visited[cmap] = true;
 			}
 
-			List<MapNext> path = new List<MapNext>();
+			List<MapNext> way = new List<MapNext>();
 			int index = end;
-
 			while (index != start)
 			{
-				if (prev[index] == null)
-				{
-					return null;
-				}
-
-				MapNext step = prev[index].Value;
-				path.Add(step);
-				index = step.mapStart;
+				way.Add(prev[index]);
+				index = prev[index].mapStart;
 			}
+			way.Reverse();
 
-			path.Reverse();
-			return path;
+			if (way[0].mapStart == start)
+			{
+				return way;
+			}
+			return null;
 		}
 	}
 }

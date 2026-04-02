@@ -122,13 +122,11 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "AutoSendAttack_Toggle",
-					Title = Strings.autoAttack,
-					Description = Strings.autoSendAttackDescription,
-					GetValueFunc = () => AutoSendAttack.gI.IsActing,
-					SetValueAction = AutoSendAttack.gI.toggle,
-					GetIsDisabled = () => Pk9rPickMob.IsTanSat,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.pickMobTitle) + '!'
+					ID = "AutoKillAll_Toggle",
+					Title = "Kill all",
+					Description = "MỘT MÌNH TAO CHẤP HẾT",
+					GetValueFunc = () => AutoKillAll.gI.IsActing,
+					SetValueAction = AutoKillAll.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -137,6 +135,14 @@ namespace Mod.ModMenu
 					Description = Strings.autoLoginDescription,
 					GetValueFunc = () => AutoLogin.isEnabled,
 					SetValueAction = AutoLogin.SetState
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoGoback_Toggle",
+					Title = "Goback",
+					Description = "Goback",
+					GetValueFunc = () => AutoGoback.gI.IsActing,
+					SetValueAction = AutoGoback.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -279,16 +285,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => (int)GraphicsReducer.Level,
 					SetValueAction = level => GraphicsReducer.Level = (ReduceGraphicsLevel)level,
 					RMSName = "reduce_graphics"
-				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig
-				{
-					ID = "Set_GoBack",
-					Title = "GoBack",
-					Values = Strings.setGoBackChoices,
-					GetValueFunc = () => (int)AutoGoback.mode,
-					SetValueAction = value => AutoGoback.setState((int)value),
-					GetIsDisabled = () => UpCSKBController.gI.IsActing,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
