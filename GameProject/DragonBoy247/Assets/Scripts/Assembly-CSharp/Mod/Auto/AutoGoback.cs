@@ -9,6 +9,8 @@ namespace Mod.Auto
     {
         static int? mapGoBackId;
         static int? zoneIdTrain;
+        static int? lastX;
+        static int? lastY;
         
         protected override float Interval => 1f;
 
@@ -18,6 +20,8 @@ namespace Mod.Auto
             {
                 mapGoBackId = TileMap.mapID;
                 zoneIdTrain = TileMap.zoneID;
+                lastX = Char.myCharz().cx;
+                lastY = Char.myCharz().cy;
                 yield return new WaitForSecondsRealtime(1f);
                 ReviveWhenDead();
             }
@@ -30,6 +34,7 @@ namespace Mod.Auto
             
             yield return ReturnToTrainMapIfNeeded();
             yield return ChangeToTrainZoneIfNeeded();
+            yield return GotoCoordinates();
         }
         
         static void ReviveWhenDead()
@@ -61,6 +66,24 @@ namespace Mod.Auto
             }
             XmapController.start(mapGoBackId.Value);
             yield return null;
+        }
+        
+        static IEnumerable GotoCoordinates()
+        {
+            if (lastX == null || lastY == null)
+            {
+                yield break;
+            }
+            Utils.TeleportMyChar(lastX.Value, lastY.Value);
+            ClearGoBackInfo();
+        }
+        
+        static void ClearGoBackInfo()
+        {
+            mapGoBackId = null;
+            zoneIdTrain = null;
+            lastX = null;
+            lastY = null;
         }
     }
 }

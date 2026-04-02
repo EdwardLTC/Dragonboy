@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Mod.ModHelper;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
@@ -7,15 +8,16 @@ using UnityEngine;
 
 namespace Mod.Auto
 {
-	internal class AutoSendAttack : ThreadAction<AutoSendAttack>
+	public class AutoSendAttack : CoroutineMainThreadAction<AutoSendAttack>
 	{
-		internal override int Interval => 100;
+		protected override float Interval => 0.1f;
 
-		protected override void action()
+
+		protected override IEnumerator OnUpdate()
 		{
 			if (Char.myCharz().meDead || Char.myCharz().cHP <= 0 || Char.myCharz().statusMe == 14 || Char.myCharz().statusMe == 5 || Char.myCharz().myskill.template.type == 3 || Char.myCharz().myskill.template.id == 10 || Char.myCharz().myskill.template.id == 11 || Char.myCharz().isWaitMonkey || Char.myCharz().isCharge || (Char.myCharz().myskill.paintCanNotUseSkill && !GameCanvas.panel.isShow))
 			{
-				return;
+ 				yield return null;
 			}
 			if (GameScr.gI().isMeCanAttackMob(Char.myCharz().mobFocus))
 			{
@@ -33,11 +35,11 @@ namespace Mod.Auto
         [ChatCommand("ak"),HotkeyCommand('a')]
         internal static void toggleAutoAttack()
         {
-            gI.toggle();
+            gI.Toggle();
             GameScr.info1.addInfo(Strings.autoAttack + ": " + (gI.IsActing ? mResources.ON : mResources.OFF) + '!', 0);
         }
         
-       public static void SendAttackToCharFocus()
+       static void SendAttackToCharFocus()
         {
 	        try
 	        {
