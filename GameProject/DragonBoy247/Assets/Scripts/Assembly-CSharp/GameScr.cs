@@ -4782,7 +4782,7 @@ public class GameScr : mScreen, IChatable
 		}
 		if (isAutoPlay && GameCanvas.gameTick % 20 == 0)
 		{
-			autoPlay();
+			// autoPlay(); // handle by PickMob
 		}
 		updateXoSo();
 		mSystem.checkAdComlete();

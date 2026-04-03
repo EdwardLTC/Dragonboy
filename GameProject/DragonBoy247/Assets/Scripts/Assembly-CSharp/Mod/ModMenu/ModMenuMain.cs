@@ -130,19 +130,29 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "AutoGoback_Toggle",
+					Title = "Goback",
+					Description = "Goback",
+					GetValueFunc = () => AutoGoback.gI.IsActing,
+					SetValueAction = AutoGoback.gI.Toggle,
+					GetIsDisabled = () => AutoKillSelfAndPickGold.gI.IsActing,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, "Kill self and pick gold")
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoKillSelfAndPickGold_Toggle",
+					Title = "Kill self and pick gold",
+					Description = "Tự chết và nhặt vàng (chỉ hoạt động ở map Làng)",
+					GetValueFunc = () => AutoKillSelfAndPickGold.gI.IsActing,
+					SetValueAction = AutoKillSelfAndPickGold.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoLogin_Toggle",
 					Title = Strings.autoLoginTitle,
 					Description = Strings.autoLoginDescription,
 					GetValueFunc = () => AutoLogin.isEnabled,
 					SetValueAction = AutoLogin.SetState
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoGoback_Toggle",
-					Title = "Goback",
-					Description = "Goback",
-					GetValueFunc = () => AutoGoback.gI.IsActing,
-					SetValueAction = AutoGoback.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -224,15 +234,15 @@ namespace Mod.ModMenu
 					TextFieldTitle = Strings.inputFPS,
 					TextFieldHint = "FPS"
 				}),
-				new ModMenuItemValues( new ModMenuItemValuesConfig
+				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
 					ID = "UpCSKB_PriceForDeposit",
 					Title = "Giá cskb kí gửi",
-					Description ="Khi túi đầy, thì sẽ kí gửi cskb (có tác dụng khi thao tác khi full là <kí gửi>)",
+					Description = "Khi túi đầy, thì sẽ kí gửi cskb (có tác dụng khi thao tác khi full là <kí gửi>)",
 					IsFloatingPoint = false,
-					GetValueFunc =  () => UpCSKB.moneyToDeposit / 1_000_000f,
+					GetValueFunc = () => UpCSKB.moneyToDeposit / 1_000_000f,
 					SetValueAction = value =>
-					{ 
+					{
 						UpCSKB.SetMoneyToDeposit((int)value);
 					},
 					MaxValue = 99_999_999,

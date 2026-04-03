@@ -17,8 +17,22 @@ namespace Mod.Auto
 		{
 			if (Char.myCharz().meDead || Char.myCharz().cHP <= 0 || Char.myCharz().statusMe == 14 || Char.myCharz().statusMe == 5 || Char.myCharz().myskill.template.type == 3 || Char.myCharz().myskill.template.id == 10 || Char.myCharz().myskill.template.id == 11 || Char.myCharz().isWaitMonkey || Char.myCharz().isCharge || (Char.myCharz().myskill.paintCanNotUseSkill && !GameCanvas.panel.isShow))
 			{
- 				yield return null;
+ 				yield break;
 			}
+			
+			Skill skill = Char.myCharz().myskill;
+			
+			if (skill == null || !CanUseSkill(skill))
+			{
+				yield break;
+			}
+			
+			if (Char.myCharz().charFocus?.holdEffID == 32 && skill.template.id == 23)
+			{
+				// avoid double troi
+				yield break;
+			}
+			
 			if (GameScr.gI().isMeCanAttackMob(Char.myCharz().mobFocus))
 			{
 				SendAttackToMobFocus();
@@ -26,10 +40,34 @@ namespace Mod.Auto
 			}
 			else if (Char.myCharz().charFocus != null && isMeCanAttackChar(Char.myCharz().charFocus) && System.Math.Abs(Char.myCharz().charFocus.cx - Char.myCharz().cx) < Char.myCharz().myskill.dx * 1.7)
 			{
-				Char.myCharz().myskill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
 				SendAttackToCharFocus();
 				Char.myCharz().myskill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
 			}
+		}
+		
+		static bool CanUseSkill(Skill skill)
+		{
+			int coolDown = skill.coolDown;
+			
+			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
+				skill.paintCanNotUseSkill = false;
+			
+			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < coolDown)
+				return false;
+			
+			if (Char.myCharz().cMP < GetManaUseSkill(skill))
+				return false;
+
+			return true;
+		}
+		
+		static int GetManaUseSkill(Skill skill)
+		{
+			if (skill.template.manaUseType == 2)
+				return 1;
+			if (skill.template.manaUseType == 1)
+				return (int)(skill.manaUse * Char.myCharz().cMPFull / 100);
+			return skill.manaUse;
 		}
 
         [ChatCommand("ak"),HotkeyCommand('a')]

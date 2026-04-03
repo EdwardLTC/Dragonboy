@@ -1,5 +1,8 @@
-﻿namespace Mod.ModHelper.CommandMod.Hotkey
+﻿using JetBrains.Annotations;
+
+namespace Mod.ModHelper.CommandMod.Hotkey
 {
+    [MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
     public class HotkeyCommandAttribute : BaseCommandAttribute
     {
         public char key;

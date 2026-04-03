@@ -5,85 +5,89 @@ using UnityEngine;
 
 namespace Mod.Auto
 {
-    internal class AutoGoback :CoroutineMainThreadAction<AutoGoback>
-    {
-        static int? mapGoBackId;
-        static int? zoneIdTrain;
-        static int? lastX;
-        static int? lastY;
-        
-        protected override float Interval => 1f;
+	internal class AutoGoback : CoroutineMainThreadAction<AutoGoback>
+	{
+		static int? mapGoBackId;
+		static int? zoneGobackId;
+		static int? lastX;
+		static int? lastY;
 
-        protected override IEnumerator OnUpdate()
-        {
-            if (Char.myCharz().IsCharDead())
-            {
-                mapGoBackId = TileMap.mapID;
-                zoneIdTrain = TileMap.zoneID;
-                lastX = Char.myCharz().cx;
-                lastY = Char.myCharz().cy;
-                yield return new WaitForSecondsRealtime(1f);
-                ReviveWhenDead();
-            }
-            
-            if (Utils.IsMyCharHome() && Char.myCharz().cHP < 1000)
-            {
-                yield return new WaitForSecondsRealtime(1f);
-                RegenHpWhenInHome();
-            }
-            
-            yield return ReturnToTrainMapIfNeeded();
-            yield return ChangeToTrainZoneIfNeeded();
-            yield return GotoCoordinates();
-        }
-        
-        static void ReviveWhenDead()
-        {
-            Service.gI().returnTownFromDead();
-        }
-        
-        static void RegenHpWhenInHome()
-        {
-            Service.gI().pickItem(-1);
-        }
-        
-        static IEnumerator ChangeToTrainZoneIfNeeded()
-        {
-            if (TileMap.mapID != mapGoBackId || zoneIdTrain == null || TileMap.zoneID == zoneIdTrain)
-            {
-                yield break;
-            }
+		public static bool IsGoingBack => mapGoBackId != null || zoneGobackId != null || lastX != null || lastY != null;
 
-            yield return new WaitForSecondsRealtime(1f);
-            Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
-        }
+		protected override float Interval => 1f;
 
-        static IEnumerator ReturnToTrainMapIfNeeded()
-        {
-            if (mapGoBackId == null || XmapController.gI.IsActing || TileMap.mapID == mapGoBackId)
-            {
-                yield break;
-            }
-            XmapController.start(mapGoBackId.Value);
-            yield return null;
-        }
-        
-        static IEnumerable GotoCoordinates()
-        {
-            if (lastX == null || lastY == null || XmapController.gI.IsActing || TileMap.mapID != mapGoBackId)
-            {
-                yield break;
-            }
-            Utils.TeleportMyChar(lastX.Value, lastY.Value);
-            ClearGoBackInfo();
-        }
-        
-        static void ClearGoBackInfo()
-        {
-            mapGoBackId = null;
-            zoneIdTrain = null;
-            lastX = null;
-            lastY = null;
-        }
-    }
+		protected override IEnumerator OnUpdate()
+		{
+			if (Char.myCharz().IsCharDead())
+			{
+				if (mapGoBackId == null || zoneGobackId == null)
+				{
+					mapGoBackId = TileMap.mapID;
+					zoneGobackId = TileMap.zoneID;
+					lastX = Char.myCharz().cx;
+					lastY = Char.myCharz().cy;
+				}
+				yield return new WaitForSecondsRealtime(1f);
+				ReviveWhenDead();
+				yield break;
+			}
+
+			if (Utils.IsMyCharHome() && Char.myCharz().cHP < Char.myCharz().cHPFull)
+			{
+				yield return new WaitForSecondsRealtime(1f);
+				RegenHpWhenInHome();
+				yield break;
+			}
+
+			ReturnToTrainMapIfNeeded();
+			ChangeToTrainZoneIfNeeded();
+			GotoCoordinates();
+		}
+
+		static void ReviveWhenDead()
+		{
+			Service.gI().returnTownFromDead();
+		}
+
+		static void RegenHpWhenInHome()
+		{
+			Service.gI().pickItem(-1);
+		}
+
+		static void ReturnToTrainMapIfNeeded()
+		{
+			if (mapGoBackId == null || XmapController.gI.IsActing || TileMap.mapID == mapGoBackId)
+			{
+				return;
+			}
+			XmapController.start(mapGoBackId.Value);
+		}
+
+		static void ChangeToTrainZoneIfNeeded()
+		{
+			if (TileMap.mapID != mapGoBackId || zoneGobackId == null || TileMap.zoneID == zoneGobackId)
+			{
+				return;
+			}
+			Service.gI().requestChangeZone(zoneGobackId.Value, 0);
+		}
+
+		static void GotoCoordinates()
+		{
+			if (lastX == null || lastY == null || XmapController.gI.IsActing || TileMap.mapID != mapGoBackId || TileMap.zoneID != zoneGobackId)
+			{
+				return;
+			}
+			Utils.TeleportMyChar(lastX.Value, lastY.Value);
+			ClearGoBackInfo();
+		}
+
+		static void ClearGoBackInfo()
+		{
+			mapGoBackId = null;
+			zoneGobackId = null;
+			lastX = null;
+			lastY = null;
+		}
+	}
 }

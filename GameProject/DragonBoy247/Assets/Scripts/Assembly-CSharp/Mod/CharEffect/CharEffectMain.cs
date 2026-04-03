@@ -147,9 +147,13 @@ namespace Mod.CharEffect
                 Char c = storedChars.ElementAt(i);
                 Char ch = GameScr.findCharInMap(c.charID);
                 if (!c.charEffectTime.HasAnyEffect())
+                {
                     storedChars.RemoveAt(i);
+                }
                 else if (ch == null)
+                {
                     c.charEffectTime.Update();
+                }
                 else
                 {
                     GameScr.findCharInMap(c.charID).charEffectTime = c.charEffectTime;
@@ -241,7 +245,9 @@ namespace Mod.CharEffect
         internal static void UpdateChar(Char ch)
         {
             if (ch.charEffectTime.HasAnyEffect() && !isContains(ch.charID))
+            {
                 storedChars.Add(ch);
+            }
             ch.charEffectTime.Update();
             if (ch.head == 412 && ch.body == 413 && ch.leg == 414)
             {

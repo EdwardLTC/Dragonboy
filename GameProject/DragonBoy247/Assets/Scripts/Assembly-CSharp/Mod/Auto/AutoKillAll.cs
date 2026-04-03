@@ -17,7 +17,7 @@ namespace Mod.Auto
 				Service.gI().getFlag(1, 8);
 				yield return null;
 			}
-			
+
 			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
 				Char obj = (Char)GameScr.vCharInMap.elementAt(i);
@@ -28,13 +28,13 @@ namespace Mod.Auto
 						Char.myCharz().mobFocus = null;
 						Char.myCharz().npcFocus = null;
 						Char.myCharz().itemFocus = null;
-					
+
 						if (!obj.meDead && obj.cHP > 0 && obj.cFlag != 0 && obj.charID > 0)
 						{
 							Char.myCharz().charFocus = obj;
-						
+
 							Skill skill = PickMobController.GetSkillAttack();
-						
+
 							if (skill != null && !skill.paintCanNotUseSkill)
 							{
 								GameScr.gI().doSelectSkill(skill, true);
@@ -59,10 +59,8 @@ namespace Mod.Auto
 			if (Char.myCharz().cFlag == 0)
 			{
 				Service.gI().getFlag(1, 8);
-				return;
 			}
-			base.OnStart(); 
+			base.OnStart();
 		}
-		
 	}
 }
