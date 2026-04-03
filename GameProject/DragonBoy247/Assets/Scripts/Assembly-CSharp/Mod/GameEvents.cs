@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Mod.AccountManager;
 using Mod.Auto;
-using Mod.Auto.AutoChat;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
@@ -64,7 +63,6 @@ namespace Mod
 				Directory.CreateDirectory(Utils.dataPath);
 			}
 			CharEffectMain.Init();
-			Setup.loadFile();
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
 			GraphicsReducer.InitializeTileMap(true);
@@ -110,7 +108,6 @@ namespace Mod
 		internal static void OnGameClosing()
 		{
 			ModMenuMain.SaveData();
-			Setup.clearStringTrash();
 			TeleportMenuMain.SaveData();
 
 			if (GameLauncherClient.Instance.IsConnected)
@@ -553,7 +550,7 @@ namespace Mod
 					Char @char = (Char)GameScr.vCharInMap.elementAt(i);
 					if (@char.cTypePk == 5)
 					{
-						g.drawLineToBoss(Char.myCharz().cx - GameScr.cmx, Char.myCharz().cy - GameScr.cmy, @char.cx - GameScr.cmx, @char.cy  - GameScr.cmy);
+						g.drawLineToBoss(Char.myCharz().cx - GameScr.cmx, Char.myCharz().cy - GameScr.cmy, @char.cx - GameScr.cmx, @char.cy - GameScr.cmy);
 					}
 				}
 			}
