@@ -165,6 +165,14 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "ShowBossInfo_Toggle",
+					Title = Strings.notifyBossTitle,
+					Description = Strings.notifyBossDescription,
+					GetValueFunc = () => Boss.isEnabled,
+					SetValueAction = Boss.setState
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoAskForPeans_Toggle",
 					Title = Strings.autoAskForPeansTitle,
 					Description = Strings.autoAskForPeansDescription,

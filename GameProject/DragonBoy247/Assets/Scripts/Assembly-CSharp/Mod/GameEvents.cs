@@ -353,6 +353,7 @@ namespace Mod
 
 			Char.myCharz().cspeed = Utils.myCharSpeed;
 			Time.timeScale = Utils.timeScale;
+			Boss.Update();
 			CharEffectMain.Update();
 			TeleportMenuMain.Update();
 			AutoTrainPet.Update();
@@ -544,6 +545,7 @@ namespace Mod
 			{
 				ModMenuMain.Paint(g);
 				CharEffectMain.Paint(g);
+				Boss.Paint(100, g);
 				g.setColor(Color.red);
 				for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 				{
@@ -602,6 +604,7 @@ namespace Mod
 				}
 			}
 
+			Boss.UpdateTouch();
 			ModMenuMain.UpdateTouch();
 			if (GameCanvas.isTouchControl)
 			{
@@ -790,7 +793,7 @@ namespace Mod
 
 		internal static void OnChatVip(string chatVip)
 		{
-
+			Boss.AddBoss(chatVip);
 		}
 
 		internal static bool OnUpdateScrollMousePanel(Panel panel, ref int pXYScrollMouse)
