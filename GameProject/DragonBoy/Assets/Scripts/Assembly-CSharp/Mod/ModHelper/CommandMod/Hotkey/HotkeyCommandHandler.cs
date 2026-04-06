@@ -50,7 +50,7 @@ namespace Mod.ModHelper.CommandMod.Hotkey
 		/// </summary>
 		public static void save()
 		{
-			File.WriteAllText(Utils.PathHotkeyCommand, JsonConvert.SerializeObject(hotkeyCommands));
+			ModDataStorage.WriteJson(Utils.PathHotkeyCommand, hotkeyCommands);
 		}
 
 		/// <summary>

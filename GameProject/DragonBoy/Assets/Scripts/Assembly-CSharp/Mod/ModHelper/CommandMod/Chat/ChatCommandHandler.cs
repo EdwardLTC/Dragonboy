@@ -42,10 +42,10 @@ namespace Mod.ModHelper.CommandMod.Chat
             save();
         }
 
-        /// <summary>
-        /// Lưu lệnh chat.
-        /// </summary>
-        public static void save() => File.WriteAllText(Utils.PathChatCommand, JsonConvert.SerializeObject(chatCommands));
+		/// <summary>
+		/// Lưu lệnh chat.
+		/// </summary>
+		public static void save() => ModDataStorage.WriteJson(Utils.PathChatCommand, chatCommands);
 
         /// <summary>
         /// Tìm và thực hiện lệnh chat.

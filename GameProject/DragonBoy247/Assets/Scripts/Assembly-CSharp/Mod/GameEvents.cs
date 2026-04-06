@@ -58,10 +58,7 @@ namespace Mod
 			}
 			OnSetResolution();
 			OnCheckZoomLevel(Screen.width, Screen.height);
-			if (!Directory.Exists(Utils.dataPath))
-			{
-				Directory.CreateDirectory(Utils.dataPath);
-			}
+			ModStorage.EnsureCommonDataDirectory();
 			CharEffectMain.Init();
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
@@ -258,7 +255,7 @@ namespace Mod
 			//    }
 			//}
 
-			result = Utils.GetRootDataPath();
+			result = ModStorage.RootDataPath;
 			// check ip server lậu, lưu rms riêng
 			// ...
 			result = Path.Combine(result, subFolder);
@@ -762,7 +759,7 @@ namespace Mod
 		{
 			string streamingAssetsPath = Application.streamingAssetsPath;
 			if (Utils.IsAndroidBuild())
-				streamingAssetsPath = Path.Combine(Utils.PersistentDataPath, "StreamingAssets");
+				streamingAssetsPath = Path.Combine(ModStorage.PersistentDataPath, "StreamingAssets");
 			string customAssetsPath = Path.Combine(streamingAssetsPath, "CustomAssets");
 			image = new Image();
 			Texture2D texture2D;

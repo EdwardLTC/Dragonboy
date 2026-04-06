@@ -4318,9 +4318,7 @@ public class GameScr : mScreen, IChatable
 				Skill skill2 = (Skill)Char.myCharz().vSkillFight.elementAt(j);
 				if (skill2.template.id < skill.template.id)
 				{
-					Skill skill3 = skill2;
-					skill2 = skill;
-					skill = skill3;
+					(skill, skill2) = (skill2, skill);
 					Char.myCharz().vSkillFight.setElementAt(skill, i);
 					Char.myCharz().vSkillFight.setElementAt(skill2, j);
 				}
@@ -5769,6 +5767,19 @@ public class GameScr : mScreen, IChatable
 			}
 		}
 		return null;
+	}
+	
+	public static void removeCharInMap(int charId)
+	{
+		for (int i = 0; i < vCharInMap.size(); i++)
+		{
+			Char obj = (Char)vCharInMap.elementAt(i);
+			if (obj.charID == charId)
+			{
+				vCharInMap.removeElementAt(i);
+				i--;
+			}
+		}
 	}
 
 	public static Mob findMobInMap(sbyte mobIndex)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using Mod.Constants;
@@ -8,22 +6,11 @@ using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Mod
 {
 	internal static class Utils
 	{
-		static string persistentDataPath = Application.persistentDataPath;
-		internal static string PersistentDataPath => persistentDataPath;
-
-		internal static readonly string dataPath = Path.Combine(GetRootDataPath(), "CommonModData");
-
-		internal static readonly string PathAutoChat = Path.Combine(dataPath, "autochat.txt");
-		internal static readonly string PathChatCommand = Path.Combine(dataPath, "chatCommands.json");
-		internal static readonly string PathChatHistory = Path.Combine(dataPath, "chat.txt");
-		internal static readonly string PathHotkeyCommand = Path.Combine(dataPath, "hotkeyCommands.json");
-
 		internal static readonly sbyte ID_SKILL_BUFF = 7;
 		internal static readonly short ID_ICON_ITEM_TDLT = 4387;
 		internal static readonly short ID_NPC_MOD_FACE = 7333; // Doraemon
@@ -43,8 +30,6 @@ namespace Mod
 		internal static JObject sizeData = null;
 
 		internal static int channelSyncKey = -1;
-
-		internal static Random random = new Random();
 
 		static bool isOpenedByExternalAccountManager;
 		internal static bool IsOpenedByExternalAccountManager { get; set; }
@@ -108,42 +93,6 @@ namespace Mod
 		{
 			return !IsMobile();
 		}
-
-		internal static void CheckBackButtonPress()
-		{
-			if (GameCanvas.panel != null || GameCanvas.panel2 != null)
-			{
-				if (GameCanvas.panel != null && GameCanvas.panel.isShow)
-				{
-					GameCanvas.panel.hide();
-					return;
-				}
-				if (GameCanvas.panel2 != null && GameCanvas.panel2.isShow)
-				{
-					GameCanvas.panel2.hide();
-					return;
-				}
-			}
-			if (InfoDlg.isShow)
-				return;
-			if (GameCanvas.currentDialog != null && GameCanvas.currentDialog is MsgDlg)
-			{
-				GameCanvas.endDlg();
-				return;
-			}
-			if (ChatTextField.gI().isShow)
-			{
-				ChatTextField.gI().close();
-				return;
-			}
-			if (GameCanvas.menu.showMenu)
-			{
-				// GameCanvas.menu.closeMenu();
-				return;
-			}
-			GameCanvas.checkBackButton();
-		}
-
 
 		internal static MyVector getMyVectorMe()
 		{
@@ -449,172 +398,6 @@ namespace Mod
 			return TileMap.mapID >= 85 && TileMap.mapID <= 91;
 		}
 
-		internal static long LoadDataLong(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			byte[] array = new byte[8];
-			fileStream.Read(array, 0, array.Length);
-			fileStream.Close();
-			return BitConverter.ToInt64(array, 0);
-		}
-
-		internal static bool LoadDataBool(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-
-			if (!isCommon)
-			{
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			}
-
-			Directory.CreateDirectory(path);
-
-			string filePath = Path.Combine(path, name);
-
-			using (FileStream fileStream =
-			       new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-			{
-				byte[] array = new byte[1];
-				int read = fileStream.Read(array, 0, 1);
-				if (read == 0)
-					return false;
-
-				return array[0] == 1;
-			}
-		}
-
-		internal static string LoadDataString(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			StreamReader streamReader = new StreamReader(fileStream);
-			string result = streamReader.ReadToEnd();
-			streamReader.Close();
-			fileStream.Close();
-			return result;
-		}
-
-		internal static double LoadDataDouble(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			byte[] array = new byte[8];
-			fileStream.Read(array, 0, array.Length);
-			fileStream.Close();
-			return BitConverter.ToDouble(array, 0);
-		}
-
-		internal static bool TryLoadDataLong(string name, out long value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataLong(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
-
-		internal static bool TryLoadDataBool(string name, out bool value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataBool(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
-
-		internal static bool TryLoadDataString(string name, out string value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataString(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
-
-		internal static bool TryLoadDataDouble(string name, out double value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataDouble(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
-
-		internal static void SaveData(string name, long value, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(BitConverter.GetBytes(value), 0, 8);
-			fileStream.Flush();
-			fileStream.Close();
-		}
-
-		internal static void SaveData(string name, bool status, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(new[]
-			{
-				(byte)(status ? 1 : 0)
-			}, 0, 1);
-			fileStream.Flush();
-			fileStream.Close();
-		}
-
-		internal static void SaveData(string name, string data, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			byte[] buffer = Encoding.UTF8.GetBytes(data);
-			fileStream.Write(buffer, 0, buffer.Length);
-			fileStream.Flush();
-			fileStream.Close();
-		}
-
-		internal static void SaveData(string name, double value, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(BitConverter.GetBytes(value), 0, 8);
-			fileStream.Flush();
-			fileStream.Close();
-		}
-
 		/// <summary>
 		///     Dịch chuyển đến đối tượng trong map
 		/// </summary>
@@ -860,14 +643,6 @@ namespace Mod
 			chatTextField.tfChat.x = GameCanvas.w / 2 - chatTextField.tfChat.width / 2;
 			chatTextField.tfChat.isFocus = true;
 			chatTextField.tfChat.setMaxTextLenght(80);
-		}
-
-		internal static string GetRootDataPath()
-		{
-			string result = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Data");
-			if (IsEditor() || IsAndroidBuild())
-				result = PersistentDataPath;
-			return result;
 		}
 
 		internal static double Distance(double x1, double y1, double x2, double y2)

@@ -12,7 +12,7 @@ namespace Mod.ModHelper
 {
 	public class GameLauncherClient
 	{
-		static readonly string pathLog = Path.Combine(Utils.dataPath, "log_launcher_client.txt");
+		static readonly string pathLog = ModStorage.GetCommonDataPath("log_launcher_client.txt");
 
 		static GameLauncherClient _instance;
 		public static GameLauncherClient Instance => _instance ??= new GameLauncherClient();
@@ -336,4 +336,3 @@ namespace Mod.ModHelper
 		}
 	}
 }
-

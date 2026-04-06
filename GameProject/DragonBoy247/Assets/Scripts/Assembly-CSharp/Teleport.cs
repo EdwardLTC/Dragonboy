@@ -4,49 +4,51 @@ public class Teleport
 {
 	public static MyVector vTeleport = new MyVector();
 
-	public int x;
-
-	public int y;
-
-	public int headId;
-
-	public int type;
-
-	public bool isMe;
-
-	public int y2;
-
-	public int id;
-
-	public int dir;
-
-	public int planet;
-
 	public static Image[] maybay = new Image[5];
 
 	public static Image hole;
 
-	public bool isUp;
+	readonly bool createShip;
+
+	public Char @char;
+
+	public int dir;
+
+	public int headId;
+
+	public int id;
 
 	public bool isDown;
 
-	private bool createShip;
+	public bool isMe;
+
+	bool isShock;
+
+	public bool isUp;
+
+	bool painHead;
 
 	public bool paintFire;
 
-	private bool painHead;
+	public int planet;
 
-	private int tPrepare;
+	int tDelayHole;
 
-	private int vy = 1;
+	int tFire;
 
-	private int tFire;
+	bool tHole;
 
-	private int tDelayHole;
+	int tPrepare;
 
-	private bool tHole;
+	public int type;
 
-	private bool isShock;
+	int vy = 1;
+
+	public int x;
+
+	public int y;
+
+	public int y2;
 
 	public Teleport(int x, int y, int headId, int dir, int type, bool isMe, int planet)
 	{
@@ -145,30 +147,30 @@ public class Teleport
 		}
 		if (painHead && planet < 3)
 		{
-			SmallImage.drawSmallImage(g, part.pi[Char.CharInfo[0][0][0]].id, x + ((dir != 1) ? (-num) : num), y - num2, (dir != 1) ? 2 : 0, StaticObj.TOP_CENTER);
+			SmallImage.drawSmallImage(g, part.pi[Char.CharInfo[0][0][0]].id, x + (dir != 1 ? -num : num), y - num2, dir != 1 ? 2 : 0, StaticObj.TOP_CENTER);
 		}
 		if (planet < 3)
 		{
-			g.drawRegion(maybay[planet], 0, 0, mGraphics.getImageWidth(maybay[planet]), mGraphics.getImageHeight(maybay[planet]), (dir == 1) ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
+			g.drawRegion(maybay[planet], 0, 0, mGraphics.getImageWidth(maybay[planet]), mGraphics.getImageHeight(maybay[planet]), dir == 1 ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
 		}
 		else if (isDown)
 		{
 			if (tPrepare > 10)
 			{
-				g.drawRegion(maybay[4], 0, 0, mGraphics.getImageWidth(maybay[4]), mGraphics.getImageHeight(maybay[4]), (dir == 1) ? 2 : 0, (dir != 1) ? (x + 11) : (x - 11), y + 2, StaticObj.BOTTOM_HCENTER);
+				g.drawRegion(maybay[4], 0, 0, mGraphics.getImageWidth(maybay[4]), mGraphics.getImageHeight(maybay[4]), dir == 1 ? 2 : 0, dir != 1 ? x + 11 : x - 11, y + 2, StaticObj.BOTTOM_HCENTER);
 			}
 			else
 			{
-				g.drawRegion(maybay[3], 0, 0, mGraphics.getImageWidth(maybay[3]), mGraphics.getImageHeight(maybay[3]), (dir == 1) ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
+				g.drawRegion(maybay[3], 0, 0, mGraphics.getImageWidth(maybay[3]), mGraphics.getImageHeight(maybay[3]), dir == 1 ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
 			}
 		}
 		else if (tPrepare < 20)
 		{
-			g.drawRegion(maybay[4], 0, 0, mGraphics.getImageWidth(maybay[4]), mGraphics.getImageHeight(maybay[4]), (dir == 1) ? 2 : 0, (dir != 1) ? (x + 11) : (x - 11), y + 2, StaticObj.BOTTOM_HCENTER);
+			g.drawRegion(maybay[4], 0, 0, mGraphics.getImageWidth(maybay[4]), mGraphics.getImageHeight(maybay[4]), dir == 1 ? 2 : 0, dir != 1 ? x + 11 : x - 11, y + 2, StaticObj.BOTTOM_HCENTER);
 		}
 		else
 		{
-			g.drawRegion(maybay[3], 0, 0, mGraphics.getImageWidth(maybay[3]), mGraphics.getImageHeight(maybay[3]), (dir == 1) ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
+			g.drawRegion(maybay[3], 0, 0, mGraphics.getImageWidth(maybay[3]), mGraphics.getImageHeight(maybay[3]), dir == 1 ? 2 : 0, x, y, StaticObj.BOTTOM_HCENTER);
 		}
 	}
 
@@ -197,7 +199,7 @@ public class Teleport
 		if (isDown)
 		{
 			paintFire = true;
-			painHead = ((type != 0) ? true : false);
+			painHead = type != 0;
 			if (planet < 3)
 			{
 				int num = y2 - y >> 3;
@@ -377,9 +379,9 @@ public class Teleport
 					Controller.isStopReadMessage = false;
 					Char.ischangingMap = true;
 				}
-				if (!isMe && GameScr.findCharInMap(id) != null && type == 0)
+				if (!isMe && @char != null && type == 0)
 				{
-					GameScr.vCharInMap.removeElement(GameScr.findCharInMap(id));
+					GameScr.vCharInMap.removeElement(@char);
 				}
 				if (planet < 3)
 				{

@@ -12,7 +12,7 @@ namespace Mod.Auto
 		static int? lastX;
 		static int? lastY;
 
-		public static bool IsGoingBack => mapGoBackId != null || zoneGobackId != null || lastX != null || lastY != null;
+		public static bool IsGoingBack;
 
 		protected override float Interval => 1f;
 
@@ -22,6 +22,7 @@ namespace Mod.Auto
 			{
 				if (mapGoBackId == null || zoneGobackId == null)
 				{
+					IsGoingBack = true;
 					mapGoBackId = TileMap.mapID;
 					zoneGobackId = TileMap.zoneID;
 					lastX = Char.myCharz().cx;
@@ -29,13 +30,6 @@ namespace Mod.Auto
 				}
 				yield return new WaitForSecondsRealtime(1f);
 				ReviveWhenDead();
-				yield break;
-			}
-
-			if (Utils.IsMyCharHome() && Char.myCharz().cHP < Char.myCharz().cHPFull)
-			{
-				yield return new WaitForSecondsRealtime(1f);
-				RegenHpWhenInHome();
 				yield break;
 			}
 
@@ -47,11 +41,6 @@ namespace Mod.Auto
 		static void ReviveWhenDead()
 		{
 			Service.gI().returnTownFromDead();
-		}
-
-		static void RegenHpWhenInHome()
-		{
-			Service.gI().pickItem(-1);
 		}
 
 		static void ReturnToTrainMapIfNeeded()
@@ -78,16 +67,29 @@ namespace Mod.Auto
 			{
 				return;
 			}
-			Utils.TeleportMyChar(lastX.Value, lastY.Value);
+			if (Utils.Distance(Char.myCharz().cx, Char.myCharz().cy, lastX.Value, Utils.GetYGround(lastX.Value)) > 15)
+			{
+				Utils.TeleportMyChar(lastX.Value, Utils.GetYGround(lastX.Value));
+			}
+			ClearGoBackInfo();
+		}
+
+		protected override void OnStart()
+		{
+			ClearGoBackInfo();
+		}
+
+		protected override void OnStop()
+		{
 			ClearGoBackInfo();
 		}
 
 		static void ClearGoBackInfo()
 		{
+			IsGoingBack = false;
 			mapGoBackId = null;
 			zoneGobackId = null;
 			lastX = null;
-			lastY = null;
 		}
 	}
 }

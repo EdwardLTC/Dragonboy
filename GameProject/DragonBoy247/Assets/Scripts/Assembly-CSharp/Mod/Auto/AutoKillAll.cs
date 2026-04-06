@@ -53,14 +53,5 @@ namespace Mod.Auto
 				}
 			}
 		}
-
-		protected override void OnStart()
-		{
-			if (Char.myCharz().cFlag == 0)
-			{
-				Service.gI().getFlag(1, 8);
-			}
-			base.OnStart();
-		}
 	}
 }

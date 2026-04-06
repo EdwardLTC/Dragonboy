@@ -29,13 +29,12 @@ namespace Mod.Xmap
 
 			int currentMapId = TileMap.mapID;
 			float now = Time.realtimeSinceStartup;
-			bool isMapTransitioning = Char.isLoadingMap || Char.ischangingMap || Controller.isStopReadMessage;
 
 			if (currentMapId != lastProgressMapId || indexWay != lastProgressStepIndex)
 			{
 				MarkProgress();
 			}
-			else if (isMapTransitioning)
+			else if (GameCanvas.currentScreen is TransportScr)
 			{
 				lastProgressRealtime = now;
 			}
@@ -179,7 +178,7 @@ namespace Mod.Xmap
 			{
 				yield break;
 			}
-			
+
 			GameCanvas.panel.mapNames = null;
 
 			float deadline = Time.realtimeSinceStartup + 5f;
@@ -192,7 +191,7 @@ namespace Mod.Xmap
 				{
 					break;
 				}
-				
+
 				if (Time.realtimeSinceStartup >= nextRetry)
 				{
 					if (Pk9rXmap.CanUseCapsuleVip())
@@ -209,7 +208,7 @@ namespace Mod.Xmap
 
 				yield return null;
 			}
-			
+
 			if (GameCanvas.panel is not { isShow: true, mapNames: { Length: > 0 } })
 			{
 				yield break;
@@ -223,7 +222,10 @@ namespace Mod.Xmap
 				int to = XmapUtils.getMapIdFromName(mapNames[select]);
 				if (to != -1)
 				{
-					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[] { select }));
+					graph[mapStart].Add(new MapNext(mapStart, to, TypeMapNext.Capsule, new[]
+					{
+						select
+					}));
 				}
 			}
 		}

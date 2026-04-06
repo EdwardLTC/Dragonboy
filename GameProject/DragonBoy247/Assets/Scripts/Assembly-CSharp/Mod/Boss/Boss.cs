@@ -32,6 +32,8 @@ namespace Mod
 
 		static readonly int MAX_BOSS_DISPLAY = 5;
 
+		static readonly int MAX_BOSS_STORED = 50;
+
 		static readonly int MAX_BOSS = 100;
 
 		static readonly string LIST_BOSS = "Danh sách Boss";
@@ -114,6 +116,10 @@ namespace Mod
 
 		public static void AddBoss(string chatVip)
 		{
+			if (!isEnabled)
+			{
+				return;
+			}
 			if (strBossHasBeenKilled.Any(chatVip.Contains))
 			{
 				strBossHasBeenKilled.ForEach(s => chatVip = chatVip.Replace(s, "|"));
@@ -124,7 +130,8 @@ namespace Mod
 					boss = listBosses.Last(b =>
 					{
 						if (new[]
-						    { 79, 82, 83
+						    {
+							    79, 82, 83
 						    }.Contains(b.mapId))
 						{
 							if (Regex.IsMatch(b.name, "(Tiểu đội trưởng|(Captain|Kapten) Ginyu|Số [1-4]|Jeice|Burter|Recoome|Guldo)"))

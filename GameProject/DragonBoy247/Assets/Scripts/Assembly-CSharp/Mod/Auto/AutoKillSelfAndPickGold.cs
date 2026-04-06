@@ -19,6 +19,12 @@ namespace Mod.Auto
 				yield break;
 			}
 
+			if (Char.myCharz().cFlag == 0)
+			{
+				Service.gI().getFlag(1, 8);
+				yield break;
+			}
+
 			int itemMapId = -1;
 
 			for (int i = 0; i < GameScr.vItemMap.size(); i++)

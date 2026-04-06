@@ -1353,19 +1353,19 @@ public class Controller : IMessageHandler
 				}
 				if (Char.myCharz().charID == num86)
 				{
-					isStopReadMessage = true;
-					GameScr.lockTick = 500;
+					// isStopReadMessage = true;
+					// GameScr.lockTick = 500;
 					GameScr.gI().center = null;
 					if (b38 == 0 || b38 == 1 || b38 == 3)
 					{
 						Teleport p = new Teleport(Char.myCharz().cx, Char.myCharz().cy, Char.myCharz().head, Char.myCharz().cdir, 0, true, (b38 != 1) ? b38 : Char.myCharz().cgender);
-						Teleport.addTeleport(p);
+						//Teleport.addTeleport(p);
 					}
-					if (b38 == 2)
-					{
-						GameScr.lockTick = 50;
-						Char.myCharz().hide();
-					}
+					// if (b38 == 2)
+					// {
+					// 	GameScr.lockTick = 50;
+					// 	Char.myCharz().hide();
+					// }
 				}
 				else
 				{
@@ -1375,6 +1375,7 @@ public class Controller : IMessageHandler
 						obj5.isUsePlane = true;
 						Teleport teleport = new Teleport(obj5.cx, obj5.cy, obj5.head, obj5.cdir, 0, false, (b38 != 1) ? b38 : obj5.cgender);
 						teleport.id = num86;
+						teleport.@char = obj5;
 						Teleport.addTeleport(teleport);
 					}
 					if (b38 == 2)
@@ -3979,6 +3980,8 @@ public class Controller : IMessageHandler
 							break;
 						}
 					}
+					GameScr.removeCharInMap(charID);
+					GameScr.vCharInMap.addElement(obj16);
 					if (GameScr.findCharInMap(obj16.charID) == null)
 					{
 						GameScr.vCharInMap.addElement(obj16);
