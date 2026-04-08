@@ -2,15 +2,16 @@ using System;
 using Assets.src.e;
 using Assets.src.g;
 using Mod;
+using Mod.Graphics;
 using UnityEngine;
 
 public class GameCanvas : IActionListener
 {
-	public static long timeNow = 0L;
+	public static long timeNow;
 
 	public static bool open3Hour;
 
-	public static bool lowGraphic = false;
+	public static bool lowGraphic;
 
 	public static bool serverchat = false;
 
@@ -18,7 +19,7 @@ public class GameCanvas : IActionListener
 
 	public static bool isLoading;
 
-	public static bool isTouch = false;
+	public static bool isTouch;
 
 	public static bool isTouchControl;
 
@@ -136,15 +137,13 @@ public class GameCanvas : IActionListener
 
 	public static int skyColor;
 
-	public static int curPos = 0;
+	public static int curPos;
 
 	public static int[] bgW;
 
 	public static int[] bgH;
 
 	public static int planet = 0;
-
-	private mGraphics g = new mGraphics();
 
 	public static Image img18;
 
@@ -158,13 +157,13 @@ public class GameCanvas : IActionListener
 
 	public static bool isPlaySound = true;
 
-	private static int clearOldData;
+	static int clearOldData;
 
 	public static int timeOpenKeyBoard;
 
 	public static bool isFocusPanel2;
 
-	public static int fps = 0;
+	public static int fps;
 
 	public static int max;
 
@@ -172,19 +171,11 @@ public class GameCanvas : IActionListener
 
 	public static int upmax;
 
-	private long timefps = mSystem.currentTimeMillis() + 1000;
-
-	private long timeup = mSystem.currentTimeMillis() + 1000;
-
 	public static int isRequestMapID = -1;
 
 	public static long waitingTimeChangeMap;
 
-	private static int dir_ = -1;
-
-	private int tickWaitThongBao;
-
-	public bool isPaintCarret;
+	static int dir_ = -1;
 
 	public static MyVector debugUpdate;
 
@@ -192,7 +183,7 @@ public class GameCanvas : IActionListener
 
 	public static MyVector debugSession;
 
-	private static bool isShowErrorForm = false;
+	static bool isShowErrorForm = false;
 
 	public static bool paintBG;
 
@@ -272,13 +263,19 @@ public class GameCanvas : IActionListener
 
 	public static int yb3;
 
-	public static int nBg = 0;
+	public static int nBg;
 
 	public static int lastBg = -1;
 
-	public static int[] bgRain = new int[3] { 1, 4, 11 };
+	public static int[] bgRain = new int[3]
+	{
+		1, 4, 11
+	};
 
-	public static int[] bgRainFont = new int[1] { -1 };
+	public static int[] bgRainFont = new int[1]
+	{
+		-1
+	};
 
 	public static Image imgCaycot;
 
@@ -290,7 +287,7 @@ public class GameCanvas : IActionListener
 
 	public static bool isLoadBGok;
 
-	public static long lastTimePress = 0L;
+	public static long lastTimePress;
 
 	public static int keyAsciiPress;
 
@@ -300,17 +297,13 @@ public class GameCanvas : IActionListener
 
 	public static MyVector flyTexts = new MyVector();
 
-	public int longTime;
-
 	public static long timeBreakLoading;
 
 	public static string thongBaoTest;
 
 	public static int xThongBaoTranslate = w - 60;
 
-	public static bool isPointerJustDown = false;
-
-	public int count = 1;
+	public static bool isPointerJustDown;
 
 	public static bool csWait;
 
@@ -350,14 +343,6 @@ public class GameCanvas : IActionListener
 
 	public static int girlHPBarY;
 
-	public int timeOut;
-
-	public int[] dustX;
-
-	public int[] dustY;
-
-	public int[] dustState;
-
 	public static int[] wsX;
 
 	public static int[] wsY;
@@ -380,11 +365,33 @@ public class GameCanvas : IActionListener
 
 	public static SelectCharScr _SelectCharScr;
 
-	public bool resetToLoginScr;
-
 	public static long TIMEOUT;
 
 	public static int timeLoading = 15;
+
+	public int count = 1;
+
+	public int[] dustState;
+
+	public int[] dustX;
+
+	public int[] dustY;
+
+	readonly mGraphics g = new mGraphics();
+
+	public bool isPaintCarret;
+
+	public int longTime;
+
+	public bool resetToLoginScr;
+
+	int tickWaitThongBao;
+
+	long timefps = mSystem.currentTimeMillis() + 1000;
+
+	public int timeOut;
+
+	long timeup = mSystem.currentTimeMillis() + 1000;
 
 	public GameCanvas()
 	{
@@ -407,6 +414,339 @@ public class GameCanvas : IActionListener
 			Rms.saveRMSInt(GameMidlet.VERSION, 1);
 		}
 		initGame();
+	}
+
+	public void perform(int idAction, object p)
+	{
+		switch (idAction)
+		{
+		case 9000:
+			endDlg();
+			SplashScr.imgLogo = null;
+			SmallImage.loadBigRMS();
+			mSystem.gcc();
+			ServerListScreen.bigOk = true;
+			ServerListScreen.loadScreen = true;
+			GameScr.gI().loadGameScr();
+			if (currentScreen != loginScr)
+			{
+				serverScreen.switchToMe2();
+			}
+			break;
+		case 999:
+			mSystem.closeBanner();
+			endDlg();
+			break;
+		case 888396:
+			endDlg();
+			break;
+		case 888397:
+		{
+			string text4 = (string)p;
+			break;
+		}
+		case 9999:
+			endDlg();
+			connect();
+			Service.gI().setClientType();
+			if (loginScr == null)
+			{
+				loginScr = new LoginScr();
+			}
+			loginScr.doLogin();
+			break;
+		case 8881:
+		{
+			string url = (string)p;
+			try
+			{
+				GameMidlet.instance.platformRequest(url);
+			}
+			catch (Exception)
+			{
+			}
+			currentDialog = null;
+			break;
+		}
+		case 8882:
+			InfoDlg.hide();
+			currentDialog = null;
+			ServerListScreen.isAutoConect = false;
+			ServerListScreen.countDieConnect = 0;
+			break;
+		case 8884:
+			endDlg();
+			if (serverScr == null)
+			{
+				serverScr = new ServerScr();
+			}
+			serverScr.switchToMe();
+			break;
+		case 8885:
+			GameMidlet.instance.exit();
+			break;
+		case 8886:
+		{
+			endDlg();
+			string name = (string)p;
+			Service.gI().addFriend(name);
+			break;
+		}
+		case 8887:
+		{
+			endDlg();
+			int charId = (int)p;
+			Service.gI().addPartyAccept(charId);
+			break;
+		}
+		case 8888:
+		{
+			int charId2 = (int)p;
+			Service.gI().addPartyCancel(charId2);
+			endDlg();
+			break;
+		}
+		case 8889:
+		{
+			string str = (string)p;
+			endDlg();
+			Service.gI().acceptPleaseParty(str);
+			break;
+		}
+		case 88810:
+		{
+			int playerMapId = (int)p;
+			endDlg();
+			Service.gI().acceptInviteTrade(playerMapId);
+			break;
+		}
+		case 88811:
+			endDlg();
+			Service.gI().cancelInviteTrade();
+			break;
+		case 88814:
+		{
+			Item[] items = (Item[])p;
+			endDlg();
+			Service.gI().crystalCollectLock(items);
+			break;
+		}
+		case 88817:
+			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
+			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menu.menuSelectedItem, 0);
+			break;
+		case 88818:
+		{
+			short menuId2 = (short)p;
+			Service.gI().textBoxId(menuId2, inputDlg.tfInput.getText());
+			endDlg();
+			break;
+		}
+		case 88819:
+		{
+			short menuId = (short)p;
+			Service.gI().menuId(menuId);
+			break;
+		}
+		case 88820:
+		{
+			string[] array = (string[])p;
+			if (Char.myCharz().npcFocus == null)
+			{
+				break;
+			}
+			int menuSelectedItem = menu.menuSelectedItem;
+			if (array.Length > 1)
+			{
+				MyVector myVector = new MyVector();
+				for (int i = 0; i < array.Length - 1; i++)
+				{
+					myVector.addElement(new Command(array[i + 1], instance, 88821, menuSelectedItem));
+				}
+				menu.startAt(myVector, 3);
+			}
+			else
+			{
+				ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
+				Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menuSelectedItem, 0);
+			}
+			break;
+		}
+		case 88821:
+		{
+			int menuId3 = (int)p;
+			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
+			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menuId3, menu.menuSelectedItem);
+			break;
+		}
+		case 88822:
+			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
+			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menu.menuSelectedItem, 0);
+			break;
+		case 88823:
+			startOKDlg(mResources.SENTMSG);
+			break;
+		case 88824:
+			startOKDlg(mResources.NOSENDMSG);
+			break;
+		case 88825:
+			startOKDlg(mResources.sendMsgSuccess, false);
+			break;
+		case 88826:
+			startOKDlg(mResources.cannotSendMsg, false);
+			break;
+		case 88827:
+			startOKDlg(mResources.sendGuessMsgSuccess);
+			break;
+		case 88828:
+			startOKDlg(mResources.sendMsgFail);
+			break;
+		case 88829:
+		{
+			string text5 = inputDlg.tfInput.getText();
+			if (!text5.Equals(string.Empty))
+			{
+				Service.gI().changeName(text5, (int)p);
+				InfoDlg.showWait();
+			}
+			break;
+		}
+		case 88836:
+			inputDlg.tfInput.setMaxTextLenght(6);
+			inputDlg.show(mResources.INPUT_PRIVATE_PASS, new Command(mResources.ACCEPT, instance, 888361, null), TField.INPUT_TYPE_NUMERIC);
+			break;
+		case 888361:
+		{
+			string text3 = inputDlg.tfInput.getText();
+			endDlg();
+			if (text3.Length < 6 || text3.Equals(string.Empty))
+			{
+				startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
+				break;
+			}
+			try
+			{
+				Service.gI().activeAccProtect(int.Parse(text3));
+				break;
+			}
+			catch (Exception ex3)
+			{
+				startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
+				Cout.println("Loi tai 888361 Gamescavas " + ex3);
+				break;
+			}
+		}
+		case 88837:
+		{
+			string text2 = inputDlg.tfInput.getText();
+			endDlg();
+			try
+			{
+				Service.gI().openLockAccProtect(int.Parse(text2.Trim()));
+				break;
+			}
+			catch (Exception ex2)
+			{
+				Cout.println("Loi tai 88837 " + ex2);
+				break;
+			}
+		}
+		case 88839:
+		{
+			string text = inputDlg.tfInput.getText();
+			endDlg();
+			if (text.Length < 6 || text.Equals(string.Empty))
+			{
+				startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
+				break;
+			}
+			try
+			{
+				startYesNoDlg(mResources.cancelAccountProtection, 888391, text, 8882, null);
+				break;
+			}
+			catch (Exception)
+			{
+				startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
+				break;
+			}
+		}
+		case 888391:
+		{
+			string s = (string)p;
+			endDlg();
+			Service.gI().clearAccProtect(int.Parse(s));
+			break;
+		}
+		case 888392:
+			Service.gI().menu(4, menu.menuSelectedItem, 0);
+			break;
+		case 888393:
+			if (loginScr == null)
+			{
+				loginScr = new LoginScr();
+			}
+			loginScr.doLogin();
+			Main.closeKeyBoard();
+			break;
+		case 888394:
+			endDlg();
+			break;
+		case 888395:
+			endDlg();
+			break;
+		case 101023:
+			Main.numberQuit = 0;
+			break;
+		case 101024:
+			Res.outz("output 101024");
+			endDlg();
+			break;
+		case 101025:
+			endDlg();
+			if (ServerListScreen.loadScreen)
+			{
+				serverScreen.switchToMe();
+			}
+			else
+			{
+				serverScreen.show2();
+			}
+			break;
+		case 101026:
+			mSystem.onDisconnected();
+			break;
+		case 100001:
+			Service.gI().getFlag(0, -1);
+			InfoDlg.showWait();
+			break;
+		case 100002:
+			if (loginScr == null)
+			{
+				loginScr = new LoginScr();
+			}
+			loginScr.backToRegister();
+			break;
+		case 100005:
+			if (Char.myCharz().statusMe == 14)
+			{
+				startOKDlg(mResources.can_not_do_when_die);
+			}
+			else
+			{
+				Service.gI().openUIZone();
+			}
+			break;
+		case 100006:
+			mSystem.onDisconnected();
+			break;
+		case 100016:
+			ServerListScreen.SetIpSelect(17, false);
+			instance.doResetToLoginScr(serverScreen);
+			ServerListScreen.waitToLogin = true;
+			endDlg();
+			break;
+		}
 	}
 
 	public static string getPlatformName()
@@ -904,7 +1244,7 @@ public class GameCanvas : IActionListener
 
 	public static bool isWaiting()
 	{
-		if (InfoDlg.isShow || (msgdlg != null && msgdlg.info.Equals(mResources.PLEASEWAIT)) || Char.isLoadingMap || LoginScr.isContinueToLogin)
+		if (InfoDlg.isShow || msgdlg != null && msgdlg.info.Equals(mResources.PLEASEWAIT) || Char.isLoadingMap || LoginScr.isContinueToLogin)
 		{
 			return true;
 		}
@@ -992,7 +1332,7 @@ public class GameCanvas : IActionListener
 		{
 			SoundMn.gI().stopAll();
 			LoginScr.isContinueToLogin = false;
-			TileMap.lastType = (TileMap.bgType = 0);
+			TileMap.lastType = TileMap.bgType = 0;
 			Char.clearMyChar();
 			GameScr.clearGameScr();
 			GameScr.resetAllvector();
@@ -1006,7 +1346,7 @@ public class GameCanvas : IActionListener
 			GameScr.loadCamera(true, -1, -1);
 			GameScr.cmx = 100;
 			panel.currentTabIndex = 0;
-			panel.selected = (isTouch ? (-1) : 0);
+			panel.selected = isTouch ? -1 : 0;
 			panel.init();
 			panel2 = null;
 			GameScr.isPaint = true;
@@ -1035,7 +1375,7 @@ public class GameCanvas : IActionListener
 		}
 		catch (Exception ex)
 		{
-			Cout.println("Loi tai doResetToLoginScr " + ex.ToString());
+			Cout.println("Loi tai doResetToLoginScr " + ex);
 		}
 		ServerListScreen.isAutoConect = true;
 		ServerListScreen.countDieConnect = 0;
@@ -1073,7 +1413,7 @@ public class GameCanvas : IActionListener
 		{
 			cmy = GameCanvas.h;
 		}
-		g.fillRect(x, y - ((detalY != 0) ? (cmy >> detalY) : 0), w, h + ((detalY != 0) ? (cmy >> detalY) : 0));
+		g.fillRect(x, y - (detalY != 0 ? cmy >> detalY : 0), w, h + (detalY != 0 ? cmy >> detalY : 0));
 	}
 
 	public static void paintBackgroundtLayer(mGraphics g, int layer, int deltaY, int color1, int color2)
@@ -1114,14 +1454,14 @@ public class GameCanvas : IActionListener
 				{
 					for (int i = -((GameScr.cmx + moveX[num] >> layerSpeed[num]) % bgW[num]); i < GameScr.gW; i += bgW[num])
 					{
-						g.drawImage(imgBG[num], i, yb[num] - ((deltaY > 0) ? (cmy >> deltaY) : 0), 0);
+						g.drawImage(imgBG[num], i, yb[num] - (deltaY > 0 ? cmy >> deltaY : 0), 0);
 					}
 				}
 				else
 				{
 					for (int j = 0; j < GameScr.gW; j += bgW[num])
 					{
-						g.drawImage(imgBG[num], j, yb[num] - ((deltaY > 0) ? (cmy >> deltaY) : 0), 0);
+						g.drawImage(imgBG[num], j, yb[num] - (deltaY > 0 ? cmy >> deltaY : 0), 0);
 					}
 				}
 				if (color1 != -1)
@@ -1171,7 +1511,7 @@ public class GameCanvas : IActionListener
 		}
 		catch (Exception ex)
 		{
-			Cout.LogError("Loi ham paint bground: " + ex.ToString());
+			Cout.LogError("Loi ham paint bground: " + ex);
 		}
 	}
 
@@ -1239,13 +1579,17 @@ public class GameCanvas : IActionListener
 		}
 		else
 		{
-			int num = ((TileMap.bgID % 2 != 0) ? 1 : 2);
+			int num = TileMap.bgID % 2 != 0 ? 1 : 2;
 			imgBgIOS = mSystem.loadImage("/bg/bg_ios_" + num + ".png");
 		}
 	}
 
 	public static void paintBGGameScr(mGraphics g)
 	{
+		if (GraphicsReducer.OnPaintBgGameScr(g))
+		{
+			return;
+		}
 		if (!isLoadBGok)
 		{
 			g.setColor(0);
@@ -1308,7 +1652,7 @@ public class GameCanvas : IActionListener
 				{
 					int num = GameScr.cmy - (325 - GameScr.gH23);
 					g.translate(0, -num);
-					fillRect(g, (!GameScr.gI().isRongThanXuatHien && !GameScr.gI().isFireWorks) ? colorTop[2] : GameScr.gI().mautroi, 0, num - (GameScr.cmy >> 3), gW, yb[2] - num + (GameScr.cmy >> 3) + 100, 2);
+					fillRect(g, !GameScr.gI().isRongThanXuatHien && !GameScr.gI().isFireWorks ? colorTop[2] : GameScr.gI().mautroi, 0, num - (GameScr.cmy >> 3), gW, yb[2] - num + (GameScr.cmy >> 3) + 100, 2);
 					paintBackgroundtLayer(g, 3, 2, -1, colorBotton[2]);
 					paintBackgroundtLayer(g, 2, 0, -1, -1);
 					paintBackgroundtLayer(g, 1, 0, -1, colorBotton[0]);
@@ -1317,7 +1661,7 @@ public class GameCanvas : IActionListener
 				else if (typeBg == 4)
 				{
 					paintBackgroundtLayer(g, 4, 7, colorTop[3], -1);
-					paintBackgroundtLayer(g, 3, 3, -1, (!isHDVersion()) ? colorTop[1] : colorBotton[2]);
+					paintBackgroundtLayer(g, 3, 3, -1, !isHDVersion() ? colorTop[1] : colorBotton[2]);
 					paintBackgroundtLayer(g, 2, 2, colorTop[1], colorBotton[1]);
 					paintBackgroundtLayer(g, 1, 1, -1, colorBotton[0]);
 				}
@@ -1366,7 +1710,7 @@ public class GameCanvas : IActionListener
 					drawSun2(g);
 					paintBackgroundtLayer(g, 3, 4, -1, colorBotton[2]);
 					paintBackgroundtLayer(g, 2, 2, -1, colorBotton[1]);
-					if (((TileMap.mapID < 92 || TileMap.mapID > 96) && TileMap.mapID != 51 && TileMap.mapID != 52) || currentScreen == loginScr)
+					if ((TileMap.mapID < 92 || TileMap.mapID > 96) && TileMap.mapID != 51 && TileMap.mapID != 52 || currentScreen == loginScr)
 					{
 						paintBackgroundtLayer(g, 1, 1, -1, colorBotton[0]);
 					}
@@ -1388,7 +1732,7 @@ public class GameCanvas : IActionListener
 				{
 					int num2 = GameScr.cmy - (380 - GameScr.gH23);
 					g.translate(0, -num2);
-					fillRect(g, (!GameScr.gI().isRongThanXuatHien) ? colorTop[1] : GameScr.gI().mautroi, 0, num2 - (GameScr.cmy >> 2), gW, yb[1] - num2 + (GameScr.cmy >> 2) + 100, 2);
+					fillRect(g, !GameScr.gI().isRongThanXuatHien ? colorTop[1] : GameScr.gI().mautroi, 0, num2 - (GameScr.cmy >> 2), gW, yb[1] - num2 + (GameScr.cmy >> 2) + 100, 2);
 					paintBackgroundtLayer(g, 2, 2, -1, colorBotton[1]);
 					drawSun1(g);
 					drawSun2(g);
@@ -1618,14 +1962,17 @@ public class GameCanvas : IActionListener
 			}
 			BackgroudEffect.clearImage();
 			randomRaintEff(typeBG);
-			if ((TileMap.lastBgID == typeBG && TileMap.lastType == TileMap.bgType) || typeBG == -1)
+			if (TileMap.lastBgID == typeBG && TileMap.lastType == TileMap.bgType || typeBG == -1)
 			{
 				return;
 			}
 			transY = 12;
 			TileMap.lastBgID = (sbyte)typeBG;
 			TileMap.lastType = (sbyte)TileMap.bgType;
-			layerSpeed = new int[5] { 1, 2, 3, 7, 8 };
+			layerSpeed = new int[5]
+			{
+				1, 2, 3, 7, 8
+			};
 			moveX = new int[5];
 			moveXSpeed = new int[5];
 			typeBg = typeBG;
@@ -1640,7 +1987,10 @@ public class GameCanvas : IActionListener
 			{
 			case 0:
 				imgCaycot = loadImageRMS("/bg/caycot.png");
-				layerSpeed = new int[4] { 1, 3, 5, 7 };
+				layerSpeed = new int[4]
+				{
+					1, 3, 5, 7
+				};
 				nBg = 4;
 				if (TileMap.bgType == 2)
 				{
@@ -1652,8 +2002,14 @@ public class GameCanvas : IActionListener
 				nBg = 4;
 				break;
 			case 2:
-				moveX = new int[5] { 0, 0, 1, 0, 0 };
-				moveXSpeed = new int[5] { 0, 0, 2, 0, 0 };
+				moveX = new int[5]
+				{
+					0, 0, 1, 0, 0
+				};
+				moveXSpeed = new int[5]
+				{
+					0, 0, 2, 0, 0
+				};
 				nBg = 5;
 				break;
 			case 3:
@@ -1661,16 +2017,28 @@ public class GameCanvas : IActionListener
 				break;
 			case 4:
 				BackgroudEffect.addEffect(3);
-				moveX = new int[5] { 0, 1, 0, 0, 0 };
-				moveXSpeed = new int[5] { 0, 1, 0, 0, 0 };
+				moveX = new int[5]
+				{
+					0, 1, 0, 0, 0
+				};
+				moveXSpeed = new int[5]
+				{
+					0, 1, 0, 0, 0
+				};
 				nBg = 4;
 				break;
 			case 5:
 				nBg = 4;
 				break;
 			case 6:
-				moveX = new int[5] { 1, 0, 0, 0, 0 };
-				moveXSpeed = new int[5] { 2, 0, 0, 0, 0 };
+				moveX = new int[5]
+				{
+					1, 0, 0, 0, 0
+				};
+				moveXSpeed = new int[5]
+				{
+					2, 0, 0, 0, 0
+				};
 				nBg = 5;
 				break;
 			case 7:
@@ -1693,8 +2061,14 @@ public class GameCanvas : IActionListener
 				nBg = 3;
 				break;
 			case 12:
-				moveX = new int[5] { 1, 1, 0, 0, 0 };
-				moveXSpeed = new int[5] { 2, 1, 0, 0, 0 };
+				moveX = new int[5]
+				{
+					1, 1, 0, 0, 0
+				};
+				moveXSpeed = new int[5]
+				{
+					2, 1, 0, 0, 0
+				};
 				nBg = 3;
 				break;
 			case 13:
@@ -1705,16 +2079,28 @@ public class GameCanvas : IActionListener
 				nBg = 2;
 				break;
 			case 16:
-				layerSpeed = new int[4] { 1, 3, 5, 7 };
+				layerSpeed = new int[4]
+				{
+					1, 3, 5, 7
+				};
 				nBg = 4;
 				break;
 			case 19:
-				moveX = new int[5] { 0, 2, 1, 0, 0 };
-				moveXSpeed = new int[5] { 0, 2, 1, 0, 0 };
+				moveX = new int[5]
+				{
+					0, 2, 1, 0, 0
+				};
+				moveXSpeed = new int[5]
+				{
+					0, 2, 1, 0, 0
+				};
 				nBg = 5;
 				break;
 			default:
-				layerSpeed = new int[4] { 1, 3, 5, 7 };
+				layerSpeed = new int[4]
+				{
+					1, 3, 5, 7
+				};
 				nBg = 4;
 				break;
 			}
@@ -1817,13 +2203,12 @@ public class GameCanvas : IActionListener
 			getYBackground(typeBg);
 			cloudX = new int[5]
 			{
-				GameScr.gW / 2 - 40,
-				GameScr.gW / 2 + 40,
-				GameScr.gW / 2 - 100,
-				GameScr.gW / 2 - 80,
-				GameScr.gW / 2 - 120
+				GameScr.gW / 2 - 40, GameScr.gW / 2 + 40, GameScr.gW / 2 - 100, GameScr.gW / 2 - 80, GameScr.gW / 2 - 120
 			};
-			cloudY = new int[5] { 130, 100, 150, 140, 80 };
+			cloudY = new int[5]
+			{
+				130, 100, 150, 140, 80
+			};
 			imgSunSpec = null;
 			if (typeBg != 0)
 			{
@@ -1846,8 +2231,8 @@ public class GameCanvas : IActionListener
 				}
 				else if (typeBg == 7)
 				{
-					imgSun = loadImageRMS("/bg/sun3" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-					imgSun2 = loadImageRMS("/bg/sun4" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+					imgSun = loadImageRMS("/bg/sun3" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+					imgSun2 = loadImageRMS("/bg/sun4" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 					sunX = GameScr.gW - GameScr.gW / 3;
 					sunY = yb[3] - 80;
 					sunX2 = sunX - 100;
@@ -1855,8 +2240,8 @@ public class GameCanvas : IActionListener
 				}
 				else if (typeBg == 6)
 				{
-					imgSun = loadImageRMS("/bg/sun5" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-					imgSun2 = loadImageRMS("/bg/sun6" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+					imgSun = loadImageRMS("/bg/sun5" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+					imgSun2 = loadImageRMS("/bg/sun6" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 					sunX = GameScr.gW - GameScr.gW / 3;
 					sunY = yb[4];
 					sunX2 = sunX - 100;
@@ -1864,8 +2249,8 @@ public class GameCanvas : IActionListener
 				}
 				else if (typeBG == 5)
 				{
-					imgSun = loadImageRMS("/bg/sun8" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-					imgSun2 = loadImageRMS("/bg/sun7" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+					imgSun = loadImageRMS("/bg/sun8" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+					imgSun2 = loadImageRMS("/bg/sun7" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 					sunX = GameScr.gW / 2 - 50;
 					sunY = yb[3] + 20;
 					sunX2 = GameScr.gW / 2 + 20;
@@ -1873,8 +2258,8 @@ public class GameCanvas : IActionListener
 				}
 				else if (typeBg == 8 && TileMap.mapID < 90)
 				{
-					imgSun = loadImageRMS("/bg/sun9" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-					imgSun2 = loadImageRMS("/bg/sun10" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+					imgSun = loadImageRMS("/bg/sun9" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+					imgSun2 = loadImageRMS("/bg/sun10" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 					sunX = GameScr.gW / 2 - 30;
 					sunY = yb[3] + 60;
 					sunX2 = GameScr.gW / 2 + 20;
@@ -1885,42 +2270,42 @@ public class GameCanvas : IActionListener
 					switch (typeBG)
 					{
 					case 9:
-						imgSun = loadImageRMS("/bg/sun11" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-						imgSun2 = loadImageRMS("/bg/sun12" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+						imgSun = loadImageRMS("/bg/sun11" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+						imgSun2 = loadImageRMS("/bg/sun12" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 						sunX = GameScr.gW - GameScr.gW / 3;
 						sunY = yb[4] + 20;
 						sunX2 = sunX - 80;
 						sunY2 = yb[4] + 40;
 						break;
 					case 10:
-						imgSun = loadImageRMS("/bg/sun13" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-						imgSun2 = loadImageRMS("/bg/sun14" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+						imgSun = loadImageRMS("/bg/sun13" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+						imgSun2 = loadImageRMS("/bg/sun14" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 						sunX = GameScr.gW - GameScr.gW / 3;
 						sunY = yb[1] - 30;
 						sunX2 = sunX - 80;
 						sunY2 = yb[1];
 						break;
 					case 11:
-						imgSun = loadImageRMS("/bg/sun15" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
-						imgSun2 = loadImageRMS("/bg/b113" + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+						imgSun = loadImageRMS("/bg/sun15" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
+						imgSun2 = loadImageRMS("/bg/b113" + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 						sunX = GameScr.gW / 2 - 30;
 						sunY = yb[2] - 30;
 						break;
 					case 12:
-						cloudY = new int[5] { 200, 170, 220, 150, 250 };
+						cloudY = new int[5]
+						{
+							200, 170, 220, 150, 250
+						};
 						break;
 					case 16:
 					{
-						cloudX = new int[7] { 90, 170, 250, 320, 400, 450, 500 };
+						cloudX = new int[7]
+						{
+							90, 170, 250, 320, 400, 450, 500
+						};
 						cloudY = new int[7]
 						{
-							yb[2] + 5,
-							yb[2] - 20,
-							yb[2] - 50,
-							yb[2] - 30,
-							yb[2] - 50,
-							yb[2],
-							yb[2] - 40
+							yb[2] + 5, yb[2] - 20, yb[2] - 50, yb[2] - 30, yb[2] - 50, yb[2], yb[2] - 40
 						};
 						imgSunSpec = new Image[7];
 						for (int l = 0; l < imgSunSpec.Length; l++)
@@ -1935,15 +2320,21 @@ public class GameCanvas : IActionListener
 						break;
 					}
 					case 19:
-						moveX = new int[5] { 0, 2, 1, 0, 0 };
-						moveXSpeed = new int[5] { 0, 2, 1, 0, 0 };
+						moveX = new int[5]
+						{
+							0, 2, 1, 0, 0
+						};
+						moveXSpeed = new int[5]
+						{
+							0, 2, 1, 0, 0
+						};
 						nBg = 5;
 						break;
 					default:
 						imgCloud = null;
 						imgSun = null;
 						imgSun2 = null;
-						imgSun = loadImageRMS("/bg/sun" + typeBG + ((TileMap.bgType != 0) ? ("-" + TileMap.bgType) : string.Empty) + ".png");
+						imgSun = loadImageRMS("/bg/sun" + typeBG + (TileMap.bgType != 0 ? "-" + TileMap.bgType : string.Empty) + ".png");
 						if (loadImageRMS("/tWater/water_flow_" + typeBG) != null)
 						{
 							TileMap.imgWaterflow = loadImageRMS("/tWater/water_flow_" + typeBG);
@@ -1966,7 +2357,7 @@ public class GameCanvas : IActionListener
 		}
 	}
 
-	private static void randomRaintEff(int typeBG)
+	static void randomRaintEff(int typeBG)
 	{
 		for (int i = 0; i < bgRain.Length; i++)
 		{
@@ -1980,8 +2371,12 @@ public class GameCanvas : IActionListener
 
 	public void keyPressedz(int keyCode)
 	{
+		if (GameEvents.OnKeyPressed(keyCode, false))
+		{
+			return;
+		}
 		lastTimePress = mSystem.currentTimeMillis();
-		if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 122) || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 32 || keyCode == 31)
+		if (keyCode >= 48 && keyCode <= 57 || keyCode >= 65 && keyCode <= 122 || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 32 || keyCode == 31)
 		{
 			keyAsciiPress = keyCode;
 		}
@@ -2067,14 +2462,14 @@ public class GameCanvas : IActionListener
 			keyPressed[0] = true;
 			break;
 		case 49:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[1] = true;
 				keyPressed[1] = true;
 			}
 			break;
 		case 51:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[3] = true;
 				keyPressed[3] = true;
@@ -2107,35 +2502,35 @@ public class GameCanvas : IActionListener
 			keyPressed[13] = true;
 			break;
 		case 50:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[2] = true;
 				keyPressed[2] = true;
 			}
 			break;
 		case 52:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[4] = true;
 				keyPressed[4] = true;
 			}
 			break;
 		case 54:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[6] = true;
 				keyPressed[6] = true;
 			}
 			break;
 		case 56:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[8] = true;
 				keyPressed[8] = true;
 			}
 			break;
 		case 53:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[5] = true;
 				keyPressed[5] = true;
@@ -2158,6 +2553,10 @@ public class GameCanvas : IActionListener
 
 	public void keyReleasedz(int keyCode)
 	{
+		if (GameEvents.OnKeyReleased(keyCode, false))
+		{
+			return;
+		}
 		keyAsciiPress = 0;
 		mapKeyRelease(keyCode);
 	}
@@ -2192,14 +2591,14 @@ public class GameCanvas : IActionListener
 			keyReleased[0] = true;
 			break;
 		case 49:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[1] = false;
 				keyReleased[1] = true;
 			}
 			break;
 		case 51:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[3] = false;
 				keyReleased[3] = true;
@@ -2232,35 +2631,35 @@ public class GameCanvas : IActionListener
 			keyReleased[13] = true;
 			break;
 		case 50:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[2] = false;
 				keyReleased[2] = true;
 			}
 			break;
 		case 52:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[4] = false;
 				keyReleased[4] = true;
 			}
 			break;
 		case 54:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[6] = false;
 				keyReleased[6] = true;
 			}
 			break;
 		case 56:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[8] = false;
 				keyReleased[8] = true;
 			}
 			break;
 		case 53:
-			if (currentScreen == CrackBallScr.instance || (currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow))
+			if (currentScreen == CrackBallScr.instance || currentScreen == GameScr.instance && isMoveNumberPad && !ChatTextField.gI().isShow)
 			{
 				keyHold[5] = false;
 				keyReleased[5] = true;
@@ -2422,7 +2821,7 @@ public class GameCanvas : IActionListener
 		g.fillRect(0, 0, w, h);
 		g.drawImage(LoginScr.imgTitle, w / 2, h / 2 - 24, StaticObj.BOTTOM_HCENTER);
 		paintShukiren(hw, h / 2 + 24, g);
-		mFont.tahoma_7b_white.drawString(g, mResources.PLEASEWAIT + ((LoginScr.timeLogin <= 0) ? empty : (" " + LoginScr.timeLogin + "s")), w / 2, h / 2, 2);
+		mFont.tahoma_7b_white.drawString(g, mResources.PLEASEWAIT + (LoginScr.timeLogin <= 0 ? empty : " " + LoginScr.timeLogin + "s"), w / 2, h / 2, 2);
 	}
 
 	public void paint(mGraphics gx)
@@ -2534,6 +2933,7 @@ public class GameCanvas : IActionListener
 		catch (Exception)
 		{
 		}
+		GameEvents.OnPaintGameCanvas(this, g);
 	}
 
 	public static void endDlg()
@@ -2548,6 +2948,10 @@ public class GameCanvas : IActionListener
 
 	public static void startOKDlg(string info)
 	{
+		if (GameEvents.OnStartOKDlg(info))
+		{
+			return;
+		}
 		closeKeyBoard();
 		msgdlg.setInfo(info, null, new Command(mResources.OK, instance, 8882, null), null);
 		currentDialog = msgdlg;
@@ -2618,7 +3022,7 @@ public class GameCanvas : IActionListener
 			if (m >= 1000)
 			{
 				int num2 = m % 1000;
-				text = ((num2 != 0) ? ((num2 >= 10) ? ((num2 >= 100) ? ("." + num2 + text) : (".0" + num2 + text)) : (".00" + num2 + text)) : (".000" + text));
+				text = num2 != 0 ? num2 >= 10 ? num2 >= 100 ? "." + num2 + text : ".0" + num2 + text : ".00" + num2 + text : ".000" + text;
 				m /= 1000;
 				continue;
 			}
@@ -2671,7 +3075,7 @@ public class GameCanvas : IActionListener
 			}
 			catch (Exception)
 			{
-				Cout.LogError("Loi ham khong tim thay a: " + ex.ToString());
+				Cout.LogError("Loi ham khong tim thay a: " + ex);
 			}
 		}
 		return result;
@@ -2713,7 +3117,7 @@ public class GameCanvas : IActionListener
 		{
 			return false;
 		}
-		int num = ((dir != 1) ? 1 : 0);
+		int num = dir != 1 ? 1 : 0;
 		if (dustState[num] != -1)
 		{
 			return false;
@@ -2737,7 +3141,7 @@ public class GameCanvas : IActionListener
 			wsY = new int[2];
 			wsState = new int[2];
 			wsF = new int[2];
-			wsState[0] = (wsState[1] = -1);
+			wsState[0] = wsState[1] = -1;
 		}
 	}
 
@@ -2747,7 +3151,7 @@ public class GameCanvas : IActionListener
 		{
 			return false;
 		}
-		int num = ((wsState[0] != -1) ? 1 : 0);
+		int num = wsState[0] != -1 ? 1 : 0;
 		if (wsState[num] != -1)
 		{
 			return false;
@@ -2874,7 +3278,7 @@ public class GameCanvas : IActionListener
 		dustX = new int[2];
 		dustY = new int[2];
 		dustState = new int[2];
-		dustState[0] = (dustState[1] = -1);
+		dustState[0] = dustState[1] = -1;
 	}
 
 	public static void paintShukiren(int x, int y, mGraphics g)
@@ -2898,339 +3302,6 @@ public class GameCanvas : IActionListener
 			return true;
 		}
 		return false;
-	}
-
-	public void perform(int idAction, object p)
-	{
-		switch (idAction)
-		{
-		case 9000:
-			endDlg();
-			SplashScr.imgLogo = null;
-			SmallImage.loadBigRMS();
-			mSystem.gcc();
-			ServerListScreen.bigOk = true;
-			ServerListScreen.loadScreen = true;
-			GameScr.gI().loadGameScr();
-			if (currentScreen != loginScr)
-			{
-				serverScreen.switchToMe2();
-			}
-			break;
-		case 999:
-			mSystem.closeBanner();
-			endDlg();
-			break;
-		case 888396:
-			endDlg();
-			break;
-		case 888397:
-		{
-			string text4 = (string)p;
-			break;
-		}
-		case 9999:
-			endDlg();
-			connect();
-			Service.gI().setClientType();
-			if (loginScr == null)
-			{
-				loginScr = new LoginScr();
-			}
-			loginScr.doLogin();
-			break;
-		case 8881:
-		{
-			string url = (string)p;
-			try
-			{
-				GameMidlet.instance.platformRequest(url);
-			}
-			catch (Exception)
-			{
-			}
-			currentDialog = null;
-			break;
-		}
-		case 8882:
-			InfoDlg.hide();
-			currentDialog = null;
-			ServerListScreen.isAutoConect = false;
-			ServerListScreen.countDieConnect = 0;
-			break;
-		case 8884:
-			endDlg();
-			if (serverScr == null)
-			{
-				serverScr = new ServerScr();
-			}
-			serverScr.switchToMe();
-			break;
-		case 8885:
-			GameMidlet.instance.exit();
-			break;
-		case 8886:
-		{
-			endDlg();
-			string name = (string)p;
-			Service.gI().addFriend(name);
-			break;
-		}
-		case 8887:
-		{
-			endDlg();
-			int charId = (int)p;
-			Service.gI().addPartyAccept(charId);
-			break;
-		}
-		case 8888:
-		{
-			int charId2 = (int)p;
-			Service.gI().addPartyCancel(charId2);
-			endDlg();
-			break;
-		}
-		case 8889:
-		{
-			string str = (string)p;
-			endDlg();
-			Service.gI().acceptPleaseParty(str);
-			break;
-		}
-		case 88810:
-		{
-			int playerMapId = (int)p;
-			endDlg();
-			Service.gI().acceptInviteTrade(playerMapId);
-			break;
-		}
-		case 88811:
-			endDlg();
-			Service.gI().cancelInviteTrade();
-			break;
-		case 88814:
-		{
-			Item[] items = (Item[])p;
-			endDlg();
-			Service.gI().crystalCollectLock(items);
-			break;
-		}
-		case 88817:
-			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
-			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menu.menuSelectedItem, 0);
-			break;
-		case 88818:
-		{
-			short menuId2 = (short)p;
-			Service.gI().textBoxId(menuId2, inputDlg.tfInput.getText());
-			endDlg();
-			break;
-		}
-		case 88819:
-		{
-			short menuId = (short)p;
-			Service.gI().menuId(menuId);
-			break;
-		}
-		case 88820:
-		{
-			string[] array = (string[])p;
-			if (Char.myCharz().npcFocus == null)
-			{
-				break;
-			}
-			int menuSelectedItem = menu.menuSelectedItem;
-			if (array.Length > 1)
-			{
-				MyVector myVector = new MyVector();
-				for (int i = 0; i < array.Length - 1; i++)
-				{
-					myVector.addElement(new Command(array[i + 1], instance, 88821, menuSelectedItem));
-				}
-				menu.startAt(myVector, 3);
-			}
-			else
-			{
-				ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
-				Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menuSelectedItem, 0);
-			}
-			break;
-		}
-		case 88821:
-		{
-			int menuId3 = (int)p;
-			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
-			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menuId3, menu.menuSelectedItem);
-			break;
-		}
-		case 88822:
-			ChatPopup.addChatPopup(string.Empty, 1, Char.myCharz().npcFocus);
-			Service.gI().menu(Char.myCharz().npcFocus.template.npcTemplateId, menu.menuSelectedItem, 0);
-			break;
-		case 88823:
-			startOKDlg(mResources.SENTMSG);
-			break;
-		case 88824:
-			startOKDlg(mResources.NOSENDMSG);
-			break;
-		case 88825:
-			startOKDlg(mResources.sendMsgSuccess, false);
-			break;
-		case 88826:
-			startOKDlg(mResources.cannotSendMsg, false);
-			break;
-		case 88827:
-			startOKDlg(mResources.sendGuessMsgSuccess);
-			break;
-		case 88828:
-			startOKDlg(mResources.sendMsgFail);
-			break;
-		case 88829:
-		{
-			string text5 = inputDlg.tfInput.getText();
-			if (!text5.Equals(string.Empty))
-			{
-				Service.gI().changeName(text5, (int)p);
-				InfoDlg.showWait();
-			}
-			break;
-		}
-		case 88836:
-			inputDlg.tfInput.setMaxTextLenght(6);
-			inputDlg.show(mResources.INPUT_PRIVATE_PASS, new Command(mResources.ACCEPT, instance, 888361, null), TField.INPUT_TYPE_NUMERIC);
-			break;
-		case 888361:
-		{
-			string text3 = inputDlg.tfInput.getText();
-			endDlg();
-			if (text3.Length < 6 || text3.Equals(string.Empty))
-			{
-				startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
-				break;
-			}
-			try
-			{
-				Service.gI().activeAccProtect(int.Parse(text3));
-				break;
-			}
-			catch (Exception ex3)
-			{
-				startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
-				Cout.println("Loi tai 888361 Gamescavas " + ex3.ToString());
-				break;
-			}
-		}
-		case 88837:
-		{
-			string text2 = inputDlg.tfInput.getText();
-			endDlg();
-			try
-			{
-				Service.gI().openLockAccProtect(int.Parse(text2.Trim()));
-				break;
-			}
-			catch (Exception ex2)
-			{
-				Cout.println("Loi tai 88837 " + ex2.ToString());
-				break;
-			}
-		}
-		case 88839:
-		{
-			string text = inputDlg.tfInput.getText();
-			endDlg();
-			if (text.Length < 6 || text.Equals(string.Empty))
-			{
-				startOKDlg(mResources.ALERT_PRIVATE_PASS_1);
-				break;
-			}
-			try
-			{
-				startYesNoDlg(mResources.cancelAccountProtection, 888391, text, 8882, null);
-				break;
-			}
-			catch (Exception)
-			{
-				startOKDlg(mResources.ALERT_PRIVATE_PASS_2);
-				break;
-			}
-		}
-		case 888391:
-		{
-			string s = (string)p;
-			endDlg();
-			Service.gI().clearAccProtect(int.Parse(s));
-			break;
-		}
-		case 888392:
-			Service.gI().menu(4, menu.menuSelectedItem, 0);
-			break;
-		case 888393:
-			if (loginScr == null)
-			{
-				loginScr = new LoginScr();
-			}
-			loginScr.doLogin();
-			Main.closeKeyBoard();
-			break;
-		case 888394:
-			endDlg();
-			break;
-		case 888395:
-			endDlg();
-			break;
-		case 101023:
-			Main.numberQuit = 0;
-			break;
-		case 101024:
-			Res.outz("output 101024");
-			endDlg();
-			break;
-		case 101025:
-			endDlg();
-			if (ServerListScreen.loadScreen)
-			{
-				serverScreen.switchToMe();
-			}
-			else
-			{
-				serverScreen.show2();
-			}
-			break;
-		case 101026:
-			mSystem.onDisconnected();
-			break;
-		case 100001:
-			Service.gI().getFlag(0, -1);
-			InfoDlg.showWait();
-			break;
-		case 100002:
-			if (loginScr == null)
-			{
-				loginScr = new LoginScr();
-			}
-			loginScr.backToRegister();
-			break;
-		case 100005:
-			if (Char.myCharz().statusMe == 14)
-			{
-				startOKDlg(mResources.can_not_do_when_die);
-			}
-			else
-			{
-				Service.gI().openUIZone();
-			}
-			break;
-		case 100006:
-			mSystem.onDisconnected();
-			break;
-		case 100016:
-			ServerListScreen.SetIpSelect(17, false);
-			instance.doResetToLoginScr(serverScreen);
-			ServerListScreen.waitToLogin = true;
-			endDlg();
-			break;
-		}
 	}
 
 	public static void clearAllPointerEvent()

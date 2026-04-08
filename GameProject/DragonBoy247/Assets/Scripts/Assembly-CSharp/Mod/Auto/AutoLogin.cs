@@ -43,6 +43,7 @@ namespace Mod.Auto
 			{
 				lastTimeAttemptLogin = mSystem.currentTimeMillis();
 				GameCanvas.serverScreen.switchToMe();
+				Char.myChar = null;
 				steps = 1;
 			}
 		}

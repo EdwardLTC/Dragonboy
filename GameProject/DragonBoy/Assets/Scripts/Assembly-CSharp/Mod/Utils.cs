@@ -15,15 +15,14 @@ namespace Mod
 {
 	internal static class Utils
 	{
-		static string persistentDataPath = Application.persistentDataPath;
-		internal static string PersistentDataPath => persistentDataPath;
+		internal static string PersistentDataPath => ModDataStorage.PersistentDataPath;
 
-		internal static readonly string dataPath = Path.Combine(GetRootDataPath(), "CommonModData");
+		internal static readonly string dataPath = ModDataStorage.DataPath;
 
-		internal static readonly string PathAutoChat = Path.Combine(dataPath, "autochat.txt");
-		internal static readonly string PathChatCommand = Path.Combine(dataPath, "chatCommands.json");
-		internal static readonly string PathChatHistory = Path.Combine(dataPath, "chat.txt");
-		internal static readonly string PathHotkeyCommand = Path.Combine(dataPath, "hotkeyCommands.json");
+		internal static readonly string PathAutoChat = ModDataStorage.PathAutoChat;
+		internal static readonly string PathChatCommand = ModDataStorage.PathChatCommand;
+		internal static readonly string PathChatHistory = ModDataStorage.PathChatHistory;
+		internal static readonly string PathHotkeyCommand = ModDataStorage.PathHotkeyCommand;
 
 		internal static readonly sbyte ID_SKILL_BUFF = 7;
 		internal static readonly short ID_ICON_ITEM_TDLT = 4387;
@@ -564,157 +563,40 @@ namespace Mod
 		}
 
 		internal static long LoadDataLong(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			byte[] array = new byte[8];
-			fileStream.Read(array, 0, array.Length);
-			fileStream.Close();
-			return BitConverter.ToInt64(array, 0);
-		}
+			=> ModDataStorage.LoadDataLong(name, isCommon);
 
 		internal static bool LoadDataBool(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			byte[] array = new byte[1];
-			fileStream.Read(array, 0, 1);
-			fileStream.Close();
-			return array[0] == 1;
-		}
+			=> ModDataStorage.LoadDataBool(name, isCommon);
 
 		internal static string LoadDataString(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			StreamReader streamReader = new StreamReader(fileStream);
-			string result = streamReader.ReadToEnd();
-			streamReader.Close();
-			fileStream.Close();
-			return result;
-		}
+			=> ModDataStorage.LoadDataString(name, isCommon);
 
 		internal static double LoadDataDouble(string name, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.OpenOrCreate);
-			byte[] array = new byte[8];
-			fileStream.Read(array, 0, array.Length);
-			fileStream.Close();
-			return BitConverter.ToDouble(array, 0);
-		}
+			=> ModDataStorage.LoadDataDouble(name, isCommon);
 
 		internal static bool TryLoadDataLong(string name, out long value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataLong(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
+			=> ModDataStorage.TryLoadDataLong(name, out value, isCommon);
 
 		internal static bool TryLoadDataBool(string name, out bool value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataBool(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
+			=> ModDataStorage.TryLoadDataBool(name, out value, isCommon);
 
 		internal static bool TryLoadDataString(string name, out string value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataString(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
+			=> ModDataStorage.TryLoadDataString(name, out value, isCommon);
 
 		internal static bool TryLoadDataDouble(string name, out double value, bool isCommon = true)
-		{
-			value = default;
-			try
-			{
-				value = LoadDataDouble(name, isCommon);
-				return true;
-			}
-			catch (Exception ex) { Debug.LogException(ex); }
-			return false;
-		}
+			=> ModDataStorage.TryLoadDataDouble(name, out value, isCommon);
 
 		internal static void SaveData(string name, long value, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(BitConverter.GetBytes(value), 0, 8);
-			fileStream.Flush();
-			fileStream.Close();
-		}
+			=> ModDataStorage.SaveData(name, value, isCommon);
 
 		internal static void SaveData(string name, bool status, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(new byte[]
-			{
-				(byte)(status ? 1 : 0)
-			}, 0, 1);
-			fileStream.Flush();
-			fileStream.Close();
-		}
+			=> ModDataStorage.SaveData(name, status, isCommon);
 
 		internal static void SaveData(string name, string data, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			byte[] buffer = Encoding.UTF8.GetBytes(data);
-			fileStream.Write(buffer, 0, buffer.Length);
-			fileStream.Flush();
-			fileStream.Close();
-		}
+			=> ModDataStorage.SaveData(name, data, isCommon);
 
 		internal static void SaveData(string name, double value, bool isCommon = true)
-		{
-			string path = dataPath;
-			if (!isCommon)
-				path = Path.Combine(Rms.GetiPhoneDocumentsPath(), "ModData");
-			if (!Directory.Exists(path))
-				Directory.CreateDirectory(path);
-			FileStream fileStream = new FileStream(Path.Combine(path, name), FileMode.Create);
-			fileStream.Write(BitConverter.GetBytes(value), 0, 8);
-			fileStream.Flush();
-			fileStream.Close();
-		}
+			=> ModDataStorage.SaveData(name, value, isCommon);
 
 		/// <summary>
 		/// Dịch chuyển đến đối tượng trong map
@@ -987,13 +869,7 @@ namespace Mod
 			chatTextField.tfChat.setMaxTextLenght(80);
 		}
 
-		internal static string GetRootDataPath()
-		{
-			string result = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Data");
-			if (IsEditor() || IsAndroidBuild())
-				result = PersistentDataPath;
-			return result;
-		}
+		internal static string GetRootDataPath() => ModDataStorage.GetRootDataPath();
 
 		internal static double Distance(double x1, double y1, double x2, double y2)
 		{

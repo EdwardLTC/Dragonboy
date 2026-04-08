@@ -25,8 +25,8 @@ namespace Mod.Auto
         {
             if (!shouldReviveDeadChars || GameCanvas.gameTick % (30 * Time.timeScale) != 0)
                 return;
-            var deadChar = getDeadCharInMap();
-            var skillRescue = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
+            Char deadChar = getDeadCharInMap();
+            Skill skillRescue = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
             if (deadChar == null || !skillRescue.CanUse())
                 return;
             if (canHealChar(deadChar) && skillRescue.point <= 1)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -50,7 +49,7 @@ namespace Mod.ModHelper.CommandMod.Hotkey
 		/// </summary>
 		public static void save()
 		{
-			File.WriteAllText(Utils.PathHotkeyCommand, JsonConvert.SerializeObject(hotkeyCommands));
+			ModStorage.WriteText(ModStorage.GetCommonDataPath("hotkeyCommands.json"), JsonConvert.SerializeObject(hotkeyCommands));
 		}
 
 		/// <summary>

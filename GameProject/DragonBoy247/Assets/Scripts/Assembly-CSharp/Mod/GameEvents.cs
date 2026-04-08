@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Mod.AccountManager;
 using Mod.Auto;
-using Mod.Auto.AutoChat;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
@@ -59,12 +58,8 @@ namespace Mod
 			}
 			OnSetResolution();
 			OnCheckZoomLevel(Screen.width, Screen.height);
-			if (!Directory.Exists(Utils.dataPath))
-			{
-				Directory.CreateDirectory(Utils.dataPath);
-			}
+			ModStorage.EnsureCommonDataDirectory();
 			CharEffectMain.Init();
-			Setup.loadFile();
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
 			GraphicsReducer.InitializeTileMap(true);
@@ -110,7 +105,6 @@ namespace Mod
 		internal static void OnGameClosing()
 		{
 			ModMenuMain.SaveData();
-			Setup.clearStringTrash();
 			TeleportMenuMain.SaveData();
 
 			if (GameLauncherClient.Instance.IsConnected)
@@ -261,7 +255,7 @@ namespace Mod
 			//    }
 			//}
 
-			result = Utils.GetRootDataPath();
+			result = ModStorage.RootDataPath;
 			// check ip server lậu, lưu rms riêng
 			// ...
 			result = Path.Combine(result, subFolder);
@@ -356,9 +350,9 @@ namespace Mod
 
 			Char.myCharz().cspeed = Utils.myCharSpeed;
 			Time.timeScale = Utils.timeScale;
+			Boss.Update();
 			CharEffectMain.Update();
 			TeleportMenuMain.Update();
-			AutoGoback.Update();
 			AutoTrainPet.Update();
 			AutoSellTrashItems.Update();
 			AutoLogin.OnGameScrUpdate();
@@ -548,6 +542,16 @@ namespace Mod
 			{
 				ModMenuMain.Paint(g);
 				CharEffectMain.Paint(g);
+				Boss.Paint(100, g);
+				g.setColor(Color.red);
+				for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+				{
+					Char @char = (Char)GameScr.vCharInMap.elementAt(i);
+					if (@char.cTypePk == 5)
+					{
+						g.drawLineToBoss(Char.myCharz().cx - GameScr.cmx, Char.myCharz().cy - GameScr.cmy, @char.cx - GameScr.cmx, @char.cy - GameScr.cmy);
+					}
+				}
 			}
 			catch (Exception e)
 			{
@@ -597,6 +601,7 @@ namespace Mod
 				}
 			}
 
+			Boss.UpdateTouch();
 			ModMenuMain.UpdateTouch();
 			if (GameCanvas.isTouchControl)
 			{
@@ -735,11 +740,6 @@ namespace Mod
 			}
 		}
 
-		internal static bool OnPaintBgGameScr(mGraphics g)
-		{
-			return false;
-		}
-
 		internal static void OnMobStartDie(Mob mob)
 		{
 			Pk9rPickMob.MobStartDie(mob);
@@ -754,7 +754,7 @@ namespace Mod
 		{
 			string streamingAssetsPath = Application.streamingAssetsPath;
 			if (Utils.IsAndroidBuild())
-				streamingAssetsPath = Path.Combine(Utils.PersistentDataPath, "StreamingAssets");
+				streamingAssetsPath = Path.Combine(ModStorage.PersistentDataPath, "StreamingAssets");
 			string customAssetsPath = Path.Combine(streamingAssetsPath, "CustomAssets");
 			image = new Image();
 			Texture2D texture2D;
@@ -785,7 +785,7 @@ namespace Mod
 
 		internal static void OnChatVip(string chatVip)
 		{
-
+			Boss.AddBoss(chatVip);
 		}
 
 		internal static void OnUpdateChar(Char ch)

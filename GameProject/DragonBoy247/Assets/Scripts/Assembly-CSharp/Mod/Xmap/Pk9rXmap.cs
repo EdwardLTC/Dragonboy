@@ -167,8 +167,8 @@ namespace Mod.Xmap
 					{
 						waypoint = random.Next(27, 29) == 27 ? XmapUtils.findWaypoint(27) : XmapUtils.findWaypoint(29);
 					}
-					yield return ChangeMap(waypoint);
 					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+					yield return ChangeMap(waypoint);
 					retryCount++;
 				}
 			}
@@ -177,18 +177,11 @@ namespace Mod.Xmap
 			Utils.TeleportToNPC(npcId);
 			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			Service.gI().openMenu(npcId);
-			if (mapNext.info.Length > 1)
-			{
-				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
-			}
 			for (int i = 1; i < mapNext.info.Length; i++)
 			{
 				int select = mapNext.info[i];
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Service.gI().confirmMenu((short)npcId, (sbyte)select);
-				if (i < mapNext.info.Length - 1)
-				{
-					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
-				}
 			}
 			Char.chatPopup = null;
 		}
@@ -216,6 +209,7 @@ namespace Mod.Xmap
 				Service.gI().requestChangeMap();
 				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 				Service.gI().getMapOffline();
+				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
 			}
 		}
 

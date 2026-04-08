@@ -122,13 +122,29 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "AutoSendAttack_Toggle",
-					Title = Strings.autoAttack,
-					Description = Strings.autoSendAttackDescription,
-					GetValueFunc = () => AutoSendAttack.gI.IsActing,
-					SetValueAction = AutoSendAttack.gI.toggle,
-					GetIsDisabled = () => Pk9rPickMob.IsTanSat,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.pickMobTitle) + '!'
+					ID = "AutoKillAll_Toggle",
+					Title = "Kill all",
+					Description = "MỘT MÌNH TAO CHẤP HẾT",
+					GetValueFunc = () => AutoKillAll.gI.IsActing,
+					SetValueAction = AutoKillAll.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoGoback_Toggle",
+					Title = "Goback",
+					Description = "Goback",
+					GetValueFunc = () => AutoGoback.gI.IsActing,
+					SetValueAction = AutoGoback.gI.Toggle,
+					GetIsDisabled = () => AutoKillSelfAndPickGold.gI.IsActing,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, "Kill self and pick gold")
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoKillSelfAndPickGold_Toggle",
+					Title = "Kill self and pick gold",
+					Description = "Tự chết và nhặt vàng (chỉ hoạt động ở map Làng)",
+					GetValueFunc = () => AutoKillSelfAndPickGold.gI.IsActing,
+					SetValueAction = AutoKillSelfAndPickGold.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -146,6 +162,14 @@ namespace Mod.ModMenu
 					GetValueFunc = () => CharEffectMain.isEnabled,
 					SetValueAction = CharEffectMain.setState,
 					RMSName = "show_target_info"
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "ShowBossInfo_Toggle",
+					Title = Strings.notifyBossTitle,
+					Description = Strings.notifyBossDescription,
+					GetValueFunc = () => Boss.isEnabled,
+					SetValueAction = Boss.setState
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -218,23 +242,6 @@ namespace Mod.ModMenu
 					TextFieldTitle = Strings.inputFPS,
 					TextFieldHint = "FPS"
 				}),
-				new ModMenuItemValues( new ModMenuItemValuesConfig
-				{
-					ID = "UpCSKB_PriceForDeposit",
-					Title = "Giá cskb kí gửi",
-					Description ="Khi túi đầy, thì sẽ kí gửi cskb (có tác dụng khi thao tác khi full là <kí gửi>)",
-					IsFloatingPoint = false,
-					GetValueFunc =  () => UpCSKB.moneyToDeposit / 1_000_000f,
-					SetValueAction = value =>
-					{ 
-						UpCSKB.SetMoneyToDeposit((int)value);
-					},
-					MaxValue = 99_999_999,
-					MinValue = 10_000_000,
-					RMSName = "upcskb_price_for_deposit",
-					TextFieldTitle = "Giá cskb kí gửi",
-					TextFieldHint = "Nhập số tiền sẽ bán khi túi đầy (10 triệu - 99 triệu)"
-				}),
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
 					ID = "Set_GameSpeed",
@@ -279,16 +286,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => (int)GraphicsReducer.Level,
 					SetValueAction = level => GraphicsReducer.Level = (ReduceGraphicsLevel)level,
 					RMSName = "reduce_graphics"
-				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig
-				{
-					ID = "Set_GoBack",
-					Title = "GoBack",
-					Values = Strings.setGoBackChoices,
-					GetValueFunc = () => (int)AutoGoback.mode,
-					SetValueAction = value => AutoGoback.setState((int)value),
-					GetIsDisabled = () => UpCSKBController.gI.IsActing,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
@@ -732,15 +729,15 @@ namespace Mod.ModMenu
 		{
 			foreach (ModMenuItemBoolean modMenuItem in modMenuItemBools)
 				if (!string.IsNullOrEmpty(modMenuItem.RMSName))
-					Utils.SaveData(modMenuItem.RMSName, modMenuItem.Value);
+					ModStorage.WriteBool(modMenuItem.RMSName, modMenuItem.Value);
 			foreach (ModMenuItemValues modMenuItem in modMenuItemValues)
 			{
 				if (string.IsNullOrEmpty(modMenuItem.RMSName))
 					continue;
 				if (modMenuItem.IsFloatingPoint)
-					Utils.SaveData(modMenuItem.RMSName, modMenuItem.SelectedValue);
+					ModStorage.WriteDouble(modMenuItem.RMSName, modMenuItem.SelectedValue);
 				else
-					Utils.SaveData(modMenuItem.RMSName, (long)modMenuItem.SelectedValue);
+					ModStorage.WriteLong(modMenuItem.RMSName, (long)modMenuItem.SelectedValue);
 			}
 		}
 

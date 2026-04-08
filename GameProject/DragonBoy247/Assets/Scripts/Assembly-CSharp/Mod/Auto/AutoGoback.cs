@@ -1,132 +1,95 @@
-﻿using Mod.R;
+﻿using System.Collections;
+using Mod.ModHelper;
 using Mod.Xmap;
+using UnityEngine;
 
 namespace Mod.Auto
 {
-    internal class AutoGoback
-    {
-        internal static InfoGoBack goingBackTo = new InfoGoBack();
-        internal static bool IsGoingBack => isGoingBack;
-        static bool isGoingBack;
-        internal static GoBackMode mode { get; set; }
-        static long lastTimeGoBack;
-        static long lastTimeUpdate;
+	internal class AutoGoback : CoroutineMainThreadAction<AutoGoback>
+	{
+		static int? mapGoBackId;
+		static int? zoneGobackId;
+		static int? lastX;
+		static int? lastY;
 
-        internal static bool isEnabled => mode != GoBackMode.Disabled;
+		public static bool IsGoingBack;
 
-        internal static void setState(int value)
-        {
-            mode = (GoBackMode)value;
-            if (isEnabled)
-                Enable();
-            else
-                Disable();
-        }
+		protected override float Interval => 1f;
 
-        internal static void Enable()
-        {
-            if (mode != GoBackMode.GoBackToFixedLocation) 
-                return;
-            goingBackTo = new InfoGoBack(TileMap.mapID, TileMap.zoneID, Char.myCharz().cx, Char.myCharz().cy);
-            GameScr.info1.addInfo(string.Format(Strings.gobackTo, TileMap.mapName, TileMap.zoneID, goingBackTo.x, goingBackTo.y) + '!', 0);
-        }
+		protected override IEnumerator OnUpdate()
+		{
+			if (Char.myCharz().IsCharDead())
+			{
+				if (mapGoBackId == null || zoneGobackId == null)
+				{
+					IsGoingBack = true;
+					mapGoBackId = TileMap.mapID;
+					zoneGobackId = TileMap.zoneID;
+					lastX = Char.myCharz().cx;
+					lastY = Char.myCharz().cy;
+				}
+				yield return new WaitForSecondsRealtime(1f);
+				ReviveWhenDead();
+				yield break;
+			}
 
-        internal static void Disable()
-        {
-            isGoingBack = false;
-            XmapController.finishXmap();
-        }
+			ReturnToTrainMapIfNeeded();
+			ChangeToTrainZoneIfNeeded();
+			GotoCoordinates();
+		}
 
-        internal static void Update()
-        {
-            if (!isEnabled || XmapController.gI.IsActing)
-                return;
-            if (mSystem.currentTimeMillis() - lastTimeUpdate < 1000)
-                return;
-            lastTimeUpdate = mSystem.currentTimeMillis();
-            if (Char.myCharz().IsCharDead())
-                HandleDeath();
-            else if (isGoingBack)
-                HandleGoingBack();
-        }
+		static void ReviveWhenDead()
+		{
+			Service.gI().returnTownFromDead();
+		}
 
-        static void HandleGoingBack()
-        {
-            if (Utils.IsMyCharHome())
-            {
-                if (Char.myCharz().cHP <= 1)
-                {
-                    if (Char.myCharz().taskMaint.taskId > 2)
-                        Service.gI().pickItem(-1);
-                    else
-                        GameScr.gI().doUseHP();
-                }
-                else
-                    XmapController.start(goingBackTo.mapID);
-            }
-            else if (TileMap.mapID == goingBackTo.mapID)
-            {
-                if (TileMap.zoneID != goingBackTo.zoneID)
-                  Service.gI().requestChangeZone(goingBackTo.zoneID, 0);
-                else 
-                {
-                    Char.chatPopup = null;
-                    if (mode != GoBackMode.GoBackToWhereIDied && Char.myCharz().cx != goingBackTo.x || Char.myCharz().cy != goingBackTo.y)
-                        Utils.TeleportMyChar(goingBackTo.x, goingBackTo.y);
-                    else
-                        isGoingBack = false;
-                }
-            }
-        }
+		static void ReturnToTrainMapIfNeeded()
+		{
+			if (mapGoBackId == null || XmapController.gI.IsActing || TileMap.mapID == mapGoBackId)
+			{
+				return;
+			}
+			XmapController.start(mapGoBackId.Value);
+		}
 
-        static void HandleDeath()
-        {
-            long now = mSystem.currentTimeMillis();
-            long timeSinceDeath = now - lastTimeGoBack;
-            if (timeSinceDeath > 4000)
-            {
-                lastTimeGoBack = now;
-                return;
-            }
-            if (timeSinceDeath > 3000)
-            {
-                if (mode != GoBackMode.GoBackToFixedLocation)
-                    goingBackTo = new InfoGoBack(TileMap.mapID, TileMap.zoneID, Char.myCharz());
-                Service.gI().returnTownFromDead();
-                isGoingBack = true;
-            }
-        }
+		static void ChangeToTrainZoneIfNeeded()
+		{
+			if (TileMap.mapID != mapGoBackId || zoneGobackId == null || TileMap.zoneID == zoneGobackId)
+			{
+				return;
+			}
+			Service.gI().requestChangeZone(zoneGobackId.Value, 0);
+		}
 
-        static bool HasChicken() => GameScr.vItemMap.size() > 0;
+		static void GotoCoordinates()
+		{
+			if (lastX == null || lastY == null || XmapController.gI.IsActing || TileMap.mapID != mapGoBackId || TileMap.zoneID != zoneGobackId)
+			{
+				return;
+			}
+			if (Utils.Distance(Char.myCharz().cx, Char.myCharz().cy, lastX.Value, Utils.GetYGround(lastX.Value)) > 15)
+			{
+				Utils.TeleportMyChar(lastX.Value, Utils.GetYGround(lastX.Value));
+			}
+			ClearGoBackInfo();
+		}
 
-        internal struct InfoGoBack
-        {
-            internal int mapID;
-            internal int zoneID;
-            internal int x;
-            internal int y;
+		protected override void OnStart()
+		{
+			ClearGoBackInfo();
+		}
 
-            internal InfoGoBack(int mapId, int zoneId, int x, int y)
-            {
-                mapID = mapId;
-                zoneID = zoneId;
-                this.x = x;
-                this.y = TileMap.tileTypeAt(x, y, 2) ? y : Utils.GetYGround(x);
-            }
-            internal InfoGoBack(int mapId, int zoneId, IMapObject mapObject)
-            {
-                mapID = mapId;
-                zoneID = zoneId;
-                x = mapObject.getX();
-                y = TileMap.tileTypeAt(x, mapObject.getY(), 2) ? mapObject.getY() : Utils.GetYGround(x);
-            }
-        }
+		protected override void OnStop()
+		{
+			ClearGoBackInfo();
+		}
 
-        internal enum GoBackMode
-        {
-            Disabled,
-            GoBackToWhereIDied,
-            GoBackToFixedLocation,
-        }
-    }
+		static void ClearGoBackInfo()
+		{
+			IsGoingBack = false;
+			mapGoBackId = null;
+			zoneGobackId = null;
+			lastX = null;
+		}
+	}
 }

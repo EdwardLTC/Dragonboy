@@ -268,6 +268,67 @@ public class mGraphics
 		}
 		GUIUtility.RotateAroundPivot(0f - num3, vector);
 	}
+	
+	public void drawLineToBoss(int x1, int y1, int x2, int y2)
+	{
+		x1 *= zoomLevel;
+		y1 *= zoomLevel;
+		x2 *= zoomLevel;
+		y2 *= zoomLevel;
+		if (isTranslate)
+		{
+			x1 += translateX;
+			y1 += translateY;
+			x2 += translateX;
+			y2 += translateY;
+		}
+		string key = "dl" + r + g + b;
+		Texture2D texture2D = (Texture2D)cachedTextures[key];
+		if (texture2D == null)
+		{
+			texture2D = new Texture2D(1, 1);
+			Color color = new Color(r, g, b);
+			texture2D.SetPixel(0, 0, color);
+			texture2D.Apply();
+			cache(key, texture2D);
+		}
+		Vector2 vector = new Vector2(x1, y1);
+		Vector2 vector2 = new Vector2(x2, y2);
+		Vector2 vector3 = vector2 - vector;
+		float num3 = 57.29578f * Mathf.Atan(vector3.y / vector3.x);
+		if (vector3.x < 0f)
+		{
+			num3 += 180f;
+		}
+		int num4 = (int)Mathf.Ceil(0f);
+		GUIUtility.RotateAroundPivot(num3, vector);
+		int num5 = 0;
+		int num6 = 0;
+		int num7 = 0;
+		int num8 = 0;
+		if (isClip)
+		{
+			num5 = clipX;
+			num6 = clipY;
+			num7 = clipW;
+			num8 = clipH;
+			if (isTranslate)
+			{
+				num5 += clipTX;
+				num6 += clipTY;
+			}
+		}
+		if (isClip)
+		{
+			GUI.BeginGroup(new Rect(num5, num6, num7, num8));
+		}
+		Graphics.DrawTexture(new Rect(vector.x - (float)num5, vector.y - (float)num4 - (float)num6, vector3.magnitude, 1f), texture2D);
+		if (isClip)
+		{
+			GUI.EndGroup();
+		}
+		GUIUtility.RotateAroundPivot(0f - num3, vector);
+	}
 
 	public Color setColorMiniMap(int rgb)
 	{

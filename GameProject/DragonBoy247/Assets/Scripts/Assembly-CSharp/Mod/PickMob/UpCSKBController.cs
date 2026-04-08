@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using Mod.Auto;
+using Mod.Graphics;
 using Mod.ModHelper;
 using Mod.Xmap;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Mod.PickMob
 		static long notUsingMDTime;
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
-		
+
 		static bool isTeleToNpc28;
 
 		protected override float Interval => 1f;
@@ -63,6 +64,7 @@ namespace Mod.PickMob
 
 		protected override void OnStop()
 		{
+			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
 			Pk9rPickMob.SetSlaughter(false);
 			AutoLogin.SetState(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
@@ -78,6 +80,7 @@ namespace Mod.PickMob
 				return;
 			}
 
+			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
@@ -88,13 +91,13 @@ namespace Mod.PickMob
 			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
 
 			Item capsuleInBox = Utils.getItemInBox(ID_CAPSULE_KB);
-			
+
 			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
 			{
 				Stop("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
 				return;
 			}
-			
+
 			if (!ItemTime.isExistItem(ID_ICON_MD))
 			{
 				bool isUseMDSuccess = Utils.useItem(ID_CAPSULE_MD);
@@ -191,10 +194,9 @@ namespace Mod.PickMob
 			}
 
 			Npc npc28 = Utils.findNpc(28);
-			if (!isTeleToNpc28)
+			if (!IsMyCharInNpc28Position(npc28))
 			{
 				Utils.teleToNpc(28);
-				isTeleToNpc28 = true;
 				yield return new WaitForSecondsRealtime(0.5f);
 			}
 
@@ -212,7 +214,12 @@ namespace Mod.PickMob
 
 		static bool ShouldOpenDepositMenu(Npc npc28)
 		{
-			return isTeleToNpc28 && npc28 != null && GameCanvas.panel is not null && !GameCanvas.panel.isShow;
+			return IsMyCharInNpc28Position(npc28) && GameCanvas.panel is not null && !GameCanvas.panel.isShow;
+		}
+
+		static bool IsMyCharInNpc28Position(Npc npc28)
+		{
+			return npc28 != null && Char.myCharz().cx == npc28.cx && Char.myCharz().cy == npc28.ySd - npc28.ySd % 24;
 		}
 
 		static IEnumerator OpenDepositMenu(Npc npc28)

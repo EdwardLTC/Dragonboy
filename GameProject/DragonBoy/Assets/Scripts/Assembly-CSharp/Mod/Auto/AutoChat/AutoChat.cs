@@ -10,12 +10,15 @@ namespace Mod.Auto.AutoChat
     {
         internal override int Interval => /*Res.random(5000, 10000)*/ Setup.delayAutoChat;
 
-        protected override void update()
-        {
-            string filePath = Utils.PathAutoChat;
-            string content = File.ReadAllLines(filePath)[0];
-            Service.gI().chat("mcd" + Res.random(10, 100) + ": " + content);
-        }
+		protected override void update()
+		{
+			string content = ModDataStorage.ReadLinesOrDefault(Utils.PathAutoChat, new[]
+			{
+				Mod.R.Strings.communityMod,
+				"6500"
+			})[0];
+			Service.gI().chat("mcd" + Res.random(10, 100) + ": " + content);
+		}
 
         [ChatCommand("openachat")]
         internal static void showMenu()
@@ -42,13 +45,12 @@ namespace Mod.Auto.AutoChat
                     ChatTextField.gI().tfChat.name = Setup.inputDelayAutoChat[1];
                     ChatTextField.gI().startChat2(Setup.gI, string.Empty);
                 }))
-                .addItem(Strings.viewContent, new MenuAction(() =>
-                {
-                    using StreamReader reader = new StreamReader(Utils.PathAutoChat);
-                    // Đọc toàn bộ nội dung tệp tin và in ra
-                    string content = reader.ReadToEnd();
-                    GameCanvas.startOKDlg(Strings.autoChatContent + ":\n" + content);
-                })).start();
-        }
-    }
+				.addItem(Strings.viewContent, new MenuAction(() =>
+				{
+					// Đọc toàn bộ nội dung tệp tin và in ra
+					string content = ModDataStorage.ReadTextOrDefault(Utils.PathAutoChat, Strings.communityMod + "\n6500");
+					GameCanvas.startOKDlg(Strings.autoChatContent + ":\n" + content);
+				})).start();
+		}
+	}
 }

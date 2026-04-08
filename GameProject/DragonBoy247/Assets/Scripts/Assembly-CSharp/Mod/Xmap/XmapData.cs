@@ -450,9 +450,7 @@ namespace Mod.Xmap
 			const int npcId = 12;
 			const int select = 0;
 
-			AddLink(ID_MAP_TPVGT, ID_MAP_TO_COLD,
-				TypeMapNext.NpcMenu,
-				npcId, select);
+			AddLink(ID_MAP_TPVGT, ID_MAP_TO_COLD, TypeMapNext.NpcMenu, npcId, select);
 		}
 		#endregion
 	}

@@ -1,24 +1,28 @@
+using JetBrains.Annotations;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 
 namespace Mod
 {
+	[UsedImplicitly]
 	internal static class InGameCommand
 	{
-		
+
 		[HotkeyCommand('f')]
 		internal static void usePorata()
 		{
 			sbyte index = Utils.getIndexItemBag(921, 454);
-			if (index == -1)
+			if (index == -1 || !Char.myCharz().havePet)
 			{
-				GameScr.info1.addInfo("Không tìm thấy bông tai", 0);
+				GameScr.info1.addInfo("Yêu cầu bông tai và đệ tử", 0);
 				return;
 			}
 
 			Service.gI().useItem(0, 1, index, -1);
+			Service.gI().petStatus(3);
+
 		}
-		
+
 		[HotkeyCommand('j')]
 		internal static void ChangeMapLeft()
 		{
@@ -107,7 +111,7 @@ namespace Mod
 		{
 			Utils.menuZone();
 		}
-		
+
 		[HotkeyCommand('c')]
 		internal static void useCapsule()
 		{
@@ -125,6 +129,22 @@ namespace Mod
 		internal static void UseTDLT()
 		{
 			Utils.useItem(521);
+		}
+
+		[HotkeyCommand('s')]
+		internal static void FocusBoss()
+		{
+			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+			{
+				Char.myCharz().mobFocus = null;
+				Char.myCharz().npcFocus = null;
+				Char.myCharz().itemFocus = null;
+				Char @char = (Char)GameScr.vCharInMap.elementAt(i);
+				if (@char.cTypePk == 5 && Char.myCharz().charFocus != @char)
+				{
+					Char.myCharz().charFocus = @char;
+				}
+			}
 		}
 	}
 }
