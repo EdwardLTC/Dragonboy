@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -355,7 +355,6 @@ namespace Mod
 			TeleportMenuMain.Update();
 			AutoTrainPet.Update();
 			AutoSellTrashItems.Update();
-			AutoLogin.OnGameScrUpdate();
 			Pk9rPickMob.Update();
 			AutoPean.Update();
 			AutoSkill.Update();
@@ -405,6 +404,7 @@ namespace Mod
 					pass = Utils.password == "" ? pass : Utils.password;
 				}
 			}
+			AutoLogin.server = ServerListScreen.ipSelect;
 		}
 
 		internal static void OnServerListScreenLoaded(ServerListScreen serverListScreen)

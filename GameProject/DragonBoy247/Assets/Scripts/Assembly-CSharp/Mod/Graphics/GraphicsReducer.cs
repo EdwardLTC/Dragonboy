@@ -439,7 +439,7 @@ namespace Mod.Graphics
 			{
 				if (!GameCanvas.isLoadBGok)
 				{
-					g.setColor(00255);
+					g.setColor(204255204);
 					g.fillRect(0, 0, GameCanvas.w, GameCanvas.h);
 				}
 				if (Char.isLoadingMap)
@@ -447,7 +447,7 @@ namespace Mod.Graphics
 					return true;
 				}
 				g.translate(-g.getTranslateX(), -g.getTranslateY());
-				g.setColor(00255);
+				g.setColor(204255204);
 				g.fillRect(0, 0, GameCanvas.w, GameCanvas.h);
 
 				return true;

@@ -62,16 +62,6 @@ namespace Mod.PickMob
 			yield return ChangeToTrainZoneIfNeeded();
 		}
 
-		protected override void OnStop()
-		{
-			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
-			Pk9rPickMob.SetSlaughter(false);
-			AutoLogin.SetState(false);
-			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
-			Utils.status = "Đã kết nối";
-			base.OnStop();
-		}
-
 		protected override void OnStart()
 		{
 			if (!mapCanTrain.Contains(TileMap.mapID))
@@ -81,6 +71,7 @@ namespace Mod.PickMob
 			}
 
 			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
+			Pk9rPickMob.IsAttackMonsterBySendCommand = true;
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
@@ -110,8 +101,17 @@ namespace Mod.PickMob
 
 			isTeleToNpc28 = false;
 			notUsingMDTime = 0L;
-			Utils.status = "Up CSKB";
 			base.OnStart();
+		}
+
+		protected override void OnStop()
+		{
+			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
+			Pk9rPickMob.IsAttackMonsterBySendCommand = false;
+			Pk9rPickMob.SetSlaughter(false);
+			AutoLogin.SetState(false);
+			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
+			base.OnStop();
 		}
 
 		static void UpdateNotUsingMdTime()

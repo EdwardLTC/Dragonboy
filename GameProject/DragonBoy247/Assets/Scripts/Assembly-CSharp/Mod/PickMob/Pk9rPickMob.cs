@@ -22,15 +22,6 @@ namespace Mod.PickMob
 			225, 353, 354, 355, 356, 357, 358, 359, 360, 362
 		};
 
-		internal static bool IsTanSat { get; set; }
-		internal static bool IsNeSieuQuai { get; set; } = true;
-		internal static bool IsVuotDiaHinh { get; set; } = true;
-		internal static bool IsAutoPickItems { get; set; } = true;
-		internal static bool IsItemMe { get; set; } = true;
-		internal static bool IsLimitTimesPickItem { get; set; } = true;
-		internal static bool IsAttackMonsterBySendCommand { get; set; }
-		internal static bool IsSkipPickEventItems { get; set; } = true;
-
 		internal static List<int> IdMobsTanSat = new List<int>();
 		internal static List<int> TypeMobsTanSat = new List<int>();
 		internal static List<sbyte> IdSkillsTanSat = new List<sbyte>(IdSkillsBase);
@@ -42,6 +33,15 @@ namespace Mod.PickMob
 		internal static List<sbyte> TypeItemBlocks = new List<sbyte>();
 
 		static Pk9rPickMob _Instance;
+
+		internal static bool IsTanSat { get; set; }
+		internal static bool IsNeSieuQuai { get; set; } = true;
+		internal static bool IsVuotDiaHinh { get; set; } = true;
+		internal static bool IsAutoPickItems { get; set; } = true;
+		internal static bool IsItemMe { get; set; } = true;
+		internal static bool IsLimitTimesPickItem { get; set; } = true;
+		internal static bool IsAttackMonsterBySendCommand { get; set; }
+		internal static bool IsSkipPickEventItems { get; set; } = true;
 		internal static Pk9rPickMob getInstance()
 		{
 			if (_Instance == null)

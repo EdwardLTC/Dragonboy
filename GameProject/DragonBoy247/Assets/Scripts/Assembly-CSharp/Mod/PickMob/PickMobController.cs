@@ -23,13 +23,13 @@ namespace Mod.PickMob
 
 		static readonly PickMobController _Instance = new PickMobController();
 
-		public static bool IsPickingItems;
+		static bool IsPickingItems;
 
 		static bool IsWait;
 		static long TimeStartWait;
 		static long TimeWait;
 
-		public static List<ItemMap> ItemPicks = new List<ItemMap>();
+		static readonly List<ItemMap> ItemPicks = new List<ItemMap>();
 		static int IndexItemPick;
 
 		public static void Update()
@@ -422,7 +422,7 @@ namespace Mod.PickMob
 		static bool CanUseSkill(Skill skill)
 		{
 			int coolDown = skill.coolDown;
-			
+
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
 
@@ -431,10 +431,10 @@ namespace Mod.PickMob
 
 			if (IdSkillsCanNotAttack.Contains(skill.template.id))
 				return false;
-			
+
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < coolDown)
 				return false;
-			
+
 			if (Char.myCharz().cMP < GetManaUseSkill(skill))
 				return false;
 
