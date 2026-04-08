@@ -1,4 +1,5 @@
 using System.Collections;
+using Mod.Graphics;
 using Mod.ModHelper;
 using Mod.Xmap;
 using UnityEngine;
@@ -75,6 +76,7 @@ namespace Mod.Auto
 				Toggle(false);
 				return;
 			}
+			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
 			if (Char.myCharz().cFlag == 0)
 			{
 				Service.gI().getFlag(1, 8);
@@ -85,6 +87,7 @@ namespace Mod.Auto
 
 		protected override void OnStop()
 		{
+			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
 			AutoGoback.gI.Toggle(false);
 			GameScr.info1.addInfo("Đã tắt AutoKillSelfAndPickGold", 0);
 			base.OnStop();

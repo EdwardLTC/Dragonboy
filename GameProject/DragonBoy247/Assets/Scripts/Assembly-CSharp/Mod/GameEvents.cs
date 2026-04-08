@@ -740,11 +740,6 @@ namespace Mod
 			}
 		}
 
-		internal static bool OnPaintBgGameScr(mGraphics g)
-		{
-			return false;
-		}
-
 		internal static void OnMobStartDie(Mob mob)
 		{
 			Pk9rPickMob.MobStartDie(mob);
