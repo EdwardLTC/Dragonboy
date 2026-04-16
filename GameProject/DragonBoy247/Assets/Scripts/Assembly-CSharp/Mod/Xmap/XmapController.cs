@@ -155,6 +155,8 @@ namespace Mod.Xmap
 					capsuleProbeDeadline = now + CapsuleProbeTimeoutSeconds;
 					capsuleProbeNextRetry = 0f;
 					GameCanvas.panel.mapNames = null;
+					GameCanvas.panel.hideNow();
+					GameCanvas.panel2.hideNow();
 					return false;
 				}
 
@@ -164,7 +166,6 @@ namespace Mod.Xmap
 
 			if (GameCanvas.panel is { isShow: true, mapNames: { Length: > 0 } })
 			{
-				int mapStart = currentMapId;
 				string[] mapNames = GameCanvas.panel.mapNames;
 
 				for (int select = 0; select < mapNames?.Length; select++)
@@ -172,7 +173,7 @@ namespace Mod.Xmap
 					int to = XmapUtils.getMapIdFromName(mapNames[select]);
 					if (to != -1)
 					{
-						AddCapsuleLink(initializeGraph, mapStart, to, select);
+						AddCapsuleLink(initializeGraph, currentMapId, to, select);
 					}
 				}
 

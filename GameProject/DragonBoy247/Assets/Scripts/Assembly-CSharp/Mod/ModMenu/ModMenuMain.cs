@@ -89,6 +89,8 @@ namespace Mod.ModMenu
 					Description = Strings.vSyncDescription,
 					GetValueFunc = () => QualitySettings.vSyncCount == 1,
 					SetValueAction = value => QualitySettings.vSyncCount = value ? 1 : 0,
+					GetIsDisabled = Utils.IsMacBuild,
+					GetDisabledReason = () => "VSync Not Available On Mac",
 					RMSName = "enable_vsync"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig

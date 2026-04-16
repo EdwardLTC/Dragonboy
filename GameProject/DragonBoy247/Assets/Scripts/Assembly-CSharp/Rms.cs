@@ -187,49 +187,60 @@ public class Rms
 
 	static void __saveRMS(string filename, sbyte[] data)
 	{
-		string text = GetiPhoneDocumentsPath() + "/" + filename;
-		FileStream fileStream = new FileStream(text, FileMode.Create);
-		fileStream.Write(ArrayCast.cast(data), 0, data.Length);
-		fileStream.Flush();
-		fileStream.Close();
-		Main.setBackupIcloud(text);
+		GameEvents.OnRmsFileIo(() =>
+		{
+			string text = GetiPhoneDocumentsPath() + "/" + filename;
+			FileStream fileStream = new FileStream(text, FileMode.Create);
+			fileStream.Write(ArrayCast.cast(data), 0, data.Length);
+			fileStream.Flush();
+			fileStream.Close();
+			Main.setBackupIcloud(text);
+		});
 	}
 
 	static sbyte[] __loadRMS(string filename)
 	{
-		try
+		sbyte[] loaded = null;
+		GameEvents.OnRmsFileIo(() =>
 		{
-			FileStream fileStream = new FileStream(GetiPhoneDocumentsPath() + "/" + filename, FileMode.Open);
-			byte[] array = new byte[fileStream.Length];
-			fileStream.Read(array, 0, array.Length);
-			fileStream.Close();
-			sbyte[] array2 = ArrayCast.cast(array);
-			return ArrayCast.cast(array);
-		}
-		catch (Exception)
-		{
-			return null;
-		}
+			try
+			{
+				FileStream fileStream = new FileStream(GetiPhoneDocumentsPath() + "/" + filename, FileMode.Open);
+				byte[] array = new byte[fileStream.Length];
+				fileStream.Read(array, 0, array.Length);
+				fileStream.Close();
+				loaded = ArrayCast.cast(array);
+			}
+			catch (Exception)
+			{
+				loaded = null;
+			}
+		});
+		return loaded;
 	}
 
 	public static void clearAll()
 	{
-		if (GameEvents.OnClearAllRMS())
+		GameEvents.OnRmsFileIo(() =>
 		{
-			return;
-		}
-		FileInfo[] files = new DirectoryInfo(GetiPhoneDocumentsPath() + "/").GetFiles();
-		foreach (FileInfo fileInfo in files)
-		{
-			fileInfo.Delete();
-		}
+			if (GameEvents.OnClearAllRMS())
+				return;
+			FileInfo[] files = new DirectoryInfo(GetiPhoneDocumentsPath() + "/").GetFiles();
+			foreach (FileInfo fileInfo in files)
+			{
+				fileInfo.Delete();
+			}
+		});
 	}
 
 	public static void DeleteStorage(string path)
 	{
 		try
 		{
-			File.Delete(GetiPhoneDocumentsPath() + "/" + path);
+			GameEvents.OnRmsFileIo(() =>
+			{
+				File.Delete(GetiPhoneDocumentsPath() + "/" + path);
+			});
 		}
 		catch (Exception)
 		{

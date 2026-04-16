@@ -216,9 +216,19 @@ namespace Mod.Xmap
 		static IEnumerator NextMapCapsule(MapNext mapNext)
 		{
 			int select = mapNext.info[0];
-			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
-			Service.gI().requestMapSelect(select);
-			yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+			const int maxRetries = 5;
+			const float retryDelaySeconds = 0.25f;
+
+			for (int attempt = 0; attempt < maxRetries; attempt++)
+			{
+				Service.gI().requestMapSelect(select);
+				yield return new WaitForSecondsRealtime(retryDelaySeconds);
+
+				if (!GameCanvas.panel.isShow)
+				{
+					yield break;
+				}
+			}
 		}
 
 		static void MoveMyChar(int x, int y)

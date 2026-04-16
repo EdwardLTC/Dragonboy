@@ -1,28 +1,18 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Mod.AutoTrain;
 using Mod.Constants;
 using Mod.ModHelper;
-using Mod.ModHelper.CommandMod.Chat;
 using Mod.Xmap;
 using UnityEngine;
 
 namespace Mod.PickMob
 {
-	internal class PickMobControllerV2 : CoroutineMainThreadAction<PickMobControllerV2>
+	public class PickMobControllerV2 : CoroutineMainThreadAction<PickMobControllerV2>
 	{
-		const int ATTACK_RANGE_GROUND = 50;
-		const int ATTACK_RANGE_FLY_X = 70;
-		const int ATTACK_RANGE_GUI = 48;
-		const int ITEM_PICK_RANGE = 60;
 		const float PICK_ITEM_DELAY = 0.2f;
-		const float ATTACK_DELAY = 0.2f;
+		const float ATTACK_DELAY = 0.1f;
 		const int ID_ICON_ITEM_TDLT = 4387;
-		const int MAX_STUCK_TICKS = 10;
-		const int WAYPOINT_REACH_SQ = 24 * 24;
 
 		static readonly sbyte[] IdSkillsMelee =
 		{
@@ -32,187 +22,138 @@ namespace Mod.PickMob
 		{
 			10, 11, 14, 23, 7
 		};
-		int _lastMoveX;
-		int _lastMoveY;
-		List<int[]> _path;
-		int _pathIdx;
-		Mob _skippedMob;
-		int _stuckCount;
 
-		Mob _target;
+		protected override float Interval => 0f;
 
-		protected override float Interval => 0.1f;
-
-		#region Main Loop
 		protected override IEnumerator OnUpdate()
 		{
-			if (XmapController.gI.IsActing) yield break;
-
-			Char myChar = Char.myCharz();
-			if (myChar.statusMe == 14 || myChar.cHP <= 0 || myChar.meDead) yield break;
-
-			bool isUseTDLT = ItemTime.isExistItem(ID_ICON_ITEM_TDLT);
-
-			if (Pk9rPickMob.IsAutoPickItems && !(Pk9rPickMob.IsTanSat && isUseTDLT))
+			if (XmapController.gI.IsActing)
 			{
-				bool picked = false;
-				yield return PickItems(myChar, isUseTDLT, v => picked = v);
-				if (picked) yield break;
+				yield break;
 			}
 
-			if (myChar.isCharge) yield break;
+			Char myChar = Char.myCharz();
+
+			if (myChar.statusMe == 14 || myChar.cHP <= 0)
+			{
+				yield break;
+			}
+
+			bool isUseTDLT = ItemTime.isExistItem(ID_ICON_ITEM_TDLT);
+			bool isTanSatTDLT = Pk9rPickMob.IsTanSat && isUseTDLT;
+
+			if (Pk9rPickMob.IsAutoPickItems && !isTanSatTDLT)
+			{
+				if (TileMap.mapID == myChar.cgender + 21 && GameScr.vItemMap.size() > 0)
+				{
+					Service.gI().pickItem(((ItemMap)GameScr.vItemMap.elementAt(0)).itemMapID);
+					yield break;
+				}
+
+				bool pickedAny = false;
+				for (int i = 0; i < GameScr.vItemMap.size(); i++)
+				{
+					ItemMap itemMap = (ItemMap)GameScr.vItemMap.elementAt(i);
+					TypePickItem type = GetTypePickItem(itemMap);
+					if (type == TypePickItem.CanNotPickItem)
+					{
+						continue;
+					}
+
+					pickedAny = true;
+					switch (type)
+					{
+					case TypePickItem.PickItemTDLT:
+						myChar.cx = itemMap.xEnd;
+						myChar.cy = itemMap.yEnd;
+						Service.gI().charMove();
+						Service.gI().pickItem(itemMap.itemMapID);
+						itemMap.countAutoPick++;
+						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
+						break;
+					case TypePickItem.PickItemTanSat:
+						Move(itemMap.xEnd, itemMap.yEnd);
+						myChar.mobFocus = null;
+						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
+						break;
+					case TypePickItem.PickItemNormal:
+						Service.gI().charMove();
+						Service.gI().pickItem(itemMap.itemMapID);
+						itemMap.countAutoPick++;
+						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
+						break;
+					}
+				}
+
+				if (pickedAny)
+				{
+					yield break;
+				}
+			}
+
+			if (Pk9rPickMob.IsTanSat)
+			{
+				yield return DoSlaughter(myChar, isUseTDLT);
+			}
+		}
+
+		static IEnumerator DoSlaughter(Char myChar, bool isUseTDLT)
+		{
+			if (myChar.isCharge)
+			{
+				yield return new WaitForSecondsRealtime(ATTACK_DELAY);
+				yield break;
+			}
 
 			myChar.clearFocus(0);
 
-			if (_target != null && !IsMobAlive(_target))
-				ClearTarget(myChar);
+			if (myChar.mobFocus != null && !IsMobTanSat(myChar.mobFocus))
+				myChar.mobFocus = null;
 
-			if (_target == null)
-				_target = FindNearestMob(myChar);
-
-			if (_target == null)
+			if (myChar.mobFocus == null)
 			{
-				if (!isUseTDLT)
+				myChar.mobFocus = GetMobTanSat();
+				if (isUseTDLT && myChar.mobFocus != null)
 				{
-					Mob next = FindNextMobSpawn();
-					if (next != null)
-						yield return MoveTo(myChar, next.xFirst - 24, next.yFirst, false);
-				}
-				yield break;
-			}
-
-			Skill skill = GetBestSkill();
-			if (skill == null || skill.paintCanNotUseSkill) yield break;
-
-			_target.x = _target.xFirst;
-			_target.y = _target.yFirst;
-
-			bool isFly = _target.getTemplate().type == MonsterType.Fly;
-			bool inRange = isFly
-				? Math.abs(myChar.cx - _target.x) <= ATTACK_RANGE_FLY_X
-				: Utils.Distance(myChar, _target) <= ATTACK_RANGE_GROUND;
-
-			if (inRange)
-			{
-				yield return Attack(myChar, _target, skill, isFly);
-			}
-			else
-			{
-				int goalX = isFly ? _target.x : _target.xFirst;
-				int goalY = isFly ? Utils.GetYGround(_target.x) : _target.yFirst;
-
-				if (isUseTDLT)
-				{
-					myChar.cx = isFly ? goalX : goalX - 24;
-					myChar.cy = goalY;
+					myChar.cx = myChar.mobFocus.xFirst - 24;
+					myChar.cy = myChar.mobFocus.yFirst;
 					Service.gI().charMove();
 				}
-				else
+			}
+
+			if (myChar.mobFocus != null)
+			{
+				if (myChar.skillInfoPaint() == null)
 				{
-					yield return MoveTo(myChar, goalX, goalY, false);
+					Skill skill = GetSkillAttack();
+					if (skill != null && !skill.paintCanNotUseSkill)
+						AttackMob(myChar, skill);
 				}
 			}
+			else if (!isUseTDLT)
+			{
+				Mob mob = GetMobNext();
+				if (mob != null)
+					Move(mob.xFirst - 24, mob.yFirst);
+			}
+
+			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 		}
-		#endregion
 
-		#region Movement
-		IEnumerator MoveTo(Char myChar, int goalX, int goalY, bool isUseTDLT)
+		#region Attack
+		static void AttackMob(Char myChar, Skill skill)
 		{
-			if (isUseTDLT)
-			{
-				myChar.cx = goalX;
-				myChar.cy = goalY;
-				Service.gI().charMove();
-				yield break;
-			}
-
-			if (myChar.currentMovePoint != null)
-			{
-				if (myChar.cx == _lastMoveX && myChar.cy == _lastMoveY)
-				{
-					_stuckCount++;
-					if (_stuckCount >= MAX_STUCK_TICKS)
-					{
-						myChar.currentMovePoint = null;
-						_stuckCount = 0;
-						if (_path != null)
-						{
-							_pathIdx++;
-							if (_pathIdx >= _path.Count)
-							{
-								_path = null;
-								_skippedMob = _target;
-								_target = null;
-							}
-						}
-						else
-						{
-							_skippedMob = _target;
-							_target = null;
-						}
-					}
-				}
-				else
-				{
-					_stuckCount = 0;
-				}
-				_lastMoveX = myChar.cx;
-				_lastMoveY = myChar.cy;
-				yield break;
-			}
-
-			if (_path != null)
-			{
-				while (_pathIdx < _path.Count)
-				{
-					int[] wp = _path[_pathIdx];
-					int dx = myChar.cx - wp[0];
-					int dy = myChar.cy - wp[1];
-					if (dx * dx + dy * dy > WAYPOINT_REACH_SQ) break;
-					_pathIdx++;
-				}
-				if (_pathIdx >= _path.Count)
-					_path = null;
-			}
-
-			if (_path == null)
-			{
-				_path = MapAStarPathfinder.FindPath(myChar.cx, myChar.cy, goalX, goalY);
-				_pathIdx = 1;
-			}
-
-			int targetX, targetY;
-			if (_path != null && _pathIdx < _path.Count)
-			{
-				targetX = _path[_pathIdx][0];
-				targetY = _path[_pathIdx][1];
-			}
-			else
-			{
-				targetX = goalX;
-				targetY = goalY;
-				_path = null;
-			}
-
-			_stuckCount = 0;
-			_lastMoveX = myChar.cx;
-			_lastMoveY = myChar.cy;
-			myChar.currentMovePoint = new MovePoint(targetX, targetY);
-		}
-		#endregion
-
-		#region Combat
-		IEnumerator Attack(Char myChar, Mob mob, Skill skill, bool isFly)
-		{
-			myChar.currentMovePoint = null;
+			Mob mobFocus = myChar.mobFocus;
+			mobFocus.x = mobFocus.xFirst;
+			mobFocus.y = mobFocus.yFirst;
 
 			if (Pk9rPickMob.IsAttackMonsterBySendCommand)
-				yield return AttackByCommand(myChar, mob, skill, isFly);
+				AttackMobBySendCommand(myChar, skill, mobFocus);
 			else
-				yield return AttackByGUI(myChar, mob, skill);
+				AttackMobByFocus(myChar, skill, mobFocus);
 		}
 
-		IEnumerator AttackByCommand(Char myChar, Mob mob, Skill skill, bool isFly)
+		static void AttackMobBySendCommand(Char myChar, Skill skill, Mob mobFocus)
 		{
 			if (myChar.myskill != skill)
 			{
@@ -220,265 +161,340 @@ namespace Mod.PickMob
 				myChar.myskill = skill;
 			}
 
-			if (isFly)
+			if (mobFocus.getTemplate().type == MonsterType.Fly)
 			{
-				myChar.currentMovePoint = null;
-				myChar.cx = mob.x + Res.random(-5, 5);
-				myChar.cy = mob.y + Res.random(-5, 5);
-				Service.gI().charMove();
+				if (Math.abs(myChar.cx - mobFocus.x) > 70)
+				{
+					Move(mobFocus.x, Utils.GetYGround(mobFocus.x));
+				}
+				else
+				{
+					myChar.currentMovePoint = null;
+					myChar.cx = mobFocus.x + Res.random(-5, 5);
+					myChar.cy = mobFocus.y + Res.random(-5, 5);
+					Service.gI().charMove();
+				}
+			}
+			else
+			{
+				Move(mobFocus.xFirst, mobFocus.yFirst);
 			}
 
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
+			bool inRange = Utils.Distance(myChar, mobFocus) <= 50 ||
+			               mobFocus.getTemplate().type == MonsterType.Fly &&
+			               Math.abs(myChar.cx - mobFocus.x) <= 70;
+
+			if (inRange && mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown + 100L)
 			{
-				myChar.mobFocus = mob;
+				myChar.mobFocus = mobFocus;
 				skill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
-				MyVector vec = new MyVector();
-				vec.addElement(mob);
-				Service.gI().sendPlayerAttack(vec, new MyVector(), -1);
-				ClearTarget(myChar);
+				MyVector targets = new MyVector();
+				targets.addElement(mobFocus);
+				Service.gI().sendPlayerAttack(targets, new MyVector(), -1);
 			}
-
-			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 		}
 
-		IEnumerator AttackByGUI(Char myChar, Mob mob, Skill skill)
+		static void AttackMobByFocus(Char myChar, Skill skill, Mob mobFocus)
 		{
-			if (Res.distance(mob.xFirst, mob.yFirst, myChar.cx, myChar.cy) > ATTACK_RANGE_GUI)
-			{
-				yield return MoveTo(myChar, mob.xFirst, mob.yFirst, false);
-				yield break;
-			}
-
 			GameScr.gI().doSelectSkill(skill, true);
-			myChar.focusManualTo(mob);
-			Utils.DoDoubleClickToObj(mob);
-			ClearTarget(myChar);
-			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
+			if (Res.distance(mobFocus.xFirst, mobFocus.yFirst, myChar.cx, myChar.cy) <= 48)
+			{
+				myChar.focusManualTo(mobFocus);
+				Utils.DoDoubleClickToObj(mobFocus);
+			}
+			else
+			{
+				Move(mobFocus.xFirst, mobFocus.yFirst);
+			}
 		}
 		#endregion
 
-		#region Item Picking
-		IEnumerator PickItems(Char myChar, bool isUseTDLT, Action<bool> result)
+		#region Movement
+		static void Move(int x, int y)
 		{
-			if (TileMap.mapID == myChar.cgender + 21 && GameScr.vItemMap.size() > 0)
+			Char myChar = Char.myCharz();
+			if (!Pk9rPickMob.IsVuotDiaHinh)
 			{
-				Service.gI().pickItem(((ItemMap)GameScr.vItemMap.elementAt(0)).itemMapID);
-				result(true);
-				yield break;
+				myChar.currentMovePoint = new MovePoint(x, y);
+				return;
 			}
 
-			for (int i = 0; i < GameScr.vItemMap.size(); i++)
+			int[] vs = GetPointYsdMax(myChar.cx, x);
+			if (vs[1] >= y || vs[1] >= myChar.cy && (myChar.statusMe == 2 || myChar.statusMe == 1))
 			{
-				ItemMap item = (ItemMap)GameScr.vItemMap.elementAt(i);
-				if (!CanPickItem(myChar, item)) continue;
-
-				bool isNear = Res.abs(myChar.cx - item.xEnd) < ITEM_PICK_RANGE && Res.abs(myChar.cy - item.yEnd) < ITEM_PICK_RANGE;
-
-				if (isNear)
-				{
-					Service.gI().charMove();
-					Service.gI().pickItem(item.itemMapID);
-					item.countAutoPick++;
-					result(true);
-					yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
-					yield break;
-				}
-
-				if (isUseTDLT)
-				{
-					myChar.cx = item.xEnd;
-					myChar.cy = item.yEnd;
-					Service.gI().charMove();
-					Service.gI().pickItem(item.itemMapID);
-					item.countAutoPick++;
-					result(true);
-					yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
-					yield break;
-				}
-
-				yield return MoveTo(myChar, item.xEnd, item.yEnd, false);
-				myChar.mobFocus = null;
-				result(true);
-				yield break;
+				vs[0] = x;
+				vs[1] = y;
 			}
 
-			result(false);
+			myChar.currentMovePoint = new MovePoint(vs[0], vs[1]);
 		}
 
-		static bool CanPickItem(Char myChar, ItemMap itemMap)
+		static int GetYsd(int xsd)
 		{
-			bool isMyItem = itemMap.playerId == myChar.charID || itemMap.playerId == -1;
-			if (Pk9rPickMob.IsItemMe && !isMyItem) return false;
-			if (Pk9rPickMob.IsLimitTimesPickItem && itemMap.countAutoPick > Pk9rPickMob.TimesAutoPickItemMax) return false;
-			if (Pk9rPickMob.IsSkipPickEventItems && itemMap.template.description.Contains("Vật phẩm sự kiện")) return false;
-			if (Pk9rPickMob.IdItemPicks.Count != 0 && !Pk9rPickMob.IdItemPicks.Contains(itemMap.template.id)) return false;
-			if (Pk9rPickMob.IdItemBlocks.Count != 0 && Pk9rPickMob.IdItemBlocks.Contains(itemMap.template.id)) return false;
-			if (Pk9rPickMob.TypeItemPicks.Count != 0 && !Pk9rPickMob.TypeItemPicks.Contains(itemMap.template.type)) return false;
-			if (Pk9rPickMob.TypeItemBlocks.Count != 0 && Pk9rPickMob.TypeItemBlocks.Contains(itemMap.template.type)) return false;
+			int dmin = TileMap.pxh;
+			int ysdBest = -1;
+			int myCharY = Char.myCharz().cy;
+			for (int i = 24; i < TileMap.pxh; i += 24)
+			{
+				if (!TileMap.tileTypeAt(xsd, i, 2))
+					continue;
+				int d = Res.abs(i - myCharY);
+				if (d < dmin)
+				{
+					dmin = d;
+					ysdBest = i;
+				}
+			}
+
+			return ysdBest;
+		}
+
+		static int[] GetPointYsdMax(int xStart, int xEnd)
+		{
+			int ysdMin = TileMap.pxh;
+			int x = -1;
+
+			if (xStart > xEnd)
+			{
+				for (int i = xEnd; i < xStart; i += 24)
+				{
+					int ysd = GetYsd(i);
+					if (ysd < ysdMin)
+					{
+						ysdMin = ysd;
+						x = i;
+					}
+				}
+			}
+			else
+			{
+				for (int i = xEnd; i > xStart; i -= 24)
+				{
+					int ysd = GetYsd(i);
+					if (ysd < ysdMin)
+					{
+						ysdMin = ysd;
+						x = i;
+					}
+				}
+			}
+
+			return new[]
+			{
+				x, ysdMin
+			};
+		}
+		#endregion
+
+		#region Item picking helpers
+		static TypePickItem GetTypePickItem(ItemMap itemMap)
+		{
+			Char myChar = Char.myCharz();
+			if (Pk9rPickMob.IsItemMe && itemMap.playerId != myChar.charID && itemMap.playerId != -1)
+				return TypePickItem.CanNotPickItem;
+
+			if (Pk9rPickMob.IsLimitTimesPickItem && itemMap.countAutoPick > Pk9rPickMob.TimesAutoPickItemMax)
+				return TypePickItem.CanNotPickItem;
+
+			if (!FilterItemPick(itemMap))
+				return TypePickItem.CanNotPickItem;
+
+			if (Pk9rPickMob.IsSkipPickEventItems && itemMap.template.description.Contains("Vật phẩm sự kiện"))
+				return TypePickItem.CanNotPickItem;
+
+			if (Res.abs(myChar.cx - itemMap.xEnd) < 60 && Res.abs(myChar.cy - itemMap.yEnd) < 60)
+				return TypePickItem.PickItemNormal;
+
+			if (ItemTime.isExistItem(ID_ICON_ITEM_TDLT))
+				return TypePickItem.PickItemTDLT;
+
+			if (Pk9rPickMob.IsTanSat)
+				return TypePickItem.PickItemTanSat;
+
+			return TypePickItem.CanNotPickItem;
+		}
+
+		static bool FilterItemPick(ItemMap itemMap)
+		{
+			if (Pk9rPickMob.IdItemPicks.Count != 0 && !Pk9rPickMob.IdItemPicks.Contains(itemMap.template.id))
+				return false;
+
+			if (Pk9rPickMob.IdItemBlocks.Count != 0 && Pk9rPickMob.IdItemBlocks.Contains(itemMap.template.id))
+				return false;
+
+			if (Pk9rPickMob.TypeItemPicks.Count != 0 && !Pk9rPickMob.TypeItemPicks.Contains(itemMap.template.type))
+				return false;
+
+			if (Pk9rPickMob.TypeItemBlocks.Count != 0 && Pk9rPickMob.TypeItemBlocks.Contains(itemMap.template.type))
+				return false;
+
+			return true;
+		}
+
+		enum TypePickItem
+		{
+			CanNotPickItem,
+			PickItemNormal,
+			PickItemTDLT,
+			PickItemTanSat
+		}
+		#endregion
+
+		#region Mob selection helpers
+		static Mob GetMobTanSat()
+		{
+			Mob closest = null;
+			int minDist = int.MaxValue;
+			Char myChar = Char.myCharz();
+			for (int i = 0; i < GameScr.vMob.size(); i++)
+			{
+				Mob mob = (Mob)GameScr.vMob.elementAt(i);
+				int dx = mob.xFirst - myChar.cx;
+				int dy = mob.yFirst - myChar.cy;
+				int dist = dx * dx + dy * dy;
+				if (IsMobTanSat(mob) && dist < minDist)
+				{
+					closest = mob;
+					minDist = dist;
+				}
+			}
+
+			return closest;
+		}
+
+		static Mob GetMobNext()
+		{
+			Mob earliest = null;
+			long earliestTime = mSystem.currentTimeMillis();
+			for (int i = 0; i < GameScr.vMob.size(); i++)
+			{
+				Mob mob = (Mob)GameScr.vMob.elementAt(i);
+				if (IsMobNext(mob) && mob.lastTimeDie < earliestTime)
+				{
+					earliest = mob;
+					earliestTime = mob.lastTimeDie;
+				}
+			}
+
+			return earliest;
+		}
+
+		static bool IsMobTanSat(Mob mob)
+		{
+			if (mob.status == 0 || mob.status == 1 || mob.hp <= 0 || mob.isMobMe)
+				return false;
+
+			if (mob.levelBoss != 0 && Pk9rPickMob.IsNeSieuQuai && !ItemTime.isExistItem(ID_ICON_ITEM_TDLT))
+				return false;
+
+			return FilterMobTanSat(mob);
+		}
+
+		static bool IsMobNext(Mob mob)
+		{
+			if (mob.isMobMe || !FilterMobTanSat(mob))
+				return false;
+
+			if (!Pk9rPickMob.IsNeSieuQuai || ItemTime.isExistItem(ID_ICON_ITEM_TDLT) || mob.getTemplate().hp < 3000)
+				return true;
+
+			if (mob.levelBoss != 0)
+			{
+				Mob mobNextSieuQuai = null;
+				bool found = false;
+				for (int i = 0; i < GameScr.vMob.size(); i++)
+				{
+					mobNextSieuQuai = (Mob)GameScr.vMob.elementAt(i);
+					if (mobNextSieuQuai.countDie == 10 &&
+					    (mobNextSieuQuai.status == 0 || mobNextSieuQuai.status == 1))
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) return false;
+				mob.lastTimeDie = mobNextSieuQuai.lastTimeDie;
+			}
+			else if (mob.countDie == 10 && (mob.status == 0 || mob.status == 1))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		static bool FilterMobTanSat(Mob mob)
+		{
+			if (Pk9rPickMob.IdMobsTanSat.Count != 0 && !Pk9rPickMob.IdMobsTanSat.Contains(mob.mobId))
+				return false;
+
+			if (Pk9rPickMob.TypeMobsTanSat.Count != 0 &&
+			    !Pk9rPickMob.TypeMobsTanSat.Contains(mob.getTemplate().mobTemplateId))
+				return false;
+
 			return true;
 		}
 		#endregion
 
-		#region Mob Selection
+		#region Skill helpers
 		[CanBeNull]
-		Mob FindNearestMob(Char myChar)
-		{
-			if (_skippedMob != null && !IsMobAlive(_skippedMob))
-				_skippedMob = null;
-
-			Mob best = null;
-			int bestDist = int.MaxValue;
-			for (int i = 0; i < GameScr.vMob.size(); i++)
-			{
-				Mob mob = (Mob)GameScr.vMob.elementAt(i);
-				if (!IsMobAlive(mob) || mob == _skippedMob) continue;
-				int d = (mob.xFirst - myChar.cx) * (mob.xFirst - myChar.cx) +
-				        (mob.yFirst - myChar.cy) * (mob.yFirst - myChar.cy);
-				if (d < bestDist)
-				{
-					bestDist = d;
-					best = mob;
-				}
-			}
-			return best;
-		}
-
-		[CanBeNull]
-		static Mob FindNextMobSpawn()
-		{
-			Mob best = null;
-			long bestTime = mSystem.currentTimeMillis();
-			for (int i = 0; i < GameScr.vMob.size(); i++)
-			{
-				Mob mob = (Mob)GameScr.vMob.elementAt(i);
-				if (mob.isMobMe || !FilterMob(mob)) continue;
-
-				bool ne = Pk9rPickMob.IsNeSieuQuai && !ItemTime.isExistItem(ID_ICON_ITEM_TDLT);
-				if (ne && mob.getTemplate().hp >= 3000)
-				{
-					if (mob.levelBoss != 0)
-					{
-						bool found = false;
-						Mob sq = null;
-						for (int j = 0; j < GameScr.vMob.size(); j++)
-						{
-							sq = (Mob)GameScr.vMob.elementAt(j);
-							if (sq.countDie == 10 && (sq.status == 0 || sq.status == 1))
-							{
-								found = true;
-								break;
-							}
-						}
-						if (!found) continue;
-						mob.lastTimeDie = sq.lastTimeDie;
-					}
-					else if (mob.countDie == 10 && (mob.status == 0 || mob.status == 1))
-					{
-						continue;
-					}
-				}
-
-				if (mob.lastTimeDie < bestTime)
-				{
-					bestTime = mob.lastTimeDie;
-					best = mob;
-				}
-			}
-			return best;
-		}
-
-		static bool IsMobAlive(Mob mob)
-		{
-			if (mob.status == 0 || mob.status == 1 || mob.hp <= 0 || mob.isMobMe) return false;
-			if (mob.levelBoss != 0 && Pk9rPickMob.IsNeSieuQuai && !ItemTime.isExistItem(ID_ICON_ITEM_TDLT)) return false;
-			return FilterMob(mob);
-		}
-
-		static bool FilterMob(Mob mob)
-		{
-			if (Pk9rPickMob.IdMobsTanSat.Count != 0 && !Pk9rPickMob.IdMobsTanSat.Contains(mob.mobId)) return false;
-			if (Pk9rPickMob.TypeMobsTanSat.Count != 0 && !Pk9rPickMob.TypeMobsTanSat.Contains(mob.getTemplate().mobTemplateId)) return false;
-			return true;
-		}
-		#endregion
-
-		#region Skill Selection
-		[CanBeNull]
-		static Skill GetBestSkill()
+		public static Skill GetSkillAttack()
 		{
 			Skill best = null;
-			SkillTemplate tmpl = new SkillTemplate();
+			SkillTemplate template = new SkillTemplate();
 			foreach (sbyte id in Pk9rPickMob.IdSkillsTanSat)
 			{
-				tmpl.id = id;
-				Skill s = Char.myCharz().getSkill(tmpl);
-				if (IsSkillBetter(s, best)) best = s;
+				template.id = id;
+				Skill candidate = Char.myCharz().getSkill(template);
+				if (IsSkillBetter(candidate, best))
+					best = candidate;
 			}
+
 			return best;
 		}
 
 		static bool IsSkillBetter(Skill candidate, Skill current)
 		{
-			if (candidate == null || !CanUseSkill(candidate)) return false;
-			if (current != null)
-			{
-				bool prioritized = candidate.template.id == 17 && current.template.id == 2 ||
-				                   candidate.template.id == 9 && current.template.id == 0;
-				if (current.coolDown >= candidate.coolDown && !prioritized) return false;
-			}
-			return true;
+			if (candidate == null || !CanUseSkill(candidate))
+				return false;
+
+			if (current == null)
+				return true;
+
+			bool isPrioritize = candidate.template.id == 17 && current.template.id == 2 ||
+			                    candidate.template.id == 9 && current.template.id == 0;
+
+			return current.coolDown < candidate.coolDown || isPrioritize;
 		}
 
 		static bool CanUseSkill(Skill skill)
 		{
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
-			if (skill.paintCanNotUseSkill && !IdSkillsMelee.Contains(skill.template.id)) return false;
-			if (IdSkillsCanNotAttack.Contains(skill.template.id)) return false;
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown) return false;
-			if (Char.myCharz().cMP < GetManaUse(skill)) return false;
+
+			if (skill.paintCanNotUseSkill && !IdSkillsMelee.Contains(skill.template.id))
+				return false;
+
+			if (IdSkillsCanNotAttack.Contains(skill.template.id))
+				return false;
+
+			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown)
+				return false;
+
+			if (Char.myCharz().cMP < GetManaUseSkill(skill))
+				return false;
+
 			return true;
 		}
 
-		static int GetManaUse(Skill skill)
+		static int GetManaUseSkill(Skill skill)
 		{
-			if (skill.template.manaUseType == 2) return 1;
+			if (skill.template.manaUseType == 2)
+				return 1;
 			if (skill.template.manaUseType == 1)
 				return (int)(skill.manaUse * Char.myCharz().cMPFull / 100);
 			return skill.manaUse;
-		}
-		#endregion
-
-		#region Lifecycle
-		void ClearTarget(Char myChar)
-		{
-			_target = null;
-			_path = null;
-			myChar.currentMovePoint = null;
-		}
-
-		protected override void OnStart()
-		{
-			_target = null;
-			_skippedMob = null;
-			_path = null;
-			_stuckCount = 0;
-		}
-
-		protected override void OnStop()
-		{
-			_target = null;
-			_skippedMob = null;
-			_path = null;
-			_stuckCount = 0;
-			Char.myCharz().currentMovePoint = null;
-		}
-
-		[ChatCommand("ts2")]
-		internal static void TogglePickMobV2()
-		{
-			gI.Toggle();
-			GameScr.info1.addInfo("PickMob V2: " + (gI.IsActing ? mResources.ON : mResources.OFF) + '!', 0);
 		}
 		#endregion
 	}

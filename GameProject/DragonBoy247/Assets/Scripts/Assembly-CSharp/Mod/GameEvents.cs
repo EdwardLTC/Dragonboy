@@ -46,6 +46,10 @@ namespace Mod
 
 		internal static void OnGameStart()
 		{
+			if (Utils.IsMacBuild())
+			{
+				QualitySettings.vSyncCount = 0;
+			}
 			if (Utils.IsAndroidBuild())
 			{
 				Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -88,7 +92,6 @@ namespace Mod
 		{
 			if (mSystem.currentTimeMillis() - lastTimeGamePause > 1000 && !isFirstPause)
 			{
-				ModMenuMain.SaveData();
 				if (!Utils.IsOpenedByExternalAccountManager)
 				{
 					InGameAccountManager.OnCloseAndPause();
@@ -104,7 +107,6 @@ namespace Mod
 
 		internal static void OnGameClosing()
 		{
-			ModMenuMain.SaveData();
 			TeleportMenuMain.SaveData();
 
 			if (GameLauncherClient.Instance.IsConnected)
@@ -176,6 +178,11 @@ namespace Mod
 		{
 			if (filename.StartsWith("userAo") && string.IsNullOrEmpty(data))
 				filename = "";
+		}
+
+		internal static void OnRmsFileIo(Action action)
+		{
+			ModStorage.ExecuteWithCrossProcessDataLock(action);
 		}
 
 		internal static void OnLoadLanguage(sbyte newLanguage)
