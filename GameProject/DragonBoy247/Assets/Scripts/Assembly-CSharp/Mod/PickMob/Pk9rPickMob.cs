@@ -34,7 +34,8 @@ namespace Mod.PickMob
 
 		static Pk9rPickMob _Instance;
 
-		internal static bool IsTanSat { get; set; }
+		internal static bool IsTanSat => PickMobControllerV2.gI.IsActing;
+
 		internal static bool IsNeSieuQuai { get; set; } = true;
 		internal static bool IsVuotDiaHinh { get; set; } = true;
 		internal static bool IsAutoPickItems { get; set; } = true;
@@ -42,17 +43,13 @@ namespace Mod.PickMob
 		internal static bool IsLimitTimesPickItem { get; set; } = true;
 		internal static bool IsAttackMonsterBySendCommand { get; set; }
 		internal static bool IsSkipPickEventItems { get; set; } = true;
-		internal static Pk9rPickMob getInstance()
-		{
-			if (_Instance == null)
-				_Instance = new Pk9rPickMob();
-			return _Instance;
-		}
+		internal static Pk9rPickMob getInstance => _Instance ??= new Pk9rPickMob();
 
 		internal static void SetSlaughter(bool newState)
 		{
-			IsTanSat = newState;
+			PickMobControllerV2.gI.Toggle(newState);
 		}
+
 		internal static void SetAvoidSuperMonster(bool newState)
 		{
 			IsNeSieuQuai = newState;
@@ -338,185 +335,6 @@ namespace Mod.PickMob
 				TypeItemBlocks.Add(type);
 				GameScr.info1.addInfo(string.Format(Strings.pickMobDontPickItemTypeListAdded, type) + '!', 0);
 			}
-		}
-
-		[Obsolete("Không cần dùng")]
-		internal static bool Chat(string text)
-		{
-			if (IsGetInfoChat<int>(text, "sln"))
-			{
-				TimesAutoPickItemMax = GetInfoChat<int>(text, "sln");
-				GameScr.info1.addInfo("Số lần nhặt giới hạn là: " + TimesAutoPickItemMax, 0);
-			}
-			else if (IsGetInfoChat<short>(text, "addi"))
-			{
-				short id = GetInfoChat<short>(text, "addi");
-				if (IdItemPicks.Contains(id))
-				{
-					IdItemPicks.Remove(id);
-					GameScr.info1.addInfo($"Đã xoá khỏi danh sách chỉ tự động nhặt item: {ItemTemplates.get(id).name}[{id}]", 0);
-				}
-				else
-				{
-					IdItemPicks.Add(id);
-					GameScr.info1.addInfo($"Đã thêm vào danh sách chỉ tự động nhặt item: {ItemTemplates.get(id).name}[{id}]", 0);
-				}
-			}
-			else if (IsGetInfoChat<short>(text, "blocki"))
-			{
-				short id = GetInfoChat<short>(text, "blocki");
-				if (IdItemBlocks.Contains(id))
-				{
-					IdItemBlocks.Remove(id);
-					GameScr.info1.addInfo($"Đã thêm vào danh sách không tự động nhặt item: {ItemTemplates.get(id).name}[{id}]", 0);
-				}
-				else
-				{
-					IdItemBlocks.Add(id);
-					GameScr.info1.addInfo($"Đã xoá khỏi danh sách không tự động nhặt item: {ItemTemplates.get(id).name}[{id}]", 0);
-				}
-			}
-			else if (IsGetInfoChat<sbyte>(text, "addti"))
-			{
-				sbyte type = GetInfoChat<sbyte>(text, "addti");
-				if (TypeItemPicks.Contains(type))
-				{
-					TypeItemPicks.Remove(type);
-					GameScr.info1.addInfo("Đã xoá khỏi danh sách chỉ tự động nhặt loại item: " + type, 0);
-				}
-				else
-				{
-					TypeItemPicks.Add(type);
-					GameScr.info1.addInfo("Đã thêm vào danh sách chỉ tự động nhặt loại item: " + type, 0);
-				}
-			}
-			else if (IsGetInfoChat<sbyte>(text, "blockti"))
-			{
-				sbyte type = GetInfoChat<sbyte>(text, "blockti");
-				if (TypeItemBlocks.Contains(type))
-				{
-					TypeItemBlocks.Remove(type);
-					GameScr.info1.addInfo("Đã xoá khỏi danh sách không tự động nhặt loại item: " + type, 0);
-				}
-				else
-				{
-					TypeItemBlocks.Add(type);
-					GameScr.info1.addInfo("Đã thêm vào danh sách không tự động nhặt loại item: " + type, 0);
-				}
-			}
-			else if (IsGetInfoChat<int>(text, "addm"))
-			{
-				int id = GetInfoChat<int>(text, "addm");
-				if (IdMobsTanSat.Contains(id))
-				{
-					IdMobsTanSat.Remove(id);
-					GameScr.info1.addInfo("Đã xoá mob: " + id, 0);
-				}
-				else
-				{
-					IdMobsTanSat.Add(id);
-					GameScr.info1.addInfo("Đã thêm mob: " + id, 0);
-				}
-			}
-			else if (IsGetInfoChat<int>(text, "addtm"))
-			{
-				int id = GetInfoChat<int>(text, "addtm");
-				if (TypeMobsTanSat.Contains(id))
-				{
-					TypeMobsTanSat.Remove(id);
-					GameScr.info1.addInfo($"Đã xoá loại mob: {Mob.arrMobTemplate[id].name}[{id}]", 0);
-				}
-				else
-				{
-					TypeMobsTanSat.Add(id);
-					GameScr.info1.addInfo($"Đã thêm loại mob: {Mob.arrMobTemplate[id].name}[{id}]", 0);
-				}
-			}
-			else if (IsGetInfoChat<int>(text, "skill"))
-			{
-				int index = GetInfoChat<int>(text, "skill") - 1;
-				SkillTemplate template = Char.myCharz().nClass.skillTemplates[index];
-				if (IdSkillsTanSat.Contains(template.id))
-				{
-					IdSkillsTanSat.Remove(template.id);
-					GameScr.info1.addInfo($"Đã xoá khỏi danh sách skill sử dụng tự động đánh quái skill: {template.name}[{template.id}]", 0);
-				}
-				else
-				{
-					IdSkillsTanSat.Add(template.id);
-					GameScr.info1.addInfo($"Đã thêm vào danh sách skill sử dụng tự động đánh quái skill: {template.name}[{template.id}]", 0);
-				}
-			}
-			else if (IsGetInfoChat<sbyte>(text, "skillid"))
-			{
-				sbyte id = GetInfoChat<sbyte>(text, "skillid");
-				if (IdSkillsTanSat.Contains(id))
-				{
-					IdSkillsTanSat.Remove(id);
-					GameScr.info1.addInfo("Đã xoá khỏi danh sách skill sử dụng tự động đánh quái skill: " + id, 0);
-				}
-				else
-				{
-					IdSkillsTanSat.Add(id);
-					GameScr.info1.addInfo("Đã thêm vào danh sách skill sử dụng tự động đánh quái skill: " + id, 0);
-				}
-			}
-			//else if (text == "abf")
-			//{
-			//    if (HpBuff == 0 && MpBuff == 0)
-			//    {
-			//        GameScr.info1.addInfo("Tự động sử dụng đậu thần: Tắt", 0);
-			//    }
-			//    else
-			//    {
-			//        HpBuff = DEFAULT_HP_BUFF;
-			//        MpBuff = DEFAULT_MP_BUFF;
-			//        GameScr.info1.addInfo($"Tự động sử dụng đậu thần khi HP dưới {HpBuff}%, MP dưới {MpBuff}%", 0);
-			//    }    
-			//}
-			//else if (IsGetInfoChat<int>(text, "abf"))
-			//{
-			//    HpBuff = GetInfoChat<int>(text, "abf");
-			//    MpBuff = 0;
-			//    GameScr.info1.addInfo($"Tự động sử dụng đậu thần khi HP dưới {HpBuff}%", 0);
-			//}
-			//else if (IsGetInfoChat<int>(text, "abf", 2))
-			//{
-			//    int[] vs = GetInfoChat<int>(text, "abf", 2);
-			//    HpBuff = vs[0];
-			//    MpBuff = vs[1];
-			//    GameScr.info1.addInfo($"Tự động sử dụng đậu thần khi HP dưới {HpBuff}%, MP dưới {MpBuff}%", 0);
-			//}
-			else return false;
-			return true;
-		}
-
-		[Obsolete("Không cần dùng")]
-		internal static bool HotKeys()
-		{
-			switch (GameCanvas.keyAsciiPress)
-			{
-			case 't':
-				ToggleSlaughter();
-				break;
-			case 'n':
-				ToggleAutoPickUpItems();
-				break;
-			case 'a':
-				ToggleSelectedMob();
-				break;
-			case 'b':
-				Chat("abf");
-				break;
-			default:
-				return false;
-			}
-			return true;
-		}
-
-		internal static void Update()
-		{
-			PickMobController.Update();
 		}
 
 		internal static void MobStartDie(object obj)

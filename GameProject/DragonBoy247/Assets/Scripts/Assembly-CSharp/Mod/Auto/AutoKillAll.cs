@@ -33,7 +33,7 @@ namespace Mod.Auto
 						{
 							Char.myCharz().charFocus = obj;
 
-							Skill skill = PickMobController.GetSkillAttack();
+							Skill skill = SkillPicker.GetSkillAttack();
 
 							if (skill != null && !skill.paintCanNotUseSkill)
 							{

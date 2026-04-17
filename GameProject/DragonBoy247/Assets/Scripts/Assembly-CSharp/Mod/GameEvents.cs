@@ -362,7 +362,6 @@ namespace Mod
 			TeleportMenuMain.Update();
 			AutoTrainPet.Update();
 			AutoSellTrashItems.Update();
-			Pk9rPickMob.Update();
 			AutoPean.Update();
 			AutoSkill.Update();
 			DelayedAction.Tick();

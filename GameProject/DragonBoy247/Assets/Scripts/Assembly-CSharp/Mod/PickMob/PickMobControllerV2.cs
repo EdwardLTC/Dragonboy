@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Linq;
-using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper;
 using Mod.Xmap;
@@ -13,15 +11,6 @@ namespace Mod.PickMob
 		const float PICK_ITEM_DELAY = 0.2f;
 		const float ATTACK_DELAY = 0.1f;
 		const int ID_ICON_ITEM_TDLT = 4387;
-
-		static readonly sbyte[] IdSkillsMelee =
-		{
-			0, 9, 2, 17, 4
-		};
-		static readonly sbyte[] IdSkillsCanNotAttack =
-		{
-			10, 11, 14, 23, 7
-		};
 
 		protected override float Interval => 0f;
 
@@ -107,13 +96,15 @@ namespace Mod.PickMob
 
 			myChar.clearFocus(0);
 
-			if (myChar.mobFocus != null && !IsMobTanSat(myChar.mobFocus))
+			if (myChar.mobFocus != null && !MobPicker.IsMobTanSat(myChar.mobFocus))
+			{
 				myChar.mobFocus = null;
+			}
 
 			if (myChar.mobFocus == null)
 			{
-				myChar.mobFocus = GetMobTanSat();
-				if (isUseTDLT && myChar.mobFocus != null)
+				myChar.mobFocus = MobPicker.GetMobTanSat();
+				if (myChar.mobFocus != null && isUseTDLT)
 				{
 					myChar.cx = myChar.mobFocus.xFirst - 24;
 					myChar.cy = myChar.mobFocus.yFirst;
@@ -125,22 +116,25 @@ namespace Mod.PickMob
 			{
 				if (myChar.skillInfoPaint() == null)
 				{
-					Skill skill = GetSkillAttack();
+					Skill skill = SkillPicker.GetSkillAttack();
 					if (skill != null && !skill.paintCanNotUseSkill)
+					{
 						AttackMob(myChar, skill);
+					}
 				}
 			}
 			else if (!isUseTDLT)
 			{
-				Mob mob = GetMobNext();
+				Mob mob = MobPicker.GetMobNext();
 				if (mob != null)
+				{
 					Move(mob.xFirst - 24, mob.yFirst);
+				}
 			}
 
 			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 		}
 
-		#region Attack
 		static void AttackMob(Char myChar, Skill skill)
 		{
 			Mob mobFocus = myChar.mobFocus;
@@ -148,9 +142,13 @@ namespace Mod.PickMob
 			mobFocus.y = mobFocus.yFirst;
 
 			if (Pk9rPickMob.IsAttackMonsterBySendCommand)
+			{
 				AttackMobBySendCommand(myChar, skill, mobFocus);
+			}
 			else
+			{
 				AttackMobByFocus(myChar, skill, mobFocus);
+			}
 		}
 
 		static void AttackMobBySendCommand(Char myChar, Skill skill, Mob mobFocus)
@@ -207,9 +205,7 @@ namespace Mod.PickMob
 				Move(mobFocus.xFirst, mobFocus.yFirst);
 			}
 		}
-		#endregion
 
-		#region Movement
 		static void Move(int x, int y)
 		{
 			Char myChar = Char.myCharz();
@@ -284,7 +280,6 @@ namespace Mod.PickMob
 				x, ysdMin
 			};
 		}
-		#endregion
 
 		#region Item picking helpers
 		static TypePickItem GetTypePickItem(ItemMap itemMap)
@@ -337,164 +332,6 @@ namespace Mod.PickMob
 			PickItemNormal,
 			PickItemTDLT,
 			PickItemTanSat
-		}
-		#endregion
-
-		#region Mob selection helpers
-		static Mob GetMobTanSat()
-		{
-			Mob closest = null;
-			int minDist = int.MaxValue;
-			Char myChar = Char.myCharz();
-			for (int i = 0; i < GameScr.vMob.size(); i++)
-			{
-				Mob mob = (Mob)GameScr.vMob.elementAt(i);
-				int dx = mob.xFirst - myChar.cx;
-				int dy = mob.yFirst - myChar.cy;
-				int dist = dx * dx + dy * dy;
-				if (IsMobTanSat(mob) && dist < minDist)
-				{
-					closest = mob;
-					minDist = dist;
-				}
-			}
-
-			return closest;
-		}
-
-		static Mob GetMobNext()
-		{
-			Mob earliest = null;
-			long earliestTime = mSystem.currentTimeMillis();
-			for (int i = 0; i < GameScr.vMob.size(); i++)
-			{
-				Mob mob = (Mob)GameScr.vMob.elementAt(i);
-				if (IsMobNext(mob) && mob.lastTimeDie < earliestTime)
-				{
-					earliest = mob;
-					earliestTime = mob.lastTimeDie;
-				}
-			}
-
-			return earliest;
-		}
-
-		static bool IsMobTanSat(Mob mob)
-		{
-			if (mob.status == 0 || mob.status == 1 || mob.hp <= 0 || mob.isMobMe)
-				return false;
-
-			if (mob.levelBoss != 0 && Pk9rPickMob.IsNeSieuQuai && !ItemTime.isExistItem(ID_ICON_ITEM_TDLT))
-				return false;
-
-			return FilterMobTanSat(mob);
-		}
-
-		static bool IsMobNext(Mob mob)
-		{
-			if (mob.isMobMe || !FilterMobTanSat(mob))
-				return false;
-
-			if (!Pk9rPickMob.IsNeSieuQuai || ItemTime.isExistItem(ID_ICON_ITEM_TDLT) || mob.getTemplate().hp < 3000)
-				return true;
-
-			if (mob.levelBoss != 0)
-			{
-				Mob mobNextSieuQuai = null;
-				bool found = false;
-				for (int i = 0; i < GameScr.vMob.size(); i++)
-				{
-					mobNextSieuQuai = (Mob)GameScr.vMob.elementAt(i);
-					if (mobNextSieuQuai.countDie == 10 &&
-					    (mobNextSieuQuai.status == 0 || mobNextSieuQuai.status == 1))
-					{
-						found = true;
-						break;
-					}
-				}
-
-				if (!found) return false;
-				mob.lastTimeDie = mobNextSieuQuai.lastTimeDie;
-			}
-			else if (mob.countDie == 10 && (mob.status == 0 || mob.status == 1))
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		static bool FilterMobTanSat(Mob mob)
-		{
-			if (Pk9rPickMob.IdMobsTanSat.Count != 0 && !Pk9rPickMob.IdMobsTanSat.Contains(mob.mobId))
-				return false;
-
-			if (Pk9rPickMob.TypeMobsTanSat.Count != 0 &&
-			    !Pk9rPickMob.TypeMobsTanSat.Contains(mob.getTemplate().mobTemplateId))
-				return false;
-
-			return true;
-		}
-		#endregion
-
-		#region Skill helpers
-		[CanBeNull]
-		public static Skill GetSkillAttack()
-		{
-			Skill best = null;
-			SkillTemplate template = new SkillTemplate();
-			foreach (sbyte id in Pk9rPickMob.IdSkillsTanSat)
-			{
-				template.id = id;
-				Skill candidate = Char.myCharz().getSkill(template);
-				if (IsSkillBetter(candidate, best))
-					best = candidate;
-			}
-
-			return best;
-		}
-
-		static bool IsSkillBetter(Skill candidate, Skill current)
-		{
-			if (candidate == null || !CanUseSkill(candidate))
-				return false;
-
-			if (current == null)
-				return true;
-
-			bool isPrioritize = candidate.template.id == 17 && current.template.id == 2 ||
-			                    candidate.template.id == 9 && current.template.id == 0;
-
-			return current.coolDown < candidate.coolDown || isPrioritize;
-		}
-
-		static bool CanUseSkill(Skill skill)
-		{
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
-				skill.paintCanNotUseSkill = false;
-
-			if (skill.paintCanNotUseSkill && !IdSkillsMelee.Contains(skill.template.id))
-				return false;
-
-			if (IdSkillsCanNotAttack.Contains(skill.template.id))
-				return false;
-
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown)
-				return false;
-
-			if (Char.myCharz().cMP < GetManaUseSkill(skill))
-				return false;
-
-			return true;
-		}
-
-		static int GetManaUseSkill(Skill skill)
-		{
-			if (skill.template.manaUseType == 2)
-				return 1;
-			if (skill.template.manaUseType == 1)
-				return (int)(skill.manaUse * Char.myCharz().cMPFull / 100);
-			return skill.manaUse;
 		}
 		#endregion
 	}

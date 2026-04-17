@@ -1788,6 +1788,10 @@ public class Char : IMapObject
 	public virtual void update()
 	{
 		GameEvents.OnUpdateChar(this);
+		if (isMiniPet)
+		{
+			return;
+		}
 		if (isMafuba)
 		{
 			cf = 23;
