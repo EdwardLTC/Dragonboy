@@ -6455,9 +6455,13 @@ public class Panel : IActionListener, IChatable
 		if (isTypeShop() || TileMap.mapID == 45)
 			Char.myCharz().resetPartTemp();
 		if (chatTField != null && type == 13 && chatTField.isShow)
+		{
 			chatTField = null;
+		}
 		if (type == 13 && !isAccept)
+		{
 			Service.gI().giaodich(3, -1, -1, -1);
+		}
 		Res.outz("HIDE PANELLLLLLLLLLLLLLLLLLLLLL");
 		SoundMn.gI().buttonClose();
 		GameScr.isPaint = true;

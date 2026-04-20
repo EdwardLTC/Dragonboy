@@ -3980,24 +3980,24 @@ public class GameScr : mScreen, IChatable
 		{
 			return;
 		}
-		// bool flag2 = false;
-		// for (int j = 0; j < Char.myCharz().arrItemBag.Length; j++)
-		// {
-		// 	Item item = Char.myCharz().arrItemBag[j];
-		// 	if (item != null && item.template.type == 6)
-		// 	{
-		// 		flag2 = true;
-		// 		break;
-		// 	}
-		// }
-		// if (!flag2 && GameCanvas.gameTick % 150 == 0)
-		// {
-		// 	Service.gI().requestPean();
-		// }
-		// if (Char.myCharz().cHP <= Char.myCharz().cHPFull * 20 / 100 || Char.myCharz().cMP <= Char.myCharz().cMPFull * 20 / 100)
-		// {
-		// 	doUseHP();
-		// }
+		bool flag2 = false;
+		for (int j = 0; j < Char.myCharz().arrItemBag.Length; j++)
+		{
+			Item item = Char.myCharz().arrItemBag[j];
+			if (item != null && item.template.type == 6)
+			{
+				flag2 = true;
+				break;
+			}
+		}
+		if (!flag2 && GameCanvas.gameTick % 150 == 0)
+		{
+			Service.gI().requestPean();
+		}
+		if (Char.myCharz().cHP <= Char.myCharz().cHPFull * 20 / 100 || Char.myCharz().cMP <= Char.myCharz().cMPFull * 20 / 100)
+		{
+			doUseHP();
+		}
 		if (Char.myCharz().mobFocus == null || (Char.myCharz().mobFocus != null && Char.myCharz().mobFocus.isMobMe))
 		{
 			for (int k = 0; k < vMob.size(); k++)
@@ -4024,27 +4024,26 @@ public class GameScr : mScreen, IChatable
 		Skill skill = null;
 		if (GameCanvas.isTouch)
 		{
-			// for (int l = 0; l < onScreenSkill.Length; l++)
-			// {
-			// 	if (onScreenSkill[l] == null || onScreenSkill[l].paintCanNotUseSkill || onScreenSkill[l].template.id == 10 || onScreenSkill[l].template.id == 11 || onScreenSkill[l].template.id == 14 || onScreenSkill[l].template.id == 23 || onScreenSkill[l].template.id == 7 || Char.myCharz().skillInfoPaint() != null || onScreenSkill[l].template.isSkillSpec())
-			// 	{
-			// 		continue;
-			// 	}
-			// 	long num = 0L;
-			// 	num = ((onScreenSkill[l].template.manaUseType == 2) ? 1 : ((onScreenSkill[l].template.manaUseType == 1) ? (onScreenSkill[l].manaUse * Char.myCharz().cMPFull / 100) : onScreenSkill[l].manaUse));
-			// 	if (Char.myCharz().cMP >= num)
-			// 	{
-			// 		if (skill == null)
-			// 		{
-			// 			skill = onScreenSkill[l];
-			// 		}
-			// 		else if (skill.coolDown < onScreenSkill[l].coolDown)
-			// 		{
-			// 			skill = onScreenSkill[l];
-			// 		}
-			// 	}
-			// }
-			skill = PickMobController.GetSkillAttack();
+			for (int l = 0; l < onScreenSkill.Length; l++)
+			{
+				if (onScreenSkill[l] == null || onScreenSkill[l].paintCanNotUseSkill || onScreenSkill[l].template.id == 10 || onScreenSkill[l].template.id == 11 || onScreenSkill[l].template.id == 14 || onScreenSkill[l].template.id == 23 || onScreenSkill[l].template.id == 7 || Char.myCharz().skillInfoPaint() != null || onScreenSkill[l].template.isSkillSpec())
+				{
+					continue;
+				}
+				long num = 0L;
+				num = ((onScreenSkill[l].template.manaUseType == 2) ? 1 : ((onScreenSkill[l].template.manaUseType == 1) ? (onScreenSkill[l].manaUse * Char.myCharz().cMPFull / 100) : onScreenSkill[l].manaUse));
+				if (Char.myCharz().cMP >= num)
+				{
+					if (skill == null)
+					{
+						skill = onScreenSkill[l];
+					}
+					else if (skill.coolDown < onScreenSkill[l].coolDown)
+					{
+						skill = onScreenSkill[l];
+					}
+				}
+			}
 			if (skill != null)
 			{
 				doSelectSkill(skill, true);

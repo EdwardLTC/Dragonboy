@@ -1,4 +1,3 @@
-using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using Mod;
@@ -223,7 +222,6 @@ public class Main : MonoBehaviour
 		{
 			Screen.orientation = ScreenOrientation.LandscapeLeft;
 			Application.runInBackground = true;
-			Application.targetFrameRate = 35;
 			useGUILayout = false;
 			isCompactDevice = detectCompactDevice();
 			if (main == null)
@@ -271,10 +269,10 @@ public class Main : MonoBehaviour
 			Paint.loadbg();
 			PopUp.loadBg();
 			GameScr.loadBg();
-			InfoMe.gI().loadCharId();
 			Panel.loadBg();
 			Menu.loadBg();
 			Key.mapKeyPC();
+			InfoMe.gI().loadCharId();
 			SoundMn.gI().loadSound(TileMap.mapID);
 			// g.CreateLineMaterial();
 		}
@@ -303,7 +301,14 @@ public class Main : MonoBehaviour
 	{
 		if (isPC)
 		{
-			int num = Rms.loadRMSInt("lastZoomlevel");
+			sbyte[] zoomBytes = Rms.loadRMS("lastZoomlevel");
+			if (zoomBytes == null || zoomBytes.Length == 0)
+			{
+				Rms.saveRMSInt("lastZoomlevel", mGraphics.zoomLevel);
+				Rms.saveRMSInt("levelScreenKN", level);
+				return;
+			}
+			int num = zoomBytes[0];
 			if (num != mGraphics.zoomLevel)
 			{
 				Rms.clearAll();

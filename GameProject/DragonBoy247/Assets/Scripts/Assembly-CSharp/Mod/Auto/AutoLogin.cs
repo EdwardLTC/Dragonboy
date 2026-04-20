@@ -1,6 +1,4 @@
 using Mod.R;
-using Mod.Xmap;
-using UnityEngine;
 
 namespace Mod.Auto
 {
@@ -9,12 +7,8 @@ namespace Mod.Auto
 		internal static bool isEnabled;
 		static long lastTimeAttemptLogin;
 		static long lastTimeUpdate;
-		static int lastMapID;
-		static int lastZoneID;
-		static int lastX;
-		static int lastY;
+		public static int server;
 		static int steps;
-		internal static bool IsRunning => isEnabled && steps > 0;
 
 		internal static void Update()
 		{
@@ -72,6 +66,11 @@ namespace Mod.Auto
 			}
 			else if (GameCanvas.currentScreen is ServerListScreen)
 			{
+				if (ServerListScreen.ipSelect != server)
+				{
+					SwitchServer(server);
+					return;
+				}
 				GameCanvas.serverScreen.perform(3, null);
 			}
 			else
@@ -80,36 +79,14 @@ namespace Mod.Auto
 			}
 		}
 
-		static void GotoLastMapAndZone()
+		static void SwitchServer(int index)
 		{
-			if (TileMap.mapID != lastMapID)
+			try
 			{
-				if (!XmapController.gI.IsActing)
-					XmapController.start(lastMapID);
+				ServerListScreen.ipSelect = index;
+				GameCanvas.serverScreen.selectServer();
 			}
-			else if (TileMap.zoneID != lastZoneID)
-				Service.gI().requestChangeZone(lastZoneID, 0);
-			else if (Utils.Distance(Char.myCharz().cx, Char.myCharz().cy, lastX, lastY) > 15)
-				Utils.TeleportMyChar(lastX, lastY);
-			else
-			{
-				Char.chatPopup = null;
-				ChatPopup.currChatPopup = null;
-				steps = 0;
-			}
-		}
-
-		internal static void OnGameScrUpdate()
-		{
-			if (!isEnabled)
-				return;
-			if (steps == 0 && GameCanvas.gameTick % (60f * Time.timeScale) == 0f)
-			{
-				lastMapID = TileMap.mapID;
-				lastZoneID = TileMap.zoneID;
-				lastX = Char.myCharz().cx;
-				lastY = Utils.GetYGround(Char.myCharz().cx);
-			}
+			catch { }
 		}
 
 		internal static void SetState(bool state)
