@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Mod.Graphics;
 using Mod.R;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Mod.AccountManager
@@ -57,7 +56,6 @@ namespace Mod.AccountManager
 		};
 
 		static ComboBox selectServer;
-		static List<Account> accounts = new List<Account>();
 		static ScrollableMenuItems<Account> scrollableMenuAccounts;
 
 		static TField tfUser;
@@ -70,8 +68,6 @@ namespace Mod.AccountManager
 		static TField tfInputRegexMatchAccountInfoImportAccounts;
 		static Server[] defaultServers;
 		static Server customServer;
-
-		static int selectedAccountIndex = -1;
 		static int currentAccountInfoX;
 
 		static bool isSwitchedToMe;
@@ -96,8 +92,15 @@ namespace Mod.AccountManager
 		//[name]:[address]:[port]:[language]:[typesv]:[isnew],...
 		//Super 2:dragon11.teamobi.com:17001:0:1:1,0,0
 		static InGameAccountManager instance;
+		static List<Account> accounts => InGameAccountDAO.Accounts;
 
-		internal static Account SelectedAccount => selectedAccountIndex == -1 ? null : accounts[selectedAccountIndex];
+		static int selectedAccountIndex
+		{
+			get => InGameAccountDAO.SelectedAccountIndex;
+			set => InGameAccountDAO.SelectedAccountIndex = value;
+		}
+
+		internal static Account SelectedAccount => InGameAccountDAO.SelectedAccount;
 
 		internal static Server SelectedServer { get; set; }
 
@@ -332,59 +335,25 @@ namespace Mod.AccountManager
 			base.keyPress(keyCode);
 		}
 
-		static void LoadDataAccounts()
+		static void ApplyLoadedAccountServerSelection()
 		{
-			string jsonData = ModStorage.ReadString("account_manager_accounts", "[]");
-			accounts = JsonConvert.DeserializeObject<List<Account>>(jsonData) ?? new List<Account>();
-			selectedAccountIndex = (int)ModStorage.ReadLong("account_manager_selected_account_index", -1);
-			if (selectedAccountIndex >= accounts.Count)
-				selectedAccountIndex = -1;
-			if (selectedAccountIndex != -1 && !SelectedAccount.Server.IsCustomIP())
+			if (InGameAccountDAO.SelectedAccountIndex != -1 && !InGameAccountDAO.SelectedAccount.Server.IsCustomIP())
 			{
-				ServerListScreen.ipSelect = SelectedAccount.Server.index;
-				Rms.saveRMSInt("svselect", SelectedAccount.Server.index);
+				ServerListScreen.ipSelect = InGameAccountDAO.SelectedAccount.Server.index;
+				Rms.saveRMSInt("svselect", InGameAccountDAO.SelectedAccount.Server.index);
 			}
-			if (selectedAccountIndex != -1)
-				SelectedServer = SelectedAccount.Server;
-		}
-
-		static void SaveDataAccounts()
-		{
-			if (accounts == null || accounts.Count == 0)
-			{
-				return;
-			}
-			ModStorage.WriteString("account_manager_accounts", JsonConvert.SerializeObject(accounts));
-			ModStorage.WriteLong("account_manager_selected_account_index", selectedAccountIndex);
+			if (InGameAccountDAO.SelectedAccountIndex != -1)
+				SelectedServer = InGameAccountDAO.SelectedAccount.Server;
 		}
 
 		internal static void AddUserAoToAccountManager()
 		{
-			string userAo = Rms.loadRMSString("userAo" + ServerListScreen.ipSelect);
-			if (string.IsNullOrEmpty(userAo))
-				return;
-			if (accounts.Any(acc => acc.Username == userAo))
-			{
-				GameCanvas.startOKDlg(Strings.inGameAccountManagerUnregisteredAccountAlreadyAdded + '!');
-				return;
-			}
-			Account account = new Account
-			{
-				Username = userAo,
-				Server = new Server(ServerListScreen.ipSelect),
-				LastTimeLogin = DateTime.Now
-			};
-			accounts.Add(account);
-			selectedAccountIndex = accounts.Count - 1;
-			Rms.DeleteStorage("userAo" + account.Server.index);
-			SaveDataAccounts();
-			GameScr.info1.addInfo(Strings.inGameAccountManagerAccountAdded + '!', 0);
+			InGameAccountDAO.AddUserAoToAccountManager();
 		}
 
 		internal static void ResetSelectedAccountIndex()
 		{
-			selectedAccountIndex = -1;
-			SaveDataAccounts();
+			InGameAccountDAO.ResetSelectedAccountIndex();
 		}
 
 		static void PaintListAccounts(mGraphics g)
@@ -826,7 +795,8 @@ namespace Mod.AccountManager
 			down = CustomGraphics.Resize(down, down.width * mGraphics.zoomLevel / 4, down.height * mGraphics.zoomLevel / 4);
 			addMultiple = CustomGraphics.Resize(addMultiple, addMultiple.width * mGraphics.zoomLevel / 4, addMultiple.height * mGraphics.zoomLevel / 4);
 			help = CustomGraphics.Resize(help, help.width * mGraphics.zoomLevel / 4, help.height * mGraphics.zoomLevel / 4);
-			LoadDataAccounts();
+			InGameAccountDAO.Load();
+			ApplyLoadedAccountServerSelection();
 			scrollableMenuAccounts = new ScrollableMenuItems<Account>(accounts)
 			{
 				PaintItemAction = PaintAccount,
@@ -887,7 +857,15 @@ namespace Mod.AccountManager
 
 		internal static void OnCloseAndPause()
 		{
-			SaveDataAccounts();
+			Account live = InGameAccountDAO.SelectedAccount;
+			if (live != null)
+			{
+				InGameAccountDAO.SaveMergedLoggedInAccount(live);
+			}
+			else
+			{
+				InGameAccountDAO.Save();
+			}
 		}
 
 		static void PaintAccount(mGraphics g, int i, int x, int y, int width, int height)
@@ -1058,7 +1036,7 @@ namespace Mod.AccountManager
 
 		internal class ActionListener : IActionListener
 		{
-			static ActionListener instance;
+			static ActionListener _instance;
 
 			public void perform(int id, object obj)
 			{
@@ -1111,11 +1089,11 @@ namespace Mod.AccountManager
 					}
 					InfoDlg.hide();
 					GameCanvas.currentDialog = null;
-					SaveDataAccounts();
+					InGameAccountDAO.Save();
 					break;
 				case CommandType.SelectAccountToLogin:
 					selectedAccountIndex = scrollableMenuAccounts.CurrentItemIndex;
-					SaveDataAccounts();
+					InGameAccountDAO.Save();
 					SelectedServer = SelectedAccount.Server;
 					Rms.saveRMSString("acc", "acc");
 					Rms.saveRMSString("pass", "pass");
@@ -1184,7 +1162,7 @@ namespace Mod.AccountManager
 					}
 					closeAndSaveData: ;
 					isAddingAccount = isEditingAccount = false;
-					SaveDataAccounts();
+					InGameAccountDAO.Save();
 					break;
 				case CommandType.CloseInputAccount:
 					isAddingAccount = isEditingAccount = false;
@@ -1241,7 +1219,7 @@ namespace Mod.AccountManager
 						accounts.RemoveAt(scrollableMenuAccounts.CurrentItemIndex);
 						accounts.Insert(scrollableMenuAccounts.CurrentItemIndex - 1, acc);
 						scrollableMenuAccounts.CurrentItemIndex--;
-						SaveDataAccounts();
+						InGameAccountDAO.Save();
 					}
 					break;
 				case CommandType.MoveAccountDown:
@@ -1251,7 +1229,7 @@ namespace Mod.AccountManager
 						accounts.RemoveAt(scrollableMenuAccounts.CurrentItemIndex);
 						accounts.Insert(scrollableMenuAccounts.CurrentItemIndex + 1, acc);
 						scrollableMenuAccounts.CurrentItemIndex++;
-						SaveDataAccounts();
+						InGameAccountDAO.Save();
 					}
 					break;
 				case CommandType.ImportAccounts:
@@ -1362,9 +1340,9 @@ namespace Mod.AccountManager
 			}
 			internal static ActionListener gI()
 			{
-				if (instance == null)
-					instance = new ActionListener();
-				return instance;
+				if (_instance == null)
+					_instance = new ActionListener();
+				return _instance;
 			}
 		}
 	}
