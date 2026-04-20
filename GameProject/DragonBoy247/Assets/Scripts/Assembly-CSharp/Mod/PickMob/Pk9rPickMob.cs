@@ -34,8 +34,7 @@ namespace Mod.PickMob
 
 		static Pk9rPickMob _Instance;
 
-		internal static bool IsTanSat => PickMobControllerV2.gI.IsActing;
-
+		internal static bool IsTanSat { get; set; }
 		internal static bool IsNeSieuQuai { get; set; } = true;
 		internal static bool IsVuotDiaHinh { get; set; } = true;
 		internal static bool IsAutoPickItems { get; set; } = true;
@@ -45,15 +44,26 @@ namespace Mod.PickMob
 		internal static bool IsSkipPickEventItems { get; set; } = true;
 		internal static Pk9rPickMob getInstance => _Instance ??= new Pk9rPickMob();
 
+		internal static void Init()
+		{
+			PickMobControllerV2.gI.Toggle(true);
+		}
+
 		internal static void SetSlaughter(bool newState)
 		{
-			PickMobControllerV2.gI.Toggle(newState);
+			IsTanSat = newState;
 		}
 
 		internal static void SetAvoidSuperMonster(bool newState)
 		{
 			IsNeSieuQuai = newState;
 		}
+
+		internal static void SetAttackMonsterBySendCommand(bool newState)
+		{
+			IsAttackMonsterBySendCommand = newState;
+		}
+
 		internal static void SetCrossTerrain(bool newState)
 		{
 			IsVuotDiaHinh = newState;

@@ -184,6 +184,7 @@ namespace Mod.Xmap
 				Service.gI().confirmMenu((short)npcId, (sbyte)select);
 			}
 			Char.chatPopup = null;
+			GameCanvas.menu.doCloseMenu();
 		}
 
 		static IEnumerator NextMapNpcPanel(MapNext mapNext)

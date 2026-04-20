@@ -67,6 +67,7 @@ namespace Mod
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
 			GraphicsReducer.InitializeTileMap(true);
+			Pk9rPickMob.Init();
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
 
@@ -734,7 +735,6 @@ namespace Mod
 
 		internal static bool OnMenuStartAt(MyVector menuItems)
 		{
-
 			return false;
 		}
 

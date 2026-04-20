@@ -157,6 +157,8 @@ namespace Mod.Xmap
 					GameCanvas.panel.mapNames = null;
 					GameCanvas.panel.hideNow();
 					GameCanvas.panel2.hideNow();
+					Char.chatPopup = null;
+					GameCanvas.menu.doCloseMenu();
 					return false;
 				}
 

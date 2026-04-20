@@ -25,8 +25,6 @@ namespace Mod.PickMob
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
 
-		static bool isTeleToNpc28;
-
 		protected override float Interval => 1f;
 
 		protected override IEnumerator OnUpdate()
@@ -71,7 +69,7 @@ namespace Mod.PickMob
 			}
 
 			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
-			Pk9rPickMob.IsAttackMonsterBySendCommand = true;
+			Pk9rPickMob.SetAttackMonsterBySendCommand(true);
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
@@ -99,7 +97,6 @@ namespace Mod.PickMob
 				}
 			}
 
-			isTeleToNpc28 = false;
 			notUsingMDTime = 0L;
 			base.OnStart();
 		}
@@ -107,7 +104,7 @@ namespace Mod.PickMob
 		protected override void OnStop()
 		{
 			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
-			Pk9rPickMob.IsAttackMonsterBySendCommand = false;
+			Pk9rPickMob.SetAttackMonsterBySendCommand(false);
 			Pk9rPickMob.SetSlaughter(false);
 			AutoLogin.SetState(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
@@ -135,7 +132,7 @@ namespace Mod.PickMob
 
 		static bool TryRecoverMd(Item capsuleInBag, Item capsuleInBox)
 		{
-			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70)
+			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
 			{
 				StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
 				return false;
@@ -262,6 +259,7 @@ namespace Mod.PickMob
 			}
 
 			ClosePanels();
+			yield return new WaitForSecondsRealtime(1f);
 			XmapController.start(mapIdTrain.Value);
 			yield return null;
 		}
@@ -270,13 +268,16 @@ namespace Mod.PickMob
 		{
 			if (GameCanvas.panel is not null && GameCanvas.panel.isShow)
 			{
-				GameCanvas.panel.isShow = false;
+				GameCanvas.panel.hideNow();
 			}
 
 			if (GameCanvas.panel2 is not null && GameCanvas.panel2.isShow)
 			{
-				GameCanvas.panel2.isShow = false;
+				GameCanvas.panel2.hideNow();
 			}
+
+			Char.chatPopup = null;
+			GameCanvas.menu.doCloseMenu();
 		}
 
 		static IEnumerator ChangeToTrainZoneIfNeeded()

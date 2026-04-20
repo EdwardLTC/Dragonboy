@@ -3,48 +3,6 @@ using Mod.Graphics;
 
 public class TileMap
 {
-	public const int T_EMPTY = 0;
-
-	public const int T_TOP = 2;
-
-	public const int T_LEFT = 4;
-
-	public const int T_RIGHT = 8;
-
-	public const int T_TREE = 16;
-
-	public const int T_WATERFALL = 32;
-
-	public const int T_WATERFLOW = 64;
-
-	public const int T_TOPFALL = 128;
-
-	public const int T_OUTSIDE = 256;
-
-	public const int T_DOWN1PIXEL = 512;
-
-	public const int T_BRIDGE = 1024;
-
-	public const int T_UNDERWATER = 2048;
-
-	public const int T_SOLIDGROUND = 4096;
-
-	public const int T_BOTTOM = 8192;
-
-	public const int T_DIE = 16384;
-
-	public const int T_HEBI = 32768;
-
-	public const int T_BANG = 65536;
-
-	public const int T_JUM8 = 131072;
-
-	public const int T_NT0 = 262144;
-
-	public const int T_NT1 = 524288;
-
-	public const int T_CENTER = 1;
-
 	public static int tmw;
 
 	public static int tmh;
@@ -63,10 +21,6 @@ public class TileMap
 
 	public static Image[] imgTile;
 
-	public static Image imgTileSmall;
-
-	public static Image imgMiniMap;
-
 	public static Image imgWaterfall;
 
 	public static Image imgTopWaterfall;
@@ -77,35 +31,19 @@ public class TileMap
 
 	public static Image imgWaterlowN2;
 
-	public static Image imgWaterF;
-
-	public static Image imgLeaf;
-
 	public static sbyte size = 24;
 
-	private static int bx;
+	static int bx;
 
-	private static int dbx;
+	static int dbx;
 
-	private static int fx;
+	static int fx;
 
-	private static int dfx;
-
-	public static string[] instruction;
-
-	public static int[] iX;
-
-	public static int[] iY;
-
-	public static int[] iW;
-
-	public static int iCount;
+	static int dfx;
 
 	public static bool isMapDouble = false;
 
 	public static string mapName = string.Empty;
-
-	public static sbyte versionMap = 1;
 
 	public static int mapID;
 
@@ -125,8 +63,6 @@ public class TileMap
 
 	public static sbyte lastPlanetId = -1;
 
-	public static long timeTranMini;
-
 	public static MyVector vGo = new MyVector();
 
 	public static MyVector vItemBg = new MyVector();
@@ -135,61 +71,28 @@ public class TileMap
 
 	public static string[] mapNames;
 
-	public static sbyte MAP_NORMAL = 0;
-
 	public static Image bong;
 
-	public const int TRAIDAT_DOINUI = 0;
+	public static int[] offlineId = new int[6]
+	{
+		21, 22, 23, 39, 40, 41
+	};
 
-	public const int TRAIDAT_RUNG = 1;
+	public static int[] highterId = new int[6]
+	{
+		21, 22, 23, 24, 25, 26
+	};
 
-	public const int TRAIDAT_DAORUA = 2;
-
-	public const int TRAIDAT_DADO = 3;
-
-	public const int NAMEK_THUNGLUNG = 5;
-
-	public const int NAMEK_DOINUI = 4;
-
-	public const int NAMEK_RUNG = 6;
-
-	public const int NAMEK_DAO = 7;
-
-	public const int SAYAI_DOINUI = 8;
-
-	public const int SAYAI_RUNG = 9;
-
-	public const int SAYAI_CITY = 10;
-
-	public const int SAYAI_NIGHT = 11;
-
-	public const int KAMISAMA = 12;
-
-	public const int TIME_ROOM = 13;
-
-	public const int HELL = 15;
-
-	public const int BEERUS = 16;
-
-	public const int THE_HELL = 19;
-
-	public static Image[] bgItem = new Image[8];
-
-	public static MyVector vObject = new MyVector();
-
-	public static int[] offlineId = new int[6] { 21, 22, 23, 39, 40, 41 };
-
-	public static int[] highterId = new int[6] { 21, 22, 23, 24, 25, 26 };
-
-	public static int[] toOfflineId = new int[3] { 0, 7, 14 };
+	public static int[] toOfflineId = new int[3]
+	{
+		0, 7, 14
+	};
 
 	public static int[][] tileType;
 
 	public static int[][][] tileIndex;
 
 	public static Image imgLight = GameCanvas.loadImage("/bg/light.png");
-
-	public static int sizeMiniMap = 2;
 
 	public static int gssx;
 
@@ -203,9 +106,7 @@ public class TileMap
 
 	public static int county;
 
-	private static int[] colorMini = new int[2] { 5257738, 8807192 };
-
-	public static int yWater = 0;
+	public static int yWater;
 
 	public static void loadBg()
 	{
@@ -266,36 +167,6 @@ public class TileMap
 			}
 		}
 		return false;
-	}
-
-	public static bool isHighterMap()
-	{
-		for (int i = 0; i < offlineId.Length; i++)
-		{
-			if (mapID == highterId[i])
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static bool isToOfflineMap()
-	{
-		for (int i = 0; i < toOfflineId.Length; i++)
-		{
-			if (mapID == toOfflineId[i])
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static void freeTilemap()
-	{
-		imgTile = null;
-		mSystem.gcc();
 	}
 
 	public static void loadTileCreatChar()
@@ -441,7 +312,7 @@ public class TileMap
 			string empty = string.Empty;
 			for (int k = 0; k < imgTile.Length; k++)
 			{
-				empty = ((k >= 9) ? ("/t/" + tileID + "/t_" + (k + 1)) : ("/t/" + tileID + "/t_0" + (k + 1)));
+				empty = k >= 9 ? "/t/" + tileID + "/t_" + (k + 1) : "/t/" + tileID + "/t_0" + (k + 1);
 				imgTile[k] = GameCanvas.loadImage(empty);
 			}
 			return;
@@ -498,56 +369,11 @@ public class TileMap
 		}
 	}
 
-	public static void paintTilemapLOW(mGraphics g)
-	{
-		for (int i = GameScr.gssx; i < GameScr.gssxe; i++)
-		{
-			for (int j = GameScr.gssy; j < GameScr.gssye; j++)
-			{
-				int num = maps[j * tmw + i] - 1;
-				if (num != -1)
-				{
-					paintTile(g, num, i, j);
-				}
-				if ((tileTypeAt(i, j) & 0x20) == 32)
-				{
-					g.drawRegion(imgWaterfall, 0, 24 * (GameCanvas.gameTick % 4), 24, 24, 0, i * size, j * size, 0);
-				}
-				else if ((tileTypeAt(i, j) & 0x40) == 64)
-				{
-					if ((tileTypeAt(i, j - 1) & 0x20) == 32)
-					{
-						g.drawRegion(imgWaterfall, 0, 24 * (GameCanvas.gameTick % 4), 24, 24, 0, i * size, j * size, 0);
-					}
-					else if ((tileTypeAt(i, j - 1) & 0x1000) == 4096)
-					{
-						paintTile(g, 21, i, j);
-					}
-					Image image = null;
-					image = ((tileID == 5) ? imgWaterlowN : ((tileID != 8) ? imgWaterflow : imgWaterlowN2));
-					g.drawRegion(image, 0, (GameCanvas.gameTick % 8 >> 2) * 24, 24, 24, 0, i * size, j * size, 0);
-				}
-				if ((tileTypeAt(i, j) & 0x800) == 2048)
-				{
-					if ((tileTypeAt(i, j - 1) & 0x20) == 32)
-					{
-						g.drawRegion(imgWaterfall, 0, 24 * (GameCanvas.gameTick % 4), 24, 24, 0, i * size, j * size, 0);
-					}
-					else if ((tileTypeAt(i, j - 1) & 0x1000) == 4096)
-					{
-						paintTile(g, 21, i, j);
-					}
-					paintTile(g, maps[j * tmw + i] - 1, i, j);
-				}
-			}
-		}
-	}
-
 	public static void paintTilemap(mGraphics g)
 	{
 		if (GraphicsReducer.OnTileMapPaintTile(g))
 		{
-			return;	
+			return;
 		}
 		if (Char.isLoadingMap)
 		{
@@ -655,7 +481,7 @@ public class TileMap
 	{
 		if (GraphicsReducer.OnTileMapPaintOutTile())
 		{
-			return;	
+			return;
 		}
 		if (GameCanvas.lowGraphic)
 		{
@@ -672,7 +498,7 @@ public class TileMap
 					continue;
 				}
 				Image image = null;
-				image = ((tileID == 5) ? imgWaterlowN : ((tileID != 8) ? imgWaterflow : imgWaterlowN2));
+				image = tileID == 5 ? imgWaterlowN : tileID != 8 ? imgWaterflow : imgWaterlowN2;
 				if (!isWaterEff())
 				{
 					g.drawRegion(image, 0, 0, 24, 24, 0, i * size, j * size - 1, 0);
@@ -720,18 +546,6 @@ public class TileMap
 		types = new int[maps.Length];
 	}
 
-	public static int tileAt(int x, int y)
-	{
-		try
-		{
-			return maps[y * tmw + x];
-		}
-		catch (Exception)
-		{
-			return 1000;
-		}
-	}
-
 	public static int tileTypeAt(int x, int y)
 	{
 		try
@@ -771,11 +585,6 @@ public class TileMap
 	public static void setTileTypeAtPixel(int px, int py, int t)
 	{
 		types[py / size * tmw + px / size] |= t;
-	}
-
-	public static void setTileTypeAt(int x, int y, int t)
-	{
-		types[y * tmw + x] = t;
 	}
 
 	public static void killTileTypeAt(int px, int py, int t)

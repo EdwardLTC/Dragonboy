@@ -274,10 +274,10 @@ public class Main : MonoBehaviour
 			Paint.loadbg();
 			PopUp.loadBg();
 			GameScr.loadBg();
-			InfoMe.gI().loadCharId();
 			Panel.loadBg();
 			Menu.loadBg();
 			Key.mapKeyPC();
+			InfoMe.gI().loadCharId();
 			SoundMn.gI().loadSound(TileMap.mapID);
 			// g.CreateLineMaterial();
 		}

@@ -69,7 +69,7 @@ namespace Mod.Xmap
 					}
 
 					int cost = 1;
-					if (mapNext.type == TypeMapNext.NpcMenu && mapNext.info != null && mapNext.info.Length > 0 && mapNext.info[0] == 38)
+					if (mapNext is { type: TypeMapNext.NpcMenu, info: { Length: > 0 } } && mapNext.info[0] == 38)
 					{
 						cost = 100;
 					}
