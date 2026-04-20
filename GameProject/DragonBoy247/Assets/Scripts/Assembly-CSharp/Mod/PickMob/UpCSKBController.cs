@@ -29,6 +29,8 @@ namespace Mod.PickMob
 
 		protected override IEnumerator OnUpdate()
 		{
+			AutoFusion();
+
 			UpdateNotUsingMdTime();
 
 			Item capsuleInBag = Utils.getItemInBag(ID_CAPSULE_KB);
@@ -69,6 +71,7 @@ namespace Mod.PickMob
 			}
 
 			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
+			HideGameUI.SetState(true);
 			Pk9rPickMob.SetAttackMonsterBySendCommand(true);
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
@@ -104,6 +107,7 @@ namespace Mod.PickMob
 		protected override void OnStop()
 		{
 			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
+			HideGameUI.SetState(false);
 			Pk9rPickMob.SetAttackMonsterBySendCommand(false);
 			Pk9rPickMob.SetSlaughter(false);
 			AutoLogin.SetState(false);
@@ -262,6 +266,17 @@ namespace Mod.PickMob
 			yield return new WaitForSecondsRealtime(1f);
 			XmapController.start(mapIdTrain.Value);
 			yield return null;
+		}
+
+		static void AutoFusion()
+		{
+			sbyte index = Utils.getIndexItemBag(921, 454);
+			if (index == -1 || !Char.myCharz().havePet || Char.myCharz().isNhapThe)
+			{
+				return;
+			}
+
+			Service.gI().useItem(0, 1, index, -1);
 		}
 
 		static void ClosePanels()
