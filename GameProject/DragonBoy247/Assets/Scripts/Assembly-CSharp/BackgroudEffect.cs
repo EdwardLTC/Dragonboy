@@ -1,6 +1,5 @@
 using System;
 using Assets.src.e;
-using Mod.Graphics;
 
 public class BackgroudEffect
 {
@@ -456,10 +455,6 @@ public class BackgroudEffect
 
 	public static void initCloud()
 	{
-		if (GraphicsReducer.OnBackgroundEffectInitCloud())
-		{
-			return;
-		}
 		if (mSystem.clientType == 1)
 		{
 			imgCloud1 = null;
@@ -498,10 +493,6 @@ public class BackgroudEffect
 
 	public static void updateCloud2()
 	{
-		if (GraphicsReducer.OnBackgroundEffectUpdateCloud2())
-		{
-			return;
-		}
 		if (mSystem.clientType == 1 || GameCanvas.lowGraphic || nCloud <= 0)
 		{
 			return;
@@ -520,10 +511,6 @@ public class BackgroudEffect
 
 	public static void updateFog()
 	{
-		if (GraphicsReducer.OnBackgroundEffectUpdateFog())
-		{
-			return;
-		}
 		if (mSystem.clientType != 1 && !GameCanvas.lowGraphic && isFog)
 		{
 			xfog--;
@@ -536,10 +523,6 @@ public class BackgroudEffect
 
 	public static void paintCloud2(mGraphics g)
 	{
-		if (GraphicsReducer.OnBackgroundEffectPaintCloud2())
-		{
-			return;
-		}
 		if (mSystem.clientType == 1 || GameCanvas.lowGraphic || nCloud == 0 || imgCloud1 == null)
 		{
 			return;
@@ -561,10 +544,6 @@ public class BackgroudEffect
 
 	public static void paintFog(mGraphics g)
 	{
-		if (GraphicsReducer.OnBackgroundEffectPaintFog())
-		{
-			return;
-		}
 		if (mSystem.clientType == 1 || GameCanvas.lowGraphic || !isFog || imgFog == null)
 		{
 			return;
@@ -1055,10 +1034,6 @@ public class BackgroudEffect
 
 	public static void addEffect(int id)
 	{
-		if (GraphicsReducer.OnBackgroundEffectAddEffect())
-		{
-			return;
-		}
 		if (!GameCanvas.lowGraphic)
 		{
 			BackgroudEffect o = new BackgroudEffect(id);

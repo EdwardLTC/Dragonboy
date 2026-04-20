@@ -1,5 +1,4 @@
 using System;
-using Mod.Graphics;
 
 public class TileMap
 {
@@ -371,10 +370,6 @@ public class TileMap
 
 	public static void paintTilemap(mGraphics g)
 	{
-		if (GraphicsReducer.OnTileMapPaintTile(g))
-		{
-			return;
-		}
 		if (Char.isLoadingMap)
 		{
 			return;
@@ -479,10 +474,6 @@ public class TileMap
 
 	public static void paintOutTilemap(mGraphics g)
 	{
-		if (GraphicsReducer.OnTileMapPaintOutTile())
-		{
-			return;
-		}
 		if (GameCanvas.lowGraphic)
 		{
 			return;

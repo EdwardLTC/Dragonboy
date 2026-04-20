@@ -2,7 +2,6 @@ using System;
 using Assets.src.e;
 using Assets.src.g;
 using Mod;
-using Mod.Graphics;
 using UnityEngine;
 
 public class GameCanvas : IActionListener
@@ -1586,10 +1585,6 @@ public class GameCanvas : IActionListener
 
 	public static void paintBGGameScr(mGraphics g)
 	{
-		if (GraphicsReducer.OnPaintBgGameScr(g))
-		{
-			return;
-		}
 		if (!isLoadBGok)
 		{
 			g.setColor(0);

@@ -1,7 +1,5 @@
 using System;
 using Assets.src.g;
-using Mod;
-using Mod.Graphics;
 
 public class Mob : IMapObject
 {
@@ -1431,10 +1429,6 @@ public class Mob : IMapObject
 
 	public virtual void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnMobPaint(this, g))
-		{
-			return;
-		}
 		if (isHide)
 		{
 			return;

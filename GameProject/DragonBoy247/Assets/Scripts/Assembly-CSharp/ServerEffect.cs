@@ -1,5 +1,3 @@
-using Mod.Graphics;
-
 public class ServerEffect : Effect2
 {
 	public EffectCharPaint eff;
@@ -94,10 +92,6 @@ public class ServerEffect : Effect2
 
 	public override void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnServerEffectPaint())
-		{
-			return;	
-		}
 		if (mGraphics.zoomLevel == 1)
 		{
 			GameScr.countEff++;

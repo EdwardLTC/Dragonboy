@@ -1,5 +1,4 @@
 using System;
-using Mod.Graphics;
 
 public class Effect
 {
@@ -339,10 +338,6 @@ public class Effect
 
 	public void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnEffectPaint())
-		{
-			return;	
-		}
 		if (!isPaint || getEffDataById(effId) == null || getEffDataById(effId).img == null)
 		{
 			return;

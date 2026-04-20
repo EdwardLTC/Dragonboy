@@ -1,5 +1,3 @@
-using Mod.Graphics;
-
 public class Npc : Char
 {
 	public const sbyte BINH_KHI = 0;
@@ -199,10 +197,6 @@ public class Npc : Char
 
 	public override void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnNpcPaint(this, g))
-		{
-			return;
-		}
 		if (Char.isLoadingMap || isHide || !isPaint() || statusMe == 15)
 		{
 			return;

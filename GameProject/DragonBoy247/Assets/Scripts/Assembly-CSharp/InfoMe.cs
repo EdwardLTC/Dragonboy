@@ -1,6 +1,3 @@
-using Mod;
-using Mod.Graphics;
-
 public class InfoMe
 {
 	public static InfoMe me;
@@ -76,10 +73,6 @@ public class InfoMe
 
 	public void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnInfoMePaint(this, g))
-		{
-			return;
-		}
 		if ((Equals(GameScr.info2) && GameScr.gI().isVS()) || (Equals(GameScr.info2) && GameScr.gI().popUpYesNo != null) || !GameScr.isPaint || (GameCanvas.currentScreen != GameScr.gI() && GameCanvas.currentScreen != CrackBallScr.gI()) || ChatPopup.serverChatPopUp != null || !isUpdate || Char.ischangingMap || (GameCanvas.panel.isShow && Equals(GameScr.info2)))
 		{
 			return;

@@ -3,7 +3,6 @@ using Assets.src.e;
 using Assets.src.g;
 using Mod;
 using Mod.CharEffect;
-using Mod.Graphics;
 using UnityEngine;
 
 public class Char : IMapObject
@@ -3746,10 +3745,6 @@ public class Char : IMapObject
 
 	public void updateSuperEff()
 	{
-		if (GraphicsReducer.OnCharUpdateSuperEff())
-		{
-			return;
-		}
 		if (isCopy || isFusion || isSetPos || isPet || isMiniPet || isMonkey == 1 || (me && !isPaintAura2 && idAuraEff > -1) || (!me && idAuraEff > -1))
 		{
 			return;
@@ -4648,10 +4643,6 @@ public class Char : IMapObject
 
 	public void paintMount1(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintMount1(this, g))
-		{
-			return;
-		}
 		if (xMount <= GameScr.cmx || xMount >= GameScr.cmx + GameCanvas.w)
 		{
 			return;
@@ -4765,10 +4756,6 @@ public class Char : IMapObject
 
 	public void paintMount2(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintMount2())
-		{
-			return;
-		}
 		if (xMount <= GameScr.cmx || xMount >= GameScr.cmx + GameCanvas.w)
 		{
 			return;
@@ -5564,10 +5551,6 @@ public class Char : IMapObject
 
 	public virtual void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaint())
-		{
-			return;
-		}
 		if (isHide)
 		{
 			return;
@@ -5675,10 +5658,6 @@ public class Char : IMapObject
 
 	public void paint_map_line(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintMapLine())
-		{
-			return;
-		}
 		if (isPaintNewSkill || x_hint == 0 || y_hint == 0 || statusMe == 14)
 		{
 			return;
@@ -5726,10 +5705,6 @@ public class Char : IMapObject
 
 	public void paintEff_Pet(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEff_Pet())
-		{
-			return;
-		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -5742,10 +5717,6 @@ public class Char : IMapObject
 
 	public void paintSuperEffBehind(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintSuperEffBehind())
-		{
-			return;
-		}
 		if ((me && !isPaintAura2) || idAuraEff > -1 || (statusMe != 1 && statusMe != 6) || mSystem.currentTimeMillis() - timeBlue <= 0 || isCopy || clevel < 16)
 		{
 			return;
@@ -5779,10 +5750,6 @@ public class Char : IMapObject
 
 	public void paintSuperEffFront(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintSuperEffFront())
-		{
-			return;
-		}
 		if (!isPaintAura2)
 		{
 			return;
@@ -5886,10 +5853,6 @@ public class Char : IMapObject
 
 	public void paintEffect(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEffect())
-		{
-			return;
-		}
 		if (effPaints != null)
 		{
 			for (int i = 0; i < effPaints.Length; i++)
@@ -6375,10 +6338,6 @@ public class Char : IMapObject
 
 	public void paintCharBody(mGraphics g, int cx, int cy, int cdir, int cf, bool isPaintBag)
 	{
-		if (GraphicsReducer.OnCharPaintCharBody(this, g, cx, cy, cdir, isPaintBag))
-		{
-			return;
-		}
 		ph = GameScr.parts[head];
 		pl = GameScr.parts[leg];
 		pb = GameScr.parts[body];
@@ -7838,10 +7797,6 @@ public class Char : IMapObject
 
 	public void paintEffBehind(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEffBehind())
-		{
-			return;
-		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -7862,10 +7817,6 @@ public class Char : IMapObject
 
 	public void paintEffFront(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEffFront())
-		{
-			return;
-		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -7988,10 +7939,6 @@ public class Char : IMapObject
 
 	public void paintAuraBehind(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintAuraBehind())
-		{
-			return;
-		}
 		if ((!me || isPaintAura) && idAuraEff > -1 && (statusMe == 1 || statusMe == 6) && !GameCanvas.panel.isShow && mSystem.currentTimeMillis() - timeBlue > 0)
 		{
 			string nameImg = strEffAura + idAuraEff + "_0";
@@ -8005,10 +7952,6 @@ public class Char : IMapObject
 
 	public void paintAuraFront(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintAuraFront())
-		{
-			return;
-		}
 		if ((me && !isPaintAura) || idAuraEff <= -1)
 		{
 			return;
@@ -8056,10 +7999,6 @@ public class Char : IMapObject
 
 	public void paintEff_Lvup_behind(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEff_LvUp_Behind())
-		{
-			return;
-		}
 		if (idEff_Set_Item != -1)
 		{
 			if (fraEff != null)
@@ -8075,10 +8014,6 @@ public class Char : IMapObject
 
 	public void paintEff_Lvup_front(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaintEff_LvUp_Front())
-		{
-			return;
-		}
 		if (idEff_Set_Item != -1)
 		{
 			if (fraEffSub != null)

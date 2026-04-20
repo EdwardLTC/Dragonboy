@@ -1,5 +1,3 @@
-using Mod.Graphics;
-
 public class BgItem
 {
 	public int id;
@@ -139,10 +137,6 @@ public class BgItem
 
 	public void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnBgItemPaint())
-		{
-			return;
-		}
 		if (Char.isLoadingMap || (idImage == 279 && GameScr.gI().tMabuEff >= 110))
 		{
 			return;

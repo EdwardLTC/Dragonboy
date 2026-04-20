@@ -1,7 +1,6 @@
 using System;
 using Assets.src.g;
 using Mod;
-using Mod.Graphics;
 using Mod.PickMob;
 
 public class GameScr : mScreen, IChatable
@@ -4996,10 +4995,6 @@ public class GameScr : mScreen, IChatable
 
 	public void paintEffect(mGraphics g)
 	{
-		if (GraphicsReducer.OnGameScrPaintEffect())
-		{
-			return;
-		}
 		for (int i = 0; i < Effect2.vEffect2.size(); i++)
 		{
 			Effect2 effect = (Effect2)Effect2.vEffect2.elementAt(i);
@@ -5025,10 +5020,6 @@ public class GameScr : mScreen, IChatable
 
 	public void paintBgItem(mGraphics g, int layer)
 	{
-		if (GraphicsReducer.OnGameScrPaintBgItem())
-		{
-			return;
-		}
 		for (int i = 0; i < TileMap.vCurrItem.size(); i++)
 		{
 			BgItem bgItem = (BgItem)TileMap.vCurrItem.elementAt(i);
