@@ -18,39 +18,41 @@ namespace Mod.Auto
 				yield return null;
 			}
 
-			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+			Char obj = Char.myChar.ClosestChar(int.MaxValue, true);
+			if (obj == null)
 			{
-				Char obj = (Char)GameScr.vCharInMap.elementAt(i);
-				try
+				yield break;
+			}
+
+			try
+			{
+				if (!string.IsNullOrEmpty(obj.cName) && !obj.isPet && !obj.isMiniPet && !obj.cName.StartsWith("#") && !obj.cName.StartsWith("$") && obj.cName != "Trọng tài" && obj.cFlag != 0 && !char.IsUpper(char.Parse(obj.cName.Substring(0, 1))) && obj.cHP > 0)
 				{
-					if (!string.IsNullOrEmpty(obj.cName) && !obj.isPet && !obj.isMiniPet && !obj.cName.StartsWith("#") && !obj.cName.StartsWith("$") && obj.cName != "Trọng tài" && obj.cFlag != 0 && !char.IsUpper(char.Parse(obj.cName.Substring(0, 1))) && obj.cHP > 0)
+					Char.myCharz().mobFocus = null;
+					Char.myCharz().npcFocus = null;
+					Char.myCharz().itemFocus = null;
+
+					if (!obj.meDead && obj.cHP > 0 && obj.cFlag != 0 && obj.charID > 0)
 					{
-						Char.myCharz().mobFocus = null;
-						Char.myCharz().npcFocus = null;
-						Char.myCharz().itemFocus = null;
+						Char.myCharz().charFocus = obj;
 
-						if (!obj.meDead && obj.cHP > 0 && obj.cFlag != 0 && obj.charID > 0)
+						Skill skill = SkillPicker.GetSkillAttack();
+
+						if (skill != null && !skill.paintCanNotUseSkill)
 						{
-							Char.myCharz().charFocus = obj;
-
-							Skill skill = SkillPicker.GetSkillAttack();
-
-							if (skill != null && !skill.paintCanNotUseSkill)
+							GameScr.gI().doSelectSkill(skill, true);
+							if (Utils.isUsingTDLT())
 							{
-								GameScr.gI().doSelectSkill(skill, true);
-								if (Utils.isUsingTDLT())
-								{
-									Utils.TeleportMyChar(obj.cx, obj.cy);
-								}
-								Utils.DoDoubleClickToObj(obj);
+								Utils.TeleportMyChar(obj.cx, obj.cy);
 							}
+							Utils.DoDoubleClickToObj(obj);
 						}
 					}
 				}
-				catch (Exception e)
-				{
-					Debug.LogException(e);
-				}
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
 			}
 		}
 	}

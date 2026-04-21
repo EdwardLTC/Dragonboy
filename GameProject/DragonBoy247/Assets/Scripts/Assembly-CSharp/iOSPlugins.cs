@@ -1,4 +1,6 @@
+#if UNITY_IOS
 using System.Runtime.InteropServices;
+#endif
 using UnityEngine;
 
 public class iOSPlugins
@@ -7,6 +9,7 @@ public class iOSPlugins
 
 	public static string Myname;
 
+#if UNITY_IOS
 	[DllImport("__Internal")]
 	private static extern void _SMSsend(string tophone, string withtext, int n);
 
@@ -24,6 +27,7 @@ public class iOSPlugins
 
 	[DllImport("__Internal")]
 	private static extern void _purchaseItem(string itemID, string userName, string gameID);
+#endif
 
 	public static int Check()
 	{
@@ -62,51 +66,63 @@ public class iOSPlugins
 
 	public static void SMSsend(string phonenumber, string bodytext, int n)
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			_SMSsend(phonenumber, bodytext, n);
 		}
+#endif
 	}
 
 	public static void back()
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			_back();
 		}
+#endif
 	}
 
 	public static void Send()
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			_Send();
 		}
+#endif
 	}
 
 	public static int unpause()
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			return _unpause();
 		}
+#endif
 		return 0;
 	}
 
 	public static int checkRotation()
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			return _checkRotation();
 		}
+#endif
 		return 0;
 	}
 
 	public static void purchaseItem(string itemID, string userName, string gameID)
 	{
+#if UNITY_IOS
 		if (Application.platform != RuntimePlatform.OSXEditor)
 		{
 			_purchaseItem(itemID, userName, gameID);
 		}
+#endif
 	}
 }

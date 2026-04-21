@@ -19,8 +19,11 @@ namespace Mod
 			}
 
 			Service.gI().useItem(0, 1, index, -1);
-			Service.gI().petStatus(3);
 
+			if (Char.myCharz().isNhapThe)
+			{
+				Service.gI().petStatus(3);
+			}
 		}
 
 		[HotkeyCommand('j')]

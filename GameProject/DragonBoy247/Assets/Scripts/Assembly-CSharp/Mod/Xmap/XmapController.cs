@@ -8,11 +8,9 @@ namespace Mod.Xmap
 {
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
-		const float MaxStuckSeconds = 15f;
+		const float MaxStuckSeconds = 10f;
 		const float CapsuleProbeTimeoutSeconds = 5f;
-		const float CapsuleProbeRetrySeconds = 1f;
 		float capsuleProbeDeadline;
-		float capsuleProbeNextRetry;
 		int indexWay;
 		List<MapNext>[] initializeGraph;
 		int initializeStartMapId;
@@ -47,7 +45,7 @@ namespace Mod.Xmap
 			}
 			else if (now - lastProgressRealtime >= MaxStuckSeconds)
 			{
-				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 15s!", 0);
+				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 10s!", 0);
 				finishXmap();
 				yield break;
 			}
@@ -105,7 +103,6 @@ namespace Mod.Xmap
 			isInitializing = true;
 			initializeStartMapId = TileMap.mapID;
 			capsuleProbeDeadline = 0f;
-			capsuleProbeNextRetry = 0f;
 
 			string mapName = TileMap.mapNames[mapEnd];
 			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
@@ -122,7 +119,6 @@ namespace Mod.Xmap
 			isInitializing = false;
 			isWaitingForCapsuleLinks = false;
 			capsuleProbeDeadline = 0f;
-			capsuleProbeNextRetry = 0f;
 			MarkProgress();
 			base.OnStop();
 		}
@@ -153,12 +149,10 @@ namespace Mod.Xmap
 				{
 					isWaitingForCapsuleLinks = true;
 					capsuleProbeDeadline = now + CapsuleProbeTimeoutSeconds;
-					capsuleProbeNextRetry = 0f;
 					GameCanvas.panel.mapNames = null;
-					GameCanvas.panel.hideNow();
-					GameCanvas.panel2.hideNow();
 					Char.chatPopup = null;
 					GameCanvas.menu.doCloseMenu();
+					TryUseProbeCapsule();
 					return false;
 				}
 
@@ -166,7 +160,7 @@ namespace Mod.Xmap
 				return true;
 			}
 
-			if (GameCanvas.panel is { isShow: true, mapNames: { Length: > 0 } })
+			if (GameCanvas.panel is { isShow: true, mapNames: { Length: > 0 }, type: Panel.TYPE_MAPTRANS })
 			{
 				string[] mapNames = GameCanvas.panel.mapNames;
 
@@ -193,20 +187,6 @@ namespace Mod.Xmap
 				return true;
 			}
 
-			if (now >= capsuleProbeNextRetry)
-			{
-				if (Pk9rXmap.CanUseCapsuleVip())
-				{
-					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
-				}
-				else if (Pk9rXmap.CanUseCapsuleNormal())
-				{
-					Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
-				}
-
-				capsuleProbeNextRetry = now + CapsuleProbeRetrySeconds;
-			}
-
 			if (now < capsuleProbeDeadline)
 			{
 				return false;
@@ -215,6 +195,18 @@ namespace Mod.Xmap
 			isWaitingForCapsuleLinks = false;
 			isInitializing = false;
 			return true;
+		}
+
+		static void TryUseProbeCapsule()
+		{
+			if (Pk9rXmap.CanUseCapsuleVip())
+			{
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_VIP);
+			}
+			else if (Pk9rXmap.CanUseCapsuleNormal())
+			{
+				Service.gI().useItem(0, 1, -1, XmapUtils.ID_ITEM_CAPSULE_NORMAL);
+			}
 		}
 
 		void MarkProgress()

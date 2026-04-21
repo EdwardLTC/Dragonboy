@@ -51,6 +51,10 @@ public class SplashScr : mScreen
 		}
 		if (splashScrStat >= 150)
 		{
+			if (GameCanvas.serverScreen == null)
+			{
+				GameCanvas.serverScreen = new ServerListScreen();
+			}
 			if (Session_ME.gI().isConnected())
 			{
 				ServerListScreen.loadScreen = true;
@@ -59,10 +63,6 @@ public class SplashScr : mScreen
 			else
 			{
 				mSystem.onDisconnected();
-				if (GameCanvas.serverScreen == null)
-				{
-					GameCanvas.serverScreen = new ServerListScreen();
-				}
 				GameCanvas.serverScreen.switchToMe();
 			}
 		}
