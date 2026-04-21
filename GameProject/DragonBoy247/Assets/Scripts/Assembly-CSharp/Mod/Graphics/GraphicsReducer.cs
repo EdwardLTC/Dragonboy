@@ -220,35 +220,45 @@ namespace Mod.Graphics
 				return true;
 			if (Level <= ReduceGraphicsLevel.Level1)
 				return false;
-			if (_this.bag >= 0 && _this.statusMe != 14 && _this.isMonkey == 0)
-			{
-				if (!ClanImage.idImages.containsKey(_this.bag + string.Empty))
-				{
-					ClanImage.idImages.put(_this.bag + string.Empty, new ClanImage());
-					Service.gI().requestBagImage((sbyte)_this.bag);
-				}
-				else
-				{
-					ClanImage clanImage = (ClanImage)ClanImage.idImages.get(_this.bag + string.Empty);
-					if (clanImage.idImage != null && isPaintBag)
-						_this.paintBag(g, clanImage.idImage, cx, cy, cdir, true);
-				}
-			}
+			// if (_this.bag >= 0 && _this.statusMe != 14 && _this.isMonkey == 0)
+			// {
+			// 	if (!ClanImage.idImages.containsKey(_this.bag + string.Empty))
+			// 	{
+			// 		ClanImage.idImages.put(_this.bag + string.Empty, new ClanImage());
+			// 		Service.gI().requestBagImage((sbyte)_this.bag);
+			// 	}
+			// 	else
+			// 	{
+			// 		ClanImage clanImage = (ClanImage)ClanImage.idImages.get(_this.bag + string.Empty);
+			// 		if (clanImage.idImage != null && isPaintBag)
+			// 		{
+			// 			_this.paintBag(g, clanImage.idImage, cx, cy, cdir, true);
+			// 		}
+			// 	}
+			// }
 			g.setColor(Color.white);
 			if (_this.me)
+			{
 				g.setColor(Color.blue);
+			}
 			if (_this.IsPet())
+			{
 				g.setColor(Color.cyan);
+			}
 			else if (_this.cTypePk == 5)
 			{
 				g.setColor(Color.red);
 				if ((_this.isCharge || _this.isFlyAndCharge || _this.isStandAndCharge) && GameCanvas.gameTick % 8 >= 4)
+				{
 					g.setColor(Color.white);
+				}
 			}
 			int height = 35;
 			int width = 12;
 			if (_this.IsPet())
+			{
 				height = 30;
+			}
 			if (_this.cTypePk == 5)
 			{
 				width = 15;
@@ -258,7 +268,9 @@ namespace Mod.Graphics
 			if (_this.statusMe == 14)
 			{
 				if (GameCanvas.gameTick % 4 > 0)
+				{
 					g.drawImage(ItemMap.imageFlare, cx, cy - _this.ch - 11, mGraphics.HCENTER | mGraphics.VCENTER);
+				}
 				SmallImage.drawSmallImage(g, 79, cx, cy - _this.ch - 8, 0, mGraphics.HCENTER | mGraphics.BOTTOM);
 			}
 			if (_this.protectEff)
@@ -267,7 +279,9 @@ namespace Mod.Graphics
 				g.drawRect(cx - 35, cy - 55, 70, 70);
 			}
 			if (_this.cFlag != 0 && _this.cFlag != -1)
+			{
 				SmallImage.drawSmallImage(g, _this.flagImage, cx - (cdir == 1 ? 10 : 0), cy - _this.ch - 30 + (GameCanvas.gameTick % 20 > 10 ? GameCanvas.gameTick % 4 / 2 : 0), 0, 0);
+			}
 			return true;
 		}
 
@@ -486,7 +500,7 @@ namespace Mod.Graphics
 			mapTile.texture.Apply();
 		}
 
-		internal static void PaintTileMap(mGraphics g)
+		static void PaintTileMap(mGraphics g)
 		{
 			InitializeTileMap(Level == ReduceGraphicsLevel.Level1);
 			//vertical

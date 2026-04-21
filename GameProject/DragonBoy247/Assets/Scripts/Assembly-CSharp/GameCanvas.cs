@@ -851,9 +851,10 @@ public class GameCanvas : IActionListener
 			loginScr = new LoginScr();
 			_SelectCharScr = new SelectCharScr();
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
 			Debug.LogError("----------------->>>>>>>>>>errr");
+			Debug.LogException(ex);
 		}
 	}
 

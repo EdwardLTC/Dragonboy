@@ -271,7 +271,7 @@ namespace Mod.PickMob
 		static void AutoFusion()
 		{
 			sbyte index = Utils.getIndexItemBag(921, 454);
-			if (index == -1 || !Char.myCharz().havePet || Char.myCharz().isNhapThe)
+			if (index == -1 || !Char.myCharz().havePet || Char.myCharz().isNhapThe || Char.myCharz().isFusion)
 			{
 				return;
 			}
@@ -281,16 +281,8 @@ namespace Mod.PickMob
 
 		static void ClosePanels()
 		{
-			if (GameCanvas.panel is not null && GameCanvas.panel.isShow)
-			{
-				GameCanvas.panel.hideNow();
-			}
-
-			if (GameCanvas.panel2 is not null && GameCanvas.panel2.isShow)
-			{
-				GameCanvas.panel2.hideNow();
-			}
-
+			GameCanvas.panel.hideNow();
+			GameCanvas.panel2?.hideNow();
 			Char.chatPopup = null;
 			GameCanvas.menu.doCloseMenu();
 		}
