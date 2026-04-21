@@ -106,6 +106,63 @@ namespace Mod
 			return null;
 		}
 
+		static void Patch(Type originalType, string originalMethodName, Type[] parameterTypes, string prefix = null, string postfix = null)
+		{
+			MethodBase originalMethod = originalType.GetMethod(originalMethodName, BindingFlagsAll, null, parameterTypes, null);
+			if (originalMethod == null)
+			{
+				Debug.LogWarning($"GameHarmony: skipped missing method {originalType.FullName}.{originalMethodName}");
+				return;
+			}
+
+			object prefixMethod = CreateHarmonyMethod(prefix);
+			object postfixMethod = CreateHarmonyMethod(postfix);
+			_patchMethod.Invoke(_harmonyInstance, new[]
+			{
+				originalMethod, prefixMethod, postfixMethod, null, null
+			});
+		}
+
+		static void PatchConstructor(Type originalType, Type[] parameterTypes, string prefix = null, string postfix = null)
+		{
+			ConstructorInfo originalConstructor = originalType.GetConstructor(BindingFlagsAll, null, parameterTypes, null);
+			if (originalConstructor == null)
+			{
+				Debug.LogWarning($"GameHarmony: skipped missing constructor {originalType.FullName}({FormatParameterTypes(parameterTypes)})");
+				return;
+			}
+
+			object prefixMethod = CreateHarmonyMethod(prefix);
+			object postfixMethod = CreateHarmonyMethod(postfix);
+			_patchMethod.Invoke(_harmonyInstance, new[]
+			{
+				originalConstructor, prefixMethod, postfixMethod, null, null
+			});
+		}
+
+		static object CreateHarmonyMethod(string patchMethodName)
+		{
+			if (string.IsNullOrEmpty(patchMethodName))
+				return null;
+
+			MethodInfo patchMethod = typeof(GameHarmony).GetMethod(patchMethodName, BindingFlagsAll);
+			if (patchMethod == null)
+				throw new MissingMethodException(typeof(GameHarmony).FullName, patchMethodName);
+
+			return _harmonyMethodCtor.Invoke(new object[]
+			{
+				patchMethod
+			});
+		}
+
+		static string FormatParameterTypes(Type[] parameterTypes)
+		{
+			if (parameterTypes == null || parameterTypes.Length == 0)
+				return string.Empty;
+
+			return string.Join(", ", parameterTypes.Select(type => type?.Name ?? "null").ToArray());
+		}
+
 		static void ApplyPatches()
 		{
 			Patch(typeof(Main), "Start", NoArguments, postfix: nameof(Postfix_Main_Start));
@@ -430,63 +487,6 @@ namespace Mod
 			{
 				typeof(mGraphics)
 			}, nameof(Prefix_GraphicsReducer_GameCanvas_PaintBGGameScr));
-		}
-
-		static void Patch(Type originalType, string originalMethodName, Type[] parameterTypes, string prefix = null, string postfix = null)
-		{
-			MethodBase originalMethod = originalType.GetMethod(originalMethodName, BindingFlagsAll, null, parameterTypes, null);
-			if (originalMethod == null)
-			{
-				Debug.LogWarning($"GameHarmony: skipped missing method {originalType.FullName}.{originalMethodName}");
-				return;
-			}
-
-			object prefixMethod = CreateHarmonyMethod(prefix);
-			object postfixMethod = CreateHarmonyMethod(postfix);
-			_patchMethod.Invoke(_harmonyInstance, new[]
-			{
-				originalMethod, prefixMethod, postfixMethod, null, null
-			});
-		}
-
-		static void PatchConstructor(Type originalType, Type[] parameterTypes, string prefix = null, string postfix = null)
-		{
-			ConstructorInfo originalConstructor = originalType.GetConstructor(BindingFlagsAll, null, parameterTypes, null);
-			if (originalConstructor == null)
-			{
-				Debug.LogWarning($"GameHarmony: skipped missing constructor {originalType.FullName}({FormatParameterTypes(parameterTypes)})");
-				return;
-			}
-
-			object prefixMethod = CreateHarmonyMethod(prefix);
-			object postfixMethod = CreateHarmonyMethod(postfix);
-			_patchMethod.Invoke(_harmonyInstance, new[]
-			{
-				originalConstructor, prefixMethod, postfixMethod, null, null
-			});
-		}
-
-		static object CreateHarmonyMethod(string patchMethodName)
-		{
-			if (string.IsNullOrEmpty(patchMethodName))
-				return null;
-
-			MethodInfo patchMethod = typeof(GameHarmony).GetMethod(patchMethodName, BindingFlagsAll);
-			if (patchMethod == null)
-				throw new MissingMethodException(typeof(GameHarmony).FullName, patchMethodName);
-
-			return _harmonyMethodCtor.Invoke(new object[]
-			{
-				patchMethod
-			});
-		}
-
-		static string FormatParameterTypes(Type[] parameterTypes)
-		{
-			if (parameterTypes == null || parameterTypes.Length == 0)
-				return string.Empty;
-
-			return string.Join(", ", parameterTypes.Select(type => type?.Name ?? "null").ToArray());
 		}
 
 		static void Postfix_Main_Start()
@@ -840,109 +840,179 @@ namespace Mod
 			return !GameEvents.OnChatPopupMultiLine(__0);
 		}
 
-		static bool Prefix_GraphicsReducer_ServerEffect_Paint(ServerEffect __instance, mGraphics __0) =>
-			!GraphicsReducer.OnServerEffectPaint();
+		static bool Prefix_GraphicsReducer_ServerEffect_Paint(ServerEffect __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnServerEffectPaint();
+		}
 
-		static bool Prefix_GraphicsReducer_Npc_Paint(Npc __instance, mGraphics __0) =>
-			!GraphicsReducer.OnNpcPaint(__instance, __0);
+		static bool Prefix_GraphicsReducer_Npc_Paint(Npc __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnNpcPaint(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_TileMap_PaintTilemap(mGraphics __0) =>
-			!GraphicsReducer.OnTileMapPaintTile(__0);
+		static bool Prefix_GraphicsReducer_TileMap_PaintTilemap(mGraphics __0)
+		{
+			return !GraphicsReducer.OnTileMapPaintTile(__0);
+		}
 
-		static bool Prefix_GraphicsReducer_TileMap_PaintOutTilemap(mGraphics __0) =>
-			!GraphicsReducer.OnTileMapPaintOutTile();
+		static bool Prefix_GraphicsReducer_TileMap_PaintOutTilemap(mGraphics __0)
+		{
+			return !GraphicsReducer.OnTileMapPaintOutTile();
+		}
 
-		static bool Prefix_GraphicsReducer_Mob_Paint(Mob __instance, mGraphics __0) =>
-			!GraphicsReducer.OnMobPaint(__instance, __0);
+		static bool Prefix_GraphicsReducer_Mob_Paint(Mob __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnMobPaint(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_MagicTree_Paint(MagicTree __instance, mGraphics __0) =>
-			!GraphicsReducer.OnMagicTreePaint(__instance, __0);
+		static bool Prefix_GraphicsReducer_MagicTree_Paint(MagicTree __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnMagicTreePaint(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_ItemMap_Paint(ItemMap __instance, mGraphics __0) =>
-			!GraphicsReducer.OnItemMapPaint(__instance, __0);
+		static bool Prefix_GraphicsReducer_ItemMap_Paint(ItemMap __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnItemMapPaint(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_InfoMe_Paint(InfoMe __instance, mGraphics __0) =>
-			!GraphicsReducer.OnInfoMePaint(__instance, __0);
+		static bool Prefix_GraphicsReducer_InfoMe_Paint(InfoMe __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnInfoMePaint(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_GameScr_PaintBgItem(GameScr __instance, mGraphics __0, int __1) =>
-			!GraphicsReducer.OnGameScrPaintBgItem();
+		static bool Prefix_GraphicsReducer_GameScr_PaintBgItem(GameScr __instance, mGraphics __0, int __1)
+		{
+			return !GraphicsReducer.OnGameScrPaintBgItem();
+		}
 
-		static bool Prefix_GraphicsReducer_GameScr_PaintEffect(GameScr __instance, mGraphics __0) =>
-			!GraphicsReducer.OnGameScrPaintEffect();
+		static bool Prefix_GraphicsReducer_GameScr_PaintEffect(GameScr __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnGameScrPaintEffect();
+		}
 
-		static bool Prefix_GraphicsReducer_Effect_Paint(Effect __instance, mGraphics __0) =>
-			!GraphicsReducer.OnEffectPaint();
+		static bool Prefix_GraphicsReducer_Effect_Paint(Effect __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnEffectPaint();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintCharBody(Char __instance, mGraphics __0, int __1, int __2, int __3, int __4, bool __5) =>
-			!GraphicsReducer.OnCharPaintCharBody(__instance, __0, __1, __2, __3, __5);
+		static bool Prefix_GraphicsReducer_Char_PaintCharBody(Char __instance, mGraphics __0, int __1, int __2, int __3, int __4, bool __5)
+		{
+			return !GraphicsReducer.OnCharPaintCharBody(__instance, __0, __1, __2, __3, __5);
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintMapLine(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintMapLine();
+		static bool Prefix_GraphicsReducer_Char_PaintMapLine(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintMapLine();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffect(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEffect();
+		static bool Prefix_GraphicsReducer_Char_PaintEffect(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEffect();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffPet(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEff_Pet();
+		static bool Prefix_GraphicsReducer_Char_PaintEffPet(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEff_Pet();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffLvupFront(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEff_LvUp_Front();
+		static bool Prefix_GraphicsReducer_Char_PaintEffLvupFront(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEff_LvUp_Front();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffLvupBehind(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEff_LvUp_Behind();
+		static bool Prefix_GraphicsReducer_Char_PaintEffLvupBehind(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEff_LvUp_Behind();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffFront(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEffFront();
+		static bool Prefix_GraphicsReducer_Char_PaintEffFront(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEffFront();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintEffBehind(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintEffBehind();
+		static bool Prefix_GraphicsReducer_Char_PaintEffBehind(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintEffBehind();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintAuraFront(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintAuraFront();
+		static bool Prefix_GraphicsReducer_Char_PaintAuraFront(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintAuraFront();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintAuraBehind(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintAuraBehind();
+		static bool Prefix_GraphicsReducer_Char_PaintAuraBehind(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintAuraBehind();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintSuperEffFront(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintSuperEffFront();
+		static bool Prefix_GraphicsReducer_Char_PaintSuperEffFront(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintSuperEffFront();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintSuperEffBehind(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintSuperEffBehind();
+		static bool Prefix_GraphicsReducer_Char_PaintSuperEffBehind(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintSuperEffBehind();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintMount2(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintMount2();
+		static bool Prefix_GraphicsReducer_Char_PaintMount2(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintMount2();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_PaintMount1(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaintMount1(__instance, __0);
+		static bool Prefix_GraphicsReducer_Char_PaintMount1(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaintMount1(__instance, __0);
+		}
 
-		static bool Prefix_GraphicsReducer_Char_Paint(Char __instance, mGraphics __0) =>
-			!GraphicsReducer.OnCharPaint();
+		static bool Prefix_GraphicsReducer_Char_Paint(Char __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnCharPaint();
+		}
 
-		static bool Prefix_GraphicsReducer_Char_UpdateSuperEff(Char __instance) =>
-			!GraphicsReducer.OnCharUpdateSuperEff();
+		static bool Prefix_GraphicsReducer_Char_UpdateSuperEff(Char __instance)
+		{
+			return !GraphicsReducer.OnCharUpdateSuperEff();
+		}
 
-		static bool Prefix_GraphicsReducer_BgItem_Paint(BgItem __instance, mGraphics __0) =>
-			!GraphicsReducer.OnBgItemPaint();
+		static bool Prefix_GraphicsReducer_BgItem_Paint(BgItem __instance, mGraphics __0)
+		{
+			return !GraphicsReducer.OnBgItemPaint();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_AddEffect(int __0) =>
-			!GraphicsReducer.OnBackgroundEffectAddEffect();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_AddEffect(int __0)
+		{
+			return !GraphicsReducer.OnBackgroundEffectAddEffect();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_PaintFog(mGraphics __0) =>
-			!GraphicsReducer.OnBackgroundEffectPaintFog();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_PaintFog(mGraphics __0)
+		{
+			return !GraphicsReducer.OnBackgroundEffectPaintFog();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_PaintCloud2(mGraphics __0) =>
-			!GraphicsReducer.OnBackgroundEffectPaintCloud2();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_PaintCloud2(mGraphics __0)
+		{
+			return !GraphicsReducer.OnBackgroundEffectPaintCloud2();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_UpdateFog() =>
-			!GraphicsReducer.OnBackgroundEffectUpdateFog();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_UpdateFog()
+		{
+			return !GraphicsReducer.OnBackgroundEffectUpdateFog();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_UpdateCloud2() =>
-			!GraphicsReducer.OnBackgroundEffectUpdateCloud2();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_UpdateCloud2()
+		{
+			return !GraphicsReducer.OnBackgroundEffectUpdateCloud2();
+		}
 
-		static bool Prefix_GraphicsReducer_BackgroundEffect_InitCloud() =>
-			!GraphicsReducer.OnBackgroundEffectInitCloud();
+		static bool Prefix_GraphicsReducer_BackgroundEffect_InitCloud()
+		{
+			return !GraphicsReducer.OnBackgroundEffectInitCloud();
+		}
 
-		static bool Prefix_GraphicsReducer_GameCanvas_PaintBGGameScr(mGraphics __0) =>
-			!GraphicsReducer.OnPaintBgGameScr(__0);
+		static bool Prefix_GraphicsReducer_GameCanvas_PaintBGGameScr(mGraphics __0)
+		{
+			return !GraphicsReducer.OnPaintBgGameScr(__0);
+		}
 	}
 }
