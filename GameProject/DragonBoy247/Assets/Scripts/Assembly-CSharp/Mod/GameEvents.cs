@@ -50,8 +50,9 @@ namespace Mod
 			{
 				QualitySettings.vSyncCount = 0;
 			}
-			if (Utils.IsAndroidBuild())
+			if (Utils.IsMobile())
 			{
+				QualitySettings.vSyncCount = 1;
 				Screen.sleepTimeout = SleepTimeout.NeverSleep;
 				Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
 				Screen.orientation = ScreenOrientation.AutoRotation;
@@ -194,7 +195,7 @@ namespace Mod
 
 		internal static void OnSetResolution()
 		{
-			if (Utils.IsAndroidBuild())
+			if (Utils.IsMobile())
 				return;
 			if (Utils.sizeData != null)
 			{
@@ -475,7 +476,7 @@ namespace Mod
 
 		internal static bool OnCheckZoomLevel(int w, int h)
 		{
-			if (Utils.IsAndroidBuild())
+			if (Utils.IsMobile())
 			{
 				if (w * h >= 2073600)
 					mGraphics.zoomLevel = 4;
@@ -759,7 +760,7 @@ namespace Mod
 		internal static bool OnCreateImage(string filename, out Image image)
 		{
 			string streamingAssetsPath = Application.streamingAssetsPath;
-			if (Utils.IsAndroidBuild())
+			if (Utils.IsMobile())
 				streamingAssetsPath = Path.Combine(ModStorage.PersistentDataPath, "StreamingAssets");
 			string customAssetsPath = Path.Combine(streamingAssetsPath, "CustomAssets");
 			image = new Image();

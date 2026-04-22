@@ -28,7 +28,7 @@ extension LauncherError: LocalizedError {
 
 final class Launcher {
     /// Default bundle path used when none provided
-    static let defaultBundlePath = "/Applications/Dragonboy247_macos.app"
+    static let defaultBundlePath = "/Applications/Dragonboy247.app"
 
     static func isAppInstalled(at bundlePath: String) -> Bool {
         return FileManager.default.fileExists(atPath: bundlePath)

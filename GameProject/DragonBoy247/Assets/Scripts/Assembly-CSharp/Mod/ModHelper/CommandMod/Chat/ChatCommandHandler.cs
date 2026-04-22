@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace Mod.ModHelper.CommandMod.Chat
 {
@@ -67,14 +66,11 @@ namespace Mod.ModHelper.CommandMod.Chat
 				if (commandLength != -1)
 				{
 					string args = command.Substring(commandLength);
-					Debug.Log($"[ChatCommand] Matched command '{chatCommand.command}' with args '{args}'");
 
 					if (chatCommand.execute(args))
 					{
-						Debug.Log($"[ChatCommand] Command '{chatCommand.command}' executed successfully");
 						return true;
 					}
-					Debug.Log($"[ChatCommand] Command '{chatCommand.command}' failed to execute with args '{args}'");
 				}
 			}
 
@@ -143,7 +139,7 @@ namespace Mod.ModHelper.CommandMod.Chat
 		/// <returns>true nếu có lệnh được thực hiện thành công.</returns>
 		public static bool handleChatText(string text)
 		{
-			return text
+			return text.ToLower()
 				.Split(',')
 				.Aggregate(false, (acc, command) => execute(command.ToString()) || acc);
 		}

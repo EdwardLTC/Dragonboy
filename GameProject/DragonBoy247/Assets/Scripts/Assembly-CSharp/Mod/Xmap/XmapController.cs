@@ -8,7 +8,7 @@ namespace Mod.Xmap
 {
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
-		const float MaxStuckSeconds = 10f;
+		const float MaxStuckSeconds = 5f;
 		const float CapsuleProbeTimeoutSeconds = 5f;
 		float capsuleProbeDeadline;
 		int indexWay;
@@ -151,6 +151,7 @@ namespace Mod.Xmap
 					capsuleProbeDeadline = now + CapsuleProbeTimeoutSeconds;
 					GameCanvas.panel.mapNames = null;
 					Char.chatPopup = null;
+					GameCanvas.panel.hideNow();
 					GameCanvas.menu.doCloseMenu();
 					TryUseProbeCapsule();
 					return false;

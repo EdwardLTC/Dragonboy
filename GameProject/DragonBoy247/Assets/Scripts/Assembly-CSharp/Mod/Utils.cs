@@ -39,9 +39,9 @@ namespace Mod
 		///     Kiểm tra xem game đang chạy trên Android hay không.
 		/// </summary>
 		/// <returns>Trả về true nếu đang chạy trên Android, ngược lại trả về false.</returns>
-		internal static bool IsAndroidBuild()
+		internal static bool IsMobile()
 		{
-			return Application.platform == RuntimePlatform.Android;
+			return Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer;
 		}
 
 		/// <summary>
@@ -74,15 +74,6 @@ namespace Mod
 		internal static bool IsEditor()
 		{
 			return Application.isEditor;
-		}
-
-		/// <summary>
-		///     Kiểm tra xem game đang chạy trên điện thoại hay không.
-		/// </summary>
-		/// <returns>Trả về true nếu đang chạy trên điện thoại, ngược lại trả về false.</returns>
-		internal static bool IsMobile()
-		{
-			return IsAndroidBuild() || Application.platform == RuntimePlatform.IPhonePlayer;
 		}
 
 		/// <summary>

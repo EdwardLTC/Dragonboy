@@ -16,12 +16,14 @@ namespace Mod.PickMob
 		const short ID_CAPSULE_KB = 380;
 		const short MAP_MARKET_ID = 84;
 		const long MD_IDLE_TIMEOUT_TICKS = 2 * 60 * 10000000L;
+		const float AUTO_FUSION_ITEM_REUSE_DELAY_SEC = 2f;
 		static readonly int[] mapCanTrain =
 		{
 			92, 93, 94, 95, 96, 97, 98, 99, 100
 		};
 
 		static long notUsingMDTime;
+		static long nextAutoFusionItemTicks;
 		static int? mapIdTrain;
 		static int? zoneIdTrain;
 
@@ -101,6 +103,7 @@ namespace Mod.PickMob
 			}
 
 			notUsingMDTime = 0L;
+			nextAutoFusionItemTicks = 0L;
 			base.OnStart();
 		}
 
@@ -276,13 +279,19 @@ namespace Mod.PickMob
 				return;
 			}
 
+			long nowTicks = DateTime.Now.Ticks;
+			if (nowTicks < nextAutoFusionItemTicks)
+			{
+				return;
+			}
+
 			Service.gI().useItem(0, 1, index, -1);
+			nextAutoFusionItemTicks = nowTicks + (long)(AUTO_FUSION_ITEM_REUSE_DELAY_SEC * TimeSpan.TicksPerSecond);
 		}
 
 		static void ClosePanels()
 		{
 			GameCanvas.panel.hideNow();
-			GameCanvas.panel2?.hideNow();
 			Char.chatPopup = null;
 			GameCanvas.menu.doCloseMenu();
 		}

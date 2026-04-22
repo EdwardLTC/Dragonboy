@@ -16,6 +16,22 @@ namespace Mod
 		static bool UseWindowsCrossProcessFileLock =>
 			Application.platform == RuntimePlatform.WindowsPlayer;
 
+		internal static string RootDataPath
+		{
+			get
+			{
+				string baseDirectory = Path.GetDirectoryName(Application.dataPath) ?? Application.persistentDataPath;
+				string result = Path.Combine(baseDirectory, "Data");
+				if (Utils.IsMobile())
+				{
+					result = PersistentDataPath;
+				}
+				return result;
+			}
+		}
+
+		static string CommonDataPath => Path.Combine(RootDataPath, "CommonModData");
+
 		static string SanitizeMutexSegment(string s)
 		{
 			if (string.IsNullOrEmpty(s))
@@ -60,22 +76,6 @@ namespace Mod
 				windowsSharedDataMutex.ReleaseMutex();
 			}
 		}
-
-		internal static string RootDataPath
-		{
-			get
-			{
-				string baseDirectory = Path.GetDirectoryName(Application.dataPath) ?? Application.persistentDataPath;
-				string result = Path.Combine(baseDirectory, "Data");
-				if (Utils.IsEditor() || Utils.IsAndroidBuild())
-				{
-					result = PersistentDataPath;
-				}
-				return result;
-			}
-		}
-
-		static string CommonDataPath => Path.Combine(RootDataPath, "CommonModData");
 
 		internal static string GetCommonDataPath(params string[] segments)
 		{
