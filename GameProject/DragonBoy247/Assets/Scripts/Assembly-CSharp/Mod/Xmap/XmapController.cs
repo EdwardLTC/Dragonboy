@@ -45,7 +45,7 @@ namespace Mod.Xmap
 			}
 			else if (now - lastProgressRealtime >= MaxStuckSeconds)
 			{
-				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 10s!", 0);
+				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 5s!", 0);
 				finishXmap();
 				yield break;
 			}

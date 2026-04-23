@@ -59,7 +59,7 @@ namespace Mod.PickMob
 			menuBuilder.addItem("Khi x99 cskb\n " + actionOnFullBagText, new MenuAction(() => SetActionOnFullBag(actionOnFullBag == ActionOnFullBag.Deposit ? ActionOnFullBag.PutToBox : ActionOnFullBag.Deposit)));
 			if (actionOnFullBag == ActionOnFullBag.Deposit)
 			{
-				menuBuilder.addItem("Số tiền kí gửi khi x99 cskb\n " + moneyToDeposit, new MenuAction(OpenTFInputMoneyToDeposit));
+				menuBuilder.addItem("Số tiền kí gửi khi x99 cskb\n " + mSystem.numberTostring(moneyToDeposit), new MenuAction(OpenTFInputMoneyToDeposit));
 			}
 			menuBuilder.start();
 		}
@@ -91,7 +91,8 @@ namespace Mod.PickMob
 		static void OpenTFInputMoneyToDeposit()
 		{
 			ChatTextField.gI().strChat = "Nhập giá kí gửi";
-			ChatTextField.gI().tfChat.name = "input_price_to_deposit";
+			ChatTextField.gI().tfChat.name = "Nhập giá kí gửi";
+			ChatTextField.gI().tfChat.setIputType(TField.INPUT_TYPE_NUMERIC);
 			GameCanvas.panel.isShow = false;
 			ChatTextField.gI().startChat2(getInstance, string.Empty);
 		}
@@ -101,7 +102,7 @@ namespace Mod.PickMob
 			moneyToDeposit = money;
 			if (showInfo)
 			{
-				GameScr.info1.addInfo($"[Up CSKB] Số tiền kí gửi khi túi đầy: {moneyToDeposit}", 0);
+				GameScr.info1.addInfo($"[Up CSKB] Số tiền kí gửi khi túi đầy: {mSystem.numberTostring(moneyToDeposit)}", 0);
 			}
 			if (saveRms)
 			{

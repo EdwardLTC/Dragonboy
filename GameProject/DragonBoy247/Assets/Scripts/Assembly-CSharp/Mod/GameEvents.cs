@@ -356,7 +356,7 @@ namespace Mod
 				lastTimeRequestZoneInfo = mSystem.currentTimeMillis();
 				Service.gI().openUIZone();
 			}
-
+			
 			Char.myCharz().cspeed = Utils.myCharSpeed;
 			Time.timeScale = Utils.timeScale;
 			Boss.Update();
@@ -1270,10 +1270,12 @@ namespace Mod
 			{
 				Panel panel = ModMenuMain.currentPanel;
 				int instanceDrawX = instance.X + instance.X - instance.cmx;
-				if (panel != null && panel.isShow && GameCanvas.isPointerJustRelease &&
+				if (panel != null && panel.isShow && panel.type == CustomPanelMenu.TYPE_CUSTOM_PANEL_MENU &&
+				    GameCanvas.isPointerJustRelease &&
 				    !GameCanvas.isPointer(instanceDrawX, instance.Y, instance.W, instance.H) &&
 				    !GameCanvas.isPointer(panel.X + panel.X - panel.cmx, panel.Y, panel.W, panel.H) &&
-				    !instance.pointerIsDowning)
+				    !instance.pointerIsDowning &&
+				    (instance.chatTField == null || !instance.chatTField.isShow))
 				{
 					instance.hide();
 					return false;

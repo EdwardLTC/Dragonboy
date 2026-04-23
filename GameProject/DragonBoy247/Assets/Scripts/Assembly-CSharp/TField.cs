@@ -1,23 +1,8 @@
 using System;
-using System.Threading;
+using UnityEngine;
 
 public class TField : IActionListener
 {
-	public bool isFocus;
-
-	public int x;
-
-	public int y;
-
-	public int width;
-
-	public int height;
-
-	public bool lockArrow;
-
-	public bool justReturnFromTextBox;
-
-	public bool paintFocus = true;
 
 	public const sbyte KEY_LEFT = 14;
 
@@ -27,9 +12,12 @@ public class TField : IActionListener
 
 	public static int typeXpeed = 2;
 
-	public static readonly int[] MAX_TIME_TO_CONFIRM_KEY = new int[7] { 30, 14, 11, 9, 6, 4, 2 };
+	public static readonly int[] MAX_TIME_TO_CONFIRM_KEY = new int[7]
+	{
+		30, 14, 11, 9, 6, 4, 2
+	};
 
-	public static int CARET_HEIGHT = 0;
+	public static int CARET_HEIGHT;
 
 	public static readonly int CARET_WIDTH = 1;
 
@@ -49,55 +37,33 @@ public class TField : IActionListener
 
 	public static string[] print = new string[12]
 	{
-		" 0", ".,@?!_1\"/$-():*+<=>;%&~#%^&*{}[];'/1", "abc2áàảãạâấầẩẫậăắằẳẵặ2", "def3đéèẻẽẹêếềểễệ3", "ghi4íìỉĩị4", "jkl5", "mno6óòỏõọôốồổỗộơớờởỡợ6", "pqrs7", "tuv8úùủũụưứừửữự8", "wxyz9ýỳỷỹỵ9",
-		"*", "#"
+		" 0", ".,@?!_1\"/$-():*+<=>;%&~#%^&*{}[];'/1", "abc2áàảãạâấầẩẫậăắằẳẵặ2", "def3đéèẻẽẹêếềểễệ3", "ghi4íìỉĩị4", "jkl5", "mno6óòỏõọôốồổỗộơớờởỡợ6", "pqrs7", "tuv8úùủũụưứừửữự8", "wxyz9ýỳỷỹỵ9", "*", "#"
 	};
 
 	public static string[] printA = new string[12]
 	{
-		"0", "1", "abc2", "def3", "ghi4", "jkl5", "mno6", "pqrs7", "tuv8", "wxyz9",
-		"0", "0"
+		"0", "1", "abc2", "def3", "ghi4", "jkl5", "mno6", "pqrs7", "tuv8", "wxyz9", "0", "0"
 	};
 
 	public static string[] printBB = new string[17]
 	{
-		" 0", "er1", "ty2", "ui3", "df4", "gh5", "jk6", "cv7", "bn8", "m9",
-		"0", "0", "qw!", "as?", "zx", "op.", "l,"
+		" 0", "er1", "ty2", "ui3", "df4", "gh5", "jk6", "cv7", "bn8", "m9", "0", "0", "qw!", "as?", "zx", "op.", "l,"
 	};
 
-	public string text = string.Empty;
-
-	public string passwordText = string.Empty;
-
-	public string paintedText = string.Empty;
-
-	public int caretPos;
-
-	public int counter;
-
-	public int maxTextLenght = 500;
-
-	public int offsetX;
-
 	public static int lastKey = -1984;
-
-	public int keyInActiveState;
-
-	public int indexOfActiveChar;
-
-	public int showCaretCounter = MAX_SHOW_CARET_COUNER;
-
-	public int inputType = INPUT_TYPE_ANY;
 
 	public static bool isQwerty = true;
 
 	public static int typingModeAreaWidth;
 
-	public static int mode = 0;
+	public static int mode;
 
 	public static long timeChangeMode;
 
-	public static readonly string[] modeNotify = new string[4] { "abc", "Abc", "ABC", "123" };
+	public static readonly string[] modeNotify = new string[4]
+	{
+		"abc", "Abc", "ABC", "123"
+	};
 
 	public static readonly int NOKIA = 0;
 
@@ -119,70 +85,160 @@ public class TField : IActionListener
 
 	public static TField currentTField;
 
-	public bool isTfield;
-
-	public bool isPaintMouse = true;
-
-	public string name = string.Empty;
-
-	public string title = string.Empty;
-
-	public string strInfo;
-
-	public Command cmdClear;
-
-	public Command cmdDoneAction;
-
-	public mScreen parentScr;
-
-	public int timeDelayKyCode;
-
-	public int holdCount;
-
 	public static int changeDau;
-
-	public int indexDau = -1;
-
-	public int indexTemplate;
-
-	public int indexCong;
-
-	public long timeDau;
 
 	public static string printDau = "aáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵ";
 
 	public static Image imgTf;
 
-	public int timePutKeyClearAll;
-
-	public int timeClearFirt;
-
-	public bool isPaintCarret;
-
-	public bool showSubTextField = true;
-
 	public static TouchScreenKeyboard kb;
+
+	static float s_touchKbOpenedRealtime = -1f;
 
 	public static int[][] BBKEY = new int[17][]
 	{
-		new int[2] { 32, 48 },
-		new int[2] { 49, 69 },
-		new int[2] { 50, 84 },
-		new int[2] { 51, 85 },
-		new int[2] { 52, 68 },
-		new int[2] { 53, 71 },
-		new int[2] { 54, 74 },
-		new int[2] { 55, 67 },
-		new int[2] { 56, 66 },
-		new int[2] { 57, 77 },
-		new int[2] { 42, 128 },
-		new int[2] { 35, 137 },
-		new int[2] { 33, 113 },
-		new int[2] { 63, 97 },
-		new int[3] { 64, 121, 122 },
-		new int[2] { 46, 111 },
-		new int[2] { 44, 108 }
+		new int[2]
+		{
+			32, 48
+		},
+		new int[2]
+		{
+			49, 69
+		},
+		new int[2]
+		{
+			50, 84
+		},
+		new int[2]
+		{
+			51, 85
+		},
+		new int[2]
+		{
+			52, 68
+		},
+		new int[2]
+		{
+			53, 71
+		},
+		new int[2]
+		{
+			54, 74
+		},
+		new int[2]
+		{
+			55, 67
+		},
+		new int[2]
+		{
+			56, 66
+		},
+		new int[2]
+		{
+			57, 77
+		},
+		new int[2]
+		{
+			42, 128
+		},
+		new int[2]
+		{
+			35, 137
+		},
+		new int[2]
+		{
+			33, 113
+		},
+		new int[2]
+		{
+			63, 97
+		},
+		new int[3]
+		{
+			64, 121, 122
+		},
+		new int[2]
+		{
+			46, 111
+		},
+		new int[2]
+		{
+			44, 108
+		}
 	};
+
+	public int caretPos;
+
+	public Command cmdClear;
+
+	public Command cmdDoneAction;
+
+	public int counter;
+
+	public int height;
+
+	public int holdCount;
+
+	public int indexCong;
+
+	public int indexDau = -1;
+
+	public int indexOfActiveChar;
+
+	public int indexTemplate;
+
+	public int inputType = INPUT_TYPE_ANY;
+	public bool isFocus;
+
+	public bool isPaintCarret;
+
+	public bool isPaintMouse = true;
+
+	public bool isTfield;
+
+	public bool justReturnFromTextBox;
+
+	public int keyInActiveState;
+
+	public bool lockArrow;
+
+	public int maxTextLenght = 500;
+
+	public string name = string.Empty;
+
+	public int offsetX;
+
+	public string paintedText = string.Empty;
+
+	public bool paintFocus = true;
+
+	public mScreen parentScr;
+
+	public string passwordText = string.Empty;
+
+	public int showCaretCounter = MAX_SHOW_CARET_COUNER;
+
+	public bool showSubTextField = true;
+
+	public string strInfo;
+
+	public string text = string.Empty;
+
+	public int timeClearFirt;
+
+	public long timeDau;
+
+	public int timeDelayKyCode;
+
+	public int timePutKeyClearAll;
+
+	public string title = string.Empty;
+
+	public int width;
+
+	public int x;
+
+	public int y;
 
 	public TField(mScreen parentScr)
 	{
@@ -214,6 +270,14 @@ public class TField : IActionListener
 		this.inputType = inputType;
 		init();
 		isTfield = true;
+	}
+
+	public void perform(int idAction, object p)
+	{
+		if (idAction == 1000)
+		{
+			clear();
+		}
 	}
 
 	public static bool setNormal(char ch)
@@ -357,12 +421,12 @@ public class TField : IActionListener
 
 	public void keyPressedAny(int keyCode)
 	{
-		string[] array = ((inputType != INPUT_TYPE_PASSWORD && inputType != INPUT_ALPHA_NUMBER_ONLY) ? print : printA);
+		string[] array = inputType != INPUT_TYPE_PASSWORD && inputType != INPUT_ALPHA_NUMBER_ONLY ? print : printA;
 		if (keyCode == lastKey)
 		{
 			indexOfActiveChar = (indexOfActiveChar + 1) % array[keyCode - 48].Length;
 			char c = array[keyCode - 48][indexOfActiveChar];
-			string text = string.Concat(arg1: (mode == 0) ? char.ToLower(c) : ((mode == 1) ? char.ToUpper(c) : ((mode != 2) ? array[keyCode - 48][array[keyCode - 48].Length - 1] : char.ToUpper(c))), arg0: this.text.Substring(0, caretPos - 1));
+			string text = string.Concat(arg1: mode == 0 ? char.ToLower(c) : mode == 1 ? char.ToUpper(c) : mode != 2 ? array[keyCode - 48][array[keyCode - 48].Length - 1] : char.ToUpper(c), arg0: this.text.Substring(0, caretPos - 1));
 			if (caretPos < this.text.Length)
 			{
 				text += this.text.Substring(caretPos, this.text.Length);
@@ -379,12 +443,12 @@ public class TField : IActionListener
 			}
 			indexOfActiveChar = 0;
 			char c2 = array[keyCode - 48][indexOfActiveChar];
-			string text2 = string.Concat(arg1: (mode == 0) ? char.ToLower(c2) : ((mode == 1) ? char.ToUpper(c2) : ((mode != 2) ? array[keyCode - 48][array[keyCode - 48].Length - 1] : char.ToUpper(c2))), arg0: this.text.Substring(0, caretPos));
-			if (caretPos < this.text.Length)
+			string text2 = string.Concat(arg1: mode == 0 ? char.ToLower(c2) : mode == 1 ? char.ToUpper(c2) : mode != 2 ? array[keyCode - 48][array[keyCode - 48].Length - 1] : char.ToUpper(c2), arg0: text.Substring(0, caretPos));
+			if (caretPos < text.Length)
 			{
-				text2 += this.text.Substring(caretPos, this.text.Length);
+				text2 += text.Substring(caretPos, text.Length);
 			}
-			this.text = text2;
+			text = text2;
 			keyInActiveState = MAX_TIME_TO_CONFIRM_KEY[typeXpeed];
 			caretPos++;
 			setPasswordTest();
@@ -413,7 +477,7 @@ public class TField : IActionListener
 		}
 		if (kb != null)
 		{
-			kb.text = this.text;
+			kb.text = text;
 		}
 	}
 
@@ -435,7 +499,7 @@ public class TField : IActionListener
 		{
 			for (int num = caretPos; num > 0; num--)
 			{
-				char c = this.text[num - 1];
+				char c = text[num - 1];
 				for (int i = 0; i < printDau.Length; i++)
 				{
 					char c2 = printDau[i];
@@ -710,15 +774,42 @@ public class TField : IActionListener
 				timeDelayKyCode = 0;
 			}
 		}
-		if (kb != null && currentTField == this)
+		if (kb != null && currentTField == this && isFocus && (UnityEngine.TouchScreenKeyboard.isSupported || !Main.isPC))
 		{
-			if (kb.text.Length < 40 && isFocus)
+			float age = Time.realtimeSinceStartup - s_touchKbOpenedRealtime;
+			bool pastOpenGrace = s_touchKbOpenedRealtime < 0f || age > 0.12f;
+			bool closed = kb.done || (pastOpenGrace && !UnityEngine.TouchScreenKeyboard.visible);
+			if (!closed)
 			{
-				setText(kb.text);
+				if (kb.text.Length <= maxTextLenght)
+				{
+					setText(kb.text);
+				}
 			}
-			if (kb.done && cmdDoneAction != null)
+			else
 			{
-				cmdDoneAction.performAction();
+				if (kb.text.Length <= maxTextLenght)
+				{
+					setText(kb.text);
+				}
+				bool commit = kb.status == UnityEngine.TouchScreenKeyboard.Status.Done;
+				Command doneCmd = cmdDoneAction;
+				kb.active = false;
+				kb = null;
+				isFocus = false;
+				if (currentTField == this)
+				{
+					currentTField = null;
+				}
+				s_touchKbOpenedRealtime = -1f;
+				if (commit && doneCmd != null)
+				{
+					doneCmd.performAction();
+				}
+				else if (!commit)
+				{
+					ChatTextField.ApplyNativeKeyboardDismissedWithoutCommit(this);
+				}
 			}
 		}
 		counter++;
@@ -784,6 +875,15 @@ public class TField : IActionListener
 				kb.text = currentTField.text;
 			}
 		}
+		else if (currentTField == this)
+		{
+			currentTField = null;
+			if (kb != null)
+			{
+				kb.active = false;
+				kb = null;
+			}
+		}
 	}
 
 	public void setFocusWithKb(bool isFocus)
@@ -795,35 +895,48 @@ public class TField : IActionListener
 		lastKey = -1984;
 		timeChangeMode = (int)(DateTime.Now.Ticks / 1000);
 		this.isFocus = isFocus;
-		if (isFocus)
+		if (!isFocus)
 		{
-			currentTField = this;
+			if (currentTField == this)
+			{
+				currentTField = null;
+				if (kb != null)
+				{
+					kb.active = false;
+					kb = null;
+				}
+			}
+			return;
 		}
-		else if (currentTField == this)
+		currentTField = this;
+		if (!UnityEngine.TouchScreenKeyboard.isSupported && Main.isPC)
 		{
-			currentTField = null;
+			return;
 		}
-		if (Thread.CurrentThread.Name == Main.mainThreadName && currentTField != null)
+		if (kb != null)
 		{
-			isFocus = true;
-			TouchScreenKeyboard.hideInput = !currentTField.showSubTextField;
-			TouchScreenKeyboardType t = TouchScreenKeyboardType.ASCIICapable;
-			if (inputType == INPUT_TYPE_NUMERIC)
-			{
-				t = TouchScreenKeyboardType.NumberPad;
-			}
-			bool type = false;
-			if (inputType == INPUT_TYPE_PASSWORD)
-			{
-				type = true;
-			}
-			kb = TouchScreenKeyboard.Open(currentTField.text, t, false, false, type, false, currentTField.name);
-			if (kb != null)
-			{
-				kb.text = currentTField.text;
-			}
-			Cout.LogWarning("SHOW KEYBOARD FOR " + currentTField.text);
+			kb.active = false;
+			kb = null;
 		}
+		this.isFocus = true;
+		TouchScreenKeyboard.hideInput = !currentTField.showSubTextField;
+		TouchScreenKeyboardType t = TouchScreenKeyboardType.ASCIICapable;
+		if (inputType == INPUT_TYPE_NUMERIC)
+		{
+			t = TouchScreenKeyboardType.NumberPad;
+		}
+		bool secure = inputType == INPUT_TYPE_PASSWORD;
+		kb = TouchScreenKeyboard.Open(currentTField.text, t, false, false, secure, false, currentTField.name);
+		if (kb != null)
+		{
+			kb.text = currentTField.text;
+			s_touchKbOpenedRealtime = Time.realtimeSinceStartup;
+		}
+		else
+		{
+			s_touchKbOpenedRealtime = -1f;
+		}
+		Cout.LogWarning("SHOW KEYBOARD FOR " + currentTField.text);
 	}
 
 	public string getText()
@@ -835,7 +948,8 @@ public class TField : IActionListener
 	{
 		if (kb != null)
 		{
-			kb.text = string.Empty;
+			kb.active = false;
+			kb = null;
 		}
 	}
 
@@ -885,13 +999,5 @@ public class TField : IActionListener
 	{
 		inputType = iputType;
 		setMaxTextLenght(500);
-	}
-
-	public void perform(int idAction, object p)
-	{
-		if (idAction == 1000)
-		{
-			clear();
-		}
 	}
 }

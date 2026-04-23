@@ -104,10 +104,9 @@ namespace Mod.AccountManager
 
 		internal static Server SelectedServer { get; set; }
 
-		internal static InGameAccountManager gI()
+		static InGameAccountManager gI()
 		{
-			if (instance == null)
-				instance = new InGameAccountManager();
+			instance ??= new InGameAccountManager();
 			return instance;
 		}
 

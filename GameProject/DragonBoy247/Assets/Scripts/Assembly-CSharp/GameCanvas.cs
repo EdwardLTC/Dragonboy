@@ -1041,7 +1041,8 @@ public class GameCanvas : IActionListener
 					{
 						panel2.updateKey();
 					}
-					if (isPointer(panel.X + panel.W, panel.Y, w - panel.W * 2, panel.H) && isPointerJustRelease && panel.isDoneCombine)
+					if (isPointer(panel.X + panel.W, panel.Y, w - panel.W * 2, panel.H) && isPointerJustRelease && panel.isDoneCombine
+					    && (panel.chatTField == null || !panel.chatTField.isShow))
 					{
 						panel.hide();
 					}
@@ -2696,6 +2697,8 @@ public class GameCanvas : IActionListener
 
 	public void pointerDragged(int x, int y)
 	{
+		pxMouse = x;
+		pyMouse = y;
 		isPointerSelect = false;
 		if (Res.abs(x - pxLast) >= 10 || Res.abs(y - pyLast) >= 10)
 		{
@@ -2724,6 +2727,8 @@ public class GameCanvas : IActionListener
 
 	public void pointerPressed(int x, int y)
 	{
+		pxMouse = x;
+		pyMouse = y;
 		isPointerSelect = false;
 		isPointerJustRelease = false;
 		isPointerJustDown = true;
@@ -2741,6 +2746,8 @@ public class GameCanvas : IActionListener
 
 	public void pointerReleased(int x, int y)
 	{
+		pxMouse = x;
+		pyMouse = y;
 		if (!isPointerMove)
 		{
 			isPointerSelect = true;

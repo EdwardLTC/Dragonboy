@@ -37,6 +37,9 @@ namespace Mod.Auto
 			case 2:
 				RemoveItemAuto((int)p);
 				break;
+			case 4:
+				AddItemAutoUse((Item)p);
+				break;
 			case 3:
 				OpenTFAutoTradeItem((Item)p);
 				break;
@@ -172,7 +175,7 @@ namespace Mod.Auto
 				}
 			}
 		}
-		
+
 		public void AddItemAutoUse(Item item)
 		{
 			if (isAutoUse(item.Id))

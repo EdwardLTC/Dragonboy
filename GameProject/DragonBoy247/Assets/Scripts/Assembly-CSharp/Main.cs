@@ -94,7 +94,11 @@ public class Main : MonoBehaviour
 			Thread.CurrentThread.Name = "Main";
 		}
 		mainThreadName = Thread.CurrentThread.Name;
-		isPC = true;
+		// Must match the real player: iOS/Android need TouchScreenKeyboard sync (see TField.update, ChatTextField).
+		isPC = !Application.isMobilePlatform;
+#if UNITY_IOS
+		isIPhone = true;
+#endif
 		started = true;
 		// if (isPC)
 		// {
@@ -235,6 +239,10 @@ public class Main : MonoBehaviour
 			}
 			isRun = true;
 			ScaleGUI.initScaleGUI();
+			isPC = !Application.isMobilePlatform;
+#if UNITY_IOS
+			isIPhone = true;
+#endif
 			if (isPC)
 			{
 				IMEI = SystemInfo.deviceUniqueIdentifier;
@@ -243,7 +251,6 @@ public class Main : MonoBehaviour
 			{
 				IMEI = GetMacAddress();
 			}
-			isPC = true;
 			if (isPC)
 			{
 				Screen.fullScreen = false;

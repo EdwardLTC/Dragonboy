@@ -20,13 +20,17 @@ namespace Mod
 		{
 			get
 			{
-				string baseDirectory = Path.GetDirectoryName(Application.dataPath) ?? Application.persistentDataPath;
-				string result = Path.Combine(baseDirectory, "Data");
+				// In the Unity Editor, never write runtime data into the project folder.
+				// In player builds on PC, keep the historical layout: "<GameFolder>/Data".
+#if UNITY_EDITOR
+				return PersistentDataPath;
+#else
 				if (Utils.IsMobile())
-				{
-					result = PersistentDataPath;
-				}
-				return result;
+					return PersistentDataPath;
+
+				string baseDirectory = Path.GetDirectoryName(Application.dataPath) ?? Application.persistentDataPath;
+				return Path.Combine(baseDirectory, "Data");
+#endif
 			}
 		}
 

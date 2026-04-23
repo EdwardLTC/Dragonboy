@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Assets.src.g;
 using Mod;
 using Mod.Auto;
-using Mod.R;
 using UnityEngine;
 
 public class Panel : IActionListener, IChatable
@@ -7112,6 +7111,10 @@ public class Panel : IActionListener, IChatable
 			{
 				myVector.addElement(new Command("Ngưng Auto\nSử Dụng", AutoUseItem.getInstance(), 2, (int)currItem.template.id));
 			}
+			else if (currItem.template.id == 380)
+			{
+				myVector.addElement(new Command("Auto CSKB", AutoUseItem.getInstance(), 4, new AutoUseItem.Item(currItem.template.id, currItem.template.name)));
+			}
 			else
 			{
 				myVector.addElement(new Command("Auto\nSử Dụng", AutoUseItem.getInstance(), 1, new AutoUseItem.Item(currItem.template.id, currItem.template.name)));
@@ -7338,7 +7341,13 @@ public class Panel : IActionListener, IChatable
 		if (GameCanvas.w > 2 * WIDTH_PANEL)
 		{
 			GameCanvas.panel2 = new Panel();
-			GameCanvas.panel2.tabName[7] = new string[1][] { new string[1] { string.Empty } };
+			GameCanvas.panel2.tabName[7] = new string[1][]
+			{
+				new string[1]
+				{
+					string.Empty
+				}
+			};
 			GameCanvas.panel2.setTypeBodyOnly();
 			GameCanvas.panel2.show();
 			GameCanvas.panel.setTypePetMain();

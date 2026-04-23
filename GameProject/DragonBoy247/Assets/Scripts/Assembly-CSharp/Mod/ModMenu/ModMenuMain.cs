@@ -246,42 +246,6 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
-					ID = "Set_GameSpeed",
-					Title = Strings.setGameSpeedTitle,
-					Description = Strings.setGameSpeedDescription,
-					IsFloatingPoint = true,
-					GetValueFunc = () => Time.timeScale,
-					SetValueAction = value =>
-					{
-						if (value >= .25d && value <= 20)
-							Time.timeScale = (float)value;
-					},
-					MinValue = 0.25d,
-					MaxValue = 20,
-					RMSName = "game_speed",
-					TextFieldTitle = Strings.inputGameSpeed,
-					TextFieldHint = Strings.inputGameSpeedHint
-				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig
-				{
-					ID = "Set_GameDelay",
-					Title = Strings.setGameDelayTitle,
-					Description = Strings.setGameDelayDescription,
-					IsFloatingPoint = true,
-					GetValueFunc = () => System.Math.Round(Time.fixedDeltaTime * 100f, 3),
-					SetValueAction = value =>
-					{
-						if (value >= 1 && value <= 5)
-							Time.fixedDeltaTime = (float)value / 100f;
-					},
-					MinValue = 1,
-					MaxValue = 5,
-					RMSName = "game_delay",
-					TextFieldTitle = Strings.inputGameDelay,
-					TextFieldHint = Strings.inputGameDelayHint
-				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig
-				{
 					ID = "Set_ReduceGraphics",
 					Title = Strings.setReduceGraphicsTitle,
 					Values = Strings.setReduceGraphicsChoices,

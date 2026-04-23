@@ -12,6 +12,7 @@ public class ipKeyboard
 
 	private static Command act;
 
+	// Do not mix with TField.setFocusWithKb for the same field: a second TouchScreenKeyboard.Open replaces the first on iOS.
 	public static void openKeyBoard(string caption, int type, string text, Command action)
 	{
 		act = action;
