@@ -131,7 +131,7 @@ public class ChatTextField : IActionListener
 
 		tfChat.cmdDoneAction = left;
 		cmdChat = new Command();
-		ActionChat actionChat = delegate(string str)
+		cmdChat.actionChat = delegate(string str)
 		{
 			tfChat.justReturnFromTextBox = false;
 			tfChat.setText(str);
@@ -139,7 +139,6 @@ public class ChatTextField : IActionListener
 			tfChat.setText(string.Empty);
 			right.caption = mResources.CLOSE;
 		};
-		cmdChat.actionChat = actionChat;
 		cmdChat2 = new Command();
 		cmdChat2.actionChat = delegate(string str)
 		{
@@ -192,6 +191,7 @@ public class ChatTextField : IActionListener
 		tfChat.clearKb();
 		tfChat.setText(string.Empty);
 		isShow = false;
+		gI().ResetTF();
 		if (right != null)
 		{
 			right.caption = mResources.CLOSE;
@@ -221,7 +221,7 @@ public class ChatTextField : IActionListener
 
 	public static ChatTextField gI()
 	{
-		return instance != null ? instance : instance = new ChatTextField();
+		return instance ??= new ChatTextField();
 	}
 
 	public void startChat(int firstCharacter, IChatable parentScreen, string to)

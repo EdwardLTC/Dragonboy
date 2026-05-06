@@ -65,7 +65,7 @@ namespace Mod.Auto
 				{
 					GameScr.info1.addInfo("Delay Không Hợp Lệ, Vui Lòng Nhập Lại!", 0);
 				}
-				ResetChatTextField();
+				ChatTextField.gI().ResetTF();
 			}
 			else if (ChatTextField.gI().strChat.Equals(inputBuyQuantity[0]))
 			{
@@ -82,7 +82,7 @@ namespace Mod.Auto
 				{
 					GameScr.info1.addInfo("Số Lượng Không Hợp Lệ, Vui Lòng Nhập Lại!", 0);
 				}
-				ResetChatTextField();
+				ChatTextField.gI().ResetTF();
 			}
 			else
 			{
@@ -103,7 +103,7 @@ namespace Mod.Auto
 				{
 					GameScr.info1.addInfo("Số Lượng Không Hợp Lệ, Vui Lòng Nhập Lại!", 0);
 				}
-				ResetChatTextField();
+				ChatTextField.gI().ResetTF();
 			}
 		}
 
@@ -143,13 +143,6 @@ namespace Mod.Auto
 					break;
 				}
 			}
-		}
-
-		static void ResetChatTextField()
-		{
-			ChatTextField.gI().strChat = "Chat";
-			ChatTextField.gI().tfChat.name = "chat";
-			ChatTextField.gI().isShow = false;
 		}
 
 		public static bool isAutoUse(int templateId)

@@ -291,9 +291,9 @@ namespace Mod.PickMob
 
 		static void ClosePanels()
 		{
+			GameCanvas.menu.doCloseMenu();
 			GameCanvas.panel.hideNow();
 			Char.chatPopup = null;
-			GameCanvas.menu.doCloseMenu();
 		}
 
 		static IEnumerator ChangeToTrainZoneIfNeeded()

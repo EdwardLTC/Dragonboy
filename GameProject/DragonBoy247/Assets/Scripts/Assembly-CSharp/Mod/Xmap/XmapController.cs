@@ -23,7 +23,7 @@ namespace Mod.Xmap
 		int mapEnd;
 		List<MapNext> way;
 
-		protected override float Interval => 0.5f;
+		protected override float Interval => Utils.isUsingTDLT() ? 0.5f : 0.1f;
 
 		protected override IEnumerator OnUpdate()
 		{

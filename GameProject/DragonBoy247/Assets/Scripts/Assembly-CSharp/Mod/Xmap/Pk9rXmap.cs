@@ -10,11 +10,12 @@ namespace Mod.Xmap
 {
 	internal static class Pk9rXmap
 	{
-		const float ServiceCallDelaySeconds = 0.2f;
-		internal static bool isUseCapsuleNormal = true;
+		static bool isUseCapsuleNormal = true;
 		static bool isUseCapsuleVip = true;
 
 		static readonly Random random = new Random();
+
+		static readonly float ServiceCallDelaySeconds = Utils.isUsingTDLT() ? 0.2f : 0.1f;
 
 		static void ToggleUseCapsuleVip()
 		{
@@ -184,7 +185,6 @@ namespace Mod.Xmap
 				Service.gI().confirmMenu((short)npcId, (sbyte)select);
 			}
 			Char.chatPopup = null;
-			GameCanvas.menu.doCloseMenu();
 		}
 
 		static IEnumerator NextMapNpcPanel(MapNext mapNext)

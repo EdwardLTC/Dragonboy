@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Text;
 using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 using UnityEngine;
 
 namespace Mod
@@ -153,7 +153,7 @@ namespace Mod
 			return -1;
 		}
 
-		internal static void teleToNpc(Npc npc)
+		static void teleToNpc(Npc npc)
 		{
 			TeleportMyChar(npc.cx, npc.ySd - npc.ySd % 24);
 			Char.myCharz().npcFocus = npc;
@@ -195,7 +195,7 @@ namespace Mod
 			Service.gI().requestChangeMap();
 		}
 
-		internal static void setWaypointChangeMap(Waypoint waypoint)
+		static void setWaypointChangeMap(Waypoint waypoint)
 		{
 			int cMapID = TileMap.mapID;
 			string textPopup = getTextPopup(waypoint.popup);

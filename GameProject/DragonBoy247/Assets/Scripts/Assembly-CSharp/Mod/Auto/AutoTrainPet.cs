@@ -230,7 +230,6 @@ namespace Mod.Auto
 
 		static void AutoSkill()
 		{
-			//auto skill 3
 			Skill skill3 = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
 			Skill skill1 = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[0]);
 			if (skill3 != null)
@@ -277,36 +276,6 @@ namespace Mod.Auto
 					isTTNL = false;
 				}
 			}
-
-			//auto khống chế siêu quái
-			Skill controlSkill = null;
-			if (Char.myCharz().cgender == 0)
-				controlSkill = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
-			else if (Char.myCharz().cgender == 1)
-				controlSkill = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[6]);
-			else if (Char.myCharz().cgender == 2)
-				controlSkill = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[6]);
-			if (controlSkill != null)
-				for (int i = 0; i < GameScr.vMob.size(); i++)
-				{
-					Mob superMob = (Mob)GameScr.vMob.elementAt(i);
-					if (superMob.levelBoss != 0 && !superMob.isMobMe && superMob.hp > 0)
-					{
-						Char.myCharz().mobFocus = superMob;
-						if (controlSkill.point > 0 && controlSkill.manaUse < Char.myCharz().cMP &&
-						    mSystem.currentTimeMillis() - controlSkill.lastTimeUseThisSkill > controlSkill.coolDown)
-						{
-							MyVector myVector = new MyVector();
-							myVector.addElement(superMob);
-							Service.gI().selectSkill(controlSkill.template.id);
-							Service.gI().sendPlayerAttack(myVector, new MyVector(), 1);
-							Service.gI().selectSkill(skill1.template.id);
-							controlSkill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
-						}
-
-						return;
-					}
-				}
 
 			//đánh khi đệ cần
 			if (saoMayLuoiThe)

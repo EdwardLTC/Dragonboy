@@ -10,29 +10,29 @@ namespace Mod.Auto
 {
 	public class AutoSendAttack : CoroutineMainThreadAction<AutoSendAttack>
 	{
-		protected override float Interval => 0.1f;
+		protected override float Interval => 0f;
 
 
 		protected override IEnumerator OnUpdate()
 		{
-			if (Char.myCharz().meDead || Char.myCharz().cHP <= 0 || Char.myCharz().statusMe == 14 || Char.myCharz().statusMe == 5 || Char.myCharz().myskill.template.type == 3 || Char.myCharz().myskill.template.id == 10 || Char.myCharz().myskill.template.id == 11 || Char.myCharz().isWaitMonkey || Char.myCharz().isCharge || (Char.myCharz().myskill.paintCanNotUseSkill && !GameCanvas.panel.isShow))
+			if (Char.myCharz().meDead || Char.myCharz().cHP <= 0 || Char.myCharz().statusMe == 14 || Char.myCharz().statusMe == 5 || Char.myCharz().myskill.template.type == 3 || Char.myCharz().myskill.template.id == 10 || Char.myCharz().myskill.template.id == 11 || Char.myCharz().isWaitMonkey || Char.myCharz().isCharge || Char.myCharz().myskill.paintCanNotUseSkill && !GameCanvas.panel.isShow)
 			{
- 				yield break;
+				yield break;
 			}
-			
+
 			Skill skill = Char.myCharz().myskill;
-			
+
 			if (skill == null || !CanUseSkill(skill))
 			{
 				yield break;
 			}
-			
+
 			if (Char.myCharz().charFocus?.holdEffID == 32 && skill.template.id == 23)
 			{
 				// avoid double troi
 				yield break;
 			}
-			
+
 			if (GameScr.gI().isMeCanAttackMob(Char.myCharz().mobFocus))
 			{
 				SendAttackToMobFocus();
@@ -44,23 +44,23 @@ namespace Mod.Auto
 				Char.myCharz().myskill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
 			}
 		}
-		
+
 		static bool CanUseSkill(Skill skill)
 		{
 			int coolDown = skill.coolDown;
-			
+
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill > skill.coolDown)
 				skill.paintCanNotUseSkill = false;
-			
+
 			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < coolDown)
 				return false;
-			
+
 			if (Char.myCharz().cMP < GetManaUseSkill(skill))
 				return false;
 
 			return true;
 		}
-		
+
 		static int GetManaUseSkill(Skill skill)
 		{
 			if (skill.template.manaUseType == 2)
@@ -70,71 +70,71 @@ namespace Mod.Auto
 			return skill.manaUse;
 		}
 
-        [ChatCommand("ak"),HotkeyCommand('a')]
-        internal static void toggleAutoAttack()
-        {
-            gI.Toggle();
-            GameScr.info1.addInfo(Strings.autoAttack + ": " + (gI.IsActing ? mResources.ON : mResources.OFF) + '!', 0);
-        }
-        
-       static void SendAttackToCharFocus()
-        {
-	        try
-	        {
-		        if (!Char.myCharz().isWaitMonkey)
-		        {
-			        MyVector myVector = new MyVector();
-			        myVector.addElement(Char.myCharz().charFocus);
-			        Service.gI().sendPlayerAttack(new MyVector(), myVector, 2);
-		        }
-	        }
-	        catch(Exception ex)
-	        { 
-		        Debug.LogError("Failed to send attack to char focus. " + ex);
-	        }
-        }
+		[ChatCommand("ak"), HotkeyCommand('a')]
+		internal static void toggleAutoAttack()
+		{
+			gI.Toggle();
+			GameScr.info1.addInfo(Strings.autoAttack + ": " + (gI.IsActing ? mResources.ON : mResources.OFF) + '!', 0);
+		}
 
-        static void SendAttackToMobFocus()
-        {
-	        try
-	        {
-		        MyVector myVector = new MyVector();
-		        myVector.addElement(Char.myCharz().mobFocus);
-		        Service.gI().sendPlayerAttack(myVector, new MyVector(), -1);
-	        }
-	        catch(Exception ex)
-	        {
-		        Debug.LogError("Failed to send attack to mob focus. " + ex);
-	        }
-        }
-        
-        static bool isMeCanAttackChar(Char ch)
-        {
-	        if (TileMap.mapID == 113)
-	        {
-		        if (ch != null && Char.myCharz().myskill != null)
-		        {
-			        if (ch.cTypePk != 5)
-			        {
-				        return ch.cTypePk == 3;
-			        }
-			        return true;
-		        }
-		        return false;
-	        }
-	        if (ch != null && Char.myCharz().myskill != null)
-	        {
-		        if (ch.statusMe == 14 || ch.statusMe == 5 || Char.myCharz().myskill.template.type == 2 || ((Char.myCharz().cFlag != 8 || ch.cFlag == 0) && (Char.myCharz().cFlag == 0 || ch.cFlag != 8) && (Char.myCharz().cFlag == ch.cFlag || Char.myCharz().cFlag == 0 || ch.cFlag == 0) && (ch.cTypePk != 3 || Char.myCharz().cTypePk != 3) && Char.myCharz().cTypePk != 5 && ch.cTypePk != 5 && (Char.myCharz().cTypePk != 1 || ch.cTypePk != 1) && (Char.myCharz().cTypePk != 4 || ch.cTypePk != 4)))
-		        {
-			        if (Char.myCharz().myskill.template.type == 2)
-			        {
-				        return ch.cTypePk != 5;
-			        }
-			        return false;
-		        }
-		        return true;
-	        }
-	        return false;
-        }
-    }
+		static void SendAttackToCharFocus()
+		{
+			try
+			{
+				if (!Char.myCharz().isWaitMonkey)
+				{
+					MyVector myVector = new MyVector();
+					myVector.addElement(Char.myCharz().charFocus);
+					Service.gI().sendPlayerAttack(new MyVector(), myVector, 2);
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("Failed to send attack to char focus. " + ex);
+			}
+		}
+
+		static void SendAttackToMobFocus()
+		{
+			try
+			{
+				MyVector myVector = new MyVector();
+				myVector.addElement(Char.myCharz().mobFocus);
+				Service.gI().sendPlayerAttack(myVector, new MyVector(), -1);
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("Failed to send attack to mob focus. " + ex);
+			}
+		}
+
+		static bool isMeCanAttackChar(Char ch)
+		{
+			if (TileMap.mapID == 113)
+			{
+				if (ch != null && Char.myCharz().myskill != null)
+				{
+					if (ch.cTypePk != 5)
+					{
+						return ch.cTypePk == 3;
+					}
+					return true;
+				}
+				return false;
+			}
+			if (ch != null && Char.myCharz().myskill != null)
+			{
+				if (ch.statusMe == 14 || ch.statusMe == 5 || Char.myCharz().myskill.template.type == 2 || (Char.myCharz().cFlag != 8 || ch.cFlag == 0) && (Char.myCharz().cFlag == 0 || ch.cFlag != 8) && (Char.myCharz().cFlag == ch.cFlag || Char.myCharz().cFlag == 0 || ch.cFlag == 0) && (ch.cTypePk != 3 || Char.myCharz().cTypePk != 3) && Char.myCharz().cTypePk != 5 && ch.cTypePk != 5 && (Char.myCharz().cTypePk != 1 || ch.cTypePk != 1) && (Char.myCharz().cTypePk != 4 || ch.cTypePk != 4))
+				{
+					if (Char.myCharz().myskill.template.type == 2)
+					{
+						return ch.cTypePk != 5;
+					}
+					return false;
+				}
+				return true;
+			}
+			return false;
+		}
+	}
 }

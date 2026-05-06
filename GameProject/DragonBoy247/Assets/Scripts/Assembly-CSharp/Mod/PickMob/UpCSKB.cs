@@ -43,7 +43,7 @@ namespace Mod.PickMob
 				{
 					GameScr.info1.addInfo("Delay Không Hợp Lệ, Vui Lòng Nhập Lại!", 0);
 				}
-				ResetChatTextField();
+				ChatTextField.gI().ResetTF();
 			}
 		}
 
@@ -131,13 +131,6 @@ namespace Mod.PickMob
 			{
 				ApplyMoneyToDeposit(savedAction, true, false);
 			}
-		}
-
-		static void ResetChatTextField()
-		{
-			ChatTextField.gI().strChat = "Chat";
-			ChatTextField.gI().tfChat.name = "chat";
-			ChatTextField.gI().isShow = false;
 		}
 	}
 }

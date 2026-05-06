@@ -15,7 +15,7 @@ public class TouchScreenKeyboard
 
 	public static bool visible => UnityEngine.TouchScreenKeyboard.visible;
 
-	public bool done => _keyboard != null && _keyboard.done;
+	public bool done => _keyboard != null && _keyboard.status == UnityEngine.TouchScreenKeyboard.Status.Done;
 
 	public UnityEngine.TouchScreenKeyboard.Status status =>
 		_keyboard != null ? _keyboard.status : UnityEngine.TouchScreenKeyboard.Status.Canceled;

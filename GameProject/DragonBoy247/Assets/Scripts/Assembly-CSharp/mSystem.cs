@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class mSystem
 {
+
+	public const int JAVA = 1;
+
+	public const int ANDROID = 2;
+
+	public const int IP_JB = 3;
+
+	public const int PC = 4;
+
+	public const int IP_APPSTORE = 5;
+
+	public const int WINDOWS_PHONE = 6;
+
+	public const int GOOGLE_PLAY = 7;
 	public static bool isTest;
 
 	public static string strAdmob;
@@ -21,20 +35,6 @@ public class mSystem
 	public static sbyte curINAPP;
 
 	public static sbyte maxINAPP = 5;
-
-	public const int JAVA = 1;
-
-	public const int ANDROID = 2;
-
-	public const int IP_JB = 3;
-
-	public const int PC = 4;
-
-	public const int IP_APPSTORE = 5;
-
-	public const int WINDOWS_PHONE = 6;
-
-	public const int GOOGLE_PLAY = 7;
 
 	public static mSystem instance;
 
@@ -125,22 +125,22 @@ public class mSystem
 		{
 			if (num2 >= 10)
 			{
-				result = ((num3 < 1) ? (num2 + "d") : ((num3 >= 10) ? (num2 + "d" + num3 + "h") : (num2 + "d0" + num3 + "h")));
+				result = num3 < 1 ? num2 + "d" : num3 >= 10 ? num2 + "d" + num3 + "h" : num2 + "d0" + num3 + "h";
 			}
 			else if (num2 < 10)
 			{
-				result = ((num3 < 1) ? (num2 + "d") : ((num3 >= 10) ? (num2 + "d" + num3 + "h") : (num2 + "d0" + num3 + "h")));
+				result = num3 < 1 ? num2 + "d" : num3 >= 10 ? num2 + "d" + num3 + "h" : num2 + "d0" + num3 + "h";
 			}
 		}
 		else if (num3 > 0)
 		{
 			if (num3 >= 10)
 			{
-				result = ((num4 < 1) ? (num3 + "h") : ((num4 >= 10) ? (num3 + "h" + num4 + "m") : (num3 + "h0" + num4 + "m")));
+				result = num4 < 1 ? num3 + "h" : num4 >= 10 ? num3 + "h" + num4 + "m" : num3 + "h0" + num4 + "m";
 			}
 			else if (num3 < 10)
 			{
-				result = ((num4 < 1) ? (num3 + "h") : ((num4 >= 10) ? (num3 + "h" + num4 + "m") : (num3 + "h0" + num4 + "m")));
+				result = num4 < 1 ? num3 + "h" : num4 >= 10 ? num3 + "h" + num4 + "m" : num3 + "h0" + num4 + "m";
 			}
 		}
 		else if (num4 > 0)
@@ -170,7 +170,7 @@ public class mSystem
 		}
 		else
 		{
-			result = ((num5 >= 10) ? (num5 + string.Empty) : ("0" + num5 + string.Empty));
+			result = num5 >= 10 ? num5 + string.Empty : "0" + num5 + string.Empty;
 		}
 		return result;
 	}
@@ -193,7 +193,7 @@ public class mSystem
 			}
 			for (int num = text3.Length - 1; num >= 0; num--)
 			{
-				text = (((text3.Length - 1 - num) % 3 != 0 || text3.Length - 1 - num <= 0) ? (text3[num] + text) : (text3[num] + "." + text));
+				text = (text3.Length - 1 - num) % 3 != 0 || text3.Length - 1 - num <= 0 ? text3[num] + text : text3[num] + "." + text;
 			}
 			return text2 + text;
 		}
@@ -205,55 +205,35 @@ public class mSystem
 
 	public static string numberTostring(long number)
 	{
-		string text = string.Empty + number;
-		bool flag = false;
-		try
+		bool isNegative = number < 0;
+		double n = System.Math.Abs((double)number);
+
+		string suffix = string.Empty;
+		if (n >= 1_000_000_000)
 		{
-			string empty = string.Empty;
-			if (number < 0)
-			{
-				flag = true;
-				number = -number;
-				text = string.Empty + number;
-			}
-			int num = 0;
-			if (number >= 1000000000)
-			{
-				empty = "b";
-				number /= 1000000000;
-				num = (string.Empty + number).Length;
-			}
-			else if (number >= 1000000)
-			{
-				empty = "m";
-				number /= 1000000;
-				num = (string.Empty + number).Length;
-			}
-			else
-			{
-				if (number < 1000)
-				{
-					if (flag)
-					{
-						return "-" + text;
-					}
-					return text;
-				}
-				empty = "k";
-				number /= 1000;
-				num = (string.Empty + number).Length;
-			}
-			int num2 = int.Parse(text.Substring(num, 2));
-			text = ((num2 == 0) ? (text.Substring(0, num) + empty) : ((num2 % 10 != 0) ? (text.Substring(0, num) + "," + text.Substring(num, 2) + empty) : (text.Substring(0, num) + "," + text.Substring(num, 1) + empty)));
+			n /= 1_000_000_000;
+			suffix = "b";
 		}
-		catch (Exception)
+		else if (n >= 1_000_000)
 		{
+			n /= 1_000_000;
+			suffix = "m";
 		}
-		if (flag)
+		else if (n >= 1_000)
 		{
-			return "-" + text;
+			n /= 1_000;
+			suffix = "k";
 		}
-		return text;
+		else
+		{
+			return (isNegative ? "-" : "") + number;
+		}
+
+		string result = n % 1 == 0
+			? n.ToString("0")
+			: n.ToString("0.#");
+
+		return (isNegative ? "-" : "") + result + suffix;
 	}
 
 	public static void callHotlinePC()
