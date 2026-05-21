@@ -15,7 +15,7 @@ namespace Mod.Xmap
 
 		static readonly Random random = new Random();
 
-		static readonly float ServiceCallDelaySeconds = Utils.isUsingTDLT() ? 0.2f : 0.1f;
+		static readonly float ServiceCallDelaySeconds = Utils.isUsingTDLT() ? 0.1f : 0.2f;
 
 		static void ToggleUseCapsuleVip()
 		{
@@ -95,11 +95,6 @@ namespace Mod.Xmap
 		internal static bool CanUseCapsuleVip()
 		{
 			return isUseCapsuleVip && !Char.myCharz().IsCharDead() && XmapUtils.hasItemCapsuleVip();
-		}
-
-		internal static int GetMapIdFromPanelXmap(string mapName)
-		{
-			return int.Parse(mapName.Split(':')[0]);
 		}
 
 		internal static IEnumerator NextMap(MapNext mapNext)

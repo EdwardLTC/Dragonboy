@@ -12,6 +12,9 @@ namespace Mod.PickMob
 		const float ATTACK_DELAY = 0.1f;
 		const int ID_ICON_ITEM_TDLT = 4387;
 
+		static int _lockedItemMapId = -1;
+		static long _lockedUntilMs;
+
 		protected override float Interval => 0f;
 
 		protected override IEnumerator OnUpdate()
@@ -39,44 +42,41 @@ namespace Mod.PickMob
 					yield break;
 				}
 
-				bool pickedAny = false;
-				for (int i = 0; i < GameScr.vItemMap.size(); i++)
+				ItemMap target = FindBestPickTarget(myChar);
+				if (target != null)
 				{
-					ItemMap itemMap = (ItemMap)GameScr.vItemMap.elementAt(i);
-					TypePickItem type = GetTypePickItem(itemMap);
-					if (type == TypePickItem.CanNotPickItem)
-					{
-						continue;
-					}
-
-					pickedAny = true;
+					TypePickItem type = GetTypePickItem(target);
 					switch (type)
 					{
 					case TypePickItem.PickItemTDLT:
-						myChar.cx = itemMap.xEnd;
-						myChar.cy = itemMap.yEnd;
+						_lockedItemMapId = target.itemMapID;
+						_lockedUntilMs = mSystem.currentTimeMillis() + 1200L;
+						myChar.cx = target.xEnd;
+						myChar.cy = target.yEnd;
 						Service.gI().charMove();
-						Service.gI().pickItem(itemMap.itemMapID);
-						itemMap.countAutoPick++;
+						Service.gI().pickItem(target.itemMapID);
+						target.countAutoPick++;
 						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
-						break;
+						yield break;
+
+					case TypePickItem.PickItemNormal:
+						_lockedItemMapId = target.itemMapID;
+						_lockedUntilMs = mSystem.currentTimeMillis() + 1200L;
+						// Ensure we actually move toward the item (server will pick once we're in range).
+						Move(target.xEnd, target.yEnd);
+						Service.gI().pickItem(target.itemMapID);
+						target.countAutoPick++;
+						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
+						yield break;
+
 					case TypePickItem.PickItemTanSat:
-						Move(itemMap.xEnd, itemMap.yEnd);
+						_lockedItemMapId = target.itemMapID;
+						_lockedUntilMs = mSystem.currentTimeMillis() + 2000L;
+						Move(target.xEnd, target.yEnd);
 						myChar.mobFocus = null;
 						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
-						break;
-					case TypePickItem.PickItemNormal:
-						Service.gI().charMove();
-						Service.gI().pickItem(itemMap.itemMapID);
-						itemMap.countAutoPick++;
-						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
-						break;
+						yield break;
 					}
-				}
-
-				if (pickedAny)
-				{
-					yield break;
 				}
 			}
 
@@ -117,7 +117,7 @@ namespace Mod.PickMob
 				if (myChar.skillInfoPaint() == null)
 				{
 					Skill skill = SkillPicker.GetSkillAttack();
-					if (skill != null && !skill.paintCanNotUseSkill)
+					if (skill is not null && !skill.paintCanNotUseSkill)
 					{
 						AttackMob(myChar, skill);
 					}
@@ -282,6 +282,73 @@ namespace Mod.PickMob
 		}
 
 		#region Item picking helpers
+		static ItemMap FindBestPickTarget(Char myChar)
+		{
+			if (GameScr.vItemMap == null || GameScr.vItemMap.size() <= 0)
+			{
+				_lockedItemMapId = -1;
+				return null;
+			}
+
+			long now = mSystem.currentTimeMillis();
+
+			// If we already started moving/picking something, keep targeting it for a short time
+			// to prevent jitter between items.
+			if (_lockedItemMapId != -1 && now < _lockedUntilMs)
+			{
+				for (int i = 0; i < GameScr.vItemMap.size(); i++)
+				{
+					ItemMap it = (ItemMap)GameScr.vItemMap.elementAt(i);
+					if (it != null && it.itemMapID == _lockedItemMapId && GetTypePickItem(it) != TypePickItem.CanNotPickItem)
+					{
+						return it;
+					}
+				}
+			}
+
+			_lockedItemMapId = -1;
+
+			ItemMap best = null;
+			int bestScore = int.MaxValue;
+
+			for (int i = 0; i < GameScr.vItemMap.size(); i++)
+			{
+				ItemMap it = (ItemMap)GameScr.vItemMap.elementAt(i);
+				if (it == null)
+				{
+					continue;
+				}
+
+				TypePickItem type = GetTypePickItem(it);
+				if (type == TypePickItem.CanNotPickItem)
+				{
+					continue;
+				}
+
+				// Prefer items that are already in range, otherwise choose the closest.
+				int dx = Res.abs(myChar.cx - it.xEnd);
+				int dy = Res.abs(myChar.cy - it.yEnd);
+				int dist = dx + dy;
+
+				int typeBias = type == TypePickItem.PickItemNormal ? -100000 : 0;
+				int score = dist + typeBias;
+
+				if (score < bestScore)
+				{
+					bestScore = score;
+					best = it;
+				}
+			}
+
+			if (best != null)
+			{
+				_lockedItemMapId = best.itemMapID;
+				_lockedUntilMs = now + 1200L;
+			}
+
+			return best;
+		}
+
 		static TypePickItem GetTypePickItem(ItemMap itemMap)
 		{
 			Char myChar = Char.myCharz();

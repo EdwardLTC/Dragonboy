@@ -19,7 +19,7 @@ namespace Mod.PickMob
 		};
 		static readonly short[] IdItemBlockBase =
 		{
-			225, 353, 354, 355, 356, 357, 358, 359, 360, 362
+			225, 353, 354, 355, 356, 357, 358, 359, 360, 362, 1229
 		};
 
 		internal static List<int> IdMobsTanSat = new List<int>();

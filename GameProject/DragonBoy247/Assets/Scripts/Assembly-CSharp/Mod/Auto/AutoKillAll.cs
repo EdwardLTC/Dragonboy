@@ -1,14 +1,74 @@
-using System;
 using System.Collections;
 using Mod.ModHelper;
 using Mod.PickMob;
-using UnityEngine;
 
 namespace Mod.Auto
 {
 	public class AutoKillAll : CoroutineMainThreadAction<AutoKillAll>
 	{
-		protected override float Interval => 1f;
+		Char currentTarget;
+		protected override float Interval => 0.2f;
+
+		bool IsEnemyCandidate(Char target)
+		{
+			return target != null
+				&& !string.IsNullOrEmpty(target.cName)
+				&& !target.isPet
+				&& !target.isMiniPet
+				&& !target.cName.StartsWith("#")
+				&& !target.cName.StartsWith("$")
+				&& target.cName != "Trọng tài"
+				&& target.cFlag != 0
+				&& !char.IsUpper(char.Parse(target.cName.Substring(0, 1)))
+				&& target.cHP > 0;
+		}
+
+		bool IsTargetValid(Char target)
+		{
+			return IsEnemyCandidate(target)
+				&& !target.meDead
+				&& GameScr.findCharInMap(target.charID) == target
+				&& target.charID > 0
+				&& target.cx >= -100
+				&& target.cy >= -100
+				&& target.cx <= TileMap.pxw + 100
+				&& target.cy <= TileMap.pxh + 100;
+		}
+
+		void ClearFocus()
+		{
+			Char.myCharz().mobFocus = null;
+			Char.myCharz().npcFocus = null;
+			Char.myCharz().itemFocus = null;
+		}
+
+		void AttackTarget(Char target)
+		{
+			ClearFocus();
+			Char.myCharz().charFocus = target;
+
+			Skill skill = SkillPicker.GetSkillAttack();
+
+			if (skill == null || skill.paintCanNotUseSkill)
+			{
+				return;
+			}
+
+			GameScr.gI().doSelectSkill(skill, true);
+
+			bool inRange = Utils.Distance(Char.myCharz(), target) <= 50 || System.Math.Abs(Char.myCharz().cx - target.cx) <= 70;
+
+			if (!inRange)
+			{
+				Utils.TeleportMyChar(target.cx, target.cy);
+				return;
+			}
+
+			skill.lastTimeUseThisSkill = mSystem.currentTimeMillis();
+			MyVector targets = new MyVector();
+			targets.addElement(target);
+			Service.gI().sendPlayerAttack(new MyVector(), targets, 2);
+		}
 
 		protected override IEnumerator OnUpdate()
 		{
@@ -18,42 +78,35 @@ namespace Mod.Auto
 				yield return null;
 			}
 
-			Char obj = Char.myChar.ClosestChar(int.MaxValue, true);
-			if (obj == null)
+			if (Char.myCharz().meDead)
 			{
 				yield break;
 			}
 
-			try
+			if (currentTarget != null)
 			{
-				if (!string.IsNullOrEmpty(obj.cName) && !obj.isPet && !obj.isMiniPet && !obj.cName.StartsWith("#") && !obj.cName.StartsWith("$") && obj.cName != "Trọng tài" && obj.cFlag != 0 && !char.IsUpper(char.Parse(obj.cName.Substring(0, 1))) && obj.cHP > 0)
+				if (!IsTargetValid(currentTarget))
 				{
-					Char.myCharz().mobFocus = null;
-					Char.myCharz().npcFocus = null;
-					Char.myCharz().itemFocus = null;
-
-					if (!obj.meDead && obj.cHP > 0 && obj.cFlag != 0 && obj.charID > 0)
-					{
-						Char.myCharz().charFocus = obj;
-
-						Skill skill = SkillPicker.GetSkillAttack();
-
-						if (skill != null && !skill.paintCanNotUseSkill)
-						{
-							GameScr.gI().doSelectSkill(skill, true);
-							if (Utils.isUsingTDLT())
-							{
-								Utils.TeleportMyChar(obj.cx, obj.cy);
-							}
-							Utils.DoDoubleClickToObj(obj);
-						}
-					}
+					currentTarget = null;
+				}
+				else
+				{
+					AttackTarget(currentTarget);
+					yield break;
 				}
 			}
-			catch (Exception e)
+
+			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
-				Debug.LogException(e);
+				Char obj = (Char)GameScr.vCharInMap.elementAt(i);
+				if (IsEnemyCandidate(obj) && obj.charID > 0)
+				{
+					currentTarget = obj;
+					AttackTarget(obj);
+					break;
+				}
 			}
+
 		}
 	}
 }
