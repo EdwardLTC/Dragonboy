@@ -5138,7 +5138,7 @@ public class GameScr : mScreen, IChatable
 			dem++;
 			if (dem < 30 && dem >= 0 && GameCanvas.gameTick % 4 == 0 || dem >= 30 && dem <= 50 && GameCanvas.gameTick % 3 == 0 || dem > 50)
 			{
-				// g.setColor(16777215);
+				g.setColor(16777215);
 				g.fillRect(0, 0, GameCanvas.w, GameCanvas.h);
 				if (dem <= 50)
 				{

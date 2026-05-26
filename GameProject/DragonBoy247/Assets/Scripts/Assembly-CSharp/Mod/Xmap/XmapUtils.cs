@@ -4,13 +4,13 @@ using Mod.R;
 
 namespace Mod.Xmap
 {
-	internal class XmapUtils
+	internal static class XmapUtils
 	{
 		internal static readonly short ID_ITEM_CAPSULE_VIP = 194;
 		internal static readonly short ID_ITEM_CAPSULE_NORMAL = 193;
 
-		internal static readonly int ID_MAP_HOME_BASE = 21;
-		internal static readonly int ID_MAP_LANG_BASE = 7;
+		static readonly int ID_MAP_HOME_BASE = 21;
+		static readonly int ID_MAP_LANG_BASE = 7;
 		internal static readonly int ID_MAP_TTVT_BASE = 24;
 
 		internal static int getX(sbyte type)
@@ -88,7 +88,7 @@ namespace Mod.Xmap
 		internal static bool hasItemCapsuleVip()
 		{
 			Item[] items = Char.myCharz().arrItemBag;
-			
+
 			return items.FirstOrDefault(item => item != null && item.template.id == ID_ITEM_CAPSULE_VIP) != null;
 		}
 

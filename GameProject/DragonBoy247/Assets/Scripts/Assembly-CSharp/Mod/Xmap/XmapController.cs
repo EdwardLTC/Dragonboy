@@ -10,6 +10,7 @@ namespace Mod.Xmap
 	{
 		const float MaxStuckSeconds = 5f;
 		const float CapsuleProbeTimeoutSeconds = 5f;
+		const int MaxStuckChecks = 5;
 		float capsuleProbeDeadline;
 		int indexWay;
 		List<MapNext>[] initializeGraph;
@@ -21,9 +22,10 @@ namespace Mod.Xmap
 		float lastProgressRealtime;
 		int lastProgressStepIndex;
 		int mapEnd;
+		int stuckCheckCount;
 		List<MapNext> way;
 
-		protected override float Interval => Utils.isUsingTDLT() ? 0.1f : 0.5f;
+		protected override float Interval => 0.5f;
 
 		protected override IEnumerator OnUpdate()
 		{
@@ -46,8 +48,16 @@ namespace Mod.Xmap
 			else if (now - lastProgressRealtime >= MaxStuckSeconds)
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 5s!", 0);
+				stuckCheckCount++;
 				finishXmap();
 				yield break;
+			}
+
+			if (stuckCheckCount >= MaxStuckChecks)
+			{
+				GameScr.info1.addInfo("[xmap] Fix screen: stuck for too long!", 0);
+				Pk9rXmap.FixBlackScreen();
+				MarkProgress();
 			}
 
 			if (way == null || way.Count == 0 || isNextMapFailed)
@@ -59,6 +69,7 @@ namespace Mod.Xmap
 
 			if (currentMapId == mapEnd && !Char.myCharz().IsCharDead())
 			{
+				stuckCheckCount = 0;
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				yield break;
@@ -127,6 +138,7 @@ namespace Mod.Xmap
 		{
 			if (initializeStartMapId == mapEnd)
 			{
+				stuckCheckCount = 0;
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				isInitializing = false;
@@ -215,6 +227,7 @@ namespace Mod.Xmap
 			lastProgressRealtime = Time.realtimeSinceStartup;
 			lastProgressMapId = TileMap.mapID;
 			lastProgressStepIndex = indexWay;
+			stuckCheckCount = 0;
 		}
 
 		internal static void start(int mapId)

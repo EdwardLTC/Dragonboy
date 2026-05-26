@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace Mod.ModHelper.CommandMod.Hotkey
 {
-	public class HotkeyCommandHandler
+	public static class HotkeyCommandHandler
 	{
-		public static List<HotkeyCommand> hotkeyCommands = new List<HotkeyCommand>();
+		static readonly List<HotkeyCommand> hotkeyCommands = new List<HotkeyCommand>();
 
 		/// <summary>
-		/// Tải phím tắt mặc định.
+		///     Tải phím tắt mặc định.
 		/// </summary>
 		public static void loadDefault()
 		{
@@ -29,7 +28,7 @@ namespace Mod.ModHelper.CommandMod.Hotkey
 						{
 							key = kca.key,
 							delimiter = kca.delimiter,
-							fullCommand = method.DeclaringType.FullName + "." + method.Name,
+							fullCommand = method.DeclaringType?.FullName + "." + method.Name,
 							method = method,
 							parameterInfos = method.GetParameters()
 						};
@@ -45,7 +44,7 @@ namespace Mod.ModHelper.CommandMod.Hotkey
 		}
 
 		/// <summary>
-		/// Lưu phím tắt.
+		///     Lưu phím tắt.
 		/// </summary>
 		public static void save()
 		{
@@ -53,7 +52,7 @@ namespace Mod.ModHelper.CommandMod.Hotkey
 		}
 
 		/// <summary>
-		/// Xử lý phím nhấn.
+		///     Xử lý phím nhấn.
 		/// </summary>
 		/// <param name="key">Mã ASCII phím được nhấn.</param>
 		/// <returns>true nếu có lệnh được thực hiện thành công.</returns>
