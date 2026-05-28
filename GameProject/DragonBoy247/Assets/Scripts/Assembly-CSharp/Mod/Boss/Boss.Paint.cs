@@ -1,5 +1,4 @@
 using System;
-using Mod.Graphics;
 using Mod.Xmap;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ namespace Mod
 		static readonly int distanceBetweenLines = 8;
 		static int offset;
 		static readonly int x = 6;
+		static readonly int frameInset = 2;
 		static int y;
 		static int maxLength;
 		static int lastBoss = -1;
@@ -18,6 +18,14 @@ namespace Mod
 		static readonly string LIST_BOSS = "Danh sách Boss";
 		static int titleWidth;
 		static int offsetX;
+
+		static readonly Color panelBackground = new Color(0.07f, 0.08f, 0.1f, 0.82f);
+		static readonly Color headerBackground = new Color(0.12f, 0.14f, 0.17f, 0.92f);
+		static readonly Color borderColor = new Color(0.58f, 0.62f, 0.68f, 0.22f);
+		static readonly Color hoverRowColor = new Color(0.19f, 0.22f, 0.27f, 0.86f);
+		static readonly Color idleRowColor = new Color(0.13f, 0.15f, 0.18f, 0.5f);
+		static readonly Color accentBossColor = new Color(0.96f, 0.34f, 0.35f, 0.95f);
+		static readonly Color accentDeadColor = new Color(0.35f, 0.35f, 0.35f, 0.6f);
 
 		static GUIStyle cachedRowStyle;
 		static int cachedRowFontSize;
@@ -177,14 +185,21 @@ namespace Mod
 			{
 				int yDraw = y + distanceBetweenLines * (i - start + offset);
 				Boss boss = listBosses[i];
-				g.setColor(new Color(.2f, .2f, .2f, .4f));
-				if (boss.isDied)
-					g.setColor(new Color(.2f, .2f, .2f, .2f));
-				if (GameCanvas.isMouseFocus(xDraw, yDraw, maxLength, 7))
-					g.setColor(new Color(.2f, .2f, .2f, .7f));
-				g.fillRect(xDraw, yDraw + 1, maxLength, 7);
-				if (GameCanvas.isMouseFocus(xDraw, yDraw, maxLength, 7))
-					CustomGraphics.fillRect(xDraw + 1, yDraw + 7, (maxLength - 2) * mGraphics.zoomLevel + 2, 1, Color.white);
+				bool isHovered = GameCanvas.isMouseFocus(xDraw, yDraw, maxLength, 7);
+				Color rowColor = boss.isDied ? new Color(idleRowColor.r, idleRowColor.g, idleRowColor.b, 0.3f) : idleRowColor;
+				if (isHovered)
+				{
+					rowColor = hoverRowColor;
+					g.setColor(rowColor);
+					g.fillRect(xDraw, yDraw + 1, maxLength, 7);
+					g.setColor(boss.isDied ? accentDeadColor : accentBossColor);
+					g.fillRect(xDraw, yDraw + 1, 2, 7);
+					g.setColor(new Color(1f, 1f, 1f, 0.12f));
+					g.fillRect(xDraw, yDraw + 1, maxLength, 1);
+					g.setColor(borderColor);
+					g.drawRect(xDraw, yDraw + 1, maxLength - 1, 6);
+				}
+				g.setColor(rowColor);
 				g.drawString($"{i + 1}. {boss.ToString(true)}", -(x + offsetX), mGraphics.zoomLevel - 3 + yDraw, rowStyle);
 			}
 		}
@@ -203,9 +218,9 @@ namespace Mod
 			g.fillRect(buttonUpX, buttonUpY, 9, scrollBarHeight + 6 * 2);
 			g.drawRegion(Mob.imgHP, 0, offset < listBosses.Count - MAX_BOSS_DISPLAY ? 24 : 54, 9, 6, 1, buttonUpX, buttonUpY, 0);
 			g.drawRegion(Mob.imgHP, 0, offset > 0 ? 24 : 54, 9, 6, 0, buttonDownX, buttonDownY, 0);
-			g.setColor(new Color(.2f, .2f, .2f, .7f));
+			g.setColor(new Color(.18f, .2f, .23f, .82f));
 			g.fillRect(buttonUpX, thumbY, scrollBarWidth, scrollBarThumbHeight);
-			g.setColor(new Color(.7f, .7f, 0f, 1f));
+			g.setColor(new Color(.88f, .92f, .98f, .55f));
 			g.drawRect(buttonUpX, thumbY, scrollBarWidth - 1, scrollBarThumbHeight - 1);
 		}
 
@@ -221,38 +236,48 @@ namespace Mod
 			titleWidth = Utils.getWidth(style, LIST_BOSS);
 
 			int titleX = GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth;
-			g.setColor(new Color(.2f, .2f, .2f, .7f));
+			g.setColor(headerBackground);
 			g.fillRect(titleX, y - distanceBetweenLines, titleWidth, 8);
 			if (GameCanvas.isMouseFocus(titleX, y - distanceBetweenLines, titleWidth, 8))
 			{
-				g.setColor(style.normal.textColor);
+				g.setColor(new Color(1f, 1f, 1f, 0.12f));
 				g.fillRect(titleX, y - 1, titleWidth - 1, 1);
 			}
 			g.drawString(LIST_BOSS, -(x + offsetX) + scrollBarWidth, y - distanceBetweenLines - 2, style);
 			getCollapseButton(out int collapseButtonX, out int collapseButtonY);
 			g.drawRegion(Mob.imgHP, 0, 18, 9, 6, isCollapsed ? 5 : 4, collapseButtonX, collapseButtonY, 0);
 			if (isCollapsed || listBosses.Count <= 0)
+			{
 				return;
+			}
 
-			g.setColor(Color.yellow);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, w - titleWidth - 9 - (scrollBarWidth > 0 ? 2 : 0), 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) + scrollBarWidth, y - 5, 3 + (scrollBarWidth > 0 ? 1 : 0), 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, 1, h);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3 + w, y - 5, 1, h + 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5 + h, w + 1, 1);
+			int panelWidth = Mathf.Max(maxLength, titleWidth);
+			int left = GameCanvas.w - (x + offsetX) - panelWidth - 3 + frameInset;
+			int outerWidth = w - frameInset;
+			int titleGapStart = Mathf.Max(left, titleX - 2);
+			int titleGapEnd = Mathf.Min(left + outerWidth, titleX + titleWidth + 2);
+			g.setColor(borderColor);
+			if (titleGapStart > left)
+				g.fillRect(left, y - 5, titleGapStart - left, 1);
+			if (titleGapEnd < left + outerWidth)
+				g.fillRect(titleGapEnd, y - 5, left + outerWidth - titleGapEnd, 1);
+			g.fillRect(left, y - 5, 1, h);
+			g.fillRect(left + outerWidth, y - 5, 1, h + 1);
+			g.fillRect(left, y - 5 + h, outerWidth + 1, 1);
 		}
 
 		static void FillBackground(mGraphics g)
 		{
 			if (!isCollapsed && listBosses.Count > 0)
 			{
-				g.setColor(new Color(0, 0, 0, .075f));
+				g.setColor(panelBackground);
 				getScrollBar(out int scrollBarWidth, out _, out _);
 				if (listBosses.Count <= MAX_BOSS_DISPLAY)
 					scrollBarWidth = 0;
 				int w = GetPanelWidth(scrollBarWidth);
 				int h = GetPanelHeight();
-				g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, w, h);
+				int panelWidth = Mathf.Max(maxLength, titleWidth);
+				g.fillRect(GameCanvas.w - (x + offsetX) - panelWidth - 3 + frameInset, y - 5, w - frameInset, h);
 			}
 		}
 

@@ -761,7 +761,6 @@ public class Panel : IActionListener, IChatable
 			if (isnewInventory)
 			{
 				b = (sbyte)currItem.indexUI;
-				// Use sellectInventory to determine if body or bag item
 				sbyte where = (sbyte)(sellectInventory < Char.myCharz().arrItemBody.Length ? 0 : 1);
 				Service.gI().useItem(0, where, b, -1);
 			}

@@ -18,15 +18,27 @@ namespace Mod.ListChar
 		static int maxLength;
 		static readonly int MAX_CHAR = 6;
 		static readonly int distanceBetweenLines = 8;
+		static readonly int frameInset = 2;
 		static int offset;
 		static bool isCollapsed;
 		static int titleWidth;
 		static int offsetX;
 
+		static readonly Color panelBackground = new Color(0.07f, 0.08f, 0.1f, 0.82f);
+		static readonly Color headerBackground = new Color(0.12f, 0.14f, 0.17f, 0.92f);
+		static readonly Color borderColor = new Color(0.58f, 0.62f, 0.68f, 0.22f);
+		static readonly Color hoverRowColor = new Color(0.19f, 0.22f, 0.27f, 0.86f);
+		static readonly Color focusRowColor = new Color(0.95f, 0.67f, 0.25f, 0.72f);
+		static readonly Color idleRowColor = new Color(0.13f, 0.15f, 0.18f, 0.5f);
+		static readonly Color emptyStateColor = new Color(0.82f, 0.84f, 0.88f, 0.85f);
+
 		internal static void Update()
 		{
 			if (!isEnabled)
+			{
 				return;
+			}
+			ClampOffset();
 			listChars.Clear();
 			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
@@ -38,24 +50,24 @@ namespace Mod.ListChar
 					{
 						Char chPet = GameScr.findCharInMap(-ch.charID);
 						if (chPet != null)
+						{
 							listChars.Add(chPet);
+						}
 					}
 				}
 			}
 			if (isShowPet)
+			{
 				for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 				{
 					Char ch = (Char)GameScr.vCharInMap.elementAt(i);
 					if (ch.IsNormalChar(false, true) && !listChars.Contains(ch))
+					{
 						listChars.Add(ch);
+					}
 				}
-			if (offset >= listChars.Count - MAX_CHAR)
-			{
-				if (listChars.Count - MAX_CHAR > 0)
-					offset = listChars.Count - MAX_CHAR;
-				else
-					offset = 0;
 			}
+			ClampOffset();
 			if (GameCanvas.isMouseFocus(GameCanvas.w - (x + offsetX) - maxLength, y + 1, maxLength, 8 * MAX_CHAR))
 			{
 				if (GameCanvas.pXYScrollMouse > 0)
@@ -65,7 +77,7 @@ namespace Mod.ListChar
 					if (offset > 0)
 						offset--;
 			}
-			getScrollBar(out int scrollBarWidth, out _, out _);
+			getScrollBar(out int scrollBarWidth, out _);
 			if (listChars.Count > MAX_CHAR)
 				offsetX = scrollBarWidth;
 			else
@@ -76,13 +88,7 @@ namespace Mod.ListChar
 		{
 			if (!isEnabled)
 				return getSpaceOccupied();
-			if (offset >= listChars.Count - MAX_CHAR)
-			{
-				if (listChars.Count - MAX_CHAR > 0)
-					offset = listChars.Count - MAX_CHAR;
-				else
-					offset = 0;
-			}
+			ClampOffset();
 			y = _y;
 			maxLength = 0;
 
@@ -99,58 +105,126 @@ namespace Mod.ListChar
 		{
 			long hp = ch.cHP;
 			long hpFull = ch.cHPFull;
-			float ratio = hp / (float)hpFull;
+			float ratio = hpFull > 0 ? hp / (float)hpFull : 0f;
 			Color color = new Color(Mathf.Clamp(2 - ratio * 2, 0, 1), Mathf.Clamp(ratio * 2, 0, 1), 0);
 			string hexColor = $"#{(int)(color.r * 255):x2}{(int)(color.g * 255):x2}{(int)(color.b * 255):x2}{(int)(color.a * 255):x2}";
 			if (hp == 0)
+			{
 				hexColor = "black";
+			}
 			return $"<color=white>[<color={hexColor}>{NinjaUtil.getMoneys(ch.cHP)}</color>/<color=lime>{NinjaUtil.getMoneys(ch.cHPFull)}</color>]</color>";
+		}
+
+		static void ClampOffset()
+		{
+			int maxOffset = Mathf.Max(0, listChars.Count - MAX_CHAR);
+			offset = Mathf.Clamp(offset, 0, maxOffset);
+		}
+
+		static int GetVisibleStartIndex()
+		{
+			return listChars.Count > MAX_CHAR ? listChars.Count - MAX_CHAR : 0;
+		}
+
+		static int GetVisibleCount()
+		{
+			return Mathf.Min(MAX_CHAR, listChars.Count);
+		}
+
+		static int GetPanelContentWidth()
+		{
+			return Mathf.Max(maxLength, titleWidth);
+		}
+
+		static string BuildTitleText()
+		{
+			int count = listChars.Count(c => c.IsNormalChar());
+			int maxPlayers = GameScr.gI().maxPlayer[TileMap.zoneID];
+			return $"{TileMap.mapName} • {Strings.zone} {TileMap.zoneID} [{count}/{maxPlayers}]";
+		}
+
+		static Color GetRowColor(Char ch, bool isHovered)
+		{
+			if (Char.myCharz().charFocus == ch)
+				return focusRowColor;
+			if (isHovered)
+				return hoverRowColor;
+			if (ch.cHP <= 0)
+				return new Color(idleRowColor.r, idleRowColor.g, idleRowColor.b, 0.35f);
+			return idleRowColor;
+		}
+
+		static Color GetRowAccent(Char ch)
+		{
+			if (ch.IsPet())
+				return new Color(0.25f, 0.8f, 0.95f, 0.95f);
+			if (ch.IsBoss() || ch.charEffectTime.hasBlackStarDragonBall)
+				return new Color(0.96f, 0.34f, 0.35f, 0.95f);
+			if (Char.myCharz().charFocus == ch)
+				return new Color(0.98f, 0.78f, 0.26f, 0.95f);
+			return borderColor;
+		}
+
+		static GUIStyle CreateTitleStyle()
+		{
+			GUIStyle style = new GUIStyle(GUI.skin.label)
+			{
+				fontSize = 7 * mGraphics.zoomLevel,
+				fontStyle = FontStyle.Bold,
+				alignment = TextAnchor.UpperRight,
+				richText = true
+			};
+			style.normal.textColor = Color.white;
+			return style;
+		}
+
+		static GUIStyle CreateRowStyle()
+		{
+			return new GUIStyle(GUI.skin.label)
+			{
+				fontSize = 6 * mGraphics.zoomLevel,
+				fontStyle = FontStyle.Bold,
+				alignment = TextAnchor.UpperRight,
+				richText = true
+			};
 		}
 
 		static void PaintListChars(mGraphics g)
 		{
 			int skippedCharCount = 0;
 			List<KeyValuePair<string, GUIStyle>> charDescriptions = new List<KeyValuePair<string, GUIStyle>>();
-			int start = 0;
-			if (listChars.Count > MAX_CHAR)
-				start = listChars.Count - MAX_CHAR;
+			int start = GetVisibleStartIndex();
 			for (int i = start - offset; i < listChars.Count - offset; i++)
 			{
-				GUIStyle style = new GUIStyle(GUI.skin.label)
-				{
-					fontSize = 6 * mGraphics.zoomLevel,
-					fontStyle = FontStyle.Bold,
-					alignment = TextAnchor.UpperRight,
-					richText = true
-				};
+				GUIStyle style = CreateRowStyle();
 				#region Format
 				Char ch = listChars[i];
-				string charDesc = $"<color=orange>{ch.GetClanTag()}</color>{ch.GetNameWithoutClanTag(true)} {formatHP(ch)}";
+				string charDesc = $"<color=#F2B965>{ch.GetClanTag()}</color>{ch.GetNameWithoutClanTag(true)} {formatHP(ch)}";
 				if (ch.IsNormalChar())
-					charDesc += $" - {ch.GetGender(true)} [{ch.charID}]";
+					charDesc += $" <color=#AAB4C0>•</color> {ch.GetGender(true)} <color=#AAB4C0>[{ch.charID}]</color>";
 				if (ch.IsPet())
 				{
-					charDesc += $" - {ch.GetGender(true)}";
+					charDesc += $" <color=#AAB4C0>•</color> {ch.GetGender(true)}";
 					Char chMaster = GameScr.findCharInMap(-ch.charID);
 					if (chMaster != null)
-						charDesc += string.Format(Strings.someonePet, chMaster.GetNameWithoutClanTag(true));
+						charDesc += $" <color=#AAB4C0>•</color> {string.Format(Strings.someonePet, chMaster.GetNameWithoutClanTag(true))}";
 					else
-						charDesc += Strings.petLostMaster;
+						charDesc += $" <color=#AAB4C0>•</color> {Strings.petLostMaster}";
 					skippedCharCount++;
 				}
 				else if (!ch.IsBoss())
-					charDesc = i + 1 - skippedCharCount + ". " + charDesc;
+					charDesc = $"{i + 1 - skippedCharCount}. {charDesc}";
 				else
 					skippedCharCount++;
 				if (ch.charEffectTime.hasBlackStarDragonBall || ch.IsBoss())
-					charDesc = $"<color=red>{charDesc}</color>";
+					charDesc = $"<color=#FF6B6B>{charDesc}</color>";
 				else if (ch.IsPet())
-					charDesc = $"<color=cyan>{charDesc}</color>";
+					charDesc = $"<color=#5ED8F0>{charDesc}</color>";
 				if (ch.cHP <= 0)
-					charDesc = $"<color=black>{charDesc}</color>";
+					charDesc = $"<color=#525252>{charDesc}</color>";
 
 				charDescriptions.Add(new KeyValuePair<string, GUIStyle>(charDesc, style));
-				maxLength = System.Math.Max(maxLength, Utils.getWidth(charDescriptions[i - start + offset].Value, charDesc) + (ch.cFlag != 0 ? distanceBetweenLines + 1 : 0));
+				maxLength = System.Math.Max(maxLength, Utils.getWidth(style, charDesc) + (ch.cFlag != 0 ? distanceBetweenLines + 1 : 0));
 				#endregion
 			}
 			FillBackground(g);
@@ -158,6 +232,10 @@ namespace Mod.ListChar
 			{
 				int offsetPaint = 0;
 				Char ch = listChars[i];
+				int rowIndex = i - start + offset;
+				int rowY = y + 1 + distanceBetweenLines * rowIndex;
+				int rowX = GameCanvas.w - (x + offsetX) - maxLength;
+				bool isHovered = GameCanvas.isMouseFocus(rowX - (ch.cFlag != 0 ? distanceBetweenLines + 1 : 0), rowY, maxLength, distanceBetweenLines - 1);
 				if (ch.cFlag != 0)
 				{
 					offsetPaint = distanceBetweenLines + 1;
@@ -177,28 +255,18 @@ namespace Mod.ListChar
 					g.setColor(ch.GetFlagColor());
 					g.fillRect(GameCanvas.w - (x + offsetX) - distanceBetweenLines + 1, y + 1 + distanceBetweenLines * (i - start + offset), distanceBetweenLines - 1, distanceBetweenLines - 1);
 				}
-				g.setColor(new Color(0.2f, 0.2f, 0.2f, 0.4f));
-				if (GameCanvas.isMouseFocus(GameCanvas.w - (x + offsetX) - maxLength - offsetPaint, y + 1 + distanceBetweenLines * (i - start + offset), maxLength, distanceBetweenLines - 1))
-					g.setColor(new Color(0.2f, 0.2f, 0.2f, 0.7f));
-				if (Char.myCharz().charFocus == listChars[i])
-					g.setColor(new Color(1f, .5f, 0f, .5f));
-				g.fillRect(GameCanvas.w - (x + offsetX) - maxLength, y + 1 + distanceBetweenLines * (i - start + offset), maxLength - offsetPaint, distanceBetweenLines - 1);
-				if (GameCanvas.isMouseFocus(GameCanvas.w - (x + offsetX) - maxLength - offsetPaint, y + 1 + distanceBetweenLines * (i - start + offset), maxLength, distanceBetweenLines - 1))
+				g.setColor(GetRowColor(ch, isHovered));
+				g.fillRect(rowX, rowY, maxLength - offsetPaint, distanceBetweenLines - 1);
+				g.setColor(GetRowAccent(ch));
+				g.fillRect(rowX, rowY, 2, distanceBetweenLines - 1);
+				if (isHovered)
 				{
-					int length = Utils.getWidth(charDescriptions[i - start + offset].Value, charDescriptions[i - start + offset].Key);
-					g.setColor(Color.white);
-					g.fillRect(GameCanvas.w - (x + offsetX) - length - offsetPaint + 1, y + distanceBetweenLines * (i - start + offset) + 7, length - 2, 1);
-					long hp = ch.cHP;
-					long hpFull = ch.cHPFull;
-					float ratio = hp / (float)hpFull;
-					Color color = new Color(Mathf.Clamp(2 - ratio * 2, 0, 1), Mathf.Clamp(ratio * 2, 0, 1), 0);
-					g.setColor(color);
-					g.fillRect(GameCanvas.w - (x + offsetX) - length - offsetPaint + 1, y + distanceBetweenLines * (i - start + offset) + 7, (int)(ratio * (length - 2)), 1);
+					g.setColor(new Color(1f, 1f, 1f, 0.12f));
+					g.fillRect(rowX, rowY + 1, maxLength, 1);
+					g.setColor(borderColor);
+					g.drawRect(rowX, rowY + 1, maxLength - 1, 6);
 				}
-				int offset2 = 0;
-				if (ch.IsBoss())
-					offset2 = -1;
-				g.drawString(charDescriptions[i - start + offset].Key, -(x + offsetX) - offsetPaint, mGraphics.zoomLevel - 3 + y + distanceBetweenLines * (i - start + offset) + offset2, charDescriptions[i - start + offset].Value);
+				g.drawString(charDescriptions[rowIndex].Key, -(x + offsetX) - offsetPaint, mGraphics.zoomLevel - 3 + rowY + (ch.IsBoss() ? -1 : 0), charDescriptions[rowIndex].Value);
 			}
 		}
 
@@ -206,13 +274,15 @@ namespace Mod.ListChar
 		{
 			if (!isCollapsed && listChars.Count > 0)
 			{
-				g.setColor(new Color(0, 0, 0, .075f));
-				getScrollBar(out int scrollBarWidth, out _, out _);
+				g.setColor(panelBackground);
+				getScrollBar(out int scrollBarWidth, out _);
 				if (listChars.Count <= MAX_CHAR)
+				{
 					scrollBarWidth = 0;
-				int w = maxLength + 5 + (scrollBarWidth > 0 ? scrollBarWidth + 2 : 0);
-				int h = distanceBetweenLines * System.Math.Min(MAX_CHAR, listChars.Count) + 7;
-				g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, w, h);
+				}
+				int w = GetPanelContentWidth() + 5 + (scrollBarWidth > 0 ? scrollBarWidth + 2 : 0);
+				int h = distanceBetweenLines * GetVisibleCount() + 7;
+				g.fillRect(GameCanvas.w - (x + offsetX) - GetPanelContentWidth() - 3 + frameInset, y - 5, w - frameInset, h);
 			}
 		}
 
@@ -222,58 +292,63 @@ namespace Mod.ListChar
 			{
 				getButtonUp(out int buttonUpX, out int buttonUpY);
 				getButtonDown(out int buttonDownX, out int buttonDownY);
-				getScrollBar(out int scrollBarWidth, out int scrollBarHeight, out int scrollBarThumbHeight);
+				getScrollBar(out int scrollBarWidth, out int scrollBarHeight);
 				g.setColor(new Color(.2f, .2f, .2f, .4f));
 				g.fillRect(buttonUpX, buttonUpY, 9, scrollBarHeight + 6 * 2);
 				g.drawRegion(Mob.imgHP, 0, offset < listChars.Count - MAX_CHAR ? 18 : 54, 9, 6, 1, buttonUpX, buttonUpY, 0);
 				g.drawRegion(Mob.imgHP, 0, offset > 0 ? 18 : 54, 9, 6, 0, buttonDownX, buttonDownY, 0);
-				//draw thumb
-				g.setColor(new Color(.2f, .2f, .2f, .7f));
-				g.fillRect(buttonUpX, buttonUpY + 6 + Mathf.CeilToInt((float)scrollBarHeight / listChars.Count * (listChars.Count - offset - MAX_CHAR)), scrollBarWidth, scrollBarThumbHeight);
-				g.setColor(new Color(.7f, .7f, 0f, 1f));
-				g.drawRect(buttonUpX, buttonUpY + 6 + Mathf.CeilToInt((float)scrollBarHeight / listChars.Count * (listChars.Count - offset - MAX_CHAR)), scrollBarWidth - 1, scrollBarThumbHeight - 1);
+				int thumbY = GetScrollThumbY(buttonUpY, scrollBarHeight);
+				int thumbHeight = Mathf.Max(1, Mathf.CeilToInt((float)MAX_CHAR / listChars.Count * scrollBarHeight));
+				g.setColor(new Color(.18f, .2f, .23f, .82f));
+				g.fillRect(buttonUpX, thumbY, scrollBarWidth, thumbHeight);
+				g.setColor(new Color(.88f, .92f, .98f, .55f));
+				g.drawRect(buttonUpX, thumbY, scrollBarWidth - 1, thumbHeight - 1);
 			}
 		}
 
 		static void PaintRect(mGraphics g)
 		{
-			getScrollBar(out int scrollBarWidth, out _, out _);
+			getScrollBar(out int scrollBarWidth, out _);
 			if (listChars.Count <= MAX_CHAR)
+			{
 				scrollBarWidth = 0;
-			int w = maxLength + 5 + (scrollBarWidth > 0 ? scrollBarWidth + 2 : 0);
-			int h = distanceBetweenLines * System.Math.Min(MAX_CHAR, listChars.Count) + 7;
-			int count = listChars.Count(c => c.IsNormalChar());
-			float ratio = count / (float)GameScr.gI().maxPlayer[TileMap.zoneID];
-			Color color = new Color(Mathf.Clamp(ratio * 2, 0, 1), Mathf.Clamp(2 - ratio * 2, 0, 1), 0);
-			string hexColor = $"#{(int)(color.r * 255):x2}{(int)(color.g * 255):x2}{(int)(color.b * 255):x2}{(int)(color.a * 255):x2}";
-			string str = $"<color=yellow>{TileMap.mapName}</color> {Strings.zone} <color=yellow>{TileMap.zoneID}</color> [<color={hexColor}>{count}</color>/<color=red>{GameScr.gI().maxPlayer[TileMap.zoneID]}</color>]";
-			GUIStyle style = new GUIStyle(GUI.skin.label)
-			{
-				fontSize = 7 * mGraphics.zoomLevel,
-				fontStyle = FontStyle.Bold,
-				alignment = TextAnchor.UpperRight,
-				richText = true
-			};
-			style.normal.textColor = Color.white;
+			}
+			string str = BuildTitleText();
+			GUIStyle style = CreateTitleStyle();
 			titleWidth = Utils.getWidth(style, str);
-			g.setColor(new Color(.2f, .2f, .2f, .7f));
-			g.fillRect(GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth, y - distanceBetweenLines, titleWidth, 8);
-			if (GameCanvas.isMouseFocus(GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth, y - distanceBetweenLines, titleWidth, 8))
+			int panelWidth = GetPanelContentWidth();
+			int titleX = GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth;
+			g.setColor(headerBackground);
+			g.fillRect(titleX, y - distanceBetweenLines, titleWidth, 8);
+			if (GameCanvas.isMouseFocus(titleX, y - distanceBetweenLines, titleWidth, 8))
 			{
-				g.setColor(style.normal.textColor);
-				g.fillRect(GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth, y - 1, titleWidth - 1, 1);
+				g.setColor(new Color(1f, 1f, 1f, 0.12f));
+				g.fillRect(titleX, y - 1, titleWidth - 1, 1);
 			}
 			g.drawString(str, -(x + offsetX) + scrollBarWidth, y - distanceBetweenLines - 2, style);
 			getCollapseButton(out int collapseButtonX, out int collapseButtonY);
 			g.drawRegion(Mob.imgHP, 0, 18, 9, 6, isCollapsed ? 5 : 4, collapseButtonX, collapseButtonY, 0);
 			if (isCollapsed || listChars.Count <= 0)
-				return;
-			g.setColor(Color.yellow);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, w - titleWidth - 9 - (scrollBarWidth > 0 ? 2 : 0), 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) + scrollBarWidth, y - 5, 3 + (scrollBarWidth > 0 ? 1 : 0), 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5, 1, h);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3 + w, y - 5, 1, h + 1);
-			g.fillRect(GameCanvas.w - (x + offsetX) - maxLength - 3, y - 5 + h, w + 1, 1);
+			{
+				if (listChars.Count <= 0)
+				{
+					return;
+				}
+			}
+			int w = panelWidth + 5 + (scrollBarWidth > 0 ? scrollBarWidth + 2 : 0);
+			int h = distanceBetweenLines * GetVisibleCount() + 7;
+			int left = GameCanvas.w - (x + offsetX) - panelWidth - 3 + frameInset;
+			int outerWidth = w - frameInset;
+			g.setColor(borderColor);
+			int titleGapStart = Mathf.Max(left, titleX - 2);
+			int titleGapEnd = Mathf.Min(left + outerWidth, titleX + titleWidth + 2);
+			if (titleGapStart > left)
+				g.fillRect(left, y - 5, titleGapStart - left, 1);
+			if (titleGapEnd < left + outerWidth)
+				g.fillRect(titleGapEnd, y - 5, left + outerWidth - titleGapEnd, 1);
+			g.fillRect(left, y - 5, 1, h);
+			g.fillRect(left + outerWidth, y - 5, 1, h + 1);
+			g.fillRect(left, y - 5 + h, outerWidth + 1, 1);
 		}
 
 		internal static void updateTouch()
@@ -284,7 +359,7 @@ namespace Mod.ListChar
 			{
 				if (!GameCanvas.isTouch || ChatTextField.gI().isShow || GameCanvas.menu.showMenu)
 					return;
-				getScrollBar(out int scrollBarWidth, out int scrollBarHeight, out int scrollBarThumbHeight);
+				getScrollBar(out int scrollBarWidth, out int scrollBarHeight);
 				getCollapseButton(out int collapseButtonX, out int collapseButtonY);
 				if (GameCanvas.isPointerHoldIn(collapseButtonX, collapseButtonY, 9, 6) || GameCanvas.isPointerHoldIn(GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth, y - distanceBetweenLines, titleWidth, 8))
 				{
@@ -375,16 +450,22 @@ namespace Mod.ListChar
 			buttonDownY = y + 2 + distanceBetweenLines * (MAX_CHAR - 1);
 		}
 
-		static void getScrollBar(out int scrollBarWidth, out int scrollBarHeight, out int scrollBarThumbHeight)
+		static void getScrollBar(out int scrollBarWidth, out int scrollBarHeight)
 		{
 			scrollBarWidth = 9;
 			scrollBarHeight = MAX_CHAR * distanceBetweenLines - 1 - 6 * 2;
-			scrollBarThumbHeight = Mathf.CeilToInt((float)MAX_CHAR / listChars.Count * scrollBarHeight);
+		}
+
+		static int GetScrollThumbY(int buttonUpY, int scrollBarHeight)
+		{
+			if (listChars.Count <= 0)
+				return buttonUpY + 6;
+			return buttonUpY + 6 + Mathf.CeilToInt((float)scrollBarHeight / listChars.Count * (listChars.Count - offset - MAX_CHAR));
 		}
 
 		static void getCollapseButton(out int collapseButtonX, out int collapseButtonY)
 		{
-			getScrollBar(out int scrollBarWidth, out _, out _);
+			getScrollBar(out int scrollBarWidth, out _);
 			if (listChars.Count <= MAX_CHAR)
 				scrollBarWidth = 0;
 			collapseButtonX = GameCanvas.w - (x + offsetX) - titleWidth + scrollBarWidth - 8;
@@ -407,6 +488,8 @@ namespace Mod.ListChar
 				return 0;
 			byte border = 5;
 			byte titleH = 7;
+			if (listChars.Count <= 0)
+				return titleH + border + 3;
 			if (isCollapsed)
 				return distanceBetweenLines;
 			return titleH + border + distanceBetweenLines * Mathf.Clamp(listChars.Count, 0, MAX_CHAR);
