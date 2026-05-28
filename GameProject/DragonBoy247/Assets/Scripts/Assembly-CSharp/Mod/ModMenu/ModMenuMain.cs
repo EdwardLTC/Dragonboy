@@ -5,6 +5,7 @@ using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.DeveloperFunctions;
 using Mod.Graphics;
+using Mod.ListChar;
 using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
@@ -132,6 +133,14 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "AutoKillBoss_Toggle",
+					Title = "Kill all Boss",
+					Description = "Boss La DBRR",
+					GetValueFunc = () => AutoKillBoss.gI.IsActing,
+					SetValueAction = AutoKillBoss.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoGoback_Toggle",
 					Title = "Goback",
 					Description = "Goback",
@@ -164,6 +173,14 @@ namespace Mod.ModMenu
 					GetValueFunc = () => CharEffectMain.isEnabled,
 					SetValueAction = CharEffectMain.setState,
 					RMSName = "show_target_info"
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "ShowCharInfo_Toggle",
+					Title = Strings.showCharListTitle,
+					Description = Strings.showCharListDescription,
+					GetValueFunc = () => ListCharsInMap.isEnabled,
+					SetValueAction = ListCharsInMap.setState
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{

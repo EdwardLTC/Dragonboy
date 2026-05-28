@@ -219,11 +219,6 @@ public class mSystem
 			n /= 1_000_000;
 			suffix = "m";
 		}
-		else if (n >= 1_000)
-		{
-			n /= 1_000;
-			suffix = "k";
-		}
 		else
 		{
 			return (isNegative ? "-" : "") + number;
@@ -238,7 +233,7 @@ public class mSystem
 
 	public static void callHotlinePC()
 	{
-		Application.OpenURL("http://ngocrongonline.com/");
+		Application.OpenURL("https://ngocrongonline.com/");
 	}
 
 	public static void callHotlineJava()

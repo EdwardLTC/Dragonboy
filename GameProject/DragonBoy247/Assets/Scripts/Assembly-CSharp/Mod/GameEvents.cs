@@ -7,6 +7,7 @@ using Mod.Auto;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.Graphics;
+using Mod.ListChar;
 using Mod.ModHelper;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
@@ -72,6 +73,9 @@ namespace Mod
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
 
+			UIReportersManager.AddReporter(Boss.Paint);
+			UIReportersManager.AddReporter(ListCharsInMap.Paint);
+
 			GameLauncherClient launcher = GameLauncherClient.Instance;
 			launcher.ParseStartupArgs();
 			if (launcher.IsLaunchedByLauncher())
@@ -120,6 +124,8 @@ namespace Mod
 			{
 				InGameAccountManager.OnCloseAndPause();
 			}
+
+			UIReportersManager.ClearReporters();
 
 			Session_ME.gI().close();
 			Session_ME2.gI().close();
@@ -356,10 +362,11 @@ namespace Mod
 				lastTimeRequestZoneInfo = mSystem.currentTimeMillis();
 				Service.gI().openUIZone();
 			}
-			
+
 			Char.myCharz().cspeed = Utils.myCharSpeed;
 			Time.timeScale = Utils.timeScale;
 			Boss.Update();
+			ListCharsInMap.Update();
 			CharEffectMain.Update();
 			TeleportMenuMain.Update();
 			AutoTrainPet.Update();
@@ -550,7 +557,7 @@ namespace Mod
 			{
 				ModMenuMain.Paint(g);
 				CharEffectMain.Paint(g);
-				Boss.Paint(100, g);
+				UIReportersManager.handlePaintGameScr(g);
 				g.setColor(Color.red);
 				for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 				{
@@ -610,6 +617,7 @@ namespace Mod
 			}
 
 			Boss.UpdateTouch();
+			ListCharsInMap.updateTouch();
 			ModMenuMain.UpdateTouch();
 			if (GameCanvas.isTouchControl)
 			{
