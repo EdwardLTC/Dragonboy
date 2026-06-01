@@ -163,7 +163,14 @@ namespace Mod.Xmap
 					capsuleProbeDeadline = now + CapsuleProbeTimeoutSeconds;
 					GameCanvas.panel.mapNames = null;
 					Char.chatPopup = null;
-					GameCanvas.panel.hideNow();
+					if (GameCanvas.panel != null)
+					{
+						GameCanvas.panel.hide();
+					}
+					if (GameCanvas.panel2 != null)
+					{
+						GameCanvas.panel2.hide();
+					}
 					GameCanvas.menu.doCloseMenu();
 					TryUseProbeCapsule();
 					return false;

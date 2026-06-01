@@ -3,60 +3,60 @@ namespace Mod.ModHelper
 	internal class CharacterInfoMessage
 	{
 		public string action = "updateInfo";
-
-		// Status
-		public string status;
-
-		// Character info
-		public string cName;
-		public int cgender;
-
-		// Map info
-		public string mapName;
-		public int mapID;
-		public int zoneID;
-
-		// Position
-		public int cx;
-		public int cy;
-
-		// Character stats
-		public long cHP;
-		public long cHPFull;
-		public long cMP;
-		public long cMPFull;
-		public int cStamina;
-		public long cPower;
-		public long cTiemNang;
-
-		// Base stats
-		public int cHPGoc;
-		public int cMPGoc;
-		public int cDefGoc;
-		public int cDamGoc;
+		public int cCriticalFull;
 		public int cCriticalGoc;
 
 		// Full stats
 		public long cDamFull;
+		public int cDamGoc;
+		public int cDefGoc;
 		public long cDefull;
-		public int cCriticalFull;
+		public int cgender;
+
+		// Character stats
+		public long cHP;
+		public long cHPFull;
+
+		// Base stats
+		public int cHPGoc;
+		public long cMP;
+		public long cMPFull;
+		public int cMPGoc;
+
+		// Character info
+		public string cName;
+		public int cPetCriticalFull;
+		public long cPetDamFull;
+		public long cPetDefull;
 
 		// Pet stats
 		public long cPetHP;
 		public long cPetHPFull;
 		public long cPetMP;
 		public long cPetMPFull;
-		public int cPetStamina;
 		public long cPetPower;
+		public int cPetStamina;
 		public long cPetTiemNang;
-		public long cPetDamFull;
-		public long cPetDefull;
-		public int cPetCriticalFull;
+		public long cPower;
+		public int cStamina;
+		public long cTiemNang;
+
+		// Position
+		public int cx;
+		public int cy;
+		public int luong;
+		public int luongKhoa;
+		public int mapID;
+
+		// Map info
+		public string mapName;
+
+		// Status
+		public string status;
 
 		// Currency
 		public long xu;
-		public int luong;
-		public int luongKhoa;
+		public int zoneID;
 
 		internal static CharacterInfoMessage Create(Char myChar, Char myPet)
 		{

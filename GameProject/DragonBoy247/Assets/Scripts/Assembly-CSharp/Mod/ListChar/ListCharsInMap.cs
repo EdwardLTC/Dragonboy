@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mod.R;
 using UnityEngine;
 
@@ -30,7 +29,6 @@ namespace Mod.ListChar
 		static readonly Color hoverRowColor = new Color(0.19f, 0.22f, 0.27f, 0.86f);
 		static readonly Color focusRowColor = new Color(0.95f, 0.67f, 0.25f, 0.72f);
 		static readonly Color idleRowColor = new Color(0.13f, 0.15f, 0.18f, 0.5f);
-		static readonly Color emptyStateColor = new Color(0.82f, 0.84f, 0.88f, 0.85f);
 
 		internal static void Update()
 		{
@@ -87,7 +85,9 @@ namespace Mod.ListChar
 		internal static int Paint(int _y, mGraphics g)
 		{
 			if (!isEnabled)
+			{
 				return getSpaceOccupied();
+			}
 			ClampOffset();
 			y = _y;
 			maxLength = 0;
@@ -138,9 +138,9 @@ namespace Mod.ListChar
 
 		static string BuildTitleText()
 		{
-			int count = listChars.Count(c => c.IsNormalChar());
 			int maxPlayers = GameScr.gI().maxPlayer[TileMap.zoneID];
-			return $"{TileMap.mapName} • {Strings.zone} {TileMap.zoneID} [{count}/{maxPlayers}]";
+			int players = GameScr.gI().numPlayer[TileMap.zoneID];
+			return $"{TileMap.mapName} • {Strings.zone} {TileMap.mapID} [{players}/{maxPlayers}]";
 		}
 
 		static Color GetRowColor(Char ch, bool isHovered)
@@ -197,11 +197,8 @@ namespace Mod.ListChar
 			for (int i = start - offset; i < listChars.Count - offset; i++)
 			{
 				GUIStyle style = CreateRowStyle();
-				#region Format
 				Char ch = listChars[i];
 				string charDesc = $"<color=#F2B965>{ch.GetClanTag()}</color>{ch.GetNameWithoutClanTag(true)} {formatHP(ch)}";
-				if (ch.IsNormalChar())
-					charDesc += $" <color=#AAB4C0>•</color> {ch.GetGender(true)} <color=#AAB4C0>[{ch.charID}]</color>";
 				if (ch.IsPet())
 				{
 					charDesc += $" <color=#AAB4C0>•</color> {ch.GetGender(true)}";
@@ -225,7 +222,6 @@ namespace Mod.ListChar
 
 				charDescriptions.Add(new KeyValuePair<string, GUIStyle>(charDesc, style));
 				maxLength = System.Math.Max(maxLength, Utils.getWidth(style, charDesc) + (ch.cFlag != 0 ? distanceBetweenLines + 1 : 0));
-				#endregion
 			}
 			FillBackground(g);
 			for (int i = start - offset; i < listChars.Count - offset; i++)
@@ -330,10 +326,7 @@ namespace Mod.ListChar
 			g.drawRegion(Mob.imgHP, 0, 18, 9, 6, isCollapsed ? 5 : 4, collapseButtonX, collapseButtonY, 0);
 			if (isCollapsed || listChars.Count <= 0)
 			{
-				if (listChars.Count <= 0)
-				{
-					return;
-				}
+				return;
 			}
 			int w = panelWidth + 5 + (scrollBarWidth > 0 ? scrollBarWidth + 2 : 0);
 			int h = distanceBetweenLines * GetVisibleCount() + 7;

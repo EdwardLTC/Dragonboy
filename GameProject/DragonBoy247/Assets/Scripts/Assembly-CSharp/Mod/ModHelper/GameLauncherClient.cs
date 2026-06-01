@@ -15,21 +15,21 @@ namespace Mod.ModHelper
 		static readonly string pathLog = ModStorage.GetCommonDataPath("log_launcher_client.txt");
 
 		static GameLauncherClient _instance;
-		public static GameLauncherClient Instance => _instance ??= new GameLauncherClient();
-
-		ClientWebSocket _ws;
+		bool _autoLoginDone;
 		CancellationTokenSource _cts;
 		Thread _receiveThread;
 
+		ClientWebSocket _ws;
+		public static GameLauncherClient Instance => _instance ??= new GameLauncherClient();
+
 		public bool IsConnected { get; private set; }
-		bool _autoLoginDone;
-		
+
 		public string Username { get; private set; } = "";
 		public string Password { get; private set; } = "";
 		public int WsPort { get; private set; } = -1;
-		
+
 		public event Action<string, JObject> OnLauncherEvent;
-		
+
 		public void ParseStartupArgs()
 		{
 			try
@@ -39,30 +39,30 @@ namespace Mod.ModHelper
 				{
 					switch (args[i])
 					{
-						case "-port":
-							if (i + 1 < args.Length) WsPort = int.Parse(args[++i]);
-							break;
-						case "-username":
-							if (i + 1 < args.Length) Username = args[++i];
-							break;
-						case "-password":
-							if (i + 1 < args.Length) Password = args[++i];
-							break;
+					case "-port":
+						if (i + 1 < args.Length) WsPort = int.Parse(args[++i]);
+						break;
+					case "-username":
+						if (i + 1 < args.Length) Username = args[++i];
+						break;
+					case "-password":
+						if (i + 1 < args.Length) Password = args[++i];
+						break;
 					}
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
 				WriteLog("Error parsing startup args: " + ex);
 			}
 		}
-		
+
 		public bool IsLaunchedByLauncher()
 		{
 			return WsPort > 0;
 		}
-		
+
 		public void Connect()
 		{
 			if (WsPort <= 0)
@@ -86,14 +86,14 @@ namespace Mod.ModHelper
 			{
 				_ws = new ClientWebSocket();
 				Uri uri = new Uri($"ws://127.0.0.1:{WsPort}");
-				
-				var sw = Stopwatch.StartNew();
-				
+
+				Stopwatch sw = Stopwatch.StartNew();
+
 				const int timeoutMs = 10_000;
 				System.Threading.Tasks.Task connectTask = _ws.ConnectAsync(uri, _cts.Token);
 				bool completed = connectTask.Wait(timeoutMs);
 				sw.Stop();
-				
+
 				if (!completed)
 				{
 					WriteLog($"Connection timed out after {sw.ElapsedMilliseconds}ms. Launcher may not be running or not completing WebSocket handshake on port {WsPort}.");
@@ -114,41 +114,44 @@ namespace Mod.ModHelper
 					});
 					return;
 				}
-				
+
 				if (connectTask.IsFaulted)
 				{
 					throw connectTask.Exception?.InnerException ?? connectTask.Exception ?? new Exception("Unknown connection error");
 				}
-				
+
 				IsConnected = true;
-				
+
 				SendMessage(new
 				{
 					action = "connected",
 					id = Process.GetCurrentProcess().Id,
 					username = Username
 				});
-				
+
 				MainThreadDispatcher.Dispatch(() =>
 				{
 					Utils.IsOpenedByExternalAccountManager = true;
 					Utils.username = Username;
 					Utils.password = Password;
 				});
-				
+
 				// Wait 5 seconds for the game to fully boot before auto-login (separate thread to not block receive loop)
 				new Thread(() =>
 				{
 					Thread.Sleep(5000);
 					MainThreadDispatcher.Dispatch(TryAutoLogin);
-				}) { IsBackground = true }.Start();
+				})
+				{
+					IsBackground = true
+				}.Start();
 
 				byte[] buffer = new byte[4096];
 				while (!_cts.IsCancellationRequested && _ws.State == WebSocketState.Open)
 				{
 					try
 					{
-						var ms = new MemoryStream();
+						MemoryStream ms = new MemoryStream();
 						WebSocketReceiveResult result;
 						do
 						{
@@ -167,7 +170,7 @@ namespace Mod.ModHelper
 
 						byte[] raw = ms.ToArray();
 						string message = Encoding.UTF8.GetString(raw);
-						
+
 						if (message.StartsWith("42"))
 						{
 							string json = message.Substring(2);
@@ -212,7 +215,7 @@ namespace Mod.ModHelper
 				IsConnected = false;
 			}
 		}
-		
+
 		void HandleMessage(JObject msg)
 		{
 			string action = (string)msg["action"];
@@ -226,22 +229,22 @@ namespace Mod.ModHelper
 
 			switch (action)
 			{
-				case "stop":
-				{
-					WriteLog("Launcher requested stop game.");
-					Close();
-					Application.Quit();
-					break;
-				}
-				default:
-				{
-					WriteLog($"Unknown action: {action}");
-					break;
-				}
+			case "stop":
+			{
+				WriteLog("Launcher requested stop game.");
+				Close();
+				Application.Quit();
+				break;
+			}
+			default:
+			{
+				WriteLog($"Unknown action: {action}");
+				break;
+			}
 			}
 			OnLauncherEvent?.Invoke(action, msg);
 		}
-		
+
 		void SendCharacterInfo()
 		{
 			try
@@ -253,7 +256,7 @@ namespace Mod.ModHelper
 				{
 					return;
 				}
-				
+
 				SendMessage(CharacterInfoMessage.Create(myChar, myPet));
 			}
 			catch (Exception ex)
@@ -261,15 +264,15 @@ namespace Mod.ModHelper
 				WriteLog("Error sending char info: " + ex);
 			}
 		}
-		
+
 		/// <summary>
-		/// If the current screen is ServerListScreen, auto-trigger login with the launcher's credentials.
+		///     If the current screen is ServerListScreen, auto-trigger login with the launcher's credentials.
 		/// </summary>
 		internal void TryAutoLogin()
 		{
 			if (_autoLoginDone)
 				return;
-			
+
 			if (GameCanvas.currentScreen is ServerListScreen && GameCanvas.serverScreen != null)
 			{
 				_autoLoginDone = true;
@@ -300,7 +303,7 @@ namespace Mod.ModHelper
 				WriteLog("Send error: " + ex);
 			}
 		}
-		
+
 		public void Close()
 		{
 			try
@@ -308,7 +311,10 @@ namespace Mod.ModHelper
 				_cts?.Cancel();
 				if (_ws != null && _ws.State == WebSocketState.Open)
 				{
-					SendMessage(new { action = "close-socket" });
+					SendMessage(new
+					{
+						action = "close-socket"
+					});
 					_ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client closing", CancellationToken.None)
 						.GetAwaiter().GetResult();
 				}
@@ -322,12 +328,12 @@ namespace Mod.ModHelper
 				WriteLog("Error closing: " + ex);
 			}
 		}
-		
+
 		void WriteLog(string log)
 		{
 			try
 			{
-				File.AppendAllText(pathLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {log}\n");
+				// File.AppendAllText(pathLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {log}\n");
 			}
 			catch
 			{

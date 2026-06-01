@@ -292,7 +292,14 @@ namespace Mod.PickMob
 		static void ClosePanels()
 		{
 			GameCanvas.menu.doCloseMenu();
-			GameCanvas.panel.hideNow();
+			if (GameCanvas.panel != null)
+			{
+				GameCanvas.panel.hide();
+			}
+			if (GameCanvas.panel2 != null)
+			{
+				GameCanvas.panel2.hide();
+			}
 			Char.chatPopup = null;
 		}
 
