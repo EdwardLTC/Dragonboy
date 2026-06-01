@@ -125,6 +125,16 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "Simple_UI_Toggle",
+					Title = "Simple UI",
+					Description = "Đơn giản hóa giao diện người chơi (ẩn pet, danh hiệu, ...)",
+					GetValueFunc = () => GraphicsReducer.IsSimpleUI,
+					SetValueAction = value => GraphicsReducer.IsSimpleUI = value,
+					GetIsDisabled = () => GraphicsReducer.IsEnabled,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.setReduceGraphicsTitle)
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoKillAll_Toggle",
 					Title = "Kill all",
 					Description = "MỘT MÌNH TAO CHẤP HẾT",

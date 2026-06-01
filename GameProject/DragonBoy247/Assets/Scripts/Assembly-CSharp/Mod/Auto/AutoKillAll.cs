@@ -29,10 +29,10 @@ namespace Mod.Auto
 				&& !target.meDead
 				&& GameScr.findCharInMap(target.charID) == target
 				&& target.charID > 0
-				&& target.cx >= -100
-				&& target.cy >= -100
-				&& target.cx <= TileMap.pxw + 100
-				&& target.cy <= TileMap.pxh + 100;
+				&& target.cx >= 0
+				&& target.cy >= 0
+				&& target.cx <= TileMap.pxw
+				&& target.cy <= TileMap.pxh;
 		}
 
 		void ClearFocus()
@@ -99,7 +99,8 @@ namespace Mod.Auto
 			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
 				Char obj = (Char)GameScr.vCharInMap.elementAt(i);
-				if (IsEnemyCandidate(obj) && obj.charID > 0)
+				// only select targets that are valid (inside map bounds and match enemy criteria)
+				if (IsTargetValid(obj))
 				{
 					currentTarget = obj;
 					AttackTarget(obj);

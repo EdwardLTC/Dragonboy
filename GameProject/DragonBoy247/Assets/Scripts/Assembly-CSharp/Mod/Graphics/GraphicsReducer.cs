@@ -11,6 +11,8 @@ namespace Mod.Graphics
 
 		internal static ReduceGraphicsLevel Level { get; set; }
 
+		public static bool IsSimpleUI { get; set; } = true;
+
 		internal static bool IsEnabled => Level != ReduceGraphicsLevel.Off;
 
 		internal static bool OnServerEffectPaint()
@@ -382,7 +384,24 @@ namespace Mod.Graphics
 
 		internal static bool OnCharPaint(Char _this, mGraphics g)
 		{
+			if (_this.charID < 0 && !_this.IsPet() && IsSimpleUI)
+			{
+				return true;
+			}
 			if (Level > ReduceGraphicsLevel.Level2)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		internal static bool OnCharPaintShadow(Char _this, mGraphics g)
+		{
+			if (_this.charID < 0 && !_this.IsPet() && IsSimpleUI)
+			{
+				return true;
+			}
+			if (Level > ReduceGraphicsLevel.Level1)
 			{
 				return true;
 			}

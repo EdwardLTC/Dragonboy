@@ -73,17 +73,17 @@ public class TileMap
 
 	public static Image bong;
 
-	public static int[] offlineId = new int[6]
+	public static int[] offlineId =
 	{
 		21, 22, 23, 39, 40, 41
 	};
 
-	public static int[] highterId = new int[6]
+	public static int[] highterId =
 	{
 		21, 22, 23, 24, 25, 26
 	};
 
-	public static int[] toOfflineId = new int[3]
+	public static int[] toOfflineId =
 	{
 		0, 7, 14
 	};
@@ -309,7 +309,7 @@ public class TileMap
 				mSystem.gcc();
 			}
 			imgTile = new Image[100];
-			string empty = string.Empty;
+			string empty;
 			for (int k = 0; k < imgTile.Length; k++)
 			{
 				empty = k >= 9 ? "/t/" + tileID + "/t_" + (k + 1) : "/t/" + tileID + "/t_0" + (k + 1);
@@ -487,18 +487,15 @@ public class TileMap
 		{
 			return;
 		}
-		int num = 0;
 		for (int i = GameScr.gssx; i < GameScr.gssxe; i++)
 		{
 			for (int j = GameScr.gssy; j < GameScr.gssye; j++)
 			{
-				num++;
 				if ((tileTypeAt(i, j) & 0x40) != 64)
 				{
 					continue;
 				}
-				Image image = null;
-				image = tileID == 5 ? imgWaterlowN : tileID != 8 ? imgWaterflow : imgWaterlowN2;
+				Image image = tileID == 5 ? imgWaterlowN : tileID != 8 ? imgWaterflow : imgWaterlowN2;
 				if (!isWaterEff())
 				{
 					g.drawRegion(image, 0, 0, 24, 24, 0, i * size, j * size - 1, 0);
@@ -532,18 +529,40 @@ public class TileMap
 		BackgroudEffect.paintWaterAll(g);
 	}
 
-	public static void loadMapFromResource(int mapID)
+	public static void loadMapFromResource(int mapId)
 	{
 		DataInputStream dataInputStream = null;
-		dataInputStream = MyStream.readFile("/mymap/" + mapID);
-		tmw = (ushort)dataInputStream.read();
-		tmh = (ushort)dataInputStream.read();
-		maps = new int[dataInputStream.available()];
-		for (int i = 0; i < tmw * tmh; i++)
+		try
 		{
-			maps[i] = (ushort)dataInputStream.read();
+			dataInputStream = MyStream.readFile("/mymap/" + mapId);
+			if (dataInputStream == null)
+			{
+				throw new Exception("Missing map resource: " + mapId);
+			}
+			tmw = dataInputStream.read();
+			tmh = dataInputStream.read();
+			int num = tmw * tmh;
+			maps = new int[num];
+			for (int i = 0; i < num; i++)
+			{
+				maps[i] = dataInputStream.read();
+			}
+			types = new int[num];
 		}
-		types = new int[maps.Length];
+		finally
+		{
+			if (dataInputStream != null)
+			{
+				try
+				{
+					dataInputStream.close();
+				}
+				catch (Exception)
+				{
+					Cout.println("Error closing map resource");
+				}
+			}
+		}
 	}
 
 	public static int tileTypeAt(int x, int y)

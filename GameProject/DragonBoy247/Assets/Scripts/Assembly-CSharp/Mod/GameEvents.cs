@@ -244,35 +244,13 @@ namespace Mod
 		internal static bool OnStartChatTextField(ChatTextField sender, IChatable parentScreen)
 		{
 			sender.parentScreen = parentScreen;
-			if (sender.strChat.Replace(" ", "") != "Chat" || sender.tfChat.name != "chat")
-				return false;
-			//if (sender == ChatTextField.gI())
-			//HistoryChat.gI.show();
 			return false;
 		}
 
 		internal static bool OnGetRMSPath(out string result)
 		{
-			//result = $"{Application.persistentDataPath}\\{GameMidlet.IP}_{GameMidlet.PORT}_x{mGraphics.zoomLevel}\\";
 			string subFolder = "TeaMobi";
-			//string subFolder = $"TeaMobi{Path.DirectorySeparatorChar}Vietnam";
-
-			//if (ServerListScreen.address[ServerListScreen.ipSelect] == "dragon.indonaga.com")
-			//{
-			//    switch (ServerListScreen.language[ServerListScreen.ipSelect])
-			//    {
-			//        case 1:
-			//            subFolder = $"TeaMobi{Path.DirectorySeparatorChar}World";
-			//            break;
-			//        case 2:
-			//            subFolder = $"TeaMobi{Path.DirectorySeparatorChar}Indonaga";
-			//            break;
-			//    }
-			//}
-
 			result = ModStorage.RootDataPath;
-			// check ip server lậu, lưu rms riêng
-			// ...
 			result = Path.Combine(result, subFolder);
 			if (!Directory.Exists(result))
 				Directory.CreateDirectory(result);
@@ -333,7 +311,9 @@ namespace Mod
 					if (Char.myCharz().havePet)
 					{
 						if (account.PetInfo == null)
+						{
 							account.PetInfo = new CharacterInfo();
+						}
 						account.PetInfo.Name = Char.myPetz().cName;
 						account.PetInfo.CharID = Char.myPetz().charID;
 						account.PetInfo.Gender = (sbyte)Utils.GetPetGender();

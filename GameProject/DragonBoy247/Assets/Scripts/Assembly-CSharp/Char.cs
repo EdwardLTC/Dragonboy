@@ -8,35 +8,6 @@ using UnityEngine;
 
 public class Char : IMapObject
 {
-	internal CharEffectTime charEffectTime = new CharEffectTime();
-	
-	public string xuStr;
-
-	public string luongStr;
-
-	public string luongKhoaStr;
-
-	public long lastUpdateTime;
-
-	public bool meLive;
-
-	public bool isMask;
-
-	public bool isTeleport;
-
-	public bool isUsePlane;
-
-	public int shadowX;
-
-	public int shadowY;
-
-	public int shadowLife;
-
-	public bool isNhapThe;
-
-	public PetFollow petFollow;
-
-	public int rank;
 
 	public const sbyte A_STAND = 1;
 
@@ -68,286 +39,6 @@ public class Char : IMapObject
 
 	public const sbyte A_RESETPOINT = 16;
 
-	public static ChatPopup chatPopup;
-
-	public long cPower;
-
-	public Info chatInfo;
-
-	public sbyte petStatus;
-
-	public int cx = 24;
-
-	public int cy = 24;
-
-	public int cvx;
-
-	public int cvy;
-
-	public int cp1;
-
-	public int cp2;
-
-	public int cp3;
-
-	public int statusMe = 5;
-
-	public int cdir = 1;
-
-	public int charID;
-
-	public int cgender;
-
-	public int ctaskId;
-
-	public int menuSelect;
-
-	public int cBonusSpeed;
-
-	public int cspeed = 4;
-
-	public int cCriticalFull;
-
-	public int cCritDameFull;
-
-	public int clevel;
-
-	public int xReload;
-
-	public int yReload;
-
-	public int cyStartFall;
-
-	public int saveStatus;
-
-	public int eff5BuffHp;
-
-	public int eff5BuffMp;
-
-	public int cdameDown;
-
-	public int cStr;
-
-	public long cMP;
-
-	public long cHP;
-
-	public long cHPNew;
-
-	public long cHPShow;
-
-	public long cHPFull;
-
-	public long cMPFull;
-
-	public long cDamFull;
-
-	public long cDefull;
-
-	public long cGiamST;
-
-	public long cLevelPercent;
-
-	public long cTiemNang;
-
-	public long cNangdong;
-
-	public long damHP;
-
-	public long damMP;
-
-	public bool isMob;
-
-	public bool isCrit;
-
-	public bool isDie;
-
-	public int pointUydanh;
-
-	public int pointNon;
-
-	public int pointVukhi;
-
-	public int pointAo;
-
-	public int pointLien;
-
-	public int pointGangtay;
-
-	public int pointNhan;
-
-	public int pointQuan;
-
-	public int pointNgocboi;
-
-	public int pointGiay;
-
-	public int pointPhu;
-
-	public int countFinishDay;
-
-	public int countLoopBoos;
-
-	public int limitTiemnangso;
-
-	public int limitKynangso;
-
-	public short[] potential = new short[4];
-
-	public string cName = string.Empty;
-
-	public int clanID;
-
-	public sbyte ctypeClan;
-
-	public Clan clan;
-
-	public sbyte role;
-
-	public int cw = 22;
-
-	public int ch = 32;
-
-	public int chw = 11;
-
-	public int chh = 16;
-
-	public Command cmdMenu;
-
-	public bool canFly = true;
-
-	public bool cmtoChar;
-
-	public bool me;
-
-	public bool cFinishedAttack;
-
-	public bool cchistlast;
-
-	public bool isAttack;
-
-	public bool isAttFly;
-
-	public int cwpt;
-
-	public int cwplv;
-
-	public int cf;
-
-	public int tick;
-
-	public static bool fallAttack;
-
-	public bool isJump;
-
-	public bool autoFall;
-
-	public bool attack = true;
-
-	public long xu;
-
-	public int xuInBox;
-
-	public int yen;
-
-	public int gold_lock;
-
-	public int luong;
-
-	public int luongKhoa;
-
-	public NClass nClass;
-
-	public Command endMovePointCommand;
-
-	public MyVector vSkill = new MyVector();
-
-	public MyVector vSkillFight = new MyVector();
-
-	public MyVector vEff = new MyVector();
-
-	public Skill myskill;
-
-	public Task taskMaint;
-
-	public bool paintName = true;
-
-	public Archivement[] arrArchive;
-
-	public Item[] arrItemBag;
-
-	public Item[] arrItemBox;
-
-	public Item[] arrItemBody;
-
-	public Skill[] arrPetSkill;
-
-	public Item[][] arrItemShop;
-
-	public string[][] infoSpeacialSkill;
-
-	public short[][] imgSpeacialSkill;
-
-	public short cResFire;
-
-	public short cResIce;
-
-	public short cResWind;
-
-	public short cMiss;
-
-	public short cExactly;
-
-	public short cFatal;
-
-	public sbyte cPk;
-
-	public sbyte cTypePk;
-
-	public short cReactDame;
-
-	public short sysUp;
-
-	public short sysDown;
-
-	public int avatar;
-
-	public int skillTemplateId;
-
-	public Mob mobFocus;
-
-	public Mob mobMe;
-
-	public int tMobMeBorn;
-
-	public Npc npcFocus;
-
-	public Char charFocus;
-
-	public ItemMap itemFocus;
-
-	public MyVector focus = new MyVector();
-
-	public Mob[] attMobs;
-
-	public Char[] attChars;
-
-	public short[] moveFast;
-
-	public int testCharId = -9999;
-
-	public int killCharId = -9999;
-
-	public sbyte resultTest;
-
-	public int countKill;
-
-	public int countKillMax;
-
-	public bool isInvisiblez;
-
-	public bool isShadown = true;
-
 	public const sbyte PK_NORMAL = 0;
 
 	public const sbyte PK_PHE = 1;
@@ -360,55 +51,35 @@ public class Char : IMapObject
 
 	public const sbyte PK_TUDO = 5;
 
-	public MyVector taskOrders = new MyVector();
+	public const int C_XAYDA_2 = 2;
 
-	public int cStamina;
+	public const int C_NAMEC_1 = 1;
+
+	public const int C_TRAIDAT_0 = 0;
+
+	public const byte TYPE_SKILL_KAMEX10 = 1;
+
+	public const byte TYPE_SKILL_FINAL = 2;
+
+	public const byte TYPE_SKILL_MAFUBA = 3;
+
+	public const byte TYPE_SKILL_GENKI = 4;
+
+	public static ChatPopup chatPopup;
+
+	public static bool fallAttack;
 
 	public static short[] idHead;
 
 	public static short[] idAvatar;
 
-	public int exp;
-
-	public string[] strLevel;
-
-	public string currStrLevel;
-
 	public static Image eyeTraiDat = GameCanvas.loadImage("/mainImage/myTexture2dmat-trai-dat.png");
 
 	public static Image eyeNamek = GameCanvas.loadImage("/mainImage/myTexture2dmat-namek.png");
 
-	public bool isFreez;
-
-	public bool isCharge;
-
-	public int seconds;
-
-	public int freezSeconds;
-
-	public long last;
-
-	public long cur;
-
-	public long lastFreez;
-
-	public long currFreez;
-
-	public bool isFlyUp;
-
 	public static MyVector vItemTime = new MyVector();
 
 	public static short ID_NEW_MOUNT = 30000;
-
-	public short idMount;
-
-	public bool isHaveMount;
-
-	public bool isMountVip;
-
-	public bool isEventMount;
-
-	public bool isSpeacialMount;
 
 	public static Image imgMount_TD = GameCanvas.loadImage("/mainImage/myTexture2dthucuoi10.png");
 
@@ -430,293 +101,576 @@ public class Char : IMapObject
 
 	public static Image imgEventMountWing = GameCanvas.loadImage("/mainImage/myTexture2dcanhrong.png");
 
-	public sbyte[] FrameMount = new sbyte[8] { 0, 0, 1, 1, 2, 2, 1, 1 };
-
-	public int frameMount;
-
-	public int frameNewMount;
-
-	public int transMount;
-
-	public int genderMount;
-
-	public int idcharMount;
-
-	public int xMount;
-
-	public int yMount;
-
-	public int dxMount;
-
-	public int dyMount;
-
-	public int xChar;
-
-	public int xdis;
-
-	public int speedMount;
-
-	public bool isStartMount;
-
-	public bool isMount;
-
-	public bool isEndMount;
-
-	public sbyte cFlag;
-
-	public int flagImage;
-
-	public short x_hint;
-
-	public short y_hint;
-
-	public short s_danhHieu1;
-
 	public static int[][][] CharInfo = new int[33][][]
 	{
 		new int[4][]
 		{
-			new int[3] { 0, -13, 34 },
-			new int[3] { 1, -8, 10 },
-			new int[3] { 1, -9, 16 },
-			new int[3] { 1, -9, 45 }
+			new int[3]
+			{
+				0, -13, 34
+			},
+			new int[3]
+			{
+				1, -8, 10
+			},
+			new int[3]
+			{
+				1, -9, 16
+			},
+			new int[3]
+			{
+				1, -9, 45
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -13, 35 },
-			new int[3] { 1, -8, 10 },
-			new int[3] { 1, -9, 17 },
-			new int[3] { 1, -9, 46 }
+			new int[3]
+			{
+				0, -13, 35
+			},
+			new int[3]
+			{
+				1, -8, 10
+			},
+			new int[3]
+			{
+				1, -9, 17
+			},
+			new int[3]
+			{
+				1, -9, 46
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -10, 33 },
-			new int[3] { 2, -10, 11 },
-			new int[3] { 2, -8, 16 },
-			new int[3] { 1, -12, 49 }
+			new int[3]
+			{
+				1, -10, 33
+			},
+			new int[3]
+			{
+				2, -10, 11
+			},
+			new int[3]
+			{
+				2, -8, 16
+			},
+			new int[3]
+			{
+				1, -12, 49
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -10, 32 },
-			new int[3] { 3, -12, 10 },
-			new int[3] { 3, -11, 15 },
-			new int[3] { 1, -13, 47 }
+			new int[3]
+			{
+				1, -10, 32
+			},
+			new int[3]
+			{
+				3, -12, 10
+			},
+			new int[3]
+			{
+				3, -11, 15
+			},
+			new int[3]
+			{
+				1, -13, 47
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -10, 34 },
-			new int[3] { 4, -8, 11 },
-			new int[3] { 4, -7, 17 },
-			new int[3] { 1, -12, 47 }
+			new int[3]
+			{
+				1, -10, 34
+			},
+			new int[3]
+			{
+				4, -8, 11
+			},
+			new int[3]
+			{
+				4, -7, 17
+			},
+			new int[3]
+			{
+				1, -12, 47
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -10, 34 },
-			new int[3] { 5, -12, 11 },
-			new int[3] { 5, -9, 17 },
-			new int[3] { 1, -13, 49 }
+			new int[3]
+			{
+				1, -10, 34
+			},
+			new int[3]
+			{
+				5, -12, 11
+			},
+			new int[3]
+			{
+				5, -9, 17
+			},
+			new int[3]
+			{
+				1, -13, 49
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -10, 33 },
-			new int[3] { 6, -10, 10 },
-			new int[3] { 6, -8, 16 },
-			new int[3] { 1, -12, 47 }
+			new int[3]
+			{
+				1, -10, 33
+			},
+			new int[3]
+			{
+				6, -10, 10
+			},
+			new int[3]
+			{
+				6, -8, 16
+			},
+			new int[3]
+			{
+				1, -12, 47
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -9, 36 },
-			new int[3] { 7, -5, 17 },
-			new int[3] { 7, -11, 25 },
-			new int[3] { 1, -8, 49 }
+			new int[3]
+			{
+				0, -9, 36
+			},
+			new int[3]
+			{
+				7, -5, 17
+			},
+			new int[3]
+			{
+				7, -11, 25
+			},
+			new int[3]
+			{
+				1, -8, 49
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -7, 35 },
-			new int[3] { 0, -18, 22 },
-			new int[3] { 7, -10, 25 },
-			new int[3] { 1, -7, 48 }
+			new int[3]
+			{
+				0, -7, 35
+			},
+			new int[3]
+			{
+				0, -18, 22
+			},
+			new int[3]
+			{
+				7, -10, 25
+			},
+			new int[3]
+			{
+				1, -7, 48
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -11, 35 },
-			new int[3] { 10, -3, 25 },
-			new int[3] { 12, -10, 26 },
+			new int[3]
+			{
+				1, -11, 35
+			},
+			new int[3]
+			{
+				10, -3, 25
+			},
+			new int[3]
+			{
+				12, -10, 26
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -11, 37 },
-			new int[3] { 11, -3, 25 },
-			new int[3] { 12, -11, 27 },
+			new int[3]
+			{
+				1, -11, 37
+			},
+			new int[3]
+			{
+				11, -3, 25
+			},
+			new int[3]
+			{
+				12, -11, 27
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -14, 34 },
-			new int[3] { 12, -8, 21 },
-			new int[3] { 9, -7, 31 },
+			new int[3]
+			{
+				0, -14, 34
+			},
+			new int[3]
+			{
+				12, -8, 21
+			},
+			new int[3]
+			{
+				9, -7, 31
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -12, 35 },
-			new int[3] { 8, -5, 14 },
-			new int[3] { 8, -15, 29 },
-			new int[3] { 1, -9, 49 }
+			new int[3]
+			{
+				0, -12, 35
+			},
+			new int[3]
+			{
+				8, -5, 14
+			},
+			new int[3]
+			{
+				8, -15, 29
+			},
+			new int[3]
+			{
+				1, -9, 49
+			}
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -9, 34 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 10, -7, 19 },
+			new int[3]
+			{
+				1, -9, 34
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				10, -7, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -13, 34 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 11, -10, 19 },
+			new int[3]
+			{
+				1, -13, 34
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				11, -10, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -8, 32 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 2, -6, 15 },
+			new int[3]
+			{
+				1, -8, 32
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				2, -6, 15
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -8, 32 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 13, -12, 16 },
+			new int[3]
+			{
+				1, -8, 32
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				13, -12, 16
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -10, 31 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 7, -13, 20 },
+			new int[3]
+			{
+				0, -10, 31
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				7, -13, 20
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -11, 32 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 8, -15, 26 },
+			new int[3]
+			{
+				0, -11, 32
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				8, -15, 26
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -9, 33 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 14, -8, 18 },
+			new int[3]
+			{
+				0, -9, 33
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				14, -8, 18
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -11, 33 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 15, -6, 19 },
+			new int[3]
+			{
+				0, -11, 33
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				15, -6, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -16, 31 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 9, -8, 28 },
+			new int[3]
+			{
+				0, -16, 31
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				9, -8, 28
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -14, 34 },
-			new int[3] { 1, -8, 10 },
-			new int[3] { 8, -16, 28 },
+			new int[3]
+			{
+				0, -14, 34
+			},
+			new int[3]
+			{
+				1, -8, 10
+			},
+			new int[3]
+			{
+				8, -16, 28
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -8, 36 },
-			new int[3] { 7, -5, 17 },
-			new int[3] { 0, -5, 25 },
+			new int[3]
+			{
+				0, -8, 36
+			},
+			new int[3]
+			{
+				7, -5, 17
+			},
+			new int[3]
+			{
+				0, -5, 25
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -9, 31 },
-			new int[3] { 9, -12, 9 },
-			new int[3] { 0, -6, 20 },
+			new int[3]
+			{
+				0, -9, 31
+			},
+			new int[3]
+			{
+				9, -12, 9
+			},
+			new int[3]
+			{
+				0, -6, 20
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 2, -9, 36 },
-			new int[3] { 13, -5, 17 },
-			new int[3] { 16, -11, 25 },
+			new int[3]
+			{
+				2, -9, 36
+			},
+			new int[3]
+			{
+				13, -5, 17
+			},
+			new int[3]
+			{
+				16, -11, 25
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -9, 34 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 10, -7, 19 },
+			new int[3]
+			{
+				1, -9, 34
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				10, -7, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -13, 34 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 11, -10, 19 },
+			new int[3]
+			{
+				1, -13, 34
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				11, -10, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -8, 32 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 2, -6, 15 },
+			new int[3]
+			{
+				1, -8, 32
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				2, -6, 15
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 1, -8, 32 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 13, -12, 16 },
+			new int[3]
+			{
+				1, -8, 32
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				13, -12, 16
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -9, 33 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 14, -8, 18 },
+			new int[3]
+			{
+				0, -9, 33
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				14, -8, 18
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -11, 33 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 15, -6, 19 },
+			new int[3]
+			{
+				0, -11, 33
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				15, -6, 19
+			},
 			new int[3]
 		},
 		new int[4][]
 		{
-			new int[3] { 0, -16, 32 },
-			new int[3] { 8, -5, 13 },
-			new int[3] { 9, -8, 29 },
+			new int[3]
+			{
+				0, -16, 32
+			},
+			new int[3]
+			{
+				8, -5, 13
+			},
+			new int[3]
+			{
+				9, -8, 29
+			},
 			new int[3]
 		}
 	};
 
 	public static int[] CHAR_WEAPONX = new int[11]
 	{
-		-2, -6, 22, 21, 19, 22, 10, -2, -2, 5,
-		19
+		-2, -6, 22, 21, 19, 22, 10, -2, -2, 5, 19
 	};
 
 	public static int[] CHAR_WEAPONY = new int[11]
 	{
-		9, 22, 25, 17, 26, 37, 36, 49, 50, 52,
-		36
+		9, 22, 25, 17, 26, 37, 36, 49, 50, 52, 36
 	};
 
 	public static Char myChar;
@@ -727,81 +681,59 @@ public class Char : IMapObject
 
 	public static int[][] listIonC;
 
-	public int cvyJump;
-
-	public int indexUseSkill = -1;
-
-	public int cxSend;
-
-	public int cySend;
-
-	public int cdirSend = 1;
-
-	public int cxFocus;
-
-	public int cyFocus;
-
-	public int cactFirst = 5;
-
-	public MyVector vMovePoints = new MyVector();
-
 	public static string[][] inforClass = new string[2][]
 	{
-		new string[4] { "1", "1", "chiêu 1", "0" },
-		new string[4] { "2", "2", "chiêu 2", "5" }
+		new string[4]
+		{
+			"1", "1", "chiêu 1", "0"
+		},
+		new string[4]
+		{
+			"2", "2", "chiêu 2", "5"
+		}
 	};
 
 	public static int[][] inforSkill = new int[10][]
 	{
 		new int[12]
 		{
-			1, 0, 1, 1000, 40, 1, 0, 20, 0, 0,
-			0, 0
+			1, 0, 1, 1000, 40, 1, 0, 20, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			2, 1, 10, 1000, 100, 1, 0, 40, 0, 0,
-			0, 0
+			2, 1, 10, 1000, 100, 1, 0, 40, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			2, 2, 11, 800, 100, 1, 0, 45, 0, 0,
-			0, 0
+			2, 2, 11, 800, 100, 1, 0, 45, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			2, 3, 12, 600, 100, 1, 0, 50, 0, 0,
-			0, 0
+			2, 3, 12, 600, 100, 1, 0, 50, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			2, 4, 13, 500, 100, 1, 0, 55, 0, 0,
-			0, 0
+			2, 4, 13, 500, 100, 1, 0, 55, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			3, 1, 14, 500, 100, 1, 0, 60, 0, 0,
-			0, 0
+			3, 1, 14, 500, 100, 1, 0, 60, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			3, 2, 14, 500, 100, 1, 0, 60, 0, 0,
-			0, 0
+			3, 2, 14, 500, 100, 1, 0, 60, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			3, 3, 14, 500, 100, 1, 0, 60, 0, 0,
-			0, 0
+			3, 3, 14, 500, 100, 1, 0, 60, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			3, 4, 14, 500, 100, 1, 0, 60, 0, 0,
-			0, 0
+			3, 4, 14, 500, 100, 1, 0, 60, 0, 0, 0, 0
 		},
 		new int[12]
 		{
-			3, 5, 14, 500, 100, 1, 0, 60, 0, 0,
-			0, 0
+			3, 5, 14, 500, 100, 1, 0, 60, 0, 0, 0, 0
 		}
 	};
 
@@ -813,101 +745,394 @@ public class Char : IMapObject
 
 	public static bool isLoadingMap;
 
-	public bool isLockMove;
+	public static bool isManualFocus;
 
-	public bool isLockAttack;
+	public static FrameImage fraRedEye;
 
-	public string strInfo;
-
-	public short powerPoint;
-
-	public short maxPowerPoint;
-
-	public short secondPower;
-
-	public long lastS;
-
-	public long currS;
-
-	public const int C_XAYDA_2 = 2;
-
-	public const int C_NAMEC_1 = 1;
-
-	public const int C_TRAIDAT_0 = 0;
-
-	public bool havePet = true;
-
-	public MovePoint currentMovePoint;
-
-	public int bom;
-
-	public int delayFall;
-
-	public bool isSoundJump;
-
-	public int lastFrame;
-
-	public Effect eProtect;
-
-	public Effect eDanhHieu;
-
-	public int twHp;
-
-	public bool isInjureHp;
-
-	public bool changePos;
-
-	public bool isHide;
-
-	public int count;
-
-	public bool wy;
-
-	public int wt;
-
-	public int fy;
-
-	public int ty;
-
-	public int t;
-
-	public int fM;
-
-	public int[] move = new int[15]
+	public static int[][] Arr_Head_2Fr = new int[1][]
 	{
-		1, 1, 1, 1, 2, 2, 2, 2, 3, 3,
-		3, 3, 2, 2, 2
+		new int[2]
+		{
+			542, 543
+		}
 	};
 
-	public string strMount = "mount_";
+	public static bool isPaintAura = true;
 
-	public int headICON = -1;
+	public static bool isPaintAura2 = true;
 
-	public int head;
+	public static int[][] hatInfo = new int[32][]
+	{
+		new int[2]
+		{
+			5, -7
+		},
+		new int[2]
+		{
+			5, -7
+		},
+		new int[2]
+		{
+			5, -8
+		},
+		new int[2]
+		{
+			5, -7
+		},
+		new int[2]
+		{
+			5, -6
+		},
+		new int[2]
+		{
+			5, -8
+		},
+		new int[2]
+		{
+			5, -7
+		},
+		new int[2]
+		{
+			9, 0
+		},
+		new int[2]
+		{
+			11, 1
+		},
+		new int[2]
+		{
+			4, 0
+		},
+		new int[2]
+		{
+			4, -1
+		},
+		new int[2]
+		{
+			4, 8
+		},
+		new int[2]
+		{
+			6, 5
+		},
+		new int[2]
+		{
+			6, -6
+		},
+		new int[2]
+		{
+			2, -5
+		},
+		new int[2]
+		{
+			7, -8
+		},
+		new int[2]
+		{
+			7, -6
+		},
+		new int[2]
+		{
+			8, 0
+		},
+		new int[2]
+		{
+			7, 5
+		},
+		new int[2]
+		{
+			9, -7
+		},
+		new int[2]
+		{
+			7, -3
+		},
+		new int[2]
+		{
+			2, 8
+		},
+		new int[2]
+		{
+			4, 5
+		},
+		new int[2]
+		{
+			10, -5
+		},
+		new int[2]
+		{
+			9, -5
+		},
+		new int[2]
+		{
+			9, -5
+		},
+		new int[2]
+		{
+			6, -6
+		},
+		new int[2]
+		{
+			2, -5
+		},
+		new int[2]
+		{
+			7, -8
+		},
+		new int[2]
+		{
+			7, -6
+		},
+		new int[2]
+		{
+			9, -7
+		},
+		new int[2]
+		{
+			7, -3
+		}
+	};
 
-	public int leg;
+	public static short[] Arr_Head_FlyMove = new short[0];
 
-	public int body;
+	public Arrow arr;
+
+	public Archivement[] arrArchive;
+
+	public Item[] arrItemBag;
+
+	public Item[] arrItemBody;
+
+	public Item[] arrItemBox;
+
+	public Item[][] arrItemShop;
+
+	public Skill[] arrPetSkill;
+
+	public bool attack = true;
+
+	public Char[] attChars;
+
+	public Mob[] attMobs;
+
+	public bool autoFall;
+
+	public int avatar;
 
 	public int bag;
 
-	public int wp;
+	public int bagTemp = -1;
 
-	public int indexEff = -1;
+	public bool blindEff;
 
-	public int indexEffTask = -1;
+	public int body;
 
-	public EffectCharPaint eff;
+	public int bodyTemp = -1;
 
-	public EffectCharPaint effTask;
+	public int bom;
 
-	public int indexSkill;
+	public int cactFirst = 5;
 
-	public int i0;
+	public bool canFly = true;
 
-	public int i1;
+	public int cBonusSpeed;
 
-	public int i2;
+	public bool cchistlast;
+
+	public int cCritDameFull;
+
+	public int cCriticalFull;
+
+	public int cCriticalGoc;
+
+	public int cdameDown;
+
+	public long cDamFull;
+
+	public int cDamGoc;
+
+	public int cDefGoc;
+
+	public long cDefull;
+
+	public int cdir = 1;
+
+	public int cdirSend = 1;
+
+	public short cExactly;
+
+	public int cf;
+
+	public short cFatal;
+
+	public bool cFinishedAttack;
+
+	public sbyte cFlag;
+
+	public int cgender;
+
+	public long cGiamST;
+
+	public int ch = 32;
+
+	public int cH_new = 32;
+
+	public bool changePos;
+	internal CharEffectTime charEffectTime = new CharEffectTime();
+
+	public Char charFocus;
+
+	public int chargeCount;
+
+	public Char charHold;
+
+	public int charID;
+
+	public Info chatInfo;
+
+	public int chh = 16;
+
+	public long cHP;
+
+	public long cHPFull;
+
+	public int cHPGoc;
+
+	public long cHPNew;
+
+	public long cHPShow;
+
+	public int chw = 11;
+
+	public Clan clan;
+
+	public int clanID;
+
+	public int clevel;
+
+	public long cLevelPercent;
+
+	public short cMaxStamina;
+
+	public Command cmdMenu;
+
+	public short cMiss;
+
+	public long cMP;
+
+	public long cMPFull;
+
+	public int cMPGoc;
+
+	public bool cmtoChar;
+
+	public string cName = string.Empty;
+
+	public long cNangdong;
+
+	public int count;
+
+	public int count_NEW;
+
+	public int countFinishDay;
+
+	public int countKill;
+
+	public int countKillMax;
+
+	public int countLoopBoos;
+
+	public short countMafuba;
+
+	public int cp1;
+
+	public int cp2;
+
+	public int cp3;
+
+	public sbyte cPk;
+
+	public long cPower;
+
+	public short cReactDame;
+
+	public short cResFire;
+
+	public short cResIce;
+
+	public short cResWind;
+
+	public sbyte criticalFrom1000Tiemnang = 1;
+
+	public int cspeed = 4;
+
+	public int cStamina;
+
+	public int cStr;
+
+	public int ctaskId;
+
+	public long cTiemNang;
+
+	public sbyte ctypeClan;
+
+	public sbyte cTypePk;
+
+	public long cur;
+
+	public bool currentFireByShortcut;
+
+	public MovePoint currentMovePoint;
+
+	public long currFreez;
+
+	public long currS;
+
+	public string currStrLevel;
+
+	public int cvx;
+
+	public int cvy;
+
+	public int cvyJump;
+
+	public int cw = 22;
+
+	public int cwplv;
+
+	public int cwpt;
+
+	public int cx = 24;
+
+	public int cxFocus;
+
+	public int cxSend;
+
+	public int cy = 24;
+
+	public int cyFocus;
+
+	public int cySend;
+
+	public int cyStartFall;
+
+	public sbyte damFrom1000TiemNang;
+
+	public long damHP;
+
+	public long damMP;
+
+	public bool danhHieuEff = true;
+
+	public int danhHieuFramme;
+
+	public PlayerDart dart;
+
+	public sbyte defFrom1000TiemNang = 1;
+
+	public int delayFall;
+
+	public long dHP;
 
 	public int dx0;
 
@@ -915,11 +1140,19 @@ public class Char : IMapObject
 
 	public int dx2;
 
+	public int dxMount;
+
 	public int dy0;
 
 	public int dy1;
 
 	public int dy2;
+
+	public int dyMount;
+
+	public Effect eDanhHieu;
+
+	public EffectCharPaint eff;
 
 	public EffectCharPaint eff0;
 
@@ -927,345 +1160,559 @@ public class Char : IMapObject
 
 	public EffectCharPaint eff2;
 
-	public Arrow arr;
+	public int eff5BuffHp;
 
-	public PlayerDart dart;
-
-	public bool isCreateDark;
-
-	public SkillPaint skillPaint;
-
-	public SkillPaint skillPaintRandomPaint;
+	public int eff5BuffMp;
 
 	public EffectPaint[] effPaints;
 
-	public int sType;
+	public EffectCharPaint effTask;
 
-	public sbyte isInjure;
+	public Command endMovePointCommand;
 
-	public bool isUseSkillAfterCharge;
+	public Effect eProtect;
 
-	public bool isFlyAndCharge;
-
-	public bool isStandAndCharge;
-
-	public bool isFlying;
-
-	public int posDisY;
-
-	public int chargeCount;
-
-	public bool hasSendAttack;
-
-	public bool isMabuHold;
-
-	public long timeBlue;
-
-	public int tBlue;
-
-	public bool IsAddDust1;
-
-	public bool IsAddDust2;
-
-	public int len = 24;
-
-	public int w_hp_bar = 24;
-
-	public int per = 100;
-
-	public int per_tem = 100;
-
-	public Image imgHPtem;
-
-	public bool isPet;
-
-	public bool isMiniPet;
-
-	public int iiii;
-
-	public int danhHieuFramme;
-
-	public int xSd;
-
-	public int ySd;
-
-	public bool isOutMap;
-
-	public int fBag;
-
-	public Part ph;
-
-	public Part pl;
-
-	public Part pb;
-
-	public int cH_new = 32;
-
-	public int statusBeforeNothing;
-
-	public int timeFocusToMob;
-
-	public static bool isManualFocus = false;
-
-	public Char charHold;
-
-	public Mob mobHold;
-
-	public int nInjure;
-
-	public short wdx;
-
-	public short wdy;
-
-	public bool isDirtyPostion;
-
-	public Skill lastNormalSkill;
-
-	public bool currentFireByShortcut;
-
-	public int cDamGoc;
-
-	public int cHPGoc;
-
-	public int cMPGoc;
-
-	public int cDefGoc;
-
-	public int cCriticalGoc;
-
-	public sbyte hpFrom1000TiemNang;
-
-	public sbyte mpFrom1000TiemNang;
-
-	public sbyte damFrom1000TiemNang;
-
-	public sbyte defFrom1000TiemNang = 1;
-
-	public sbyte criticalFrom1000Tiemnang = 1;
-
-	public short cMaxStamina;
+	public int exp;
 
 	public short expForOneAdd;
 
-	public sbyte isMonkey;
-
-	public bool isCopy;
-
-	public bool isWaitMonkey;
-
-	public bool isFeetEff;
-
-	public bool meDead;
-
-	public int holdEffID;
-
-	public bool holder;
-
-	public bool protectEff;
-
-	public bool danhHieuEff = true;
-
-	public bool isSetPos;
-
-	public int tpos;
-
-	public short xPos;
-
-	public short yPos;
-
-	public sbyte typePos;
-
-	public bool isMyFusion;
-
-	public bool isFusion;
-
-	public int tFusion;
-
-	public bool huytSao;
-
-	public bool blindEff;
-
-	public bool telePortSkill;
-
-	public bool sleepEff;
-
-	public bool stone;
-
-	public int perCentMp = 100;
-
-	public long dHP;
-
-	public int headTemp = -1;
-
-	public int bodyTemp = -1;
-
-	public int legTemp = -1;
-
-	public int bagTemp = -1;
-
-	public int wpTemp = -1;
-
-	public MyVector vEffChar = new MyVector("vEff");
-
-	public static FrameImage fraRedEye;
+	public int fBag;
 
 	public int fChopmat;
 
-	public bool isAddChopMat;
-
-	public long timeAddChopmat;
-
-	public int[] frChopNhanh = new int[34]
-	{
-		-1, -1, -1, -1, 0, 0, 1, 1, 0, 0,
-		1, 1, 0, 0, 1, 1, 0, 0, 1, 1,
-		0, 0, 1, 1, 0, 0, 1, 1, 0, 0,
-		-1, -1, -1, -1
-	};
-
-	public int[] frChopCham = new int[23]
-	{
-		-1, -1, -1, -1, 0, 0, 1, 1, 1, 0,
-		0, 1, 1, 1, 0, 0, 1, 1, 1, -1,
-		-1, -1, -1
-	};
-
-	public int[] frEye = new int[30]
-	{
-		-1, -1, 0, 0, 1, 1, 0, 0, 1, 1,
-		0, 0, 1, 1, 0, 0, 1, 1, 0, 0,
-		1, 1, 0, 0, 1, 1, 0, 0, -1, -1
-	};
-
-	public static int[][] Arr_Head_2Fr = new int[1][] { new int[2] { 542, 543 } };
-
 	public int fHead;
 
-	public string strEffAura = "aura_";
+	public int flagImage;
 
-	public short idAuraEff = -1;
+	public int fM;
 
-	public static bool isPaintAura = true;
-
-	public static bool isPaintAura2 = true;
-
-	public FrameImage fraEff;
-
-	public FrameImage fraEffSub;
-
-	public string strEff_Set_Item = "set_eff_";
-
-	public short idEff_Set_Item = -1;
-
-	public FrameImage fraHat_behind;
-
-	public FrameImage fraHat_font;
-
-	public FrameImage fraHat_behind_2;
-
-	public FrameImage fraHat_font_2;
-
-	public string strHat_behind = "hat_sau_";
-
-	public string strHat_font = "hat_truoc_";
-
-	public string strNgang = "ngang_";
-
-	public short idHat = -1;
-
-	public static int[][] hatInfo = new int[32][]
-	{
-		new int[2] { 5, -7 },
-		new int[2] { 5, -7 },
-		new int[2] { 5, -8 },
-		new int[2] { 5, -7 },
-		new int[2] { 5, -6 },
-		new int[2] { 5, -8 },
-		new int[2] { 5, -7 },
-		new int[2] { 9, 0 },
-		new int[2] { 11, 1 },
-		new int[2] { 4, 0 },
-		new int[2] { 4, -1 },
-		new int[2] { 4, 8 },
-		new int[2] { 6, 5 },
-		new int[2] { 6, -6 },
-		new int[2] { 2, -5 },
-		new int[2] { 7, -8 },
-		new int[2] { 7, -6 },
-		new int[2] { 8, 0 },
-		new int[2] { 7, 5 },
-		new int[2] { 9, -7 },
-		new int[2] { 7, -3 },
-		new int[2] { 2, 8 },
-		new int[2] { 4, 5 },
-		new int[2] { 10, -5 },
-		new int[2] { 9, -5 },
-		new int[2] { 9, -5 },
-		new int[2] { 6, -6 },
-		new int[2] { 2, -5 },
-		new int[2] { 7, -8 },
-		new int[2] { 7, -6 },
-		new int[2] { 9, -7 },
-		new int[2] { 7, -3 }
-	};
-
-	public static short[] Arr_Head_FlyMove = new short[0];
-
-	public const byte TYPE_SKILL_KAMEX10 = 1;
-
-	public const byte TYPE_SKILL_FINAL = 2;
-
-	public const byte TYPE_SKILL_MAFUBA = 3;
-
-	public const byte TYPE_SKILL_GENKI = 4;
-
-	public bool isPaintNewSkill;
-
-	public bool isFly;
-
-	public long timeReset_newSkill;
-
-	public sbyte typeFrame;
-
-	public short idskillPaint;
-
-	public byte[] fr_start;
+	public MyVector focus = new MyVector();
 
 	public byte[] fr_atk;
 
 	public byte[] fr_end;
 
-	public int count_NEW;
-
-	public int stt;
-
-	public short rangeDame;
-
-	public sbyte typePaint;
-
-	public sbyte typeItem;
-
-	public Point targetDame;
-
-	public long timeDame;
-
-	public bool isMafuba;
-
-	public short countMafuba;
-
-	public int xMFB;
-
-	public int yMFB;
-
-	public int timeGongSkill;
+	public byte[] fr_start;
 
 	public FrameImage fraDanhHieu;
 
+	public FrameImage fraEff;
+
+	public FrameImage fraEffSub;
+
+	public FrameImage fraHat_behind;
+
+	public FrameImage fraHat_behind_2;
+
+	public FrameImage fraHat_font;
+
+	public FrameImage fraHat_font_2;
+
+	public int frameMount;
+
+	public sbyte[] FrameMount = new sbyte[8]
+	{
+		0, 0, 1, 1, 2, 2, 1, 1
+	};
+
+	public int frameNewMount;
+
+	public int[] frChopCham = new int[23]
+	{
+		-1, -1, -1, -1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, -1, -1, -1, -1
+	};
+
+	public int[] frChopNhanh = new int[34]
+	{
+		-1, -1, -1, -1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, -1, -1, -1, -1
+	};
+
+	public int freezSeconds;
+
+	public int[] frEye = new int[30]
+	{
+		-1, -1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, -1, -1
+	};
+
+	public int fy;
+
+	public int genderMount;
+
+	public int gold_lock;
+
+	public bool hasSendAttack;
+
+	public bool havePet = true;
+
+	public int head;
+
+	public int headICON = -1;
+
+	public int headTemp = -1;
+
+	public int holdEffID;
+
+	public bool holder;
+
+	public sbyte hpFrom1000TiemNang;
+
+	public bool huytSao;
+
+	public int i0;
+
+	public int i1;
+
+	public int i2;
+
+	public short idAuraEff = -1;
+
+	public int idcharMount;
+
+	public short idEff_Set_Item = -1;
+
+	public short idHat = -1;
+
+	public short idMount;
+
+	public short idskillPaint;
+
+	public int iiii;
+
+	public Image imgHPtem;
+
+	public short[][] imgSpeacialSkill;
+
+	public int indexEff = -1;
+
+	public int indexEffTask = -1;
+
+	public int indexSkill;
+
+	public int indexUseSkill = -1;
+
+	public string[][] infoSpeacialSkill;
+
+	public bool isAddChopMat;
+
+	public bool IsAddDust1;
+
+	public bool IsAddDust2;
+
+	public bool isAttack;
+
+	public bool isAttFly;
+
+	public bool isCharge;
+
+	public bool isCopy;
+
+	public bool isCreateDark;
+
+	public bool isCrit;
+
+	public bool isDie;
+
+	public bool isDirtyPostion;
+
+	public bool isEndMount;
+
+	public bool isEventMount;
+
+	public bool isFeetEff;
+
+	public bool isFly;
+
+	public bool isFlyAndCharge;
+
+	public bool isFlying;
+
+	public bool isFlyUp;
+
+	public bool isFreez;
+
+	public bool isFusion;
+
+	public bool isHaveMount;
+
+	public bool isHide;
+
+	public sbyte isInjure;
+
+	public bool isInjureHp;
+
+	public bool isInvisiblez;
+
+	public bool isJump;
+
+	public bool isLockAttack;
+
+	public bool isLockMove;
+
+	public bool isMabuHold;
+
+	public bool isMafuba;
+
+	public bool isMask;
+
+	public bool isMiniPet;
+
+	public bool isMob;
+
+	public sbyte isMonkey;
+
+	public bool isMount;
+
+	public bool isMountVip;
+
+	public bool isMyFusion;
+
+	public bool isNhapThe;
+
+	public bool isOutMap;
+
+	public bool isPaintNewSkill;
+
+	public bool isPet;
+
+	public bool isSetPos;
+
+	public bool isShadown = true;
+
+	public bool isSoundJump;
+
+	public bool isSpeacialMount;
+
+	public bool isStandAndCharge;
+
+	public bool isStartMount;
+
+	public bool isTeleport;
+
+	public bool isUsePlane;
+
+	public bool isUseSkillAfterCharge;
+
+	public bool isWaitMonkey;
+
+	public ItemMap itemFocus;
+
+	public int killCharId = -9999;
+
+	public long last;
+
+	public int lastFrame;
+
+	public long lastFreez;
+
+	public Skill lastNormalSkill;
+
+	public long lastS;
+
+	public long lastUpdateTime;
+
+	public int leg;
+
+	public int legTemp = -1;
+
+	public int len = 24;
+
+	public int limitKynangso;
+
+	public int limitTiemnangso;
+
+	public int luong;
+
+	public int luongKhoa;
+
+	public string luongKhoaStr;
+
+	public string luongStr;
+
 	public MainImage mainImg;
+
+	public short maxPowerPoint;
+
+	public bool me;
+
+	public bool meDead;
+
+	public bool meLive;
+
+	public int menuSelect;
+
+	public Mob mobFocus;
+
+	public Mob mobHold;
+
+	public Mob mobMe;
+
+	public int[] move = new int[15]
+	{
+		1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2
+	};
+
+	public short[] moveFast;
+
+	public sbyte mpFrom1000TiemNang;
+
+	public Skill myskill;
+
+	public NClass nClass;
+
+	public int nInjure;
+
+	public Npc npcFocus;
+
+	public bool paintName = true;
+
+	public Part pb;
+
+	public int per = 100;
+
+	public int per_tem = 100;
+
+	public int perCentMp = 100;
+
+	public PetFollow petFollow;
+
+	public sbyte petStatus;
+
+	public Part ph;
+
+	public Part pl;
+
+	public int pointAo;
+
+	public int pointGangtay;
+
+	public int pointGiay;
+
+	public int pointLien;
+
+	public int pointNgocboi;
+
+	public int pointNhan;
+
+	public int pointNon;
+
+	public int pointPhu;
+
+	public int pointQuan;
+
+	public int pointUydanh;
+
+	public int pointVukhi;
+
+	public int posDisY;
+
+	public short[] potential = new short[4];
+
+	public short powerPoint;
+
+	public bool protectEff;
+
+	public short rangeDame;
+
+	public int rank;
+
+	public sbyte resultTest;
+
+	public sbyte role;
+
+	public short s_danhHieu1;
+
+	public int saveStatus;
+
+	public short secondPower;
+
+	public int seconds;
+
+	public int shadowLife;
+
+	public int shadowX;
+
+	public int shadowY;
+
+	public SkillPaint skillPaint;
+
+	public SkillPaint skillPaintRandomPaint;
+
+	public int skillTemplateId;
+
+	public bool sleepEff;
+
+	public int speedMount;
+
+	public int statusBeforeNothing;
+
+	public int statusMe = 5;
+
+	public bool stone;
+
+	public string strEff_Set_Item = "set_eff_";
+
+	public string strEffAura = "aura_";
+
+	public string strHat_behind = "hat_sau_";
+
+	public string strHat_font = "hat_truoc_";
+
+	public string strInfo;
+
+	public string[] strLevel;
+
+	public string strMount = "mount_";
+
+	public string strNgang = "ngang_";
+
+	public int stt;
+
+	public int sType;
+
+	public short sysDown;
+
+	public short sysUp;
+
+	public int t;
+
+	public Point targetDame;
+
+	public Task taskMaint;
+
+	public MyVector taskOrders = new MyVector();
+
+	public int tBlue;
+
+	public bool telePortSkill;
+
+	public int testCharId = -9999;
+
+	public int tFusion;
+
+	public int tick;
+
+	public long timeAddChopmat;
+
+	public long timeBlue;
+
+	public long timeDame;
+
+	public int timeFocusToMob;
+
+	public int timeGongSkill;
+
+	public long timeReset_newSkill;
+
+	public int tMobMeBorn;
+
+	public int tpos;
+
+	public int transMount;
+
+	public int twHp;
+
+	public int ty;
+
+	public sbyte typeFrame;
+
+	public sbyte typeItem;
+
+	public sbyte typePaint;
+
+	public sbyte typePos;
+
+	public MyVector vEff = new MyVector();
+
+	public MyVector vEffChar = new MyVector("vEff");
+
+	public MyVector vMovePoints = new MyVector();
+
+	public MyVector vSkill = new MyVector();
+
+	public MyVector vSkillFight = new MyVector();
+
+	public int w_hp_bar = 24;
+
+	public short wdx;
+
+	public short wdy;
+
+	public int wp;
+
+	public int wpTemp = -1;
+
+	public int wt;
+
+	public bool wy;
+
+	public short x_hint;
+
+	public int xChar;
+
+	public int xdis;
+
+	public int xMFB;
+
+	public int xMount;
+
+	public short xPos;
+
+	public int xReload;
+
+	public int xSd;
+
+	public long xu;
+
+	public int xuInBox;
+
+	public string xuStr;
+
+	public short y_hint;
+
+	public int yen;
+
+	public int yMFB;
+
+	public int yMount;
+
+	public short yPos;
+
+	public int yReload;
+
+	public int ySd;
 
 	public Char()
 	{
 		statusMe = 6;
+	}
+
+	public int getX()
+	{
+		return cx;
+	}
+
+	public int getY()
+	{
+		return cy;
+	}
+
+	public int getH()
+	{
+		return 32;
+	}
+
+	public int getW()
+	{
+		return 24;
+	}
+
+	public void stopMoving()
+	{
+	}
+
+	public bool isInvisible()
+	{
+		return false;
 	}
 
 	public void applyCharLevelPercent()
@@ -1279,7 +1726,7 @@ public class Char : IMapObject
 			{
 				if (cPower >= GameScr.exps[num4])
 				{
-					num = ((num4 != GameScr.exps.Length - 1) ? (GameScr.exps[num4 + 1] - GameScr.exps[num4]) : 1);
+					num = num4 != GameScr.exps.Length - 1 ? GameScr.exps[num4 + 1] - GameScr.exps[num4] : 1;
 					num2 = cPower - GameScr.exps[num4];
 					num3 = num4;
 					break;
@@ -1290,7 +1737,7 @@ public class Char : IMapObject
 		}
 		catch (Exception ex)
 		{
-			Cout.LogError("Loi char level percent: " + ex.ToString());
+			Cout.LogError("Loi char level percent: " + ex);
 		}
 	}
 
@@ -1326,7 +1773,7 @@ public class Char : IMapObject
 			{
 				text = NinjaUtil.replace(text, "#", string.Empty);
 				Npc npc = new Npc(5, 0, -100, -100, 5, GameScr.info1.charId[myCharz().cgender][2]);
-				npc.cx = (npc.cy = -100);
+				npc.cx = npc.cy = -100;
 				npc.avatar = GameScr.info1.charId[myCharz().cgender][2];
 				npc.charID = 5;
 				if (GameCanvas.currentScreen == GameScr.instance)
@@ -1437,7 +1884,7 @@ public class Char : IMapObject
 		strInfo = info;
 		maxPowerPoint = maxP;
 		secondPower = sc;
-		lastS = (currS = mSystem.currentTimeMillis());
+		lastS = currS = mSystem.currentTimeMillis();
 	}
 
 	public void addInfo(string info)
@@ -1768,15 +2215,15 @@ public class Char : IMapObject
 		{
 			SoundMn.gI().charFly();
 		}
-		if (skillPaint != null && skillInfoPaint() != null && indexSkill < skillInfoPaint().Length && isPunchKickSkill() && (me || (!me && cx >= GameScr.cmx && cx <= GameScr.cmx + GameCanvas.w)) && GameCanvas.gameTick % 5 == 0)
+		if (skillPaint != null && skillInfoPaint() != null && indexSkill < skillInfoPaint().Length && isPunchKickSkill() && (me || !me && cx >= GameScr.cmx && cx <= GameScr.cmx + GameCanvas.w) && GameCanvas.gameTick % 5 == 0)
 		{
 			if (cf == 9 || cf == 10 || cf == 11)
 			{
-				SoundMn.gI().charPunch(true, (!me) ? 0.05f : 0.1f);
+				SoundMn.gI().charPunch(true, !me ? 0.05f : 0.1f);
 			}
 			else
 			{
-				SoundMn.gI().charPunch(false, (!me) ? 0.05f : 0.1f);
+				SoundMn.gI().charPunch(false, !me ? 0.05f : 0.1f);
 			}
 		}
 	}
@@ -1803,7 +2250,7 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		if ((!isCopy && clevel < 14) || statusMe == 1 || statusMe == 6)
+		if (!isCopy && clevel < 14 || statusMe == 1 || statusMe == 6)
 		{
 		}
 		if (petFollow != null)
@@ -1973,7 +2420,7 @@ public class Char : IMapObject
 				isSetPos = false;
 				cx = xPos;
 				cy = yPos;
-				cp1 = (cp2 = (cp3 = 0));
+				cp1 = cp2 = cp3 = 0;
 				if (typePos == 1)
 				{
 					if (me)
@@ -2032,7 +2479,7 @@ public class Char : IMapObject
 				{
 					ty++;
 					wt++;
-					fy += ((!wy) ? 1 : (-1));
+					fy += !wy ? 1 : -1;
 					if (wt == 10)
 					{
 						wt = 0;
@@ -2231,14 +2678,14 @@ public class Char : IMapObject
 							isCreateDark = true;
 							bool flag2 = TileMap.tileTypeAt(myCharz().cx, myCharz().cy, 2);
 							isUseSkillAfterCharge = true;
-							setSkillPaint(GameScr.sks[myCharz().myskill.skillId], (!flag2) ? 1 : 0);
+							setSkillPaint(GameScr.sks[myCharz().myskill.skillId], !flag2 ? 1 : 0);
 						}
 						else if (TileMap.mapID == 170)
 						{
 							isCreateDark = true;
 							isUseSkillAfterCharge = true;
 							bool flag3 = TileMap.tileTypeAt(cx, cy, 2);
-							setSkillPaint(GameScr.sks[skillTemplateId], (!flag3) ? 1 : 0);
+							setSkillPaint(GameScr.sks[skillTemplateId], !flag3 ? 1 : 0);
 						}
 					}
 					else
@@ -2482,7 +2929,7 @@ public class Char : IMapObject
 							currentMovePoint = null;
 							GameScr.instance.clickMoving = false;
 							checkPerformEndMovePointAction();
-							cvx = (cvy = 0);
+							cvx = cvy = 0;
 							if ((TileMap.tileTypeAtPixel(cx, cy) & 2) == 2)
 							{
 								statusMe = 1;
@@ -2495,7 +2942,7 @@ public class Char : IMapObject
 						}
 						else
 						{
-							cdir = ((currentMovePoint.xEnd > cx) ? 1 : (-1));
+							cdir = currentMovePoint.xEnd > cx ? 1 : -1;
 							if (TileMap.tileTypeAt(cx, cy, 2))
 							{
 								statusMe = 2;
@@ -2510,7 +2957,7 @@ public class Char : IMapObject
 									{
 										bool flag4 = false;
 										sbyte b = 1;
-										b = (sbyte)((cdir == 1) ? 1 : (-1));
+										b = (sbyte)(cdir == 1 ? 1 : -1);
 										for (int j = 0; j < 2; j++)
 										{
 											if (TileMap.tileTypeAt(currentMovePoint.xEnd + chw * b, cy + chh * j, 2))
@@ -2524,7 +2971,7 @@ public class Char : IMapObject
 											currentMovePoint = null;
 											GameScr.instance.clickMoving = false;
 											statusMe = 1;
-											cvx = (cvy = 0);
+											cvx = cvy = 0;
 											checkPerformEndMovePointAction();
 										}
 										else
@@ -2587,7 +3034,7 @@ public class Char : IMapObject
 									currentMovePoint = null;
 									GameScr.instance.clickMoving = false;
 									statusMe = 1;
-									cvx = (cvy = 0);
+									cvx = cvy = 0;
 									checkPerformEndMovePointAction();
 								}
 								else
@@ -2604,7 +3051,7 @@ public class Char : IMapObject
 									{
 										if (TileMap.tileTypeAt(cx + chw, cy - chh, 4))
 										{
-											cvx = (cvy = 0);
+											cvx = cvy = 0;
 											statusMe = 4;
 											currentMovePoint = null;
 											GameScr.instance.clickMoving = false;
@@ -2613,7 +3060,7 @@ public class Char : IMapObject
 									}
 									else if (TileMap.tileTypeAt(cx - chw - 1, cy - chh, 8))
 									{
-										cvx = (cvy = 0);
+										cvx = cvy = 0;
 										statusMe = 4;
 										currentMovePoint = null;
 										GameScr.instance.clickMoving = false;
@@ -3095,7 +3542,7 @@ public class Char : IMapObject
 			catch (Exception)
 			{
 			}
-			if (obj != null && !obj.Equals(this) && ((obj.cy == cy && Res.abs(obj.cx - cx) < 35) || (cy - obj.cy < 32 && cy - obj.cy > 0 && Res.abs(obj.cx - cx) < 24)))
+			if (obj != null && !obj.Equals(this) && (obj.cy == cy && Res.abs(obj.cx - cx) < 35 || cy - obj.cy < 32 && cy - obj.cy > 0 && Res.abs(obj.cx - cx) < 24))
 			{
 				paintName = false;
 			}
@@ -3125,7 +3572,7 @@ public class Char : IMapObject
 		}
 		if (tMobMeBorn == 0)
 		{
-			mobMe.xFirst = ((cdir != 1) ? (cx + 30) : (cx - 30));
+			mobMe.xFirst = cdir != 1 ? cx + 30 : cx - 30;
 			mobMe.yFirst = cy - 60;
 			int num = mobMe.xFirst - mobMe.x;
 			int num2 = mobMe.yFirst - mobMe.y;
@@ -3141,7 +3588,7 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		if (skillPaint != null && ((charFocus != null && isMeCanAttackOtherPlayer(charFocus) && charFocus.statusMe == 14) || (mobFocus != null && mobFocus.status == 0)))
+		if (skillPaint != null && (charFocus != null && isMeCanAttackOtherPlayer(charFocus) && charFocus.statusMe == 14 || mobFocus != null && mobFocus.status == 0))
 		{
 			if (!me)
 			{
@@ -3158,8 +3605,8 @@ public class Char : IMapObject
 			indexSkill = 0;
 			skillPaint = null;
 			skillPaintRandomPaint = null;
-			eff0 = (eff1 = (eff2 = null));
-			i0 = (i1 = (i2 = 0));
+			eff0 = eff1 = eff2 = null;
+			i0 = i1 = i2 = 0;
 			mobFocus = null;
 			charFocus = null;
 			effPaints = null;
@@ -3188,8 +3635,8 @@ public class Char : IMapObject
 			Res.outz("remove 2");
 			skillPaint = null;
 			skillPaintRandomPaint = null;
-			eff0 = (eff1 = (eff2 = null));
-			i0 = (i1 = (i2 = 0));
+			eff0 = eff1 = eff2 = null;
+			i0 = i1 = i2 = 0;
 			arr = null;
 			if ((TileMap.tileTypeAtPixel(cx, cy) & 2) != 2)
 			{
@@ -3204,17 +3651,17 @@ public class Char : IMapObject
 		if (array[indexSkill].effS0Id != 0)
 		{
 			eff0 = GameScr.efs[array[indexSkill].effS0Id - 1];
-			i0 = (dx0 = (dy0 = 0));
+			i0 = dx0 = dy0 = 0;
 		}
 		if (array[indexSkill].effS1Id != 0)
 		{
 			eff1 = GameScr.efs[array[indexSkill].effS1Id - 1];
-			i1 = (dx1 = (dy1 = 0));
+			i1 = dx1 = dy1 = 0;
 		}
 		if (array[indexSkill].effS2Id != 0)
 		{
 			eff2 = GameScr.efs[array[indexSkill].effS2Id - 1];
-			i2 = (dx2 = (dy2 = 0));
+			i2 = dx2 = dy2 = 0;
 		}
 		SkillInfoPaint[] array2 = array;
 		int num = indexSkill;
@@ -3245,7 +3692,7 @@ public class Char : IMapObject
 					}
 					else
 					{
-						num2 = ((mapObject2.getY() >= cy) ? 3 : (-3));
+						num2 = mapObject2.getY() >= cy ? 3 : -3;
 						if (mapObject2 is BigBoss)
 						{
 							BigBoss bigBoss = (BigBoss)mapObject2;
@@ -3290,7 +3737,7 @@ public class Char : IMapObject
 				arr.ay = cy + array2[num].ady;
 			}
 		}
-		if ((mobFocus != null || (!me && charFocus != null) || (me && charFocus != null && (isMeCanAttackOtherPlayer(charFocus) || isSelectingSkillBuffToPlayer()) && arr == null && dart == null)) && indexSkill == array.Length - 1)
+		if ((mobFocus != null || !me && charFocus != null || me && charFocus != null && (isMeCanAttackOtherPlayer(charFocus) || isSelectingSkillBuffToPlayer()) && arr == null && dart == null) && indexSkill == array.Length - 1)
 		{
 			setAttack();
 			if (me && myskill.template.isAttackSkill())
@@ -3457,7 +3904,7 @@ public class Char : IMapObject
 		cy += cvy;
 		if (cy < 0)
 		{
-			cy = (cvy = 0);
+			cy = cvy = 0;
 		}
 		if (cvy == 0)
 		{
@@ -3465,7 +3912,7 @@ public class Char : IMapObject
 			{
 				statusMe = 4;
 				cvx = (cspeed >> 1) * cdir;
-				cp1 = (cp2 = 0);
+				cp1 = cp2 = 0;
 			}
 		}
 		else if (cvy < 0)
@@ -3488,7 +3935,7 @@ public class Char : IMapObject
 			}
 			if ((TileMap.tileTypeAtPixel(cx, cy + 3) & 2) == 2 && cy <= TileMap.tileXofPixel(cy + 3))
 			{
-				cvx = (cvy = 0);
+				cvx = cvy = 0;
 				cy = TileMap.tileXofPixel(cy + 3);
 			}
 		}
@@ -3644,7 +4091,7 @@ public class Char : IMapObject
 		}
 		cvy = -10;
 		cp1 = 0;
-		cdir = ((num > 0) ? 1 : (-1));
+		cdir = num > 0 ? 1 : -1;
 		if (num <= 5)
 		{
 			cvx = 0;
@@ -3665,7 +4112,7 @@ public class Char : IMapObject
 		int num = ((MovePoint)vMovePoints.firstElement()).xEnd - cx;
 		cvyJump = -10;
 		cp1 = 0;
-		cdir = ((num > 0) ? 1 : (-1));
+		cdir = num > 0 ? 1 : -1;
 		if (num <= 6)
 		{
 			cvx = 0;
@@ -3752,7 +4199,7 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		if (isCopy || isFusion || isSetPos || isPet || isMiniPet || isMonkey == 1 || (me && !isPaintAura2 && idAuraEff > -1) || (!me && idAuraEff > -1))
+		if (isCopy || isFusion || isSetPos || isPet || isMiniPet || isMonkey == 1 || me && !isPaintAura2 && idAuraEff > -1 || !me && idAuraEff > -1)
 		{
 			return;
 		}
@@ -3826,7 +4273,7 @@ public class Char : IMapObject
 
 	public void updateCharRun()
 	{
-		int num = ((isMonkey != 1 || me) ? 1 : 1);
+		int num = isMonkey != 1 || me ? 1 : 1;
 		if (cx >= GameScr.cmx && cx <= GameScr.cmx + GameCanvas.w)
 		{
 			if (isMonkey == 0)
@@ -3951,12 +4398,12 @@ public class Char : IMapObject
 		cp3 = 0;
 		cvx = 0;
 		cvy = 0;
-		cp1 = (cp2 = 0);
+		cp1 = cp2 = 0;
 	}
 
 	public static int abs(int i)
 	{
-		return (i <= 0) ? (-i) : i;
+		return i <= 0 ? -i : i;
 	}
 
 	public void updateCharJump()
@@ -4126,7 +4573,7 @@ public class Char : IMapObject
 			{
 				SoundMn.gI().charFall();
 			}
-			cvx = (cvy = 0);
+			cvx = cvy = 0;
 			cp3 = 0;
 			return;
 		}
@@ -4143,8 +4590,8 @@ public class Char : IMapObject
 				{
 					Service.gI().charMove();
 				}
-				cvx = (cvy = 0);
-				cp1 = (cp2 = 0);
+				cvx = cvy = 0;
+				cp1 = cp2 = 0;
 				statusMe = 1;
 				cp3 = 0;
 				return;
@@ -4234,8 +4681,8 @@ public class Char : IMapObject
 			if (me)
 			{
 				cyStartFall = 0;
-				cvx = (cvy = 0);
-				cp1 = (cp2 = 0);
+				cvx = cvy = 0;
+				cp1 = cp2 = 0;
 				cy = TileMap.tileXofPixel(cy + 3);
 				statusMe = 1;
 				if (me)
@@ -4292,7 +4739,7 @@ public class Char : IMapObject
 
 	public void updateCharFly()
 	{
-		int num = ((isMonkey != 1 || me) ? 1 : 2);
+		int num = isMonkey != 1 || me ? 1 : 2;
 		setMountIsStart();
 		if (statusMe != 16 && (TileMap.tileTypeAt(cx, cy - ch + 24, 8192) || cy < 0))
 		{
@@ -4328,7 +4775,7 @@ public class Char : IMapObject
 				cp1 = 0;
 				if (!me)
 				{
-					cvx = (cvy = 0);
+					cvx = cvy = 0;
 				}
 				cBonusSpeed = 0;
 			}
@@ -4414,7 +4861,7 @@ public class Char : IMapObject
 		{
 			ty++;
 			wt++;
-			fy += ((!wy) ? 1 : (-1));
+			fy += !wy ? 1 : -1;
 			if (wt == 10)
 			{
 				wt = 0;
@@ -4425,7 +4872,7 @@ public class Char : IMapObject
 				delayFall = 10;
 				if (GameCanvas.gameTick % 3 == 0)
 				{
-					ServerEffect.addServerEffect(111, cx + ((cdir != 1) ? 27 : (-17)), cy + fy + 13, 1, (cdir != 1) ? 2 : 0);
+					ServerEffect.addServerEffect(111, cx + (cdir != 1 ? 27 : -17), cy + fy + 13, 1, cdir != 1 ? 2 : 0);
 				}
 			}
 		}
@@ -4454,8 +4901,8 @@ public class Char : IMapObject
 				delayFall = 0;
 			}
 			cyStartFall = 0;
-			cvx = (cvy = 0);
-			cp1 = (cp2 = 0);
+			cvx = cvy = 0;
+			cp1 = cp2 = 0;
 			statusMe = 4;
 			addDustEff(3);
 		}
@@ -4795,7 +5242,7 @@ public class Char : IMapObject
 				checkFrameTick(move);
 				if (Mob.arrMobTemplate[50] != null && Mob.arrMobTemplate[50].data != null)
 				{
-					Mob.arrMobTemplate[50].data.paintFrame(g, fM, xMount + ((cdir != 1) ? 8 : (-8)), yMount + 35, (cdir != 1) ? 1 : 0, 0);
+					Mob.arrMobTemplate[50].data.paintFrame(g, fM, xMount + (cdir != 1 ? 8 : -8), yMount + 35, cdir != 1 ? 1 : 0, 0);
 				}
 				else
 				{
@@ -4850,7 +5297,7 @@ public class Char : IMapObject
 				checkFrameTick(move);
 				if (Mob.arrMobTemplate[50] != null && Mob.arrMobTemplate[50].data != null)
 				{
-					Mob.arrMobTemplate[50].data.paintFrame(g, fM, xMount + ((cdir != 1) ? 8 : (-8)), yMount + 35, (cdir != 1) ? 1 : 0, 0);
+					Mob.arrMobTemplate[50].data.paintFrame(g, fM, xMount + (cdir != 1 ? 8 : -8), yMount + 35, cdir != 1 ? 1 : 0, 0);
 				}
 				else
 				{
@@ -4939,7 +5386,7 @@ public class Char : IMapObject
 		{
 			if (array[i] != null && (array[i].template.type == 24 || array[i].template.type == 23))
 			{
-				num = ((array[i].template.part < 0) ? array[i].template.id : ((short)(ID_NEW_MOUNT + array[i].template.part)));
+				num = array[i].template.part < 0 ? array[i].template.id : (short)(ID_NEW_MOUNT + array[i].template.part);
 				result = true;
 				break;
 			}
@@ -5062,7 +5509,7 @@ public class Char : IMapObject
 			return;
 		}
 		hasSendAttack = false;
-		if (stone || (me && myskill.template.id == 9 && cHP <= cHPFull / 10))
+		if (stone || me && myskill.template.id == 9 && cHP <= cHPFull / 10)
 		{
 			return;
 		}
@@ -5080,13 +5527,13 @@ public class Char : IMapObject
 			{
 				stopUseChargeSkill();
 			}
-			if ((myskill.template.id == 23 && ((charFocus != null && charFocus.holdEffID != 0) || (mobFocus != null && mobFocus.holdEffID != 0) || holdEffID != 0)) || sleepEff || blindEff)
+			if (myskill.template.id == 23 && (charFocus != null && charFocus.holdEffID != 0 || mobFocus != null && mobFocus.holdEffID != 0 || holdEffID != 0) || sleepEff || blindEff)
 			{
 				return;
 			}
 		}
 		Res.outz("skill id= " + skillPaint.id);
-		if ((me && dart != null) || TileMap.isOfflineMap())
+		if (me && dart != null || TileMap.isOfflineMap())
 		{
 			return;
 		}
@@ -5150,7 +5597,7 @@ public class Char : IMapObject
 					SoundMn.gI().taitaoPause();
 					Service.gI().skill_not_focus(1);
 					isCharge = true;
-					last = (cur = mSystem.currentTimeMillis());
+					last = cur = mSystem.currentTimeMillis();
 				}
 				else
 				{
@@ -5228,7 +5675,7 @@ public class Char : IMapObject
 	public void useSkillNotFocus()
 	{
 		GameScr.gI().auto = 0;
-		myCharz().setSkillPaint(GameScr.sks[myCharz().myskill.skillId], (!TileMap.tileTypeAt(myCharz().cx, myCharz().cy, 2)) ? 1 : 0);
+		myCharz().setSkillPaint(GameScr.sks[myCharz().myskill.skillId], !TileMap.tileTypeAt(myCharz().cx, myCharz().cy, 2) ? 1 : 0);
 	}
 
 	public void sendUseChargeSkill()
@@ -5326,7 +5773,7 @@ public class Char : IMapObject
 	public void setAutoSkillPaint(SkillPaint skillPaint, int sType)
 	{
 		this.skillPaint = skillPaint;
-		Res.outz("set auto skill " + ((skillPaint == null) ? "null" : "ko null"));
+		Res.outz("set auto skill " + (skillPaint == null ? "null" : "ko null"));
 		if (skillPaint.id >= 0 && skillPaint.id <= 6)
 		{
 			int num = Res.random(0, skillPaint.id + 4) - 1;
@@ -5355,7 +5802,7 @@ public class Char : IMapObject
 		}
 		else if (skillPaint.id >= 28 && skillPaint.id <= 34)
 		{
-			int num3 = Res.random(0, ((isMonkey != 1) ? skillPaint.id : 105) - ((isMonkey != 1) ? 28 : 105) + 4) - 1;
+			int num3 = Res.random(0, (isMonkey != 1 ? skillPaint.id : 105) - (isMonkey != 1 ? 28 : 105) + 4) - 1;
 			if (num3 < 0)
 			{
 				num3 = 0;
@@ -5368,7 +5815,7 @@ public class Char : IMapObject
 			{
 				num3 = 0;
 			}
-			skillPaintRandomPaint = GameScr.sks[num3 + ((isMonkey != 1) ? 28 : 105)];
+			skillPaintRandomPaint = GameScr.sks[num3 + (isMonkey != 1 ? 28 : 105)];
 		}
 		else if (skillPaint.id >= 63 && skillPaint.id <= 69)
 		{
@@ -5402,7 +5849,7 @@ public class Char : IMapObject
 		}
 		this.sType = sType;
 		indexSkill = 0;
-		i0 = (i1 = (i2 = (dx0 = (dx1 = (dx2 = (dy0 = (dy1 = (dy2 = 0))))))));
+		i0 = i1 = i2 = dx0 = dx1 = dx2 = dy0 = dy1 = dy2 = 0;
 		eff0 = null;
 		eff1 = null;
 		eff2 = null;
@@ -5596,7 +6043,7 @@ public class Char : IMapObject
 		}
 		else
 		{
-			if (!isPaint() || (!me && GameScr.notPaint))
+			if (!isPaint() || !me && GameScr.notPaint)
 			{
 				return;
 			}
@@ -5605,7 +6052,7 @@ public class Char : IMapObject
 				petFollow.paint(g);
 			}
 			paintMount1(g);
-			if ((TileMap.isInAirMap() && cy >= TileMap.pxh - 48) || isTeleport)
+			if (TileMap.isInAirMap() && cy >= TileMap.pxh - 48 || isTeleport)
 			{
 				return;
 			}
@@ -5752,7 +6199,7 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		if ((me && !isPaintAura2) || idAuraEff > -1 || (statusMe != 1 && statusMe != 6) || mSystem.currentTimeMillis() - timeBlue <= 0 || isCopy || clevel < 16)
+		if (me && !isPaintAura2 || idAuraEff > -1 || statusMe != 1 && statusMe != 6 || mSystem.currentTimeMillis() - timeBlue <= 0 || isCopy || clevel < 16)
 		{
 			return;
 		}
@@ -5956,7 +6403,7 @@ public class Char : IMapObject
 		{
 			g.drawRegion(Mob.imgHP, 0, 6 * (9 - num), 9, 6, 0, x, y - mFont.tahoma_7.getHeight() - 6, 3);
 		}
-		if (cTypePk == 0 && (myCharz().cFlag == 0 || cFlag == 0 || (cFlag != 8 && myCharz().cFlag != 8 && cFlag == myCharz().cFlag)))
+		if (cTypePk == 0 && (myCharz().cFlag == 0 || cFlag == 0 || cFlag != 8 && myCharz().cFlag != 8 && cFlag == myCharz().cFlag))
 		{
 			return;
 		}
@@ -6028,7 +6475,7 @@ public class Char : IMapObject
 	{
 		Part part = GameScr.parts[getFHead(head)];
 		int num = CharInfo[cf][0][2] - part.pi[CharInfo[cf][0][0]].dy + 5;
-		if ((isInvisiblez && !me) || (!me && TileMap.mapID == 113 && cy >= 360))
+		if (isInvisiblez && !me || !me && TileMap.mapID == 113 && cy >= 360)
 		{
 			return;
 		}
@@ -6141,6 +6588,10 @@ public class Char : IMapObject
 
 	public void paintShadow(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintShadow(this, g))
+		{
+			return;
+		}
 		if (isMabuHold || head == 377 || leg == 471 || isTeleport || isFlyUp)
 		{
 			return;
@@ -6224,7 +6675,7 @@ public class Char : IMapObject
 		}
 		catch (Exception ex)
 		{
-			Cout.LogError("Loi paint char without skill: " + ex.ToString());
+			Cout.LogError("Loi paint char without skill: " + ex);
 		}
 	}
 
@@ -6341,7 +6792,7 @@ public class Char : IMapObject
 				b = 1;
 			}
 		}
-		SmallImage.drawSmallImage(g, id[b], x + ((dir != 1) ? num : (-num)), y - num2, (dir != 1) ? 2 : 0, StaticObj.VCENTER_HCENTER);
+		SmallImage.drawSmallImage(g, id[b], x + (dir != 1 ? num : -num), y - num2, dir != 1 ? 2 : 0, StaticObj.VCENTER_HCENTER);
 	}
 
 	public bool isCharBodyImageID(int id)
@@ -6370,7 +6821,7 @@ public class Char : IMapObject
 	public void paintHead(mGraphics g, int cx, int cy, int look)
 	{
 		Part part = GameScr.parts[head];
-		SmallImage.drawSmallImage(g, part.pi[CharInfo[0][0][0]].id, cx, cy, (look != 0) ? 2 : 0, mGraphics.RIGHT | mGraphics.VCENTER);
+		SmallImage.drawSmallImage(g, part.pi[CharInfo[0][0][0]].id, cx, cy, look != 0 ? 2 : 0, mGraphics.RIGHT | mGraphics.VCENTER);
 	}
 
 	public void paintHeadWithXY(mGraphics g, int x, int y, int look)
@@ -6466,15 +6917,15 @@ public class Char : IMapObject
 			}
 			catch (Exception ex)
 			{
-				Debug.LogError(">>>>>>err: " + ex.ToString());
+				Debug.LogError(">>>>>>err: " + ex);
 			}
 		}
-		ch = ((isMonkey != 1 && !isFusion) ? (CharInfo[0][0][2] + ph.pi[CharInfo[0][0][0]].dy + 10) : 60);
-		int num4 = ((Res.abs(ph.pi[CharInfo[cf][0][0]].dy) < 22) ? ph.pi[CharInfo[cf][0][0]].dy : ((ph.pi[CharInfo[cf][0][0]].dy >= 0) ? (ph.pi[CharInfo[cf][0][0]].dy - 5) : (ph.pi[CharInfo[cf][0][0]].dy + 5)));
+		ch = isMonkey != 1 && !isFusion ? CharInfo[0][0][2] + ph.pi[CharInfo[0][0][0]].dy + 10 : 60;
+		int num4 = Res.abs(ph.pi[CharInfo[cf][0][0]].dy) < 22 ? ph.pi[CharInfo[cf][0][0]].dy : ph.pi[CharInfo[cf][0][0]].dy >= 0 ? ph.pi[CharInfo[cf][0][0]].dy - 5 : ph.pi[CharInfo[cf][0][0]].dy + 5;
 		cH_new = cy - CharInfo[cf][0][2] + num4;
 		if (statusMe == 1 && charID > 0 && !isMask && !isUseChargeSkill() && !isWaitMonkey && skillPaint == null && cf != 23 && bag < 0 && ((GameCanvas.gameTick + charID) % 30 == 0 || isFreez))
 		{
-			g.drawImage((cgender != 1) ? eyeTraiDat : eyeNamek, cx + -((cgender != 1) ? 2 : 2) * num2, cy - 32 + ((cgender != 1) ? 11 : 10) - cf, anchor2);
+			g.drawImage(cgender != 1 ? eyeTraiDat : eyeNamek, cx + -(cgender != 1 ? 2 : 2) * num2, cy - 32 + (cgender != 1 ? 11 : 10) - cf, anchor2);
 		}
 		if (eProtect != null)
 		{
@@ -6510,7 +6961,7 @@ public class Char : IMapObject
 				if (i0 >= eff0.arrEfInfo.Length)
 				{
 					eff0 = null;
-					i0 = (dx0 = (dy0 = 0));
+					i0 = dx0 = dy0 = 0;
 				}
 			}
 			if (eff1 != null)
@@ -6528,7 +6979,7 @@ public class Char : IMapObject
 				if (i1 >= eff1.arrEfInfo.Length)
 				{
 					eff1 = null;
-					i1 = (dx1 = (dy1 = 0));
+					i1 = dx1 = dy1 = 0;
 				}
 			}
 			if (eff2 != null)
@@ -6546,7 +6997,7 @@ public class Char : IMapObject
 				if (i2 >= eff2.arrEfInfo.Length)
 				{
 					eff2 = null;
-					i2 = (dx2 = (dy2 = 0));
+					i2 = dx2 = dy2 = 0;
 				}
 			}
 		}
@@ -6730,7 +7181,10 @@ public class Char : IMapObject
 
 	public void searchItem()
 	{
-		int[] array = new int[4] { -1, -1, -1, -1 };
+		int[] array = new int[4]
+		{
+			-1, -1, -1, -1
+		};
 		if (itemFocus != null)
 		{
 			return;
@@ -6740,8 +7194,8 @@ public class Char : IMapObject
 			ItemMap itemMap = (ItemMap)GameScr.vItemMap.elementAt(i);
 			int num = Math.abs(myCharz().cx - itemMap.x);
 			int num2 = Math.abs(myCharz().cy - itemMap.y);
-			int num3 = ((num <= num2) ? num2 : num);
-			if (num > 48 || num2 > 48 || (itemFocus != null && num3 >= array[3]))
+			int num3 = num <= num2 ? num2 : num;
+			if (num > 48 || num2 > 48 || itemFocus != null && num3 >= array[3])
 			{
 				continue;
 			}
@@ -6786,14 +7240,17 @@ public class Char : IMapObject
 		{
 			num = 40;
 		}
-		int[] array = new int[4] { -1, -1, -1, -1 };
+		int[] array = new int[4]
+		{
+			-1, -1, -1, -1
+		};
 		int num2 = GameScr.cmx - 10;
 		int num3 = GameScr.cmx + GameCanvas.w + 10;
 		int cmy = GameScr.cmy;
 		int num4 = GameScr.cmy + GameCanvas.h - GameScr.cmdBarH + 10;
 		if (isManualFocus)
 		{
-			if ((mobFocus != null && mobFocus.status != 1 && mobFocus.status != 0 && num2 <= mobFocus.x && mobFocus.x <= num3 && cmy <= mobFocus.y && mobFocus.y <= num4) || (npcFocus != null && num2 <= npcFocus.cx && npcFocus.cx <= num3 && cmy <= npcFocus.cy && npcFocus.cy <= num4) || (charFocus != null && num2 <= charFocus.cx && charFocus.cx <= num3 && cmy <= charFocus.cy && charFocus.cy <= num4) || (itemFocus != null && num2 <= itemFocus.x && itemFocus.x <= num3 && cmy <= itemFocus.y && itemFocus.y <= num4))
+			if (mobFocus != null && mobFocus.status != 1 && mobFocus.status != 0 && num2 <= mobFocus.x && mobFocus.x <= num3 && cmy <= mobFocus.y && mobFocus.y <= num4 || npcFocus != null && num2 <= npcFocus.cx && npcFocus.cx <= num3 && cmy <= npcFocus.cy && npcFocus.cy <= num4 || charFocus != null && num2 <= charFocus.cx && charFocus.cx <= num3 && cmy <= charFocus.cy && charFocus.cy <= num4 || itemFocus != null && num2 <= itemFocus.x && itemFocus.x <= num3 && cmy <= itemFocus.y && itemFocus.y <= num4)
 			{
 				return;
 			}
@@ -6819,7 +7276,7 @@ public class Char : IMapObject
 				{
 					int num5 = Math.abs(myCharz().cx - npc.cx);
 					int num6 = Math.abs(myCharz().cy - npc.cy);
-					int num7 = ((num5 <= num6) ? num6 : num5);
+					int num7 = num5 <= num6 ? num6 : num5;
 					num2 = myCharz().cx - 80;
 					num3 = myCharz().cx + 80;
 					cmy = myCharz().cy - 30;
@@ -6854,7 +7311,7 @@ public class Char : IMapObject
 				{
 					int num8 = Math.abs(myCharz().cx - npc2.cx);
 					int num9 = Math.abs(myCharz().cy - npc2.cy);
-					int num10 = ((num8 <= num9) ? num9 : num8);
+					int num10 = num8 <= num9 ? num9 : num8;
 					num2 = myCharz().cx - 80;
 					num3 = myCharz().cx + 80;
 					cmy = myCharz().cy - 30;
@@ -6881,8 +7338,8 @@ public class Char : IMapObject
 				ItemMap itemMap = (ItemMap)GameScr.vItemMap.elementAt(k);
 				int num11 = Math.abs(myCharz().cx - itemMap.x);
 				int num12 = Math.abs(myCharz().cy - itemMap.y);
-				int num13 = ((num11 <= num12) ? num12 : num11);
-				if (num11 > 48 || num12 > 48 || (itemFocus != null && num13 >= array[3]))
+				int num13 = num11 <= num12 ? num12 : num11;
+				if (num11 > 48 || num12 > 48 || itemFocus != null && num13 >= array[3])
 				{
 					continue;
 				}
@@ -6914,8 +7371,8 @@ public class Char : IMapObject
 				ItemMap itemMap2 = (ItemMap)GameScr.vItemMap.elementAt(l);
 				int num14 = Math.abs(myCharz().cx - itemMap2.x);
 				int num15 = Math.abs(myCharz().cy - itemMap2.y);
-				int num16 = ((num14 <= num15) ? num15 : num14);
-				if (num2 > itemMap2.x || itemMap2.x > num3 || cmy > itemMap2.y || itemMap2.y > num4 || (itemFocus != null && num16 >= array[3]))
+				int num16 = num14 <= num15 ? num15 : num14;
+				if (num2 > itemMap2.x || itemMap2.x > num3 || cmy > itemMap2.y || itemMap2.y > num4 || itemFocus != null && num16 >= array[3])
 				{
 					continue;
 				}
@@ -6949,7 +7406,7 @@ public class Char : IMapObject
 				Mob mob = (Mob)GameScr.vMob.elementAt(m);
 				int num17 = Math.abs(myCharz().cx - mob.x);
 				int num18 = Math.abs(myCharz().cy - mob.y);
-				int num19 = ((num17 <= num18) ? num18 : num17);
+				int num19 = num17 <= num18 ? num18 : num17;
 				if (num2 <= mob.x && mob.x <= num3 && cmy <= mob.y && mob.y <= num4 && (mobFocus == null || num19 < array[0]))
 				{
 					mobFocus = mob;
@@ -6970,7 +7427,7 @@ public class Char : IMapObject
 				Mob mob2 = (Mob)GameScr.vMob.elementAt(n);
 				int num20 = Math.abs(myCharz().cx - mob2.x);
 				int num21 = Math.abs(myCharz().cy - mob2.y);
-				int num22 = ((num20 <= num21) ? num21 : num20);
+				int num22 = num20 <= num21 ? num21 : num20;
 				if (num2 <= mob2.x && mob2.x <= num3 && cmy <= mob2.y && mob2.y <= num4 && (mobFocus == null || num22 < array[0]))
 				{
 					mobFocus = mob2;
@@ -6987,7 +7444,7 @@ public class Char : IMapObject
 				{
 					int num24 = Math.abs(myCharz().cx - obj.cx);
 					int num25 = Math.abs(myCharz().cy - obj.cy);
-					int num26 = ((num24 <= num25) ? num25 : num24);
+					int num26 = num24 <= num25 ? num25 : num24;
 					if (num2 <= obj.cx && obj.cx <= num3 && cmy <= obj.cy && obj.cy <= num4 && (charFocus == null || num26 < array[2]))
 					{
 						charFocus = obj;
@@ -7011,7 +7468,7 @@ public class Char : IMapObject
 				{
 					int num28 = Math.abs(myCharz().cx - obj2.cx);
 					int num29 = Math.abs(myCharz().cy - obj2.cy);
-					int num30 = ((num28 <= num29) ? num29 : num28);
+					int num30 = num28 <= num29 ? num29 : num28;
 					if (num2 <= obj2.cx && obj2.cx <= num3 && cmy <= obj2.cy && obj2.cy <= num4 && (charFocus == null || num30 < array[2]))
 					{
 						charFocus = obj2;
@@ -7103,7 +7560,7 @@ public class Char : IMapObject
 			cdir = -1;
 		}
 		charHold = r;
-		holder = true; 
+		holder = true;
 		GameEvents.OnCharSetHoldChar(this, r);
 	}
 
@@ -7138,7 +7595,11 @@ public class Char : IMapObject
 		for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 		{
 			Char obj = (Char)GameScr.vCharInMap.elementAt(i);
-			if (obj.statusMe != 15 && !obj.isInvisiblez && num2 <= obj.cx && obj.cx <= num3 && num4 <= obj.cy && obj.cy <= num5 && obj.charID != -114 && (TileMap.mapID != 129 || (TileMap.mapID == 129 && myCharz().cy > 264)))
+			if (obj.charID < 0 && !obj.IsPet())
+			{
+				continue;
+			}
+			if (obj.statusMe != 15 && !obj.isInvisiblez && num2 <= obj.cx && obj.cx <= num3 && num4 <= obj.cy && obj.cy <= num5 && obj.charID != -114 && (TileMap.mapID != 129 || TileMap.mapID == 129 && myCharz().cy > 264))
 			{
 				focus.addElement(obj);
 				if (charFocus != null && obj.Equals(charFocus))
@@ -7361,7 +7822,7 @@ public class Char : IMapObject
 		{
 			cMP = 0L;
 		}
-		if (isMob || (!isMob && cTypePk != 4 && damMP != -100))
+		if (isMob || !isMob && cTypePk != 4 && damMP != -100)
 		{
 			if (HPShow <= 0)
 			{
@@ -7454,7 +7915,7 @@ public class Char : IMapObject
 		cHP = cHPFull;
 		cMP = cMPFull;
 		statusMe = 1;
-		cp1 = (cp2 = (cp3 = 0));
+		cp1 = cp2 = cp3 = 0;
 		ServerEffect.addServerEffect(109, this, 2);
 		GameScr.gI().center = null;
 		GameScr.isHaveSelectSkill = true;
@@ -7488,11 +7949,11 @@ public class Char : IMapObject
 
 	public bool isMeCanAttackOtherPlayer(Char cAtt)
 	{
-		if (cAtt == null || myCharz().myskill == null || myCharz().myskill.template.type == 2 || (myCharz().myskill.template.type == 4 && cAtt.statusMe != 14 && cAtt.statusMe != 5))
+		if (cAtt == null || myCharz().myskill == null || myCharz().myskill.template.type == 2 || myCharz().myskill.template.type == 4 && cAtt.statusMe != 14 && cAtt.statusMe != 5)
 		{
 			return false;
 		}
-		return ((cAtt.cTypePk == 3 && myCharz().cTypePk == 3) || myCharz().cTypePk == 5 || cAtt.cTypePk == 5 || (myCharz().cTypePk == 1 && cAtt.cTypePk == 1) || (myCharz().cTypePk == 4 && cAtt.cTypePk == 4) || (myCharz().testCharId >= 0 && myCharz().testCharId == cAtt.charID) || (myCharz().killCharId >= 0 && myCharz().killCharId == cAtt.charID && !isLang()) || (cAtt.killCharId >= 0 && cAtt.killCharId == myCharz().charID && !isLang()) || (myCharz().cFlag == 8 && cAtt.cFlag != 0) || (myCharz().cFlag != 0 && cAtt.cFlag == 8) || (myCharz().cFlag != cAtt.cFlag && myCharz().cFlag != 0 && cAtt.cFlag != 0)) && cAtt.statusMe != 14 && cAtt.statusMe != 5;
+		return (cAtt.cTypePk == 3 && myCharz().cTypePk == 3 || myCharz().cTypePk == 5 || cAtt.cTypePk == 5 || myCharz().cTypePk == 1 && cAtt.cTypePk == 1 || myCharz().cTypePk == 4 && cAtt.cTypePk == 4 || myCharz().testCharId >= 0 && myCharz().testCharId == cAtt.charID || myCharz().killCharId >= 0 && myCharz().killCharId == cAtt.charID && !isLang() || cAtt.killCharId >= 0 && cAtt.killCharId == myCharz().charID && !isLang() || myCharz().cFlag == 8 && cAtt.cFlag != 0 || myCharz().cFlag != 0 && cAtt.cFlag == 8 || myCharz().cFlag != cAtt.cFlag && myCharz().cFlag != 0 && cAtt.cFlag != 0) && cAtt.statusMe != 14 && cAtt.statusMe != 5;
 	}
 
 	public void clearTask()
@@ -7506,26 +7967,6 @@ public class Char : IMapObject
 			}
 		}
 		Npc.clearEffTask();
-	}
-
-	public int getX()
-	{
-		return cx;
-	}
-
-	public int getY()
-	{
-		return cy;
-	}
-
-	public int getH()
-	{
-		return 32;
-	}
-
-	public int getW()
-	{
-		return 24;
 	}
 
 	public void focusManualTo(object objectz)
@@ -7562,22 +8003,13 @@ public class Char : IMapObject
 		isManualFocus = true;
 	}
 
-	public void stopMoving()
-	{
-	}
-
 	public void cancelAttack()
 	{
 	}
 
-	public bool isInvisible()
-	{
-		return false;
-	}
-
 	public bool focusToAttack()
 	{
-		return mobFocus != null || (charFocus != null && isMeCanAttackOtherPlayer(charFocus));
+		return mobFocus != null || charFocus != null && isMeCanAttackOtherPlayer(charFocus);
 	}
 
 	public void addDustEff(int type)
@@ -7636,12 +8068,12 @@ public class Char : IMapObject
 		{
 			if (cFlag != 0 && cFlag != -1)
 			{
-				SmallImage.drawSmallImage(g, flagImage, cx - 10, cy - ch - ((!me) ? 30 : 30) + ((GameCanvas.gameTick % 20 > 10) ? (GameCanvas.gameTick % 4 / 2) : 0), 2, 0);
+				SmallImage.drawSmallImage(g, flagImage, cx - 10, cy - ch - (!me ? 30 : 30) + (GameCanvas.gameTick % 20 > 10 ? GameCanvas.gameTick % 4 / 2 : 0), 2, 0);
 			}
 		}
 		else if (cFlag != 0 && cFlag != -1)
 		{
-			SmallImage.drawSmallImage(g, flagImage, cx, cy - ch - ((!me) ? 30 : 30) + ((GameCanvas.gameTick % 20 > 10) ? (GameCanvas.gameTick % 4 / 2) : 0), 0, 0);
+			SmallImage.drawSmallImage(g, flagImage, cx, cy - ch - (!me ? 30 : 30) + (GameCanvas.gameTick % 20 > 10 ? GameCanvas.gameTick % 4 / 2 : 0), 0, 0);
 		}
 	}
 
@@ -7859,7 +8291,7 @@ public class Char : IMapObject
 				bool flag = true;
 				if (effect.isStand == 0)
 				{
-					flag = ((statusMe == 1 || statusMe == 6) ? true : false);
+					flag = statusMe == 1 || statusMe == 6 ? true : false;
 				}
 				if (flag)
 				{
@@ -7883,7 +8315,7 @@ public class Char : IMapObject
 				bool flag = true;
 				if (effect.isStand == 0)
 				{
-					flag = ((statusMe == 1 || statusMe == 6) ? true : false);
+					flag = statusMe == 1 || statusMe == 6 ? true : false;
 				}
 				if (flag)
 				{
@@ -7934,7 +8366,7 @@ public class Char : IMapObject
 
 	public void paintRedEye(mGraphics g, int xx, int yy, int trans, int anchor)
 	{
-		if (head != 934 || (statusMe != 1 && statusMe != 6))
+		if (head != 934 || statusMe != 1 && statusMe != 6)
 		{
 			return;
 		}
@@ -8007,7 +8439,7 @@ public class Char : IMapObject
 			FrameImage fraImage = mSystem.getFraImage(nameImg);
 			if (fraImage != null)
 			{
-				fraImage.drawFrame(GameCanvas.gameTick / 4 % fraImage.nFrame, cx, cy, (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+				fraImage.drawFrame(GameCanvas.gameTick / 4 % fraImage.nFrame, cx, cy, cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 			}
 		}
 	}
@@ -8018,7 +8450,7 @@ public class Char : IMapObject
 		{
 			return;
 		}
-		if ((me && !isPaintAura) || idAuraEff <= -1)
+		if (me && !isPaintAura || idAuraEff <= -1)
 		{
 			return;
 		}
@@ -8051,7 +8483,7 @@ public class Char : IMapObject
 				FrameImage fraImage = mSystem.getFraImage(nameImg);
 				if (fraImage != null)
 				{
-					fraImage.drawFrame(GameCanvas.gameTick / 4 % fraImage.nFrame, cx, cy + 2, (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+					fraImage.drawFrame(GameCanvas.gameTick / 4 % fraImage.nFrame, cx, cy + 2, cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 				}
 			}
 		}
@@ -8073,7 +8505,7 @@ public class Char : IMapObject
 		{
 			if (fraEff != null)
 			{
-				fraEff.drawFrame(GameCanvas.gameTick / 4 % fraEff.nFrame, cx, cy + 3, (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+				fraEff.drawFrame(GameCanvas.gameTick / 4 % fraEff.nFrame, cx, cy + 3, cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 			}
 			else
 			{
@@ -8092,7 +8524,7 @@ public class Char : IMapObject
 		{
 			if (fraEffSub != null)
 			{
-				fraEffSub.drawFrame(GameCanvas.gameTick / 4 % fraEffSub.nFrame, cx, cy + 8, (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+				fraEffSub.drawFrame(GameCanvas.gameTick / 4 % fraEffSub.nFrame, cx, cy + 8, cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 			}
 			else
 			{
@@ -8113,7 +8545,7 @@ public class Char : IMapObject
 			{
 				if (fraHat_behind_2 != null)
 				{
-					fraHat_behind_2.drawFrame(GameCanvas.gameTick / 4 % fraHat_behind_2.nFrame, cx + hatInfo[cf][0] * ((cdir == 1) ? 1 : (-1)), yh + hatInfo[cf][1], (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+					fraHat_behind_2.drawFrame(GameCanvas.gameTick / 4 % fraHat_behind_2.nFrame, cx + hatInfo[cf][0] * (cdir == 1 ? 1 : -1), yh + hatInfo[cf][1], cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 				}
 				else
 				{
@@ -8122,7 +8554,7 @@ public class Char : IMapObject
 			}
 			else if (fraHat_behind != null)
 			{
-				fraHat_behind.drawFrame(GameCanvas.gameTick / 4 % fraHat_behind.nFrame, cx + hatInfo[cf][0] * ((cdir == 1) ? 1 : (-1)), yh + hatInfo[cf][1], (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+				fraHat_behind.drawFrame(GameCanvas.gameTick / 4 % fraHat_behind.nFrame, cx + hatInfo[cf][0] * (cdir == 1 ? 1 : -1), yh + hatInfo[cf][1], cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 			}
 			else
 			{
@@ -8146,7 +8578,7 @@ public class Char : IMapObject
 			{
 				if (fraHat_font_2 != null)
 				{
-					fraHat_font_2.drawFrame(GameCanvas.gameTick / 4 % fraHat_font_2.nFrame, cx + hatInfo[cf][0] * ((cdir == 1) ? 1 : (-1)), yh + hatInfo[cf][1], (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+					fraHat_font_2.drawFrame(GameCanvas.gameTick / 4 % fraHat_font_2.nFrame, cx + hatInfo[cf][0] * (cdir == 1 ? 1 : -1), yh + hatInfo[cf][1], cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 				}
 				else
 				{
@@ -8155,7 +8587,7 @@ public class Char : IMapObject
 			}
 			else if (fraHat_font != null)
 			{
-				fraHat_font.drawFrame(GameCanvas.gameTick / 4 % fraHat_font.nFrame, cx + hatInfo[cf][0] * ((cdir == 1) ? 1 : (-1)), yh + hatInfo[cf][1], (cdir != 1) ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
+				fraHat_font.drawFrame(GameCanvas.gameTick / 4 % fraHat_font.nFrame, cx + hatInfo[cf][0] * (cdir == 1 ? 1 : -1), yh + hatInfo[cf][1], cdir != 1 ? 2 : 0, mGraphics.BOTTOM | mGraphics.HCENTER, g);
 			}
 			else
 			{
@@ -8249,60 +8681,120 @@ public class Char : IMapObject
 		{
 			if (!this.isFly)
 			{
-				fr_start = new byte[7] { 20, 20, 20, 20, 20, 20, 19 };
-				fr_atk = new byte[1] { 20 };
+				fr_start = new byte[7]
+				{
+					20, 20, 20, 20, 20, 20, 19
+				};
+				fr_atk = new byte[1]
+				{
+					20
+				};
 				fr_end = new byte[1];
 			}
 			else
 			{
-				fr_start = new byte[7] { 31, 31, 31, 31, 31, 31, 30 };
-				fr_atk = new byte[1] { 31 };
-				fr_end = new byte[1] { 12 };
+				fr_start = new byte[7]
+				{
+					31, 31, 31, 31, 31, 31, 30
+				};
+				fr_atk = new byte[1]
+				{
+					31
+				};
+				fr_end = new byte[1]
+				{
+					12
+				};
 			}
 		}
 		if (this.typeFrame == 2)
 		{
 			if (!this.isFly)
 			{
-				fr_start = new byte[1] { 20 };
-				fr_atk = new byte[6] { 13, 13, 13, 14, 14, 14 };
+				fr_start = new byte[1]
+				{
+					20
+				};
+				fr_atk = new byte[6]
+				{
+					13, 13, 13, 14, 14, 14
+				};
 				fr_end = new byte[1];
 			}
 			else
 			{
-				fr_start = new byte[1] { 31 };
-				fr_atk = new byte[6] { 26, 26, 26, 27, 27, 27 };
-				fr_end = new byte[1] { 12 };
+				fr_start = new byte[1]
+				{
+					31
+				};
+				fr_atk = new byte[6]
+				{
+					26, 26, 26, 27, 27, 27
+				};
+				fr_end = new byte[1]
+				{
+					12
+				};
 			}
 		}
 		if (this.typeFrame == 4)
 		{
 			if (!this.isFly)
 			{
-				fr_start = new byte[6] { 17, 17, 17, 18, 18, 18 };
-				fr_atk = new byte[1] { 18 };
+				fr_start = new byte[6]
+				{
+					17, 17, 17, 18, 18, 18
+				};
+				fr_atk = new byte[1]
+				{
+					18
+				};
 				fr_end = new byte[1];
 			}
 			else
 			{
-				fr_start = new byte[7] { 7, 7, 7, 12, 12, 12, 12 };
-				fr_atk = new byte[1] { 12 };
-				fr_end = new byte[1] { 12 };
+				fr_start = new byte[7]
+				{
+					7, 7, 7, 12, 12, 12, 12
+				};
+				fr_atk = new byte[1]
+				{
+					12
+				};
+				fr_end = new byte[1]
+				{
+					12
+				};
 			}
 		}
 		if (this.typeFrame == 3)
 		{
 			if (!this.isFly)
 			{
-				fr_start = new byte[9] { 24, 24, 24, 17, 17, 17, 18, 18, 18 };
-				fr_atk = new byte[1] { 20 };
+				fr_start = new byte[9]
+				{
+					24, 24, 24, 17, 17, 17, 18, 18, 18
+				};
+				fr_atk = new byte[1]
+				{
+					20
+				};
 				fr_end = new byte[1];
 			}
 			else
 			{
-				fr_start = new byte[10] { 23, 23, 23, 7, 7, 7, 12, 12, 12, 12 };
-				fr_atk = new byte[1] { 31 };
-				fr_end = new byte[1] { 12 };
+				fr_start = new byte[10]
+				{
+					23, 23, 23, 7, 7, 7, 12, 12, 12, 12
+				};
+				fr_atk = new byte[1]
+				{
+					31
+				};
+				fr_end = new byte[1]
+				{
+					12
+				};
 			}
 		}
 	}
@@ -8370,7 +8862,7 @@ public class Char : IMapObject
 			{
 				GameScr.shock_scr = 5;
 			}
-			if (typeFrame == 1 && count_NEW < 10 && !TileMap.tileTypeAt(cx - (chw + 1) * cdir, cy, (cdir != 1) ? 4 : 8))
+			if (typeFrame == 1 && count_NEW < 10 && !TileMap.tileTypeAt(cx - (chw + 1) * cdir, cy, cdir != 1 ? 4 : 8))
 			{
 				cx -= cdir;
 			}
@@ -8394,7 +8886,7 @@ public class Char : IMapObject
 			}
 			if (isFly)
 			{
-				cvx = (cvy = 0);
+				cvx = cvy = 0;
 				statusMe = 4;
 			}
 			isPaintNewSkill = false;
