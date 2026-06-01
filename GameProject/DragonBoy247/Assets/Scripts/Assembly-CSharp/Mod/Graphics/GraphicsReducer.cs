@@ -380,10 +380,12 @@ namespace Mod.Graphics
 			return true;
 		}
 
-		internal static bool OnCharPaint()
+		internal static bool OnCharPaint(Char _this, mGraphics g)
 		{
 			if (Level > ReduceGraphicsLevel.Level2)
+			{
 				return true;
+			}
 			return false;
 		}
 

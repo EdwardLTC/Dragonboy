@@ -5570,7 +5570,7 @@ public class Char : IMapObject
 
 	public virtual void paint(mGraphics g)
 	{
-		if (GraphicsReducer.OnCharPaint())
+		if (GraphicsReducer.OnCharPaint(this, g))
 		{
 			return;
 		}
