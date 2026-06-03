@@ -1940,62 +1940,7 @@ public class Char : IMapObject
 	{
 		myChar = null;
 	}
-
-	public void bagSort()
-	{
-		try
-		{
-			MyVector myVector = new MyVector();
-			for (int i = 0; i < arrItemBag.Length; i++)
-			{
-				Item item = arrItemBag[i];
-				if (item != null && item.template.isUpToUp && !item.isExpires)
-				{
-					myVector.addElement(item);
-				}
-			}
-			for (int j = 0; j < myVector.size(); j++)
-			{
-				Item item2 = (Item)myVector.elementAt(j);
-				if (item2 == null)
-				{
-					continue;
-				}
-				for (int k = j + 1; k < myVector.size(); k++)
-				{
-					Item item3 = (Item)myVector.elementAt(k);
-					if (item3 != null && item2.template.Equals(item3.template) && item2.isLock == item3.isLock)
-					{
-						item2.quantity += item3.quantity;
-						arrItemBag[item3.indexUI] = null;
-						myVector.setElementAt(null, k);
-					}
-				}
-			}
-			for (int l = 0; l < arrItemBag.Length; l++)
-			{
-				if (arrItemBag[l] == null)
-				{
-					continue;
-				}
-				for (int m = 0; m <= l; m++)
-				{
-					if (arrItemBag[m] == null)
-					{
-						arrItemBag[m] = arrItemBag[l];
-						arrItemBag[m].indexUI = m;
-						arrItemBag[l] = null;
-						break;
-					}
-				}
-			}
-		}
-		catch (Exception)
-		{
-			Cout.println("Char.bagSort()");
-		}
-	}
-
+	
 	public void boxSort()
 	{
 		try
@@ -2048,43 +1993,6 @@ public class Char : IMapObject
 		catch (Exception)
 		{
 			Cout.println("Char.boxSort()");
-		}
-	}
-
-	public void useItem(int indexUI)
-	{
-		Item item = arrItemBag[indexUI];
-		if (!item.isTypeBody())
-		{
-			return;
-		}
-		item.isLock = true;
-		item.typeUI = 5;
-		Item item2 = arrItemBody[item.template.type];
-		arrItemBag[indexUI] = null;
-		if (item2 != null)
-		{
-			item2.typeUI = 3;
-			arrItemBody[item.template.type] = null;
-			item2.indexUI = indexUI;
-			arrItemBag[indexUI] = item2;
-		}
-		item.indexUI = item.template.type;
-		arrItemBody[item.indexUI] = item;
-		for (int i = 0; i < arrItemBody.Length; i++)
-		{
-			Item item3 = arrItemBody[i];
-			if (item3 != null)
-			{
-				if (item3.template.type == 0)
-				{
-					body = item3.template.part;
-				}
-				else if (item3.template.type == 1)
-				{
-					leg = item3.template.part;
-				}
-			}
 		}
 	}
 
@@ -2226,10 +2134,6 @@ public class Char : IMapObject
 				SoundMn.gI().charPunch(false, !me ? 0.05f : 0.1f);
 			}
 		}
-	}
-
-	public void updateChargeSkill()
-	{
 	}
 
 	public virtual void update()
@@ -3268,7 +3172,6 @@ public class Char : IMapObject
 					updateSkillStand();
 					break;
 				case 13:
-					updateSkillFall();
 					break;
 				case 14:
 					cp1++;
@@ -3541,6 +3444,7 @@ public class Char : IMapObject
 			}
 			catch (Exception)
 			{
+				//Ignore
 			}
 			if (obj != null && !obj.Equals(this) && (obj.cy == cy && Res.abs(obj.cx - cx) < 35 || cy - obj.cy < 32 && cy - obj.cy > 0 && Res.abs(obj.cx - cx) < 24))
 			{
@@ -3556,6 +3460,7 @@ public class Char : IMapObject
 			}
 			catch (Exception)
 			{
+				// Ignore
 			}
 			if (npc != null && npc.cy == cy && Res.abs(npc.cx - cx) < 24)
 			{
@@ -3867,10 +3772,6 @@ public class Char : IMapObject
 		cf = 23;
 	}
 
-	public void updateSkillFall()
-	{
-	}
-
 	public void updateSkillStand()
 	{
 		ty = 0;
@@ -4071,60 +3972,6 @@ public class Char : IMapObject
 			return 9;
 		}
 		return 10;
-	}
-
-	public int returnAct(int xFirst, int yFirst, int xEnd, int yEnd)
-	{
-		int num = xEnd - xFirst;
-		int num2 = yEnd - yFirst;
-		if (num == 0 && num2 == 0)
-		{
-			return 1;
-		}
-		if (num2 == 0 && yFirst % 24 == 0 && TileMap.tileTypeAt(xFirst, yFirst, 2))
-		{
-			return 2;
-		}
-		if (num2 > 0 && (yFirst % 24 != 0 || !TileMap.tileTypeAt(xFirst, yFirst, 2)))
-		{
-			return 4;
-		}
-		cvy = -10;
-		cp1 = 0;
-		cdir = num > 0 ? 1 : -1;
-		if (num <= 5)
-		{
-			cvx = 0;
-		}
-		else if (num <= 10)
-		{
-			cvx = 3;
-		}
-		else
-		{
-			cvx = 5;
-		}
-		return 9;
-	}
-
-	public void setAutoJump()
-	{
-		int num = ((MovePoint)vMovePoints.firstElement()).xEnd - cx;
-		cvyJump = -10;
-		cp1 = 0;
-		cdir = num > 0 ? 1 : -1;
-		if (num <= 6)
-		{
-			cvx = 0;
-		}
-		else if (num <= 20)
-		{
-			cvx = 3;
-		}
-		else
-		{
-			cvx = 5;
-		}
 	}
 
 	public void updateCharStand()
@@ -4533,15 +4380,6 @@ public class Char : IMapObject
 		{
 			stop();
 		}
-	}
-
-	public bool checkInRangeJump(int x1, int xw1, int xmob, int y1, int yh1, int ymob)
-	{
-		if (xmob > xw1 || xmob < x1 || ymob > y1 || ymob < yh1)
-		{
-			return false;
-		}
-		return true;
 	}
 
 	public void setCharFallFromJump()
@@ -6384,10 +6222,6 @@ public class Char : IMapObject
 		}
 	}
 
-	public void paintArrowAttack(mGraphics g)
-	{
-	}
-
 	public void paintHp(mGraphics g, int x, int y)
 	{
 		int num = (int)((int)cHP * 100 / cHPFull) / 10 - 1;
@@ -6438,152 +6272,140 @@ public class Char : IMapObject
 		}
 	}
 
-	public int getClassColor()
-	{
-		int result = 9145227;
-		if (nClass.classId == 1 || nClass.classId == 2)
-		{
-			result = 16711680;
-		}
-		else if (nClass.classId == 3 || nClass.classId == 4)
-		{
-			result = 33023;
-		}
-		else if (nClass.classId == 5 || nClass.classId == 6)
-		{
-			result = 7443811;
-		}
-		return result;
-	}
-
-	public void paintNameInSameParty(mGraphics g)
-	{
-		if (cTypePk != 3 && cTypePk != 5 && isPaint())
-		{
-			if (myCharz().charFocus == null || !myCharz().charFocus.Equals(this))
-			{
-				mFont.tahoma_7_yellow.drawString(g, cName, cx, cy - ch - mFont.tahoma_7_green.getHeight() - 5, mFont.CENTER, mFont.tahoma_7_grey);
-			}
-			else if (myCharz().charFocus != null && myCharz().charFocus.Equals(this))
-			{
-				mFont.tahoma_7_yellow.drawString(g, cName, cx, cy - ch - mFont.tahoma_7_green.getHeight() - 10, mFont.CENTER, mFont.tahoma_7_grey);
-			}
-		}
-	}
-
 	public void paintCharName_HP_MP_Overhead(mGraphics g)
 	{
 		Part part = GameScr.parts[getFHead(head)];
-		int num = CharInfo[cf][0][2] - part.pi[CharInfo[cf][0][0]].dy + 5;
+		int offsetY = CharInfo[cf][0][2] - part.pi[CharInfo[cf][0][0]].dy + 5;
+
 		if (isInvisiblez && !me || !me && TileMap.mapID == 113 && cy >= 360)
 		{
 			return;
 		}
+
+		bool isFocused = myCharz().charFocus == this;
+		bool sameClan = myChar.clan != null && clanID == myChar.clan.ID;
+		bool isRedPK = cTypePk == 3 || cTypePk == 5;
+		bool isYellowPK = cTypePk == 4;
+
+		string displayName = cName;
+		bool pet = displayName.StartsWith("$");
+		bool miniPet = displayName.StartsWith("#");
+
+		if (pet || miniPet)
+		{
+			displayName = displayName.Substring(1);
+		}
+
 		if (me)
 		{
-			num += 5;
-			paintHp(g, cx, cy - num + 3);
-			if (fraDanhHieu != null)
-			{
-				int x = cx - fraDanhHieu.frameWidth / 2;
-				int y = cy - num + 3 - mFont.tahoma_7.getHeight() - (fraDanhHieu.frameHeight + 5);
-				if (GameCanvas.gameTick % 5 == 0)
-				{
-					danhHieuFramme++;
-				}
-				if (danhHieuFramme >= fraDanhHieu.nFrame)
-				{
-					danhHieuFramme = 0;
-				}
-				fraDanhHieu.drawFrame(danhHieuFramme, x, y, 0, mGraphics.TOP | mGraphics.LEFT, g);
-			}
+			offsetY += 5;
+			paintHp(g, cx, cy - offsetY + 3);
+			DrawDanhHieu(g, offsetY);
 			return;
 		}
-		bool flag = myChar.clan != null && clanID == myChar.clan.ID;
-		bool flag2 = cTypePk == 3 || cTypePk == 5;
-		bool flag3 = cTypePk == 4;
-		if (cName.StartsWith("$"))
+
+		if (isFocused)
 		{
-			cName = cName.Substring(1);
-			isPet = true;
+			offsetY += 5;
+			paintHp(g, cx, cy - offsetY + 3);
+			DrawDanhHieu(g, offsetY);
 		}
-		if (cName.StartsWith("#"))
+
+		offsetY += mFont.tahoma_7_white.getHeight();
+
+		mFont nameFont = GetNameFont(pet, miniPet, sameClan, isRedPK, isYellowPK);
+
+		if ((paintName || isRedPK || isYellowPK) && !sameClan)
 		{
-			cName = cName.Substring(1);
-			isMiniPet = true;
-		}
-		if (myCharz().charFocus != null && myCharz().charFocus.Equals(this))
-		{
-			num += 5;
-			paintHp(g, cx, cy - num + 3);
-			if (fraDanhHieu != null)
+			if (mSystem.clientType == 1)
 			{
-				int x2 = cx - fraDanhHieu.frameWidth / 2;
-				int y2 = cy - num + 3 - mFont.tahoma_7.getHeight() - (fraDanhHieu.frameHeight + 5);
-				if (GameCanvas.gameTick % 5 == 0)
-				{
-					danhHieuFramme++;
-				}
-				if (danhHieuFramme >= fraDanhHieu.nFrame)
-				{
-					danhHieuFramme = 0;
-				}
-				fraDanhHieu.drawFrame(danhHieuFramme, x2, y2, 0, mGraphics.TOP | mGraphics.LEFT, g);
+				nameFont.drawString(g, displayName, cx, cy - offsetY, mFont.CENTER, mFont.tahoma_7_greySmall);
+			}
+			else
+			{
+				nameFont.drawString(g, displayName, cx, cy - offsetY, mFont.CENTER);
+			}
+
+			offsetY += mFont.tahoma_7.getHeight();
+		}
+
+		if (sameClan)
+		{
+			if (isFocused)
+			{
+				nameFont.drawString(g, displayName, cx, cy - offsetY, mFont.CENTER, mFont.tahoma_7_greySmall);
+			}
+			else if (charFocus == null)
+			{
+				nameFont.drawString(g, displayName, cx - 10, cy - offsetY + 3, mFont.LEFT, mFont.tahoma_7_grey);
+				paintHp(g, cx - 16, cy - offsetY + 10);
 			}
 		}
-		num += mFont.tahoma_7_white.getHeight();
-		mFont mFont2 = mFont.tahoma_7_whiteSmall;
-		if (isPet || isMiniPet)
+	}
+
+	void DrawDanhHieu(mGraphics g, int offsetY)
+	{
+		if (GraphicsReducer.OnCharDrawDanhHieu(this, g))
 		{
-			mFont2 = mFont.tahoma_7_blue1Small;
+			return;
 		}
-		else if (flag2)
+		
+		if (fraDanhHieu == null)
 		{
-			mFont2 = mFont.nameFontRed;
+			return;
 		}
-		else if (flag3)
+
+		int x = cx - fraDanhHieu.frameWidth / 2;
+		int y = cy - offsetY + 3 - mFont.tahoma_7.getHeight() - (fraDanhHieu.frameHeight + 5);
+
+		if (GameCanvas.gameTick % 5 == 0)
 		{
-			mFont2 = mFont.nameFontYellow;
+			danhHieuFramme++;
+
+			if (danhHieuFramme >= fraDanhHieu.nFrame)
+			{
+				danhHieuFramme = 0;
+			}
 		}
-		else if (flag)
+
+		fraDanhHieu.drawFrame(danhHieuFramme, x, y, 0, mGraphics.TOP | mGraphics.LEFT, g);
+	}
+	
+	mFont GetNameFont(bool pet, bool miniPet, bool sameClan, bool redPK, bool yellowPK)
+	{
+		if (pet || miniPet)
 		{
-			mFont2 = mFont.nameFontGreen;
+			return mFont.tahoma_7_blue1Small;
 		}
+
+		if (redPK)
+		{
+			return mFont.nameFontRed;
+		}
+
+		if (yellowPK)
+		{
+			return mFont.nameFontYellow;
+		}
+
+		if (sameClan)
+		{
+			return mFont.nameFontGreen;
+		}
+
 		if (TileMap.mapID == 170)
 		{
 			if (flagImage == 2325)
 			{
-				mFont2 = mFont.tahoma_7_blue;
+				return mFont.tahoma_7_blue;
 			}
-			else if (flagImage == 2323)
+			if (flagImage == 2323)
 			{
-				mFont2 = mFont.tahoma_7_red;
+				return mFont.tahoma_7_red;
 			}
 		}
-		if ((paintName || flag2 || flag3) && !flag)
-		{
-			if (mSystem.clientType == 1)
-			{
-				mFont2.drawString(g, cName, cx, cy - num, mFont.CENTER, mFont.tahoma_7_greySmall);
-			}
-			else
-			{
-				mFont2.drawString(g, cName, cx, cy - num, mFont.CENTER);
-			}
-			num += mFont.tahoma_7.getHeight();
-		}
-		if (flag)
-		{
-			if (myCharz().charFocus != null && myCharz().charFocus.Equals(this))
-			{
-				mFont2.drawString(g, cName, cx, cy - num, mFont.CENTER, mFont.tahoma_7_greySmall);
-			}
-			else if (charFocus == null)
-			{
-				mFont2.drawString(g, cName, cx - 10, cy - num + 3, mFont.LEFT, mFont.tahoma_7_grey);
-				paintHp(g, cx - 16, cy - num + 10);
-			}
-		}
+
+		return mFont.tahoma_7_whiteSmall;
 	}
 
 	public void paintShadow(mGraphics g)
@@ -7595,7 +7417,7 @@ public class Char : IMapObject
 		for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 		{
 			Char obj = (Char)GameScr.vCharInMap.elementAt(i);
-			if (obj.charID < 0 && !obj.IsPet())
+			if (string.IsNullOrEmpty(cName) && cTypePk != 5)
 			{
 				continue;
 			}

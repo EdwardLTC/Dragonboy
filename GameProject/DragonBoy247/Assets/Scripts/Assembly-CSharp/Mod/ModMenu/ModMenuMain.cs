@@ -17,12 +17,12 @@ namespace Mod.ModMenu
 	internal static class ModMenuMain
 	{
 
-		internal static ModMenuItemBoolean[] modMenuItemBools;
-		internal static ModMenuItemValues[] modMenuItemValues;
-		internal static ModMenuItemFunction[] modMenuItemFunctions;
-		internal static ModMenuItemFunction[] modMenuItemDeveloperFunctions;
+		static ModMenuItemBoolean[] modMenuItemBools;
+		static ModMenuItemValues[] modMenuItemValues;
+		static ModMenuItemFunction[] modMenuItemFunctions;
+		static ModMenuItemFunction[] modMenuItemDeveloperFunctions;
 
-		internal static Texture2D imgMenu;
+		static Texture2D imgMenu;
 
 		static readonly ModMenuMainActionListener actionListener = new ModMenuMainActionListener();
 		static sbyte lastLanguage = -1;
@@ -148,6 +148,14 @@ namespace Mod.ModMenu
 					Description = "Boss La DBRR",
 					GetValueFunc = () => AutoKillBoss.gI.IsActing,
 					SetValueAction = AutoKillBoss.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoKillBossNappa_Toggle",
+					Title = "Kill all Boss Nappa",
+					Description = "Boss Nappa La DBRR",
+					GetValueFunc = () => AutoKillBossInNappa.gI.IsActing,
+					SetValueAction = AutoKillBossInNappa.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{

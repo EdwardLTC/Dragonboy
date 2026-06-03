@@ -9,28 +9,14 @@ namespace Mod.Auto
 		Char currentTarget;
 		protected override float Interval => 0.2f;
 
-		// bool IsEnemyCandidate(Char target)
-		// {
-		// 	return target != null
-		// 	       && !string.IsNullOrEmpty(target.cName)
-		// 	       && !target.isPet
-		// 	       && !target.isMiniPet
-		// 	       && !target.cName.StartsWith("#")
-		// 	       && !target.cName.StartsWith("$")
-		// 	       && target.cName != "Trọng tài"
-		// 	       && target.cFlag != 0
-		// 	       && !char.IsUpper(char.Parse(target.cName.Substring(0, 1)))
-		// 	       && target.cHP > 0;
-		// }
-
 		bool IsTargetValid(Char target)
 		{
 			return !target.meDead
 			       && target.cTypePk == 5
-			       && target.cx >= -100
-			       && target.cy >= -100
-			       && target.cx <= TileMap.pxw + 100
-			       && target.cy <= TileMap.pxh + 100;
+			       && target.cx >= 0
+			       && target.cy >= 0
+			       && target.cx <= TileMap.pxw
+			       && target.cy <= TileMap.pxh;
 		}
 
 		void ClearFocus()
@@ -58,7 +44,7 @@ namespace Mod.Auto
 
 			if (!inRange)
 			{
-				Utils.TeleportMyChar(target.cx, target.cy);
+				Utils.TeleportMyChar(target.cx - 30, Utils.GetYGround(target.cx));
 				return;
 			}
 

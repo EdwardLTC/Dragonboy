@@ -2724,7 +2724,9 @@ public class GameScr : mScreen, IChatable
 			{
 				GameEvents.OnGameScrPressHotkeys();
 				if (!GameCanvas.keyPressed[1] && !GameCanvas.keyPressed[2] && !GameCanvas.keyPressed[3] && !GameCanvas.keyPressed[4] && !GameCanvas.keyPressed[5] && !GameCanvas.keyPressed[6] && !GameCanvas.keyPressed[7] && !GameCanvas.keyPressed[8] && !GameCanvas.keyPressed[9] && !GameCanvas.keyPressed[0] && GameCanvas.keyAsciiPress != 114 && GameCanvas.keyAsciiPress != 47)
+				{
 					GameEvents.OnGameScrPressHotkeysUnassigned();
+				}
 			}
 		}
 

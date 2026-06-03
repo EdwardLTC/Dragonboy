@@ -25,7 +25,7 @@ namespace Mod.Xmap
 		int stuckCheckCount;
 		List<MapNext> way;
 
-		protected override float Interval => 0.5f;
+		protected override float Interval => 0.4f;
 
 		protected override IEnumerator OnUpdate()
 		{

@@ -596,7 +596,9 @@ public class Panel : IActionListener, IChatable
 		};
 		lastTabIndex = new int[tabName.Length];
 		for (int i = 0; i < lastTabIndex.Length; i++)
+		{
 			lastTabIndex[i] = -1;
+		}
 	}
 
 	public void perform(int idAction, object p)
@@ -8175,7 +8177,9 @@ public class Panel : IActionListener, IChatable
 			{
 				Item item4 = (Item)vItemCombine.elementAt(l);
 				if (item4 != null)
+				{
 					iconID1 = item4.template.iconID;
+				}
 			}
 		}
 		else if (typeCombine == 4)

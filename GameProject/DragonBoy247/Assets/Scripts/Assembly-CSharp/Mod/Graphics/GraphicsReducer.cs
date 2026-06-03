@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Mod.Graphics
 {
-	internal class GraphicsReducer
+	internal static class GraphicsReducer
 	{
 		static bool lastIsFill;
 		static readonly Image mapTile = new Image();
@@ -384,7 +384,7 @@ namespace Mod.Graphics
 
 		internal static bool OnCharPaint(Char _this, mGraphics g)
 		{
-			if (_this.charID < 0 && !_this.IsPet() && IsSimpleUI)
+			if (string.IsNullOrEmpty(_this.cName) && _this.cTypePk != 5 && IsSimpleUI)
 			{
 				return true;
 			}
@@ -397,11 +397,20 @@ namespace Mod.Graphics
 
 		internal static bool OnCharPaintShadow(Char _this, mGraphics g)
 		{
-			if (_this.charID < 0 && !_this.IsPet() && IsSimpleUI)
+			if (string.IsNullOrEmpty(_this.cName) && _this.cTypePk != 5 && IsSimpleUI)
 			{
 				return true;
 			}
 			if (Level > ReduceGraphicsLevel.Level1)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		internal static bool OnCharDrawDanhHieu(Char _this, mGraphics g)
+		{
+			if (Level > ReduceGraphicsLevel.Level1 || IsSimpleUI)
 			{
 				return true;
 			}
