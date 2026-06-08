@@ -2,19 +2,12 @@ using Mod.ModHelper.Menu;
 
 namespace Mod.PickMob
 {
-	public enum ActionOnFullBag
-	{
-		PutToBox,
-		Deposit
-	}
-
 	public class UpCSKB : IChatable
 	{
 		const string RMS_ACTION_ON_FULL_BAG = "upcskb_action_on_full_bag";
 		const string RMS_MONEY_TO_DEPOSIT = "upcskb_price_for_deposit";
 
-		public static ActionOnFullBag actionOnFullBag = ActionOnFullBag.Deposit;
-
+		public static ActionOnFullBag actionOnFullBag = ActionOnFullBag.Sell;
 		public static int moneyToDeposit = 40_000_000;
 
 		static UpCSKB _Instance;
@@ -53,10 +46,9 @@ namespace Mod.PickMob
 
 		internal static void ShowMenu()
 		{
-			string actionOnFullBagText = actionOnFullBag == ActionOnFullBag.Deposit ? "Kí gửi" : "Chuyển vào rương";
 			string cpDesc = "UP cskb by Edward\n";
 			MenuBuilder menuBuilder = new MenuBuilder().setChatPopup(cpDesc);
-			menuBuilder.addItem("Khi x99 cskb\n " + actionOnFullBagText, new MenuAction(() => SetActionOnFullBag(actionOnFullBag == ActionOnFullBag.Deposit ? ActionOnFullBag.PutToBox : ActionOnFullBag.Deposit)));
+			menuBuilder.addItem("Khi x99 cskb\n " + ActionOnFullBagText(actionOnFullBag), new MenuAction(() => SetActionOnFullBag(NextActionOnFullBag(actionOnFullBag))));
 			if (actionOnFullBag == ActionOnFullBag.Deposit)
 			{
 				menuBuilder.addItem("Số tiền kí gửi khi x99 cskb\n " + mSystem.numberTostring(moneyToDeposit), new MenuAction(OpenTFInputMoneyToDeposit));
@@ -81,6 +73,10 @@ namespace Mod.PickMob
 			case ActionOnFullBag.Deposit:
 				if (showInfo)
 					GameScr.info1.addInfo("[Up CSKB] Khi túi đầy sẽ tự động kí gửi", 0);
+				break;
+			case ActionOnFullBag.Sell:
+				if (showInfo)
+					GameScr.info1.addInfo("[Up CSKB] Khi túi đầy sẽ tự động bán vào cửa hàng", 0);
 				break;
 			}
 
@@ -113,7 +109,7 @@ namespace Mod.PickMob
 		static void LoadRMS()
 		{
 			int savedAction = ModStorage.ReadInt(RMS_ACTION_ON_FULL_BAG, (int)ActionOnFullBag.Deposit);
-			if (savedAction == (int)ActionOnFullBag.PutToBox || savedAction == (int)ActionOnFullBag.Deposit)
+			if (savedAction == (int)ActionOnFullBag.PutToBox || savedAction == (int)ActionOnFullBag.Deposit || savedAction == (int)ActionOnFullBag.Sell)
 			{
 				ApplyActionOnFullBag((ActionOnFullBag)savedAction, false, false);
 			}
@@ -131,6 +127,28 @@ namespace Mod.PickMob
 			{
 				ApplyMoneyToDeposit(savedAction, true, false);
 			}
+		}
+
+		static string ActionOnFullBagText(ActionOnFullBag action)
+		{
+			return action switch
+			{
+				ActionOnFullBag.PutToBox => "Chuyển vào rương",
+				ActionOnFullBag.Deposit => "Kí gửi",
+				ActionOnFullBag.Sell => "Bán vào cửa hàng",
+				_ => string.Empty
+			};
+		}
+
+		static ActionOnFullBag NextActionOnFullBag(ActionOnFullBag action)
+		{
+			return action switch
+			{
+				ActionOnFullBag.PutToBox => ActionOnFullBag.Deposit,
+				ActionOnFullBag.Deposit => ActionOnFullBag.Sell,
+				ActionOnFullBag.Sell => ActionOnFullBag.PutToBox,
+				_ => ActionOnFullBag.Deposit
+			};
 		}
 	}
 }

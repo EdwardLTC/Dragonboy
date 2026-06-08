@@ -140,7 +140,7 @@ namespace Mod.ListChar
 		{
 			int maxPlayers = GameScr.gI().maxPlayer[TileMap.zoneID];
 			int players = GameScr.gI().numPlayer[TileMap.zoneID];
-			return $"{TileMap.mapName} • {Strings.zone} {TileMap.mapID} [{players}/{maxPlayers}]";
+			return $"{TileMap.mapName} • {Strings.zone} {TileMap.zoneID} [{players}/{maxPlayers}]";
 		}
 
 		static Color GetRowColor(Char ch, bool isHovered)

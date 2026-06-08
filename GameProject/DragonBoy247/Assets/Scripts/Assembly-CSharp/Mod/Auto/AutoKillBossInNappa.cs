@@ -9,7 +9,7 @@ namespace Mod.Auto
 	public class AutoKillBossInNappa : CoroutineMainThreadAction<AutoKillBossInNappa>
 	{
 
-		const int MapTransitionDelayMs = 1200;
+		const int MapTransitionDelayMs = 3000;
 		const int ZoneAttackDelayMs = 1000;
 		static readonly int[] targetMapIds =
 		{
@@ -258,6 +258,18 @@ namespace Mod.Auto
 			{
 				MoveToNextZoneOrMap(now, zones.Length);
 			}
+		}
+
+		protected override void OnStart()
+		{
+			Pk9rPickMob.IsAutoPickItems = false;
+			base.OnStart();
+		}
+
+		protected override void OnStop()
+		{
+			Pk9rPickMob.IsAutoPickItems = true;
+			base.OnStop();
 		}
 	}
 }
