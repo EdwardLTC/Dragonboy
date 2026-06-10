@@ -163,7 +163,7 @@ namespace Mod.Xmap
 					{
 						waypoint = random.Next(27, 29) == 27 ? XmapUtils.findWaypoint(27) : XmapUtils.findWaypoint(29);
 					}
-					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds * 2);
 					yield return ChangeMap(waypoint);
 					retryCount++;
 				}
@@ -225,11 +225,33 @@ namespace Mod.Xmap
 		{
 			if (waypoint != null)
 			{
-				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
-				Utils.TeleportMyChar(waypoint.GetX(), waypoint.GetY());
-				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
-				Utils.requestChangeMap(waypoint);
-				yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+				if (waypoint == Utils.waypointMiddle)
+				{
+					Utils.TeleportMyChar(waypoint.GetX(), waypoint.GetY());
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+					Utils.requestChangeMap(waypoint);
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+					yield break;
+				}
+
+				Utils.TeleportMyChar(waypoint.GetXInsideMap(), waypoint.GetY());
+
+				if (Char.myCharz().cx == waypoint.GetXInsideMap() && Char.myCharz().cy == waypoint.GetY())
+				{
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds * 2);
+					ProcessWalkToGate(waypoint);
+					yield return new WaitForSecondsRealtime(ServiceCallDelaySeconds);
+				}
+			}
+		}
+
+		static void ProcessWalkToGate(Waypoint waypoint)
+		{
+			Char me = Char.myCharz();
+			if (me.currentMovePoint == null)
+			{
+				int offset = me.cx < waypoint.GetX() ? -15 : 15;
+				me.currentMovePoint = new MovePoint(waypoint.GetX() - offset, waypoint.GetY());
 			}
 		}
 	}

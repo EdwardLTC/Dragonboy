@@ -9,9 +9,11 @@ namespace Mod.Xmap
 	internal class XmapController : CoroutineMainThreadAction<XmapController>
 	{
 		const float MaxStuckSeconds = 5f;
+		const float MaxStuckInTransportScreenSeconds = 75f;
 		const float CapsuleProbeTimeoutSeconds = 5f;
-		const int MaxStuckChecks = 5;
 		float capsuleProbeDeadline;
+		float? firstTimeInTransportScreen;
+		bool forceNotUseCapsuleLinks;
 		int indexWay;
 		List<MapNext>[] initializeGraph;
 		int initializeStartMapId;
@@ -22,7 +24,6 @@ namespace Mod.Xmap
 		float lastProgressRealtime;
 		int lastProgressStepIndex;
 		int mapEnd;
-		int stuckCheckCount;
 		List<MapNext> way;
 
 		protected override float Interval => 0.4f;
@@ -44,20 +45,21 @@ namespace Mod.Xmap
 			else if (GameCanvas.currentScreen is TransportScr)
 			{
 				lastProgressRealtime = now;
+				if (firstTimeInTransportScreen == null)
+				{
+					firstTimeInTransportScreen = now;
+				}
+				else if (now - firstTimeInTransportScreen >= MaxStuckInTransportScreenSeconds)
+				{
+					Service.gI().transportNow();
+					firstTimeInTransportScreen = null;
+				}
 			}
 			else if (now - lastProgressRealtime >= MaxStuckSeconds)
 			{
 				GameScr.info1.addInfo("[xmap] Stopped: no map progress in 5s!", 0);
-				stuckCheckCount++;
 				finishXmap();
 				yield break;
-			}
-
-			if (stuckCheckCount >= MaxStuckChecks)
-			{
-				GameScr.info1.addInfo("[xmap] Fix screen: stuck for too long!", 0);
-				Pk9rXmap.FixBlackScreen();
-				MarkProgress();
 			}
 
 			if (way == null || way.Count == 0 || isNextMapFailed)
@@ -69,7 +71,6 @@ namespace Mod.Xmap
 
 			if (currentMapId == mapEnd && !Char.myCharz().IsCharDead())
 			{
-				stuckCheckCount = 0;
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				yield break;
@@ -114,6 +115,7 @@ namespace Mod.Xmap
 			isInitializing = true;
 			initializeStartMapId = TileMap.mapID;
 			capsuleProbeDeadline = 0f;
+			firstTimeInTransportScreen = null;
 
 			string mapName = TileMap.mapNames[mapEnd];
 			GameScr.info1.addInfo(Strings.goTo + ": " + mapName, 0);
@@ -130,6 +132,9 @@ namespace Mod.Xmap
 			isInitializing = false;
 			isWaitingForCapsuleLinks = false;
 			capsuleProbeDeadline = 0f;
+			forceNotUseCapsuleLinks = false;
+			firstTimeInTransportScreen = null;
+
 			MarkProgress();
 			base.OnStop();
 		}
@@ -138,7 +143,6 @@ namespace Mod.Xmap
 		{
 			if (initializeStartMapId == mapEnd)
 			{
-				stuckCheckCount = 0;
 				GameScr.info1.addInfo(Strings.xmapDestinationReached + '!', 0);
 				finishXmap();
 				isInitializing = false;
@@ -157,7 +161,7 @@ namespace Mod.Xmap
 					return false;
 				}
 
-				if (way.Count > 5 && (Pk9rXmap.CanUseCapsuleVip() || Pk9rXmap.CanUseCapsuleNormal()))
+				if (way.Count > 5 && (Pk9rXmap.CanUseCapsuleVip() || Pk9rXmap.CanUseCapsuleNormal()) && !forceNotUseCapsuleLinks)
 				{
 					isWaitingForCapsuleLinks = true;
 					capsuleProbeDeadline = now + CapsuleProbeTimeoutSeconds;
@@ -234,10 +238,9 @@ namespace Mod.Xmap
 			lastProgressRealtime = Time.realtimeSinceStartup;
 			lastProgressMapId = TileMap.mapID;
 			lastProgressStepIndex = indexWay;
-			stuckCheckCount = 0;
 		}
 
-		internal static void start(int mapId)
+		internal static void start(int mapId, bool forceNotUseCapsuleLinks = false)
 		{
 			if (gI == null)
 			{
@@ -249,6 +252,7 @@ namespace Mod.Xmap
 				finishXmap();
 			}
 			gI.mapEnd = mapId;
+			gI.forceNotUseCapsuleLinks = forceNotUseCapsuleLinks;
 			gI.Toggle(true);
 		}
 

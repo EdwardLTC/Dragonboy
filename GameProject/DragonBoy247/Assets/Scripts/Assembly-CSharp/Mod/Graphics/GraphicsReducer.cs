@@ -416,6 +416,13 @@ namespace Mod.Graphics
 			}
 			return false;
 		}
+		
+		internal static bool OnGameCanvasLoadBG()
+		{
+			if (Level > ReduceGraphicsLevel.Off || IsSimpleUI)
+				return true;
+			return false;
+		}
 
 		internal static bool OnCharUpdateSuperEff()
 		{

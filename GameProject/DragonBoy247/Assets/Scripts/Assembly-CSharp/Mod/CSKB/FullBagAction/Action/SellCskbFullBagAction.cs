@@ -10,7 +10,7 @@ namespace Mod.PickMob
 		{
 			if (!XmapController.gI.IsActing && TileMap.mapID != CskbConstants.BunmaHomeMapId)
 			{
-				XmapController.start(CskbConstants.BunmaHomeMapId);
+				XmapController.start(CskbConstants.BunmaHomeMapId, true);
 				yield return null;
 			}
 
