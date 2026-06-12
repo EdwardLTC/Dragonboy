@@ -1,70 +1,84 @@
-﻿using System.Linq;
+using System.Linq;
 using JetBrains.Annotations;
 using Mod.R;
 
 namespace Mod.Xmap
 {
-	internal static class XmapUtils
+	internal sealed class MapLookupService
 	{
-		internal static readonly short ID_ITEM_CAPSULE_VIP = 194;
-		internal static readonly short ID_ITEM_CAPSULE_NORMAL = 193;
+		internal const short IdItemCapsuleVip = 194;
+		internal const short IdItemCapsuleNormal = 193;
+		public const int IdMapHomeBase = 21;
+		public const int IdMapLangBase = 7;
+		internal const int IdMapTTVTBase = 24;
 
-		static readonly int ID_MAP_HOME_BASE = 21;
-		static readonly int ID_MAP_LANG_BASE = 7;
-		internal static readonly int ID_MAP_TTVT_BASE = 24;
-
-		internal static int getX(sbyte type)
+		internal int GetGateX(sbyte type)
 		{
 			for (int i = 0; i < TileMap.vGo.size(); i++)
 			{
 				Waypoint waypoint = (Waypoint)TileMap.vGo.elementAt(i);
 				if (waypoint.maxX < 60 && type == 0)
+				{
 					return 15;
+				}
+
 				if (waypoint.minX > TileMap.pxw - 60 && type == 2)
+				{
 					return TileMap.pxw - 15;
+				}
 			}
+
 			return 0;
 		}
 
-		internal static int getY(sbyte type)
+		internal int GetGateY(sbyte type)
 		{
 			for (int i = 0; i < TileMap.vGo.size(); i++)
 			{
 				Waypoint waypoint = (Waypoint)TileMap.vGo.elementAt(i);
 				if (waypoint.maxX < 60 && type == 0)
+				{
 					return waypoint.maxY;
+				}
+
 				if (waypoint.minX > TileMap.pxw - 60 && type == 2)
+				{
 					return waypoint.maxY;
+				}
 			}
+
 			return 0;
 		}
 
 		[CanBeNull]
-		internal static Waypoint findWaypoint(int idMap)
+		internal Waypoint FindWaypoint(int mapId)
 		{
 			for (int i = 0; i < TileMap.vGo.size(); i++)
 			{
 				Waypoint waypoint = (Waypoint)TileMap.vGo.elementAt(i);
 				string textPopup = Utils.getTextPopup(waypoint.popup);
-				if (textPopup.Equals(TileMap.mapNames[idMap]))
+				if (textPopup.Equals(TileMap.mapNames[mapId]))
 				{
 					return waypoint;
 				}
 			}
+
 			return null;
 		}
 
-		internal static int getMapIdFromName(string mapName)
+		internal int ResolveMapIdFromName(string mapName)
 		{
 			int offset = Char.myCharz().cgender;
 			if (mapName.Contains(LocalizedString.goHome))
 			{
-				return ID_MAP_HOME_BASE + offset;
+				return IdMapHomeBase + offset;
 			}
+
 			if (mapName.Contains(LocalizedString.spaceshipStation))
 			{
-				return ID_MAP_TTVT_BASE + offset;
+				return IdMapTTVTBase + offset;
 			}
+
 			for (int i = 0; i < TileMap.mapNames.Length; i++)
 			{
 				if (mapName.Contains(TileMap.mapNames[i]))
@@ -72,30 +86,31 @@ namespace Mod.Xmap
 					return i;
 				}
 			}
+
 			return -1;
 		}
 
-		internal static int getIdMapHome(int cgender)
+		internal int GetHomeMapId(int characterGender)
 		{
-			return ID_MAP_HOME_BASE + cgender;
+			return IdMapHomeBase + characterGender;
 		}
 
-		internal static int getIdMapLang(int cgender)
+		internal int GetVillageMapId(int characterGender)
 		{
-			return ID_MAP_LANG_BASE * cgender;
+			return IdMapLangBase * characterGender;
 		}
 
-		internal static bool hasItemCapsuleVip()
+		internal bool HasCapsuleVipInBag()
 		{
 			Item[] items = Char.myCharz().arrItemBag;
-
-			return items.FirstOrDefault(item => item != null && item.template.id == ID_ITEM_CAPSULE_VIP) != null;
+			return items.FirstOrDefault(item => item != null && item.template.id == IdItemCapsuleVip) != null;
 		}
 
-		internal static bool hasItemCapsuleNormal()
+		internal bool HasCapsuleNormalInBag()
 		{
 			Item[] items = Char.myCharz().arrItemBag;
-			return items.FirstOrDefault(item => item != null && item.template.id == ID_ITEM_CAPSULE_NORMAL && item.quantity > 10) != null;
+			return items.FirstOrDefault(item => item != null && item.template.id == IdItemCapsuleNormal && item.quantity > 10) != null;
 		}
 	}
+
 }

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace Mod.Xmap
 {
-	internal static class XmapAlgorithm
+	internal sealed class DijkstraPathFinder : IPathFinder
 	{
-		internal static List<MapNext> FindWayDijkstra(int start, int end, List<MapNext>[] graph)
+		public List<MapNext> FindWay(int start, int end, List<MapNext>[] graph)
 		{
 			if (graph == null || start < 0 || end < 0 || start >= graph.Length || end >= graph.Length)
 			{
@@ -41,12 +41,7 @@ namespace Mod.Xmap
 					}
 				}
 
-				if (cmap == -1)
-				{
-					break;
-				}
-
-				if (dist[cmap] == int.MaxValue)
+				if (cmap == -1 || dist[cmap] == int.MaxValue)
 				{
 					break;
 				}
@@ -58,28 +53,20 @@ namespace Mod.Xmap
 					continue;
 				}
 
-				int count = neighbors.Count;
-
-				for (int i = 0; i < count; i++)
+				foreach (MapNext mapNext in neighbors)
 				{
-					MapNext mapNext = neighbors[i];
-					if (mapNext.to < 0 || mapNext.to >= length)
+					if (mapNext.To < 0 || mapNext.To >= length)
 					{
 						continue;
 					}
 
-					int cost = 1;
-					if (mapNext is { type: TypeMapNext.NpcMenu, info: { Length: > 0 } } && mapNext.info[0] == 38)
-					{
-						cost = 100;
-					}
-
+					int cost = mapNext.IsNpcMenu(38) ? 100 : 1;
 					int tentative = dist[cmap] + cost;
-					if (tentative < dist[mapNext.to])
+					if (tentative < dist[mapNext.To])
 					{
-						dist[mapNext.to] = tentative;
-						prev[mapNext.to] = mapNext;
-						hasPrev[mapNext.to] = true;
+						dist[mapNext.To] = tentative;
+						prev[mapNext.To] = mapNext;
+						hasPrev[mapNext.To] = true;
 					}
 				}
 
@@ -101,11 +88,12 @@ namespace Mod.Xmap
 				}
 
 				way.Add(prev[index]);
-				index = prev[index].mapStart;
+				index = prev[index].MapStart;
 			}
-			way.Reverse();
 
+			way.Reverse();
 			return way;
 		}
 	}
+
 }

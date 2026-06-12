@@ -211,7 +211,7 @@ namespace Mod.Graphics
 
 		internal static bool OnEffectPaint()
 		{
-			if (Level > ReduceGraphicsLevel.Off)
+			if (Level > ReduceGraphicsLevel.Off || IsSimpleUI)
 				return true;
 			return false;
 		}
@@ -414,13 +414,6 @@ namespace Mod.Graphics
 			{
 				return true;
 			}
-			return false;
-		}
-		
-		internal static bool OnGameCanvasLoadBG()
-		{
-			if (Level > ReduceGraphicsLevel.Off || IsSimpleUI)
-				return true;
 			return false;
 		}
 

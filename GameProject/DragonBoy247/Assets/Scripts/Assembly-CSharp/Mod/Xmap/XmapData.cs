@@ -3,24 +3,41 @@ using System.Collections.Generic;
 
 namespace Mod.Xmap
 {
-	internal static class XmapData
+	internal interface IMapGraphRepository
 	{
-		const int ID_MAP_SIEU_THI = 84;
-		const int ID_MAP_TPVGT = 19;
-		const int ID_MAP_TO_COLD = 109;
-		internal static List<MapNext>[] links;
-		internal static List<GroupMap> groups = new List<GroupMap>();
+		List<MapNext>[] Links { get; }
+		List<GroupMap> Groups { get; }
+		void ReloadGroups();
+	}
 
-		static XmapData()
+	internal sealed class MapGraphRepository : IMapGraphRepository
+	{
+		const int IdMapSieuThi = 84;
+		const int IdMapTpvgt = 19;
+		const int IdMapToCold = 109;
+
+		internal MapGraphRepository()
 		{
-			links = new List<MapNext>[TileMap.mapNames.Length];
-			for (int i = 0; i < links.Length; i++)
-				links[i] = new List<MapNext>();
+			Links = new List<MapNext>[TileMap.mapNames.Length];
+			for (int i = 0; i < Links.Length; i++)
+			{
+				Links[i] = new List<MapNext>();
+			}
 
 			Load();
 		}
 
-		static void Load()
+		public List<MapNext>[] Links { get; }
+		public List<GroupMap> Groups { get; } = new List<GroupMap>();
+
+		public void ReloadGroups()
+		{
+			Groups.Clear();
+			LoadGroupMapsFromCode();
+			RemoveMapsHomeInGroupMaps();
+		}
+
+		void Load()
 		{
 			LoadLinksFromCode();
 			LoadLinksAutoWaypointFromCode();
@@ -29,8 +46,13 @@ namespace Mod.Xmap
 			LoadLinkToCold();
 		}
 
+		void AddLink(int mapStart, int to, TypeMapNext type, params int[] info)
+		{
+			Links[mapStart].Add(new MapNext(mapStart, to, type, info));
+		}
+
 		#region ================= MANUAL LINKS =================
-		static void LoadLinksFromCode()
+		void LoadLinksFromCode()
 		{
 			// ===== Trái Đất - Namec =====
 			AddLink(24, 25, (TypeMapNext)1, 10, 0);
@@ -95,24 +117,10 @@ namespace Mod.Xmap
 		}
 		#endregion
 
-		static void AddLink(int mapStart, int to, TypeMapNext type, params int[] info)
-		{
-			links[mapStart].Add(new MapNext(mapStart, to, type, info));
-		}
-
 		#region ================= GROUP MAPS =================
-		internal static void LoadGroupMaps()
+		void LoadGroupMapsFromCode()
 		{
-			groups.Clear();
-			LoadGroupMapsFromCode();
-			RemoveMapsHomeInGroupMaps();
-		}
-
-		static void LoadGroupMapsFromCode()
-		{
-			groups.Clear();
-
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Xayda", "Saiya"
@@ -138,7 +146,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Namec", "Namek"
@@ -162,7 +170,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Trái đất", "Earth", "Bumi"
@@ -192,7 +200,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Nappa"
@@ -222,7 +230,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Yardrat"
@@ -235,7 +243,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Tương lai", "Future"
@@ -255,7 +263,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Cold"
@@ -271,7 +279,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Potaufeu"
@@ -283,7 +291,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Doanh trại", "Barracks"
@@ -303,7 +311,7 @@ namespace Mod.Xmap
 				}
 			));
 
-			groups.Add(new GroupMap(
+			Groups.Add(new GroupMap(
 				new[]
 				{
 					"Khí Gas", "Gas"
@@ -319,31 +327,17 @@ namespace Mod.Xmap
 			));
 		}
 
-		static void RemoveMapsHomeInGroupMaps()
+		void RemoveMapsHomeInGroupMaps()
 		{
-			foreach (GroupMap groupMap in groups)
+			foreach (GroupMap groupMap in Groups)
 			{
-				switch (Char.myCharz().cgender)
-				{
-				case 0:
-					groupMap.maps.Remove(22);
-					groupMap.maps.Remove(23);
-					break;
-				case 1:
-					groupMap.maps.Remove(21);
-					groupMap.maps.Remove(23);
-					break;
-				default:
-					groupMap.maps.Remove(21);
-					groupMap.maps.Remove(22);
-					break;
-				}
+				groupMap.RemoveHomeMaps(Char.myCharz().cgender);
 			}
 		}
 		#endregion
 
 		#region ================= AUTO WAYPOINT =================
-		static void LoadLinksAutoWaypointFromCode()
+		void LoadLinksAutoWaypointFromCode()
 		{
 			// ================= TRÁI ĐẤT =================
 			AddAutoWaypointChain(42, 0, 1, 2, 3, 4, 5, 6);
@@ -401,7 +395,7 @@ namespace Mod.Xmap
 			AddAutoWaypointChain(149, 147, 152, 151, 148);
 		}
 
-		static void AddAutoWaypointChain(params int[] maps)
+		void AddAutoWaypointChain(params int[] maps)
 		{
 			for (int i = 0; i < maps.Length; i++)
 			{
@@ -409,50 +403,65 @@ namespace Mod.Xmap
 
 				if (i != 0)
 				{
-					links[mapStart].Add(new MapNext(mapStart, maps[i - 1], TypeMapNext.AutoWaypoint, Array.Empty<int>()));
+					Links[mapStart].Add(new MapNext(mapStart, maps[i - 1], TypeMapNext.AutoWaypoint, Array.Empty<int>()));
 				}
 
 				if (i != maps.Length - 1)
 				{
-					links[mapStart].Add(new MapNext(mapStart, maps[i + 1], TypeMapNext.AutoWaypoint, Array.Empty<int>()));
+					Links[mapStart].Add(new MapNext(mapStart, maps[i + 1], TypeMapNext.AutoWaypoint, Array.Empty<int>()));
 				}
 			}
 		}
 		#endregion
 
 		#region ================= SPECIAL LINKS =================
-		static void AddLinksHome()
+		void AddLinksHome()
 		{
 			int cgender = Char.myCharz().cgender;
-			int mapHome = XmapUtils.getIdMapHome(cgender);
-			int mapLang = XmapUtils.getIdMapLang(cgender);
+			int mapHome = MapLookupService.IdMapHomeBase + cgender;
+			int mapLang = MapLookupService.IdMapLangBase * cgender;
 
 			AddLink(mapHome, mapLang, TypeMapNext.AutoWaypoint);
 			AddLink(mapLang, mapHome, TypeMapNext.AutoWaypoint);
 		}
 
-		static void LoadLinkSieuThi()
+		void LoadLinkSieuThi()
 		{
 			const int npcId = 10;
 			const int select = 0;
 
 			int offset = Char.myCharz().cgender;
-			int mapTTVT = XmapUtils.ID_MAP_TTVT_BASE + offset;
+			int mapTtvt = MapLookupService.IdMapTTVTBase + offset;
 
-			AddLink(ID_MAP_SIEU_THI, mapTTVT, TypeMapNext.NpcMenu, npcId, select);
+			AddLink(IdMapSieuThi, mapTtvt, TypeMapNext.NpcMenu, npcId, select);
 		}
 
-		static void LoadLinkToCold()
+		void LoadLinkToCold()
 		{
 			if (Char.myCharz().taskMaint.taskId <= 30)
+			{
 				return;
+			}
 
 			const int npcId = 12;
 			const int select = 0;
 
-			AddLink(ID_MAP_TPVGT, ID_MAP_TO_COLD, TypeMapNext.NpcMenu, npcId, select);
+			AddLink(IdMapTpvgt, IdMapToCold, TypeMapNext.NpcMenu, npcId, select);
 		}
 		#endregion
+	}
+
+	internal static class XmapData
+	{
+		static readonly MapGraphRepository Repository = new MapGraphRepository();
+
+		internal static List<MapNext>[] links => Repository.Links;
+		internal static List<GroupMap> groups => Repository.Groups;
+
+		internal static void LoadGroupMaps()
+		{
+			Repository.ReloadGroups();
+		}
 	}
 
 }

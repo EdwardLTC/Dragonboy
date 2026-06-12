@@ -9,7 +9,7 @@ namespace Mod.Xmap
 
 		internal static void Show(List<int> maps)
 		{
-			currentMaps.RemoveRange(0, currentMaps.Count);
+			currentMaps.Clear();
 			currentMaps.AddRange(maps);
 			CustomPanelMenu.Show(new CustomPanelMenuConfig
 			{

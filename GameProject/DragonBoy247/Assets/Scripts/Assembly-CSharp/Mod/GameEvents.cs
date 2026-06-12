@@ -567,7 +567,7 @@ namespace Mod
 
 		internal static void OnAddInfoMe(string str)
 		{
-			Pk9rXmap.Info(str);
+			EdwardXmap.Info(str);
 			AutoUseGrape.Info(str);
 		}
 

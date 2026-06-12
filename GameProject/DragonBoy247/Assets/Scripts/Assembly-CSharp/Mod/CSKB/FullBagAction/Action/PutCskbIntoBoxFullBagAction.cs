@@ -9,7 +9,7 @@ namespace Mod.PickMob
 		{
 			if (!XmapController.gI.IsActing && !Utils.IsMyCharHome() && Utils.CanNextMap())
 			{
-				XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
+				XmapController.start(XmapContext.MapLookup.GetHomeMapId(Char.myCharz().cgender));
 				yield return null;
 			}
 

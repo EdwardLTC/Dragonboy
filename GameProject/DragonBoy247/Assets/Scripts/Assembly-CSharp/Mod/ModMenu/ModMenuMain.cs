@@ -322,7 +322,7 @@ namespace Mod.ModMenu
 					ID = "OpenXmapMenu",
 					Title = Strings.openXmapMenuTitle,
 					Description = Strings.openXmapMenuDescription,
-					Action = Pk9rXmap.ShowXmapMenu
+					Action = EdwardXmap.ShowXmapMenu
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{

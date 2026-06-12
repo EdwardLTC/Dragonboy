@@ -6345,11 +6345,6 @@ public class Char : IMapObject
 
 	void DrawDanhHieu(mGraphics g, int offsetY)
 	{
-		if (GraphicsReducer.OnCharDrawDanhHieu(this, g))
-		{
-			return;
-		}
-		
 		if (fraDanhHieu == null)
 		{
 			return;

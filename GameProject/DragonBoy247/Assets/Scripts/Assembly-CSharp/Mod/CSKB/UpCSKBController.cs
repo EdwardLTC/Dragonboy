@@ -234,7 +234,7 @@ namespace Mod.PickMob
 		static void StopAndGoHome(string message)
 		{
 			gI.Toggle(false);
-			XmapController.start(XmapUtils.getIdMapHome(Char.myCharz().cgender));
+			XmapController.start(XmapContext.MapLookup.GetHomeMapId(Char.myCharz().cgender));
 			GameScr.info1.addInfo("[Up CSKB] " + message + ", đã tắt auto và về nhà", 0);
 		}
 

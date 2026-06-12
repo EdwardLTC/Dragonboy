@@ -15,7 +15,7 @@ namespace Mod.Auto
 
 		protected override IEnumerator OnUpdate()
 		{
-			if (Char.myCharz().IsCharDead() || TileMap.mapID != XmapUtils.getIdMapLang(Char.myCharz().cgender) || AutoGoback.IsGoingBack)
+			if (Char.myCharz().IsCharDead() || TileMap.mapID != XmapContext.MapLookup.GetVillageMapId(Char.myCharz().cgender) || AutoGoback.IsGoingBack)
 			{
 				yield break;
 			}
@@ -70,7 +70,7 @@ namespace Mod.Auto
 
 		protected override void OnStart()
 		{
-			if (TileMap.mapID != XmapUtils.getIdMapLang(Char.myCharz().cgender))
+			if (TileMap.mapID != XmapContext.MapLookup.GetVillageMapId(Char.myCharz().cgender))
 			{
 				GameScr.info1.addInfo("Chỉ hoạt động ở map Làng", 0);
 				Toggle(false);

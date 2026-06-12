@@ -1,33 +1,77 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Mod.Xmap
 {
-	internal struct MapNext
+	internal sealed class MapNext
 	{
-		internal int mapStart;
-		internal int to;
-		internal TypeMapNext type;
-		internal int[] info;
-
 		internal MapNext(int mapStart, int to, TypeMapNext type, int[] info)
 		{
-			this.mapStart = mapStart;
-			this.to = to;
-			this.type = type;
-			this.info = info;
+			MapStart = mapStart;
+			To = to;
+			Type = type;
+			Info = info ?? Array.Empty<int>();
+		}
+		internal int MapStart { get; }
+		internal int To { get; }
+		internal TypeMapNext Type { get; }
+		internal int[] Info { get; }
+
+		internal bool IsNpcMenu(int npcId)
+		{
+			return Type == TypeMapNext.NpcMenu && Info.Length > 0 && Info[0] == npcId;
+		}
+
+		internal bool IsCapsuleSelection(int select)
+		{
+			return Type == TypeMapNext.Capsule && Info.Length > 0 && Info[0] == select;
 		}
 	}
 
-	internal struct GroupMap
+	internal sealed class GroupMap
 	{
-		internal string[] names;
-
-		internal List<int> maps;
-
 		internal GroupMap(string[] nameGroup, List<int> maps)
 		{
-			names = nameGroup;
-			this.maps = maps;
+			Names = nameGroup;
+			Maps = maps;
+		}
+
+		string[] Names { get; }
+
+		internal List<int> Maps { get; }
+
+		internal string GetCaption(int languageIndex)
+		{
+			if (Names == null || Names.Length == 0)
+			{
+				return string.Empty;
+			}
+
+			if (languageIndex >= 0 && languageIndex < Names.Length)
+			{
+				return Names[languageIndex];
+			}
+
+			return Names[^1];
+		}
+
+		internal void RemoveHomeMaps(int cgender)
+		{
+			switch (cgender)
+			{
+			case 0:
+				Maps.Remove(22);
+				Maps.Remove(23);
+				break;
+			case 1:
+				Maps.Remove(21);
+				Maps.Remove(23);
+				break;
+			default:
+				Maps.Remove(21);
+				Maps.Remove(22);
+				break;
+			}
 		}
 	}
 
@@ -38,17 +82,5 @@ namespace Mod.Xmap
 		NpcPanel,
 		Position,
 		Capsule
-	}
-
-	internal class Tile
-	{
-		internal int x;
-		internal int y;
-
-		internal Tile(int x, int y)
-		{
-			this.x = x;
-			this.y = y;
-		}
 	}
 }
