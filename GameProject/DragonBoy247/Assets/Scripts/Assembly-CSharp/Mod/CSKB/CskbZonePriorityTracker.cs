@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 
 namespace Mod.PickMob
 {
 	internal sealed class CskbZonePriorityTracker
 	{
+		static readonly Random Random = new Random();
 		readonly long stableTicks;
 		long crowdedZoneStartTicks;
-		int? emptyZoneCandidateId;
-		long emptyZoneStartTicks;
 
 		internal CskbZonePriorityTracker(long stableTicks)
 		{
@@ -17,26 +17,33 @@ namespace Mod.PickMob
 		internal int ResolveTargetZone(int currentTargetZoneId)
 		{
 			long nowTicks = DateTime.Now.Ticks;
-			bool isCurrentZoneCrowded = GetZonePlayerCount(TileMap.zoneID) > 1;
-			UpdateCurrentZoneCrowdedTime(isCurrentZoneCrowded, nowTicks);
-			UpdateEmptyZoneCandidate(FindEmptyZoneId(), nowTicks);
 
-			if (!CanSwitchToEmptyZone(isCurrentZoneCrowded, nowTicks) || !emptyZoneCandidateId.HasValue)
+			bool isCurrentZoneCrowded = GetZonePlayerCount(TileMap.zoneID) > 1;
+
+			UpdateCurrentZoneCrowdedTime(isCurrentZoneCrowded, nowTicks);
+
+			if (!CanSwitchToEmptyZone(isCurrentZoneCrowded, nowTicks))
 			{
 				return currentTargetZoneId;
 			}
 
-			int newTargetZoneId = emptyZoneCandidateId.Value;
+			int? emptyZoneId = FindEmptyZoneId();
+
+			if (!emptyZoneId.HasValue)
+			{
+				return currentTargetZoneId;
+			}
+
 			Reset();
-			GameScr.info1.addInfo("[Up CSKB] đổi sang khu vắng " + newTargetZoneId, 0);
-			return newTargetZoneId;
+
+			GameScr.info1.addInfo("[Up CSKB] đổi sang khu vắng " + emptyZoneId.Value, 0);
+
+			return emptyZoneId.Value;
 		}
 
 		internal void Reset()
 		{
 			crowdedZoneStartTicks = 0L;
-			emptyZoneStartTicks = 0L;
-			emptyZoneCandidateId = null;
 		}
 
 		void UpdateCurrentZoneCrowdedTime(bool isCurrentZoneCrowded, long nowTicks)
@@ -53,30 +60,9 @@ namespace Mod.PickMob
 			}
 		}
 
-		void UpdateEmptyZoneCandidate(int? emptyZoneId, long nowTicks)
-		{
-			if (emptyZoneId == null)
-			{
-				emptyZoneCandidateId = null;
-				emptyZoneStartTicks = 0L;
-				return;
-			}
-
-			if (emptyZoneCandidateId != emptyZoneId)
-			{
-				emptyZoneCandidateId = emptyZoneId;
-				emptyZoneStartTicks = nowTicks;
-			}
-		}
-
 		bool CanSwitchToEmptyZone(bool isCurrentZoneCrowded, long nowTicks)
 		{
-			if (!isCurrentZoneCrowded || crowdedZoneStartTicks == 0L || nowTicks - crowdedZoneStartTicks < stableTicks)
-			{
-				return false;
-			}
-
-			return emptyZoneCandidateId != null && emptyZoneStartTicks != 0L && nowTicks - emptyZoneStartTicks >= stableTicks;
+			return isCurrentZoneCrowded && crowdedZoneStartTicks != 0L && nowTicks - crowdedZoneStartTicks >= stableTicks;
 		}
 
 		static int? FindEmptyZoneId()
@@ -90,16 +76,22 @@ namespace Mod.PickMob
 			}
 
 			int count = System.Math.Min(zones.Length, numPlayer.Length);
+			List<int> emptyZones = new List<int>();
 			for (int i = 0; i < count; i++)
 			{
 				int zoneId = zones[i];
 				if (zoneId != TileMap.zoneID && numPlayer[i] == 0)
 				{
-					return zoneId;
+					emptyZones.Add(zoneId);
 				}
 			}
 
-			return null;
+			if (emptyZones.Count == 0)
+			{
+				return null;
+			}
+
+			return emptyZones[Random.Next(emptyZones.Count)];
 		}
 
 		static int GetZonePlayerCount(int zoneId)
