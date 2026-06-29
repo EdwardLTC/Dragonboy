@@ -186,7 +186,6 @@ public class Effect
 		{
 			typeEff = 1;
 		}
-		Debug.LogError(id + ">>>>>>Add Effect: layer:" + layer + " loop:" + loop + " loopCount:" + loopCount);
 		if (!isExistNewEff(effId + string.Empty))
 		{
 			newEff.addElement(effId + string.Empty);

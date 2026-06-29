@@ -31,6 +31,8 @@ public class Teleport
 	public bool isDown;
 
 	private bool createShip;
+	
+	public Char @char;
 
 	public bool paintFire;
 
@@ -377,9 +379,9 @@ public class Teleport
 					Controller.isStopReadMessage = false;
 					Char.ischangingMap = true;
 				}
-				if (!isMe && GameScr.findCharInMap(id) != null && type == 0)
+				if (!isMe && @char != null && type == 0)
 				{
-					GameScr.vCharInMap.removeElement(GameScr.findCharInMap(id));
+					GameScr.vCharInMap.removeElement(@char);
 				}
 				if (planet < 3)
 				{

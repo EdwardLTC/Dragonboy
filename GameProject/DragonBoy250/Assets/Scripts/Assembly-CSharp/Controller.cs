@@ -1357,19 +1357,19 @@ public class Controller : IMessageHandler
 				}
 				if (Char.myCharz().charID == num67)
 				{
-					isStopReadMessage = true;
-					GameScr.lockTick = 500;
+					// isStopReadMessage = true;
+					// GameScr.lockTick = 500;
 					GameScr.gI().center = null;
 					if (b30 == 0 || b30 == 1 || b30 == 3)
 					{
 						Teleport p = new Teleport(Char.myCharz().cx, Char.myCharz().cy, Char.myCharz().head, Char.myCharz().cdir, 0, true, (b30 != 1) ? b30 : Char.myCharz().cgender);
-						Teleport.addTeleport(p);
+						// Teleport.addTeleport(p);
 					}
-					if (b30 == 2)
-					{
-						GameScr.lockTick = 50;
-						Char.myCharz().hide();
-					}
+					// if (b30 == 2)
+					// {
+					// 	GameScr.lockTick = 50;
+					// 	Char.myCharz().hide();
+					// }
 				}
 				else
 				{
@@ -1379,6 +1379,7 @@ public class Controller : IMessageHandler
 						obj5.isUsePlane = true;
 						Teleport teleport = new Teleport(obj5.cx, obj5.cy, obj5.head, obj5.cdir, 0, false, (b30 != 1) ? b30 : obj5.cgender);
 						teleport.id = num67;
+						teleport.@char = obj5;
 						Teleport.addTeleport(teleport);
 					}
 					if (b30 == 2)
@@ -1849,21 +1850,21 @@ public class Controller : IMessageHandler
 				}
 				Char.myPetz().cGiamST = msg.reader().readByte();
 				Char.myPetz().cCritDameFull = msg.reader().readShort();
-				if (GameCanvas.w > 2 * Panel.WIDTH_PANEL)
-				{
-					GameCanvas.panel2 = new Panel();
-					GameCanvas.panel2.tabName[7] = new string[1][] { new string[1] { string.Empty } };
-					GameCanvas.panel2.setTypeBodyOnly();
-					GameCanvas.panel2.show();
-					GameCanvas.panel.setTypePetMain();
-					GameCanvas.panel.show();
-				}
-				else
-				{
-					GameCanvas.panel.tabName[21] = mResources.petMainTab;
-					GameCanvas.panel.setTypePetMain();
-					GameCanvas.panel.show();
-				}
+				// if (GameCanvas.w > 2 * Panel.WIDTH_PANEL)
+				// {
+				// 	GameCanvas.panel2 = new Panel();
+				// 	GameCanvas.panel2.tabName[7] = new string[1][] { new string[1] { string.Empty } };
+				// 	GameCanvas.panel2.setTypeBodyOnly();
+				// 	GameCanvas.panel2.show();
+				// 	GameCanvas.panel.setTypePetMain();
+				// 	GameCanvas.panel.show();
+				// }
+				// else
+				// {
+				// 	GameCanvas.panel.tabName[21] = mResources.petMainTab;
+				// 	GameCanvas.panel.setTypePetMain();
+				// 	GameCanvas.panel.show();
+				// }
 				break;
 			}
 			case -37:

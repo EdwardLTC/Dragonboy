@@ -1,46 +1,47 @@
 using Mod;
+using UnityEngine;
 
 public class ChatTextField : IActionListener
 {
-	public static ChatTextField instance;
-
-	public TField tfChat;
-
-	public bool isShow;
-
-	public IChatable parentScreen;
-
-	public long lastChatTime;
-
-	public Command left;
-
-	public Command cmdChat;
-
-	public Command right;
+	static ChatTextField instance;
 
 	public Command center;
 
-	public int x;
+	public Command cmdChat;
 
-	public int y;
-
-	public int w;
+	public Command cmdChat2;
 
 	public int h;
 
 	public bool isPublic;
 
-	public Command cmdChat2;
+	public bool isShow;
+
+	public int KC;
+
+	public long lastChatTime;
+
+	public Command left;
+
+	public Command right;
+
+	public string strChat = "Chat ";
+
+	public TField tfChat;
+
+	public string to;
+
+	public int w;
+
+	public int x;
+
+	public int y;
 
 	public int yBegin;
 
 	public int yUp;
 
-	public int KC;
-
-	public string to;
-
-	public string strChat = "Chat ";
+	public IChatable parentScreen;
 
 	public ChatTextField()
 	{
@@ -49,7 +50,7 @@ public class ChatTextField : IActionListener
 		{
 			tfChat.showSubTextField = false;
 		}
-		if (Main.isIPhone)
+		if (Main.isIPhone || Application.platform == RuntimePlatform.IPhonePlayer)
 		{
 			tfChat.isPaintMouse = false;
 		}
@@ -67,251 +68,6 @@ public class ChatTextField : IActionListener
 		tfChat.x = GameCanvas.w / 2 - tfChat.width / 2;
 		tfChat.isFocus = true;
 		tfChat.setMaxTextLenght(80);
-	}
-
-	public void initChatTextField()
-	{
-		left = new Command(mResources.OK, this, 8000, null, 1, GameCanvas.h - mScreen.cmdH + 1);
-		right = new Command(mResources.DELETE, this, 8001, null, GameCanvas.w - 70, GameCanvas.h - mScreen.cmdH + 1);
-		center = null;
-		w = tfChat.width + 20;
-		h = tfChat.height + 26;
-		x = GameCanvas.w / 2 - w / 2;
-		y = tfChat.y - 18;
-		if (Main.isPC && w > 320)
-		{
-			w = 320;
-		}
-		left.x = x;
-		right.x = x + w - 68;
-		if (GameCanvas.isTouch)
-		{
-			tfChat.y -= 5;
-			y -= 20;
-			h += 30;
-			left.x = GameCanvas.w / 2 - 68 - 5;
-			right.x = GameCanvas.w / 2 + 5;
-			left.y = GameCanvas.h - 30;
-			right.y = GameCanvas.h - 30;
-		}
-		cmdChat = new Command();
-		ActionChat actionChat = delegate(string str)
-		{
-			tfChat.justReturnFromTextBox = false;
-			tfChat.setText(str);
-			parentScreen.onChatFromMe(str, to);
-			tfChat.setText(string.Empty);
-			right.caption = mResources.CLOSE;
-		};
-		cmdChat.actionChat = actionChat;
-		cmdChat2 = new Command();
-		cmdChat2.actionChat = delegate(string str)
-		{
-			tfChat.justReturnFromTextBox = false;
-			if (parentScreen != null)
-			{
-				tfChat.setText(str);
-				parentScreen.onChatFromMe(str, to);
-				tfChat.setText(string.Empty);
-				tfChat.clearKb();
-				if (right != null)
-				{
-					right.performAction();
-				}
-			}
-			isShow = false;
-		};
-		yBegin = tfChat.y;
-		yUp = GameCanvas.h / 2 - 2 * tfChat.height;
-		if (Main.isWindowsPhone)
-		{
-			tfChat.showSubTextField = false;
-		}
-		if (Main.isIPhone)
-		{
-			tfChat.isPaintMouse = false;
-		}
-	}
-
-	public void updateWhenKeyBoardVisible()
-	{
-	}
-
-	public void keyPressed(int keyCode)
-	{
-		if (isShow)
-		{
-			tfChat.keyPressed(keyCode);
-		}
-		if (tfChat.getText().Equals(string.Empty))
-		{
-			right.caption = mResources.CLOSE;
-		}
-		else
-		{
-			right.caption = mResources.DELETE;
-		}
-	}
-
-	public static ChatTextField gI()
-	{
-		return (instance != null) ? instance : (instance = new ChatTextField());
-	}
-
-	public void startChat(int firstCharacter, IChatable parentScreen, string to)
-	{
-		if (GameEvents.OnStartChatTextField(this, parentScreen))
-		{
-			return;
-		}
-		right.caption = mResources.CLOSE;
-		this.to = to;
-		if (Main.isWindowsPhone)
-		{
-			tfChat.showSubTextField = false;
-		}
-		if (Main.isIPhone)
-		{
-			tfChat.isPaintMouse = false;
-		}
-		tfChat.keyPressed(firstCharacter);
-		if (!tfChat.getText().Equals(string.Empty) && GameCanvas.currentDialog == null)
-		{
-			this.parentScreen = parentScreen;
-			isShow = true;
-		}
-	}
-
-	public void startChat(IChatable parentScreen, string to)
-	{
-		right.caption = mResources.CLOSE;
-		this.to = to;
-		if (Main.isWindowsPhone)
-		{
-			tfChat.showSubTextField = false;
-		}
-		if (Main.isIPhone)
-		{
-			tfChat.isPaintMouse = false;
-		}
-		if (GameCanvas.currentDialog == null)
-		{
-			isShow = true;
-			tfChat.isFocus = true;
-			if (!Main.isPC)
-			{
-				ipKeyboard.openKeyBoard(strChat, ipKeyboard.TEXT, string.Empty, cmdChat);
-				tfChat.setFocusWithKb(true);
-			}
-		}
-		tfChat.setText(string.Empty);
-		tfChat.clearAll();
-		isPublic = false;
-	}
-
-	public void startChat2(IChatable parentScreen, string to)
-	{
-		tfChat.setFocusWithKb(true);
-		this.to = to;
-		this.parentScreen = parentScreen;
-		if (Main.isWindowsPhone)
-		{
-			tfChat.showSubTextField = false;
-		}
-		if (Main.isIPhone)
-		{
-			tfChat.isPaintMouse = false;
-		}
-		if (GameCanvas.currentDialog == null)
-		{
-			isShow = true;
-			if (!Main.isPC)
-			{
-				ipKeyboard.openKeyBoard(strChat, ipKeyboard.TEXT, string.Empty, cmdChat2);
-				tfChat.setFocusWithKb(true);
-			}
-		}
-		tfChat.setText(string.Empty);
-		tfChat.clearAll();
-		isPublic = false;
-	}
-
-	public void updateKey()
-	{
-	}
-
-	public void update()
-	{
-		if (!isShow)
-		{
-			GameEvents.OnUpdateChatTextField(this);
-			return;
-		}
-		if (!isShow)
-		{
-			return;
-		}
-		tfChat.update();
-		if (Main.isWindowsPhone)
-		{
-			updateWhenKeyBoardVisible();
-		}
-		if (tfChat.justReturnFromTextBox)
-		{
-			tfChat.justReturnFromTextBox = false;
-			parentScreen.onChatFromMe(tfChat.getText(), to);
-			tfChat.setText(string.Empty);
-			right.caption = mResources.CLOSE;
-		}
-		if (!Main.isPC)
-		{
-			return;
-		}
-		if (GameCanvas.keyPressed[15])
-		{
-			if (left != null && tfChat.getText() != string.Empty)
-			{
-				left.performAction();
-			}
-			GameCanvas.keyPressed[15] = false;
-			GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25] = false;
-		}
-		if (GameCanvas.keyPressed[14])
-		{
-			if (right != null)
-			{
-				right.performAction();
-			}
-			GameCanvas.keyPressed[14] = false;
-		}
-	}
-
-	public void close()
-	{
-		tfChat.setText(string.Empty);
-		isShow = false;
-	}
-
-	public void paint(mGraphics g)
-	{
-		GameEvents.OnPaintChatTextField(this, g);
-		if (Utils.IsMobile())
-		{
-			return;
-		}
-		if (isShow && !Main.isIPhone)
-		{
-			int num = ((!Main.isWindowsPhone) ? (y - KC) : (tfChat.y - 5));
-			int num2 = ((!Main.isWindowsPhone) ? x : 0);
-			int num3 = ((!Main.isWindowsPhone) ? w : GameCanvas.w);
-			PopUp.paintPopUp(g, num2, num, num3, h, -1, true);
-			if (Main.isPC)
-			{
-				mFont.tahoma_7b_green2.drawString(g, strChat + to, tfChat.x, tfChat.y - ((!GameCanvas.isTouch) ? 12 : 17), 0);
-				GameCanvas.paintz.paintCmdBar(g, left, center, right);
-			}
-			tfChat.paint(g);
-		}
 	}
 
 	public void perform(int idAction, object p)
@@ -344,6 +100,279 @@ public class ChatTextField : IActionListener
 			break;
 		case 8002:
 			break;
+		}
+	}
+
+	public void initChatTextField()
+	{
+		left = new Command(mResources.OK, this, 8000, null, 1, GameCanvas.h - mScreen.cmdH + 1);
+		right = new Command(mResources.DELETE, this, 8001, null, GameCanvas.w - 70, GameCanvas.h - mScreen.cmdH + 1);
+		center = null;
+		w = tfChat.width + 20;
+		h = tfChat.height + 26;
+		x = GameCanvas.w / 2 - w / 2;
+		y = tfChat.y - 18;
+		if (Main.isPC && w > 320)
+		{
+			w = 320;
+		}
+		left.x = x;
+		right.x = x + w - 68;
+		if (GameCanvas.isTouch)
+		{
+			tfChat.y -= 5;
+			y -= 20;
+			h += 30;
+			left.x = GameCanvas.w / 2 - 68 - 5;
+			right.x = GameCanvas.w / 2 + 5;
+			left.y = GameCanvas.h - 30;
+			right.y = GameCanvas.h - 30;
+		}
+
+		tfChat.cmdDoneAction = left;
+		cmdChat = new Command();
+		cmdChat.actionChat = delegate(string str)
+		{
+			tfChat.justReturnFromTextBox = false;
+			tfChat.setText(str);
+			parentScreen?.onChatFromMe(str, to);
+			tfChat.setText(string.Empty);
+			right.caption = mResources.CLOSE;
+		};
+		cmdChat2 = new Command();
+		cmdChat2.actionChat = delegate(string str)
+		{
+			tfChat.justReturnFromTextBox = false;
+			if (parentScreen != null)
+			{
+				tfChat.setText(str);
+				parentScreen.onChatFromMe(str, to);
+				tfChat.setText(string.Empty);
+				tfChat.clearKb();
+				if (right != null)
+				{
+					right.performAction();
+				}
+			}
+			isShow = false;
+		};
+		yBegin = tfChat.y;
+		yUp = GameCanvas.h / 2 - 2 * tfChat.height;
+		if (Main.isWindowsPhone)
+		{
+			tfChat.showSubTextField = false;
+		}
+		if (Main.isIPhone || Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			tfChat.isPaintMouse = false;
+		}
+	}
+
+	public static void ApplyNativeKeyboardDismissedWithoutCommit(TField sender)
+	{
+		gI().DismissKeyboardWithoutCommitIfOwns(sender);
+		if (GameCanvas.panel != null && GameCanvas.panel.chatTField != null)
+		{
+			GameCanvas.panel.chatTField.DismissKeyboardWithoutCommitIfOwns(sender);
+		}
+		if (GameCanvas.panel2 != null && GameCanvas.panel2.chatTField != null)
+		{
+			GameCanvas.panel2.chatTField.DismissKeyboardWithoutCommitIfOwns(sender);
+		}
+	}
+
+	void DismissKeyboardWithoutCommitIfOwns(TField sender)
+	{
+		if (tfChat != sender || !isShow)
+		{
+			return;
+		}
+		tfChat.setFocusWithKb(false);
+		tfChat.clearKb();
+		tfChat.setText(string.Empty);
+		isShow = false;
+		gI().ResetTF();
+		if (right != null)
+		{
+			right.caption = mResources.CLOSE;
+		}
+		parentScreen?.onCancelChat();
+	}
+
+	public void updateWhenKeyBoardVisible()
+	{
+	}
+
+	public void keyPressed(int keyCode)
+	{
+		if (isShow)
+		{
+			tfChat.keyPressed(keyCode);
+		}
+		if (tfChat.getText().Equals(string.Empty))
+		{
+			right.caption = mResources.CLOSE;
+		}
+		else
+		{
+			right.caption = mResources.DELETE;
+		}
+	}
+
+	public static ChatTextField gI()
+	{
+		return instance ??= new ChatTextField();
+	}
+
+	public void startChat(int firstCharacter, IChatable parentScreen, string to)
+	{
+		if (GameEvents.OnStartChatTextField(this, parentScreen))
+		{
+			return;
+		}
+		right.caption = mResources.CLOSE;
+		this.to = to;
+		if (Main.isWindowsPhone)
+		{
+			tfChat.showSubTextField = false;
+		}
+		if (Main.isIPhone)
+		{
+			tfChat.isPaintMouse = false;
+		}
+		tfChat.keyPressed(firstCharacter);
+		if (!tfChat.getText().Equals(string.Empty) && GameCanvas.currentDialog == null)
+		{
+			this.parentScreen = parentScreen;
+			isShow = true;
+		}
+	}
+
+	public void startChat(IChatable parentScreen, string to)
+	{
+		right.caption = mResources.CLOSE;
+		this.parentScreen = parentScreen;
+		this.to = to;
+		if (Main.isWindowsPhone)
+		{
+			tfChat.showSubTextField = false;
+		}
+		if (Main.isIPhone)
+		{
+			tfChat.isPaintMouse = false;
+		}
+		if (GameCanvas.currentDialog == null)
+		{
+			isShow = true;
+			tfChat.isFocus = true;
+			if (UnityEngine.TouchScreenKeyboard.isSupported || !Main.isPC)
+			{
+				tfChat.setFocusWithKb(true);
+			}
+		}
+		tfChat.setText(string.Empty);
+		tfChat.clearAll();
+		isPublic = false;
+	}
+
+	public void startChat2(IChatable _parentScreen, string _to)
+	{
+		to = _to;
+		parentScreen = _parentScreen;
+		if (Main.isWindowsPhone)
+		{
+			tfChat.showSubTextField = false;
+		}
+		if (Main.isIPhone)
+		{
+			tfChat.isPaintMouse = false;
+		}
+		if (GameCanvas.currentDialog == null)
+		{
+			isShow = true;
+			if (UnityEngine.TouchScreenKeyboard.isSupported || !Main.isPC)
+			{
+				tfChat.setFocusWithKb(true);
+			}
+		}
+		tfChat.setText(string.Empty);
+		tfChat.clearAll();
+		isPublic = false;
+	}
+
+	public void updateKey()
+	{
+	}
+
+	public void update()
+	{
+		if (!isShow)
+		{
+			GameEvents.OnUpdateChatTextField(this);
+			return;
+		}
+		tfChat.update();
+		if (Main.isWindowsPhone)
+		{
+			updateWhenKeyBoardVisible();
+		}
+		if (tfChat.justReturnFromTextBox)
+		{
+			tfChat.justReturnFromTextBox = false;
+			parentScreen.onChatFromMe(tfChat.getText(), to);
+			tfChat.setText(string.Empty);
+			right.caption = mResources.CLOSE;
+		}
+		if (!Main.isPC)
+		{
+			return;
+		}
+		if (GameCanvas.keyPressed[15])
+		{
+			if (left != null && tfChat.getText() != string.Empty)
+			{
+				left.performAction();
+			}
+			GameCanvas.keyPressed[15] = false;
+			GameCanvas.keyPressed[!Main.isPC ? 5 : 25] = false;
+		}
+		if (GameCanvas.keyPressed[14])
+		{
+			if (right != null)
+			{
+				right.performAction();
+			}
+			GameCanvas.keyPressed[14] = false;
+		}
+	}
+
+	public void close()
+	{
+		tfChat.setFocusWithKb(false);
+		tfChat.clearKb();
+		tfChat.setText(string.Empty);
+		isShow = false;
+	}
+
+	public void paint(mGraphics g)
+	{
+		GameEvents.OnPaintChatTextField(this, g);
+		if (Utils.IsMobile())
+		{
+			return;
+		}
+		if (isShow)
+		{
+			int num = !Main.isWindowsPhone ? y - KC : tfChat.y - 5;
+			int num2 = !Main.isWindowsPhone ? x : 0;
+			int num3 = !Main.isWindowsPhone ? w : GameCanvas.w;
+			PopUp.paintPopUp(g, num2, num, num3, h, -1, true);
+			if (Main.isPC)
+			{
+				mFont.tahoma_7b_green2.drawString(g, strChat + to, tfChat.x, tfChat.y - (!GameCanvas.isTouch ? 12 : 17), 0);
+				GameCanvas.paintz.paintCmdBar(g, left, center, right);
+			}
+			tfChat.paint(g);
 		}
 	}
 }
