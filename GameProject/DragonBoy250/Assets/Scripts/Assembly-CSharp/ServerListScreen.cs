@@ -1,4 +1,6 @@
 using System;
+using Mod;
+using Mod.R;
 using UnityEngine;
 
 public class ServerListScreen : mScreen, IActionListener
@@ -31,15 +33,15 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static bool isHaveChar;
 
-	private Command[] cmd;
+	public Command[] cmd;
 
-	private Command cmdCallHotline;
+	public Command cmdCallHotline;
 
-	private int nCmdPlay;
+	public int nCmdPlay;
 
 	public static Command cmdDeleteRMS;
 
-	private int lY;
+	public int lY;
 
 	public static string smartPhoneVN = "Vũ trụ 1:dragon1.teamobi.com:14445:0:0:0,Vũ trụ 2:dragon2.teamobi.com:14445:0:0:0,Vũ trụ 3:dragon3.teamobi.com:14445:0:0:0,Vũ trụ 4:dragon4.teamobi.com:14445:0:0:0,Vũ trụ 5:dragon5.teamobi.com:14445:0:0:0,Vũ trụ 6:dragon6.teamobi.com:14445:0:0:0,Vũ trụ 7:dragon7.teamobi.com:14445:0:0:0,Vũ trụ 8:dragon10.teamobi.com:14446:0:0:0,Vũ trụ 9:dragon10.teamobi.com:14447:0:0:0,Vũ trụ 10:dragon10.teamobi.com:14445:0:0:0,Vũ trụ 11:dragon11.teamobi.com:14445:0:0:0,Võ đài liên vũ trụ:dragonwar.teamobi.com:20000:0:0:0,Universe 1:dragon.indonaga.com:14445:1:0:0,Naga:dragon.indonaga.com:14446:2:0:0,0,0";
 
@@ -61,7 +63,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public new int keyTouch = -1;
 
-	private int tam;
+	public int tam;
 
 	public static bool stopDownload;
 
@@ -99,7 +101,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static Command cmdDownload;
 
-	private Command cmdStart;
+	public Command cmdStart;
 
 	public string dataSize;
 
@@ -115,7 +117,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static string RMS_NR_Extralink = "NRlink_extra";
 
-	private Command[] cmd_New_Ui;
+	public Command[] cmd_New_Ui;
 
 	public static bool isNewUI;
 
@@ -210,8 +212,12 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 	}
 
-	private void initCommand()
+	public void initCommand()
 	{
+		if (GameEvents.OnServerListScreenInitCommand(this))
+		{
+			return;
+		}
 		nCmdPlay = 0;
 		string text = Rms.loadRMSString(Rms.RMS_acc);
 		if (text == null)
@@ -550,7 +556,7 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 	}
 
-	private void processInput()
+	public void processInput()
 	{
 		if (loadScreen)
 		{
@@ -706,57 +712,58 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static void loadIP()
 	{
-		sbyte[] array = Rms.loadRMS(RMS_NRlink);
-		if (array == null)
-		{
-			getServerList(linkDefault);
-			return;
-		}
-		DataInputStream dataInputStream = new DataInputStream(array);
-		if (dataInputStream == null)
-		{
-			return;
-		}
-		try
-		{
-			mResources.loadLanguague(dataInputStream.readByte());
-			sbyte b = dataInputStream.readByte();
-			nameServer = new string[b];
-			address = new string[b];
-			port = new short[b];
-			language = new sbyte[b];
-			typeSv = new sbyte[b];
-			isNew = new sbyte[b];
-			for (int i = 0; i < b; i++)
-			{
-				nameServer[i] = dataInputStream.readUTF();
-				address[i] = dataInputStream.readUTF();
-				port[i] = dataInputStream.readShort();
-				language[i] = dataInputStream.readByte();
-				try
-				{
-					typeSv[i] = dataInputStream.readByte();
-				}
-				catch (Exception)
-				{
-					typeSv[i] = 0;
-				}
-				try
-				{
-					isNew[i] = dataInputStream.readByte();
-				}
-				catch (Exception)
-				{
-					isNew[i] = 0;
-				}
-			}
-			serverPriority = dataInputStream.readByte();
-			dataInputStream.close();
-			SplashScr.loadIP();
-		}
-		catch (Exception)
-		{
-		}
+		GameEvents.OnLoadIP();
+		// sbyte[] array = Rms.loadRMS(RMS_NRlink);
+		// if (array == null)
+		// {
+		// 	getServerList(linkDefault);
+		// 	return;
+		// }
+		// DataInputStream dataInputStream = new DataInputStream(array);
+		// if (dataInputStream == null)
+		// {
+		// 	return;
+		// }
+		// try
+		// {
+		// 	mResources.loadLanguague(dataInputStream.readByte());
+		// 	sbyte b = dataInputStream.readByte();
+		// 	nameServer = new string[b];
+		// 	address = new string[b];
+		// 	port = new short[b];
+		// 	language = new sbyte[b];
+		// 	typeSv = new sbyte[b];
+		// 	isNew = new sbyte[b];
+		// 	for (int i = 0; i < b; i++)
+		// 	{
+		// 		nameServer[i] = dataInputStream.readUTF();
+		// 		address[i] = dataInputStream.readUTF();
+		// 		port[i] = dataInputStream.readShort();
+		// 		language[i] = dataInputStream.readByte();
+		// 		try
+		// 		{
+		// 			typeSv[i] = dataInputStream.readByte();
+		// 		}
+		// 		catch (Exception)
+		// 		{
+		// 			typeSv[i] = 0;
+		// 		}
+		// 		try
+		// 		{
+		// 			isNew[i] = dataInputStream.readByte();
+		// 		}
+		// 		catch (Exception)
+		// 		{
+		// 			isNew[i] = 0;
+		// 		}
+		// 	}
+		// 	serverPriority = dataInputStream.readByte();
+		// 	dataInputStream.close();
+		// 	SplashScr.loadIP();
+		// }
+		// catch (Exception)
+		// {
+		// }
 	}
 
 	public override void switchToMe()
@@ -812,6 +819,8 @@ public class ServerListScreen : mScreen, IActionListener
 		}
 		mSystem.resetCurInapp();
 		base.switchToMe();
+		cmd[1 + nCmdPlay].caption = Strings.accounts;
+		GameEvents.OnServerListScreenLoaded(this);
 	}
 
 	public void connectOk()
@@ -1083,6 +1092,7 @@ public class ServerListScreen : mScreen, IActionListener
 		Char.isLoadingMap = false;
 		init();
 		base.switchToMe();
+		GameEvents.OnScreenDownloadDataShow();
 	}
 
 	public void setLinkDefault(sbyte language)

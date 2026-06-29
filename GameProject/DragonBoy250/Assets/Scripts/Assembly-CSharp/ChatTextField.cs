@@ -1,6 +1,8 @@
+using Mod;
+
 public class ChatTextField : IActionListener
 {
-	private static ChatTextField instance;
+	public static ChatTextField instance;
 
 	public TField tfChat;
 
@@ -8,7 +10,7 @@ public class ChatTextField : IActionListener
 
 	public IChatable parentScreen;
 
-	private long lastChatTime;
+	public long lastChatTime;
 
 	public Command left;
 
@@ -18,15 +20,15 @@ public class ChatTextField : IActionListener
 
 	public Command center;
 
-	private int x;
+	public int x;
 
-	private int y;
+	public int y;
 
-	private int w;
+	public int w;
 
-	private int h;
+	public int h;
 
-	private bool isPublic;
+	public bool isPublic;
 
 	public Command cmdChat2;
 
@@ -158,6 +160,10 @@ public class ChatTextField : IActionListener
 
 	public void startChat(int firstCharacter, IChatable parentScreen, string to)
 	{
+		if (GameEvents.OnStartChatTextField(this, parentScreen))
+		{
+			return;
+		}
 		right.caption = mResources.CLOSE;
 		this.to = to;
 		if (Main.isWindowsPhone)
@@ -238,6 +244,11 @@ public class ChatTextField : IActionListener
 	{
 		if (!isShow)
 		{
+			GameEvents.OnUpdateChatTextField(this);
+			return;
+		}
+		if (!isShow)
+		{
 			return;
 		}
 		tfChat.update();
@@ -283,6 +294,11 @@ public class ChatTextField : IActionListener
 
 	public void paint(mGraphics g)
 	{
+		GameEvents.OnPaintChatTextField(this, g);
+		if (Utils.IsMobile())
+		{
+			return;
+		}
 		if (isShow && !Main.isIPhone)
 		{
 			int num = ((!Main.isWindowsPhone) ? (y - KC) : (tfChat.y - 5));

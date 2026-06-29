@@ -1,5 +1,6 @@
 using System.Net.NetworkInformation;
 using System.Threading;
+using Mod;
 using UnityEngine;
 
 public class Main : MonoBehaviour
@@ -85,36 +86,11 @@ public class Main : MonoBehaviour
 		}
 		mainThreadName = Thread.CurrentThread.Name;
 		isPC = true;
+		#if UNITY_IOS
+		isIPhone = true;
+		#endif
 		started = true;
-		if (isPC)
-		{
-			level = Rms.loadRMSInt("levelScreenKN");
-			if (level == 1)
-			{
-				Screen.SetResolution(720, 320, false);
-			}
-			else
-			{
-				Screen.SetResolution(1024, 600, false);
-			}
-		}
-	}
-
-	private void SetInit()
-	{
-		base.enabled = true;
-	}
-
-	private void OnHideUnity(bool isGameShown)
-	{
-		if (!isGameShown)
-		{
-			Time.timeScale = 0f;
-		}
-		else
-		{
-			Time.timeScale = 1f;
-		}
+		GameEvents.OnMainStart();
 	}
 
 	private void OnGUI()
@@ -218,7 +194,14 @@ public class Main : MonoBehaviour
 	{
 		if (isPC)
 		{
-			int num = Rms.loadRMSInt(Rms.RMS_lastZoomlevel);
+			sbyte[] zoomBytes = Rms.loadRMS(Rms.RMS_lastZoomlevel);
+			if (zoomBytes == null || zoomBytes.Length == 0)
+			{
+				Rms.saveRMSInt(Rms.RMS_lastZoomlevel, mGraphics.zoomLevel);
+				Rms.saveRMSInt("levelScreenKN", level);
+				return;
+			}
+			int num = zoomBytes[0];
 			if (num != mGraphics.zoomLevel)
 			{
 				Rms.clearAll();
@@ -272,10 +255,12 @@ public class Main : MonoBehaviour
 				int num = 1 / a;
 			}
 		}
+		GameEvents.OnFixedUpdateMain();
 	}
 
 	private void Update()
 	{
+		GameEvents.OnUpdateMain();
 	}
 
 	private void checkInput()
@@ -342,6 +327,7 @@ public class Main : MonoBehaviour
 
 	private void OnApplicationQuit()
 	{
+		GameEvents.OnGameClosing();
 		Debug.LogWarning("APP QUIT");
 		GameCanvas.bRun = false;
 		Session_ME.gI().close();
@@ -375,6 +361,7 @@ public class Main : MonoBehaviour
 		{
 			Application.Quit();
 		}
+		GameEvents.OnGamePause(paused);
 	}
 
 	public static void exit()

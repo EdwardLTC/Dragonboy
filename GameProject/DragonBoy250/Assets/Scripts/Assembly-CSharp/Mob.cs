@@ -1,8 +1,14 @@
 using System;
 using Assets.src.g;
+using Mod;
+using Mod.Graphics;
 
 public class Mob : IMapObject
 {
+	public int countDie;
+	
+	public long lastTimeDie;
+	
 	public const sbyte TYPE_DUNG = 0;
 
 	public const sbyte TYPE_DI = 1;
@@ -155,25 +161,25 @@ public class Mob : IMapObject
 
 	public int ySd;
 
-	private bool isOutMap;
+	public bool isOutMap;
 
-	private int wCount;
+	public int wCount;
 
 	public bool isShadown = true;
 
-	private int tick;
+	public int tick;
 
-	private int frame;
+	public int frame;
 
 	public static Image imgHP = GameCanvas.loadImage("/mainImage/myTexture2dmobHP.png");
 
-	private bool wy;
+	public bool wy;
 
-	private int wt;
+	public int wt;
 
-	private int fy;
+	public int fy;
 
-	private int ty;
+	public int ty;
 
 	public int typeSuperEff;
 
@@ -199,7 +205,7 @@ public class Mob : IMapObject
 
 	public int[] hurt = new int[1];
 
-	private int color = 8421504;
+	public int color = 8421504;
 
 	public int len = 24;
 
@@ -213,11 +219,11 @@ public class Mob : IMapObject
 
 	public Image imgHPtem;
 
-	private int offset;
+	public int offset;
 
 	public bool isHide;
 
-	private sbyte[] cou = new sbyte[2] { -1, 1 };
+	public sbyte[] cou = new sbyte[2] { -1, 1 };
 
 	public Char injureBy;
 
@@ -231,7 +237,7 @@ public class Mob : IMapObject
 
 	public bool sleepEff;
 
-	private int[][] frameArr = new int[6][]
+	public int[][] frameArr = new int[6][]
 	{
 		new int[8] { 0, 0, 0, 0, 1, 1, 1, 1 },
 		new int[8] { 0, 0, 0, 0, 1, 1, 1, 1 },
@@ -241,7 +247,7 @@ public class Mob : IMapObject
 		new int[8] { 0, 0, 0, 0, 1, 1, 1, 1 }
 	};
 
-	private bool isGetFr = true;
+	public bool isGetFr = true;
 
 	public Mob()
 	{
@@ -455,7 +461,7 @@ public class Mob : IMapObject
 		tick++;
 	}
 
-	private void updateShadown()
+	public void updateShadown()
 	{
 		int num = TileMap.size;
 		xSd = x;
@@ -489,7 +495,7 @@ public class Mob : IMapObject
 		}
 	}
 
-	private void paintShadow(mGraphics g)
+	public void paintShadow(mGraphics g)
 	{
 		int num = TileMap.size;
 		if (TileMap.tileTypeAt(xSd + num / 2, ySd + 1, 4))
@@ -530,6 +536,7 @@ public class Mob : IMapObject
 
 	public virtual void update()
 	{
+		GameEvents.OnUpdateMob(this);
 		if (isMafuba)
 		{
 			return;
@@ -906,7 +913,7 @@ public class Mob : IMapObject
 		}
 	}
 
-	private bool isSpecial()
+	public bool isSpecial()
 	{
 		if ((templateId >= 58 && templateId <= 65) || templateId == 67 || templateId == 68)
 		{
@@ -915,12 +922,12 @@ public class Mob : IMapObject
 		return false;
 	}
 
-	private bool isNewModStand()
+	public bool isNewModStand()
 	{
 		return templateId == 76;
 	}
 
-	private bool isNewMod()
+	public bool isNewMod()
 	{
 		if (templateId >= 73 && !isNewModStand())
 		{
@@ -929,7 +936,7 @@ public class Mob : IMapObject
 		return false;
 	}
 
-	private void updateInjure()
+	public void updateInjure()
 	{
 		if (!isBusyAttackSomeOne && GameCanvas.gameTick % 4 == 0)
 		{
@@ -1008,7 +1015,7 @@ public class Mob : IMapObject
 		}
 	}
 
-	private void updateMobStandWait()
+	public void updateMobStandWait()
 	{
 		checkFrameTick(stand);
 		switch (arrMobTemplate[templateId].type)
@@ -1425,6 +1432,10 @@ public class Mob : IMapObject
 
 	public virtual void paint(mGraphics g)
 	{
+		if (GraphicsReducer.OnMobPaint(this, g))
+		{
+			return;
+		}
 		if (isHide)
 		{
 			return;
@@ -1496,6 +1507,7 @@ public class Mob : IMapObject
 
 	public void startDie()
 	{
+		GameEvents.OnMobStartDie(this);
 		hp = 0L;
 		injureThenDie = true;
 		hp = 0L;
@@ -1604,7 +1616,7 @@ public class Mob : IMapObject
 		}
 	}
 
-	private bool isTypeNewMod()
+	public bool isTypeNewMod()
 	{
 		if (arrMobTemplate[templateId].data != null && arrMobTemplate[templateId].data.typeData == 2)
 		{

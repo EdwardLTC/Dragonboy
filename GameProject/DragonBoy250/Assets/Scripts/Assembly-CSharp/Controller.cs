@@ -2,6 +2,7 @@ using System;
 using Assets.src.e;
 using Assets.src.f;
 using Assets.src.g;
+using Mod;
 using UnityEngine;
 
 public class Controller : IMessageHandler
@@ -5102,6 +5103,7 @@ public class Controller : IMessageHandler
 			sbyte teleport = msg.reader().readByte();
 			loadCurrMap(teleport);
 			GameCanvas.debug("SA75x8", 2);
+			GameEvents.OnInfoMapLoaded();
 		}
 		catch (Exception)
 		{

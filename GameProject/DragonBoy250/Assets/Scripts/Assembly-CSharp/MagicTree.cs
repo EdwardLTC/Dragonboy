@@ -1,4 +1,5 @@
 using System;
+using Mod.Graphics;
 
 public class MagicTree : Npc, IActionListener
 {
@@ -64,6 +65,10 @@ public class MagicTree : Npc, IActionListener
 
 	public override void paint(mGraphics g)
 	{
+		if (GraphicsReducer.OnMagicTreePaint(this, g))
+		{
+			return;
+		}
 		if (id == 0)
 		{
 			return;

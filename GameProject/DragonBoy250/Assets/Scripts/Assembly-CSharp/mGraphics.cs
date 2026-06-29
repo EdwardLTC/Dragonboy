@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Assets.src.e;
+using Mod;
 using UnityEngine;
 
 public class mGraphics
@@ -17,13 +18,13 @@ public class mGraphics
 
 	public static int BOTTOM = 32;
 
-	private float r;
+	public float r;
 
-	private float g;
+	public float g;
 
-	private float b;
+	public float b;
 
-	private float a;
+	public float a;
 
 	public int clipX;
 
@@ -33,17 +34,17 @@ public class mGraphics
 
 	public int clipH;
 
-	private bool isClip;
+	public bool isClip;
 
-	private bool isTranslate = true;
+	public bool isTranslate = true;
 
-	private int translateX;
+	public int translateX;
 
-	private int translateY;
+	public int translateY;
 
-	private float translateXf;
+	public float translateXf;
 
-	private float translateYf;
+	public float translateYf;
 
 	public static int zoomLevel = 1;
 
@@ -73,19 +74,19 @@ public class mGraphics
 
 	public static int addYWhenOpenKeyBoard;
 
-	private int clipTX;
+	public int clipTX;
 
-	private int clipTY;
+	public int clipTY;
 
-	private int currentBGColor;
+	public int currentBGColor;
 
-	private Vector2 pos = new Vector2(0f, 0f);
+	public Vector2 pos = new Vector2(0f, 0f);
 
-	private Rect rect;
+	public Rect rect;
 
-	private Matrix4x4 matrixBackup;
+	public Matrix4x4 matrixBackup;
 
-	private Vector2 pivot;
+	public Vector2 pivot;
 
 	public Vector2 size = new Vector2(128f, 128f);
 
@@ -95,9 +96,9 @@ public class mGraphics
 
 	public static Color transParentColor = new Color(1f, 1f, 1f, 0f);
 
-	private Material lineMaterial;
+	public Material lineMaterial;
 
-	private void cache(string key, Texture value)
+	public void cache(string key, Texture value)
 	{
 		if (cachedTextures.Count > 400)
 		{
@@ -213,6 +214,67 @@ public class mGraphics
 			fillRect(x1, y1, 1, y2 - y1);
 			return;
 		}
+		if (isTranslate)
+		{
+			x1 += translateX;
+			y1 += translateY;
+			x2 += translateX;
+			y2 += translateY;
+		}
+		string key = "dl" + r + g + b;
+		Texture2D texture2D = (Texture2D)cachedTextures[key];
+		if (texture2D == null)
+		{
+			texture2D = new Texture2D(1, 1);
+			Color color = new Color(r, g, b);
+			texture2D.SetPixel(0, 0, color);
+			texture2D.Apply();
+			cache(key, texture2D);
+		}
+		Vector2 vector = new Vector2(x1, y1);
+		Vector2 vector2 = new Vector2(x2, y2);
+		Vector2 vector3 = vector2 - vector;
+		float num3 = 57.29578f * Mathf.Atan(vector3.y / vector3.x);
+		if (vector3.x < 0f)
+		{
+			num3 += 180f;
+		}
+		int num4 = (int)Mathf.Ceil(0f);
+		GUIUtility.RotateAroundPivot(num3, vector);
+		int num5 = 0;
+		int num6 = 0;
+		int num7 = 0;
+		int num8 = 0;
+		if (isClip)
+		{
+			num5 = clipX;
+			num6 = clipY;
+			num7 = clipW;
+			num8 = clipH;
+			if (isTranslate)
+			{
+				num5 += clipTX;
+				num6 += clipTY;
+			}
+		}
+		if (isClip)
+		{
+			GUI.BeginGroup(new Rect(num5, num6, num7, num8));
+		}
+		Graphics.DrawTexture(new Rect(vector.x - (float)num5, vector.y - (float)num4 - (float)num6, vector3.magnitude, 1f), texture2D);
+		if (isClip)
+		{
+			GUI.EndGroup();
+		}
+		GUIUtility.RotateAroundPivot(0f - num3, vector);
+	}
+	
+	public void drawLineToBoss(int x1, int y1, int x2, int y2)
+	{
+		x1 *= zoomLevel;
+		y1 *= zoomLevel;
+		x2 *= zoomLevel;
+		y2 *= zoomLevel;
 		if (isTranslate)
 		{
 			x1 += translateX;
@@ -466,7 +528,7 @@ public class mGraphics
 		}
 	}
 
-	private void UpdatePos(int anchor)
+	public void UpdatePos(int anchor)
 	{
 		Vector2 vector = new Vector2(0f, 0f);
 		switch (anchor)
@@ -923,10 +985,15 @@ public class mGraphics
 
 	public void drawImage(Image image, int x, int y, int anchor)
 	{
+		if (GameEvents.OnMGraphicsDrawImage(image, x, y, anchor))
+		{
+			return;
+		}
 		if (image != null)
 		{
 			drawRegion(image, 0, 0, getImageWidth(image), getImageHeight(image), 0, x, y, anchor);
 		}
+		GameEvents.AfterMGraphicsDrawImage(image, x, y, anchor);
 	}
 
 	public void drawImageFog(Image image, int x, int y, int anchor)

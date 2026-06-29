@@ -1,5 +1,10 @@
+using Mod;
+using Mod.Graphics;
+
 public class ItemMap : IMapObject
 {
+	public int countAutoPick;
+	
 	public int x;
 
 	public int y;
@@ -90,6 +95,7 @@ public class ItemMap : IMapObject
 
 	public void setPoint(int xEnd, int yEnd)
 	{
+		GameEvents.OnSetPointItemMap(xEnd, yEnd);
 		this.xEnd = xEnd;
 		this.yEnd = yEnd;
 		vx = xEnd - x >> 2;
@@ -152,6 +158,10 @@ public class ItemMap : IMapObject
 
 	public void paint(mGraphics g)
 	{
+		if (GraphicsReducer.OnItemMapPaint(this, g))
+		{
+			return;
+		}
 		if (isAuraItem())
 		{
 			g.drawImage(TileMap.bong, x + 3, y, mGraphics.VCENTER | mGraphics.HCENTER);

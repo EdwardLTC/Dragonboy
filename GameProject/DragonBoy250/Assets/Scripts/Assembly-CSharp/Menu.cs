@@ -1,3 +1,5 @@
+using Mod;
+
 public class Menu
 {
 	public bool showMenu;
@@ -101,6 +103,10 @@ public class Menu
 
 	public void startAt(MyVector menuItems, int pos)
 	{
+		if (GameEvents.OnMenuStartAt(menuItems))
+		{
+			return;
+		}
 		Res.outz("startAt MENU");
 		if (showMenu)
 		{

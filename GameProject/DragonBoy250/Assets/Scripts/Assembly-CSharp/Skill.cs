@@ -1,3 +1,5 @@
+using Mod;
+
 public class Skill
 {
 	public const sbyte ATT_STAND = 0;
@@ -72,6 +74,10 @@ public class Skill
 
 	public void paint(int x, int y, mGraphics g)
 	{
+		if (GameEvents.OnSkillPaint(this, x, y, g))
+		{
+			return;	
+		}
 		SmallImage.drawSmallImage(g, template.iconId, x, y, 0, StaticObj.VCENTER_HCENTER);
 		long num = mSystem.currentTimeMillis();
 		long num2 = num - lastTimeUseThisSkill;

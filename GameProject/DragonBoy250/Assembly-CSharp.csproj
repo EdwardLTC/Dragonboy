@@ -47,28 +47,46 @@
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.9f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ExtensionMethods.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/mFont.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/ScrollableMenuItems.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/MapNavigationService.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Member.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Navigation/MapStepHandlers.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/MainThreadDispatcher.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SmallDart.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/e/SmallSave.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ItemOptionTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TransportScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapPanel.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Skill.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/HTTPHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Waypoint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Info.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SelectCharScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillOption.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/R/Strings.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModScript.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/T3.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoLogin.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ItemTemplates.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IPaint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/FireWorkEff.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TouchScreenKeyboard.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/GameEventHook.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Cout.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/R/LocalizedString.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PartImage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/KeyConstant.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemFunctionConfig.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CoroutineMainThreadAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/mScreen.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/EdwardXmap.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/CskbFullBagActionFactory.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CharEffect/CharEffectMain.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ListChar/ListCharsInMap.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/RegisterScreen.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/BaseCommand.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BgItemMn.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MyRandom.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/NewBoss.cs" />
@@ -76,153 +94,248 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/MotherCanvas.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BachTuoc.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BigBoss2.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapContext.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Sprite.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/BaseCommandAttribute.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Menu.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Command.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectPaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoSendAttack.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Paint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ClanImage.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Core/XmapRouteInitializer.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Math.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Core/XmapProgressMonitor.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/mGraphics.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Boss/Boss.Paint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/DelayedAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/LoginScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PKFlag.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TextInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/ActionOnFullBag.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapData.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ImageInfo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ChatTextField.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MovePoint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/myWriter.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/CapsuleService.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoPean.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CharEffect/CharEffectTime.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/SkillType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/RadarScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/CreateCharScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/FrameImage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectManager.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/PetFollow.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/CrackBallScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillAll.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Key.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Message.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IChatable.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoSellTrashItems.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Skills.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/ImageSource.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/iPhoneSettings.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/InGameCommand.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MagicTree.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillBossInNappa.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ClanUtils.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/mSystem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PopUpYesNo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Image.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TouchScreenKeyboardType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/DartInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/GraphicsReducer.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PlayerData.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoTrainPet.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/CskbZonePriorityTracker.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InfoItem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Line.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Navigation/IMapStepHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/NewPanel.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Effect2.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Hotkey/HotkeyCommandAttribute.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Char.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Session_ME2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ServerEffect.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/Anchor.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/Action/DepositCskbFullBagAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/myReader.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/SkillManaUseType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffecMn.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Rms.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PlayerDart.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SMS.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Cmd.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/MapLookupService.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Main.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SplashScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/InGameAccountDAO.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/MenuItem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MapTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Arrowpaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/PickMob/Pk9rPickMob.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/DeveloperFunctions/GameData.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ActionPaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/MenuAction.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/Account.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MyStream.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TaskTemplate.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/UpCSKBController.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ServerListScreen.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ArrayCast.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/CharGender.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Part.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Hotkey/HotkeyCommandHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ChooseCharScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ServerScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/ItemTemplateType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TabClanIcon.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ActionUpdate.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillSelfAndPickGold.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/SocketEmitMessageType/CharacterInfoMessage.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CustomPanel/CustomPanelMenu.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/CharacterInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Utils.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CustomPanel/SetTabPanelTemplates.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/NClass.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/NinjaUtil.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MobTemplate.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemBooleanConfig.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Archivement.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/e/ChatVip.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Boss/Boss.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ScrollResult.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Arrow.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TileMap.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/HideGameUI.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MyVector.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Position.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mob.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ChatBox.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/GameMidlet.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/GameScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/GameLauncherClient.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ItemMap.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/MapGraphService.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IMapObject.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapObjects.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MobCapcha.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/NpcTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Properties/AssemblyInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/ServerConverter.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/StaticObj.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Pathfinding/DijkstraPathFinder.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Res.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Friend.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SmallImage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/Mabu.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BackgroudEffect.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/GameEvents.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/InGameAccountManager.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/GameCanvas.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InputStream.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/ClientInput.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/UpCSKB.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoSkill.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ImgByName.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BgItem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Layer.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/TeleportMenu/TeleportChar.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectCharPaint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/T1.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/XmapSettings.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Pathfinding/IPathFinder.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Service.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MonsterDart.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MyHashTable.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/Action/PutCskbIntoBoxFullBagAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Teleport.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Frame.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Chat/ChatCommandAttribute.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/CskbFullBagActionContext.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemFunction.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemBoolean.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillPaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemValuesConfig.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/mResources.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/PickMob/SkillPicker.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ClanObject.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Firework.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Hotkey/HotkeyCommand.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Effect.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InfoDlg.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectChar.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillInfoPaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/PickMob/PickMobControllerV2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BallInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/CskbNpcHelper.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/CskbConstants.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapMenuPresenter.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MainImage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Sound.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemValues.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Chat/ChatCommandHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/f/Controller2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/BigBoss.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/Action/SellCskbFullBagAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TaskOrder.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/UIImage.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/TeleportMenu/TeleportMenuMain.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectData.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/ComboBox.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ChatPopup.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Session_ME.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Scroll.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Npc.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectPanel.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ISession.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/MenuBuilder.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IMessageHandler.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/CommandUtils.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MyAudioClip.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MsgDlg.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ClanMessage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SoundMn.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Point.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/MenuItemCollection.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Timer.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CustomPanel/PaintPanelTemplates.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CustomPanel/CustomPanelMenuConfig.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IKbAction.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillBoss.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoUseGrape.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/iOSPlugins.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/GameInfo.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuMain.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoUseItem.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/DataOutputStream.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InfoPhuBan.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TopInfo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Effect_End.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/DataInputStream.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemConfig.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EPosition.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Graphics/CustomGraphics.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ListNew.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/Server.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Navigation/MapStepExecutor.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/TField.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/PickMob/MobPicker.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Services/XmapTiming.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Controller.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/IActionListener.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Panel.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PlayerInfo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectFeet.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapController.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Dialog.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectInfoPaint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/AccountType.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/ICskbFullBagAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ScaleGUI.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/GamePad.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InfoMe.cs" />
@@ -242,12 +355,20 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/InputDlg.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillOptionTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ClanManager.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/UIReportersManager.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/MonsterType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ItemOption.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/iPhoneGeneration.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ActionChat.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Clan.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Net.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/OpenMenu.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Chat/ChatCommand.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/SpaceshipSkip.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Hint.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/Menu/IdAction.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoGoback.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModStorage.cs" />
     <None Include="Assets/Resources/BillingMode.json" />
     <Reference Include="UnityEngine">
       <HintPath>/Applications/Unity/Hub/Editor/6000.3.9f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.dll</HintPath>
@@ -1074,6 +1195,9 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Services.Core">
+      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Services.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.Tilemap.Editor">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
     </Reference>
@@ -1082,9 +1206,6 @@
     </Reference>
     <Reference Include="Unity.AI.Navigation">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.AI.Navigation.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Services.Core">
-      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Services.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
@@ -1098,17 +1219,20 @@
     <Reference Include="Unity.Services.Core.Environments">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Services.Core.Environments.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Navigation.Updater">
-      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.AI.Navigation.Updater.dll</HintPath>
+    <Reference Include="Unity.Timeline">
+      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation.Editor">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.AI.Navigation.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Timeline">
-      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.004">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.InternalAPIEngineBridge.004.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AI.Navigation.Updater">
+      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.AI.Navigation.Updater.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Multiplayer.Center.Editor">
+      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Multiplayer.Center.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll</HintPath>
@@ -1124,9 +1248,6 @@
     </Reference>
     <Reference Include="UnityEngine.Advertisements">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Multiplayer.Center.Editor">
-      <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Multiplayer.Center.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>

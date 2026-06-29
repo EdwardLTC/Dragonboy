@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Mod;
 using UnityEngine;
 
 public class Image
@@ -43,6 +44,8 @@ public class Image
 
 	public static Image createImage(string filename)
 	{
+		if (GameEvents.OnCreateImage(filename, out Image image))
+			return image;
 		return __createImage(filename);
 	}
 

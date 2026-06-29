@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class ItemTime
 {
 	public short idIcon;
@@ -6,29 +8,47 @@ public class ItemTime
 
 	public int minute;
 
-	private long curr;
+	internal long curr;
 
-	private long last;
+	internal long last;
 
-	private bool isText;
+	internal bool isText;
 
-	private bool dontClear;
+	internal bool dontClear;
 
-	private string text;
+	internal string text;
 
-	private bool isPaint_coolDownBar;
+	internal bool isPaint_coolDownBar;
 
 	public int time;
 
 	public int coutTime;
 
-	private int per = 100;
+	internal int per = 100;
 
-	public ItemTime()
+    internal bool isEquivalence;
+
+    internal bool isInfinity;
+
+    internal int tenthSecond;
+
+    public ItemTime()
 	{
 	}
 
-	public ItemTime(short idIcon, int s)
+    internal ItemTime(short idIcon, int time, bool isEquivalence) : this(idIcon, time)
+    {
+        this.isEquivalence = isEquivalence;
+    }
+
+    internal ItemTime(short idIcon, bool isInfinity)
+    {
+        this.idIcon = idIcon;
+        this.isInfinity = isInfinity;
+    }
+
+
+    public ItemTime(short idIcon, int s)
 	{
 		this.idIcon = idIcon;
 		minute = s / 60;
@@ -42,13 +62,9 @@ public class ItemTime
 	public void initTimeText(sbyte id, string text, int time)
 	{
 		if (time == -1)
-		{
 			dontClear = true;
-		}
 		else
-		{
 			dontClear = false;
-		}
 		isText = true;
 		minute = time / 60;
 		second = time % 60;
@@ -74,11 +90,8 @@ public class ItemTime
 	{
 		for (int i = 0; i < Char.vItemTime.size(); i++)
 		{
-			ItemTime itemTime = (ItemTime)Char.vItemTime.elementAt(i);
-			if (itemTime.idIcon == id)
-			{
+			if (((ItemTime)Char.vItemTime.elementAt(i)).idIcon == id)
 				return true;
-			}
 		}
 		return false;
 	}
@@ -89,9 +102,7 @@ public class ItemTime
 		{
 			ItemTime itemTime = (ItemTime)GameScr.textTime.elementAt(i);
 			if (itemTime.idIcon == id)
-			{
 				return itemTime;
-			}
 		}
 		return null;
 	}
@@ -100,11 +111,8 @@ public class ItemTime
 	{
 		for (int i = 0; i < GameScr.textTime.size(); i++)
 		{
-			ItemTime itemTime = (ItemTime)GameScr.textTime.elementAt(i);
-			if (itemTime.idIcon == id)
-			{
+			if (((ItemTime)GameScr.textTime.elementAt(i)).idIcon == id)
 				return true;
-			}
 		}
 		return false;
 	}
@@ -115,9 +123,7 @@ public class ItemTime
 		{
 			ItemTime itemTime = (ItemTime)Char.vItemTime.elementAt(i);
 			if (itemTime.idIcon == id)
-			{
 				return itemTime;
-			}
 		}
 		return null;
 	}
@@ -132,15 +138,24 @@ public class ItemTime
 
 	public void paint(mGraphics g, int x, int y)
 	{
-		SmallImage.drawSmallImage(g, idIcon, x, y, 0, 3);
-		string empty = string.Empty;
-		empty = minute + "'";
-		if (minute == 0)
-		{
-			empty = second + "s";
-		}
-		mFont.tahoma_7b_white.drawString(g, empty, x, y + 15, 2, mFont.tahoma_7b_dark);
-	}
+        SmallImage.drawSmallImage(g, idIcon, x, y, 0, 3);
+        string str;
+        if (!isInfinity)
+        {
+            str = minute + "'" + second + "s";
+            if (minute == 0)
+            {
+                str = second + "s";
+                if (second < 10)
+                    str = second + "." + tenthSecond + "s";
+            }
+            if (isEquivalence)
+                str = "~" + str;
+        }
+        else
+			str = "∞";
+        mFont.tahoma_7b_white.drawString(g, str, x, y + 15, 2, mFont.tahoma_7b_dark);
+    }
 
 	public void paintText(mGraphics g, int x, int y)
 	{
@@ -161,48 +176,38 @@ public class ItemTime
 			}
 			return;
 		}
-		string empty = string.Empty;
-		empty = minute + "'";
-		if (minute < 1)
-		{
-			empty = second + "s";
-		}
-		if (minute < 0)
-		{
-			empty = string.Empty;
-		}
-		if (dontClear)
-		{
-			empty = string.Empty;
-		}
-		mFont.tahoma_7b_white.drawString(g, text + " " + empty, x, y, 0, mFont.tahoma_7b_dark);
+        string str = minute + "'" + second + "s";
+        if (minute < 1)
+            str = second + "s";
+        if (minute < 0)
+            str = string.Empty;
+        if (dontClear)
+            str = string.Empty;
+        mFont.tahoma_7b_white.drawString(g, text + " " + str, x, y, 0, mFont.tahoma_7b_dark);
 	}
 
 	public void update()
 	{
-		curr = mSystem.currentTimeMillis();
-		if (curr - last >= 1000)
-		{
-			last = mSystem.currentTimeMillis();
-			second--;
-			coutTime--;
-			if (second <= 0)
-			{
-				second = 60;
-				minute--;
-			}
-			if (time > 0)
-			{
-				per = coutTime * 100 / time;
-			}
-		}
-		if (minute < 0 && !isText)
-		{
-			Char.vItemTime.removeElement(this);
-		}
-		if (minute < 0 && isText && !dontClear)
-		{
-			GameScr.textTime.removeElement(this);
-		}
-	}
+        if (isInfinity)
+            return;
+        curr = mSystem.currentTimeMillis();
+        tenthSecond = Mathf.Clamp((int)(9 - (curr - last) / 100), 0, 9);
+        if (curr - last >= 1000)
+        {
+            last = mSystem.currentTimeMillis();
+            second--;
+            coutTime--;
+            if (second == -1)
+            {
+                second = 59;
+                minute--;
+            }
+            if (time > 0)
+                per = coutTime * 100 / time;
+        }
+        if (minute < 0 && !isText)
+            Char.vItemTime.removeElement(this);
+        if (minute < 0 && isText && !dontClear)
+            GameScr.textTime.removeElement(this);
+    }
 }

@@ -1,6 +1,8 @@
 using System;
 using Assets.src.e;
 using Assets.src.g;
+using Mod;
+using Mod.Graphics;
 using UnityEngine;
 
 public class GameCanvas : IActionListener
@@ -143,7 +145,7 @@ public class GameCanvas : IActionListener
 
 	public static int planet = 0;
 
-	private mGraphics g = new mGraphics();
+	public mGraphics g = new mGraphics();
 
 	public static Image img18;
 
@@ -157,7 +159,7 @@ public class GameCanvas : IActionListener
 
 	public static bool isPlaySound = true;
 
-	private static int clearOldData;
+	public static int clearOldData;
 
 	public static int timeOpenKeyBoard;
 
@@ -171,17 +173,17 @@ public class GameCanvas : IActionListener
 
 	public static int upmax;
 
-	private long timefps = mSystem.currentTimeMillis() + 1000;
+	public long timefps = mSystem.currentTimeMillis() + 1000;
 
-	private long timeup = mSystem.currentTimeMillis() + 1000;
+	public long timeup = mSystem.currentTimeMillis() + 1000;
 
 	public static int isRequestMapID = -1;
 
 	public static long waitingTimeChangeMap;
 
-	private static int dir_ = -1;
+	public static int dir_ = -1;
 
-	private int tickWaitThongBao;
+	public int tickWaitThongBao;
 
 	public bool isPaintCarret;
 
@@ -191,7 +193,7 @@ public class GameCanvas : IActionListener
 
 	public static MyVector debugSession;
 
-	private static bool isShowErrorForm = false;
+	public static bool isShowErrorForm = false;
 
 	public static bool paintBG;
 
@@ -289,13 +291,13 @@ public class GameCanvas : IActionListener
 
 	public static bool isLoadBGok;
 
-	private static long lastTimePress = 0L;
+	public static long lastTimePress = 0L;
 
 	public static int keyAsciiPress;
 
 	public static int pXYScrollMouse;
 
-	private static Image imgSignal;
+	public static Image imgSignal;
 
 	public static MyVector flyTexts = new MyVector();
 
@@ -303,13 +305,13 @@ public class GameCanvas : IActionListener
 
 	public static long timeBreakLoading;
 
-	private static string thongBaoTest;
+	public static string thongBaoTest;
 
 	public static int xThongBaoTranslate = w - 60;
 
 	public static bool isPointerJustDown = false;
 
-	private int count = 1;
+	public int count = 1;
 
 	public static bool csWait;
 
@@ -1240,6 +1242,10 @@ public class GameCanvas : IActionListener
 
 	public static void paintBGGameScr(mGraphics g)
 	{
+		if (GraphicsReducer.OnPaintBgGameScr(g))
+		{
+			return;
+		}
 		if (!isLoadBGok)
 		{
 			g.setColor(0);
@@ -1960,7 +1966,7 @@ public class GameCanvas : IActionListener
 		}
 	}
 
-	private static void randomRaintEff(int typeBG)
+	public static void randomRaintEff(int typeBG)
 	{
 		for (int i = 0; i < bgRain.Length; i++)
 		{
@@ -1974,6 +1980,10 @@ public class GameCanvas : IActionListener
 
 	public void keyPressedz(int keyCode)
 	{
+		if (GameEvents.OnKeyPressed(keyCode, false))
+		{
+			return;
+		}
 		lastTimePress = mSystem.currentTimeMillis();
 		if ((keyCode >= 48 && keyCode <= 57) || (keyCode >= 65 && keyCode <= 122) || keyCode == 10 || keyCode == 8 || keyCode == 13 || keyCode == 32 || keyCode == 31)
 		{
@@ -1982,7 +1992,7 @@ public class GameCanvas : IActionListener
 		mapKeyPress(keyCode);
 	}
 
-	public void mapKeyPress(int keyCode)
+	void mapKeyPress(int keyCode)
 	{
 		if (currentDialog != null)
 		{
@@ -2152,6 +2162,10 @@ public class GameCanvas : IActionListener
 
 	public void keyReleasedz(int keyCode)
 	{
+		if (GameEvents.OnKeyReleased(keyCode, false))
+		{
+			return;
+		}
 		keyAsciiPress = 0;
 		mapKeyRelease(keyCode);
 	}
@@ -2528,6 +2542,7 @@ public class GameCanvas : IActionListener
 		catch (Exception)
 		{
 		}
+		GameEvents.OnPaintGameCanvas(this, g);
 	}
 
 	public static void endDlg()
@@ -2542,6 +2557,10 @@ public class GameCanvas : IActionListener
 
 	public static void startOKDlg(string info)
 	{
+		if (GameEvents.OnStartOKDlg(info))
+		{
+			return;
+		}
 		closeKeyBoard();
 		msgdlg.setInfo(info, null, new Command(mResources.OK, instance, 8882, null), null);
 		currentDialog = msgdlg;

@@ -1,10 +1,15 @@
 using System;
 using Assets.src.e;
 using Assets.src.g;
+using Mod;
+using Mod.CharEffect;
+using Mod.Graphics;
 using UnityEngine;
 
 public class Char : IMapObject
 {
+	internal CharEffectTime charEffectTime = new CharEffectTime();
+	
 	public string xuStr;
 
 	public string luongStr;
@@ -714,9 +719,9 @@ public class Char : IMapObject
 		36
 	};
 
-	private static Char myChar;
+	public static Char myChar;
 
-	private static Char myPet;
+	public static Char myPet;
 
 	public static int[] listAttack;
 
@@ -724,7 +729,7 @@ public class Char : IMapObject
 
 	public int cvyJump;
 
-	private int indexUseSkill = -1;
+	public int indexUseSkill = -1;
 
 	public int cxSend;
 
@@ -838,15 +843,15 @@ public class Char : IMapObject
 
 	public int delayFall;
 
-	private bool isSoundJump;
+	public bool isSoundJump;
 
 	public int lastFrame;
 
-	private Effect eProtect;
+	public Effect eProtect;
 
-	private Effect eDanhHieu;
+	public Effect eDanhHieu;
 
-	private int twHp;
+	public int twHp;
 
 	public bool isInjureHp;
 
@@ -854,9 +859,9 @@ public class Char : IMapObject
 
 	public bool isHide;
 
-	private int count;
+	public int count;
 
-	private bool wy;
+	public bool wy;
 
 	public int wt;
 
@@ -864,9 +869,9 @@ public class Char : IMapObject
 
 	public int ty;
 
-	private int t;
+	public int t;
 
-	private int fM;
+	public int fM;
 
 	public int[] move = new int[15]
 	{
@@ -874,7 +879,7 @@ public class Char : IMapObject
 		3, 3, 2, 2, 2
 	};
 
-	private string strMount = "mount_";
+	public string strMount = "mount_";
 
 	public int headICON = -1;
 
@@ -944,69 +949,69 @@ public class Char : IMapObject
 
 	public bool isStandAndCharge;
 
-	private bool isFlying;
+	public bool isFlying;
 
 	public int posDisY;
 
-	private int chargeCount;
+	public int chargeCount;
 
-	private bool hasSendAttack;
+	public bool hasSendAttack;
 
 	public bool isMabuHold;
 
-	private long timeBlue;
+	public long timeBlue;
 
-	private int tBlue;
+	public int tBlue;
 
-	private bool IsAddDust1;
+	public bool IsAddDust1;
 
-	private bool IsAddDust2;
+	public bool IsAddDust2;
 
 	public int len = 24;
 
 	public int w_hp_bar = 24;
 
-	private int per = 100;
+	public int per = 100;
 
-	private int per_tem = 100;
+	public int per_tem = 100;
 
-	private Image imgHPtem;
+	public Image imgHPtem;
 
-	private bool isPet;
+	public bool isPet;
 
-	private bool isMiniPet;
+	public bool isMiniPet;
 
-	private int iiii;
+	public int iiii;
 
-	private int danhHieuFramme;
+	public int danhHieuFramme;
 
 	public int xSd;
 
 	public int ySd;
 
-	private bool isOutMap;
+	public bool isOutMap;
 
-	private int fBag;
+	public int fBag;
 
-	private Part ph;
+	public Part ph;
 
-	private Part pl;
+	public Part pl;
 
-	private Part pb;
+	public Part pb;
 
 	public int cH_new = 32;
 
-	private int statusBeforeNothing;
+	public int statusBeforeNothing;
 
-	private int timeFocusToMob;
+	public int timeFocusToMob;
 
 	public static bool isManualFocus = false;
 
-	private Char charHold;
+	public Char charHold;
 
-	private Mob mobHold;
+	public Mob mobHold;
 
-	private int nInjure;
+	public int nInjure;
 
 	public short wdx;
 
@@ -1048,7 +1053,7 @@ public class Char : IMapObject
 
 	public bool isWaitMonkey;
 
-	private bool isFeetEff;
+	public bool isFeetEff;
 
 	public bool meDead;
 
@@ -1060,17 +1065,17 @@ public class Char : IMapObject
 
 	public bool danhHieuEff = true;
 
-	private bool isSetPos;
+	public bool isSetPos;
 
-	private int tpos;
+	public int tpos;
 
-	private short xPos;
+	public short xPos;
 
-	private short yPos;
+	public short yPos;
 
-	private sbyte typePos;
+	public sbyte typePos;
 
-	private bool isMyFusion;
+	public bool isMyFusion;
 
 	public bool isFusion;
 
@@ -1104,13 +1109,13 @@ public class Char : IMapObject
 
 	public static FrameImage fraRedEye;
 
-	private int fChopmat;
+	public int fChopmat;
 
-	private bool isAddChopMat;
+	public bool isAddChopMat;
 
-	private long timeAddChopmat;
+	public long timeAddChopmat;
 
-	private int[] frChopNhanh = new int[34]
+	public int[] frChopNhanh = new int[34]
 	{
 		-1, -1, -1, -1, 0, 0, 1, 1, 0, 0,
 		1, 1, 0, 0, 1, 1, 0, 0, 1, 1,
@@ -1118,14 +1123,14 @@ public class Char : IMapObject
 		-1, -1, -1, -1
 	};
 
-	private int[] frChopCham = new int[23]
+	public int[] frChopCham = new int[23]
 	{
 		-1, -1, -1, -1, 0, 0, 1, 1, 1, 0,
 		0, 1, 1, 1, 0, 0, 1, 1, 1, -1,
 		-1, -1, -1
 	};
 
-	private int[] frEye = new int[30]
+	public int[] frEye = new int[30]
 	{
 		-1, -1, 0, 0, 1, 1, 0, 0, 1, 1,
 		0, 0, 1, 1, 0, 0, 1, 1, 0, 0,
@@ -1134,9 +1139,9 @@ public class Char : IMapObject
 
 	public static int[][] Arr_Head_2Fr = new int[1][] { new int[2] { 542, 543 } };
 
-	private int fHead;
+	public int fHead;
 
-	private string strEffAura = "aura_";
+	public string strEffAura = "aura_";
 
 	public short idAuraEff = -1;
 
@@ -1144,27 +1149,27 @@ public class Char : IMapObject
 
 	public static bool isPaintAura2 = true;
 
-	private FrameImage fraEff;
+	public FrameImage fraEff;
 
-	private FrameImage fraEffSub;
+	public FrameImage fraEffSub;
 
-	private string strEff_Set_Item = "set_eff_";
+	public string strEff_Set_Item = "set_eff_";
 
 	public short idEff_Set_Item = -1;
 
-	private FrameImage fraHat_behind;
+	public FrameImage fraHat_behind;
 
-	private FrameImage fraHat_font;
+	public FrameImage fraHat_font;
 
-	private FrameImage fraHat_behind_2;
+	public FrameImage fraHat_behind_2;
 
-	private FrameImage fraHat_font_2;
+	public FrameImage fraHat_font_2;
 
-	private string strHat_behind = "hat_sau_";
+	public string strHat_behind = "hat_sau_";
 
-	private string strHat_font = "hat_truoc_";
+	public string strHat_font = "hat_truoc_";
 
-	private string strNgang = "ngang_";
+	public string strNgang = "ngang_";
 
 	public short idHat = -1;
 
@@ -1216,37 +1221,37 @@ public class Char : IMapObject
 
 	public bool isPaintNewSkill;
 
-	private bool isFly;
+	public bool isFly;
 
-	private long timeReset_newSkill;
+	public long timeReset_newSkill;
 
-	private sbyte typeFrame;
+	public sbyte typeFrame;
 
-	private short idskillPaint;
+	public short idskillPaint;
 
-	private byte[] fr_start;
+	public byte[] fr_start;
 
-	private byte[] fr_atk;
+	public byte[] fr_atk;
 
-	private byte[] fr_end;
+	public byte[] fr_end;
 
-	private int count_NEW;
+	public int count_NEW;
 
-	private int stt;
+	public int stt;
 
-	private short rangeDame;
+	public short rangeDame;
 
-	private sbyte typePaint;
+	public sbyte typePaint;
 
-	private sbyte typeItem;
+	public sbyte typeItem;
 
-	private Point targetDame;
+	public Point targetDame;
 
-	private long timeDame;
+	public long timeDame;
 
 	public bool isMafuba;
 
-	private short countMafuba;
+	public short countMafuba;
 
 	public int xMFB;
 
@@ -1254,9 +1259,9 @@ public class Char : IMapObject
 
 	public int timeGongSkill;
 
-	private FrameImage fraDanhHieu;
+	public FrameImage fraDanhHieu;
 
-	private MainImage mainImg;
+	public MainImage mainImg;
 
 	public Char()
 	{
@@ -1437,6 +1442,7 @@ public class Char : IMapObject
 
 	public void addInfo(string info)
 	{
+		GameEvents.OnAddInfoChar(this, info);
 		if (chatInfo == null)
 		{
 			chatInfo = new Info();
@@ -1781,6 +1787,7 @@ public class Char : IMapObject
 
 	public virtual void update()
 	{
+		GameEvents.OnUpdateChar(this);
 		if (isMafuba)
 		{
 			cf = 23;
@@ -2996,7 +3003,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void updateEffect()
+	public void updateEffect()
 	{
 		if (effPaints != null)
 		{
@@ -3061,7 +3068,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void checkPerformEndMovePointAction()
+	public void checkPerformEndMovePointAction()
 	{
 		if (endMovePointCommand != null)
 		{
@@ -3071,7 +3078,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void checkHideCharName()
+	public void checkHideCharName()
 	{
 		if (GameCanvas.gameTick % 20 != 0 || charID < 0)
 		{
@@ -3110,7 +3117,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void updateMobMe()
+	public void updateMobMe()
 	{
 		if (tMobMeBorn != 0)
 		{
@@ -3128,7 +3135,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void updateSkillPaint()
+	public void updateSkillPaint()
 	{
 		if (statusMe == 14 || statusMe == 5)
 		{
@@ -3353,7 +3360,7 @@ public class Char : IMapObject
 		myCharz().cySend = y;
 	}
 
-	private void updateCharDeadFly()
+	public void updateCharDeadFly()
 	{
 		isFreez = false;
 		if (isCharge)
@@ -3386,7 +3393,7 @@ public class Char : IMapObject
 		cf = 23;
 	}
 
-	private void updateResetPoint()
+	public void updateResetPoint()
 	{
 		InfoDlg.hide();
 		GameCanvas.clearAllPointerEvent();
@@ -3741,6 +3748,10 @@ public class Char : IMapObject
 
 	public void updateSuperEff()
 	{
+		if (GraphicsReducer.OnCharUpdateSuperEff())
+		{
+			return;
+		}
 		if (isCopy || isFusion || isSetPos || isPet || isMiniPet || isMonkey == 1 || (me && !isPaintAura2 && idAuraEff > -1) || (!me && idAuraEff > -1))
 		{
 			return;
@@ -3934,7 +3945,7 @@ public class Char : IMapObject
 		addDustEff(2);
 	}
 
-	private void stop()
+	public void stop()
 	{
 		statusMe = 6;
 		cp3 = 0;
@@ -4454,7 +4465,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private bool isHead_Fly(int head2)
+	public bool isHead_Fly(int head2)
 	{
 		if (Arr_Head_FlyMove.Length > 0)
 		{
@@ -4639,6 +4650,10 @@ public class Char : IMapObject
 
 	public void paintMount1(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintMount1(this, g))
+		{
+			return;
+		}
 		if (xMount <= GameScr.cmx || xMount >= GameScr.cmx + GameCanvas.w)
 		{
 			return;
@@ -4752,6 +4767,10 @@ public class Char : IMapObject
 
 	public void paintMount2(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintMount2())
+		{
+			return;
+		}
 		if (xMount <= GameScr.cmx || xMount >= GameScr.cmx + GameCanvas.w)
 		{
 			return;
@@ -4952,7 +4971,7 @@ public class Char : IMapObject
 		return result;
 	}
 
-	private void checkDelayFallIfTooHigh()
+	public void checkDelayFallIfTooHigh()
 	{
 		bool flag = true;
 		for (int i = 0; i < 150; i += 24)
@@ -5038,6 +5057,10 @@ public class Char : IMapObject
 
 	public void setSkillPaint(SkillPaint skillPaint, int sType)
 	{
+		if (GameEvents.OnUseSkill(this))
+		{
+			return;
+		}
 		hasSendAttack = false;
 		if (stone || (me && myskill.template.id == 9 && cHP <= cHPFull / 10))
 		{
@@ -5547,6 +5570,10 @@ public class Char : IMapObject
 
 	public virtual void paint(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaint(this, g))
+		{
+			return;
+		}
 		if (isHide)
 		{
 			return;
@@ -5652,8 +5679,12 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paint_map_line(mGraphics g)
+	public void paint_map_line(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintMapLine())
+		{
+			return;
+		}
 		if (isPaintNewSkill || x_hint == 0 || y_hint == 0 || statusMe == 14)
 		{
 			return;
@@ -5699,8 +5730,12 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintEff_Pet(mGraphics g)
+	public void paintEff_Pet(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEff_Pet())
+		{
+			return;
+		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -5711,8 +5746,12 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintSuperEffBehind(mGraphics g)
+	public void paintSuperEffBehind(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintSuperEffBehind())
+		{
+			return;
+		}
 		if ((me && !isPaintAura2) || idAuraEff > -1 || (statusMe != 1 && statusMe != 6) || mSystem.currentTimeMillis() - timeBlue <= 0 || isCopy || clevel < 16)
 		{
 			return;
@@ -5744,8 +5783,12 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintSuperEffFront(mGraphics g)
+	public void paintSuperEffFront(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintSuperEffFront())
+		{
+			return;
+		}
 		if (!isPaintAura2)
 		{
 			return;
@@ -5847,8 +5890,12 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintEffect(mGraphics g)
+	public void paintEffect(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEffect())
+		{
+			return;
+		}
 		if (effPaints != null)
 		{
 			for (int i = 0; i < effPaints.Length; i++)
@@ -5890,7 +5937,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintArrowAttack(mGraphics g)
+	public void paintArrowAttack(mGraphics g)
 	{
 	}
 
@@ -5977,7 +6024,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintCharName_HP_MP_Overhead(mGraphics g)
+	public void paintCharName_HP_MP_Overhead(mGraphics g)
 	{
 		Part part = GameScr.parts[getFHead(head)];
 		int num = CharInfo[cf][0][2] - part.pi[CharInfo[cf][0][0]].dy + 5;
@@ -6094,6 +6141,10 @@ public class Char : IMapObject
 
 	public void paintShadow(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintShadow(this, g))
+		{
+			return;
+		}
 		if (isMabuHold || head == 377 || leg == 471 || isTeleport || isFlyUp)
 		{
 			return;
@@ -6143,7 +6194,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintCharWithoutSkill(mGraphics g)
+	public void paintCharWithoutSkill(mGraphics g)
 	{
 		try
 		{
@@ -6334,6 +6385,10 @@ public class Char : IMapObject
 
 	public void paintCharBody(mGraphics g, int cx, int cy, int cdir, int cf, bool isPaintBag)
 	{
+		if (GraphicsReducer.OnCharPaintCharBody(this, g, cx, cy, cdir, isPaintBag))
+		{
+			return;
+		}
 		ph = GameScr.parts[head];
 		pl = GameScr.parts[leg];
 		pb = GameScr.parts[body];
@@ -7053,6 +7108,7 @@ public class Char : IMapObject
 		}
 		charHold = r;
 		holder = true;
+		GameEvents.OnCharSetHoldChar(this, r);
 	}
 
 	public void setHoldMob(Mob r)
@@ -7067,6 +7123,7 @@ public class Char : IMapObject
 		}
 		mobHold = r;
 		holder = true;
+		GameEvents.OnCharSetHoldMob(this);
 	}
 
 	public void findNextFocusByKey()
@@ -7577,7 +7634,7 @@ public class Char : IMapObject
 		return result;
 	}
 
-	private void paintPKFlag(mGraphics g)
+	public void paintPKFlag(mGraphics g)
 	{
 		if (cdir == 1)
 		{
@@ -7606,6 +7663,7 @@ public class Char : IMapObject
 			charHold = null;
 			mobHold = null;
 		}
+		GameEvents.OnCharRemoveHoldEff(this);
 	}
 
 	public void removeProtectEff()
@@ -7793,6 +7851,10 @@ public class Char : IMapObject
 
 	public void paintEffBehind(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEffBehind())
+		{
+			return;
+		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -7813,6 +7875,10 @@ public class Char : IMapObject
 
 	public void paintEffFront(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEffFront())
+		{
+			return;
+		}
 		for (int i = 0; i < vEffChar.size(); i++)
 		{
 			Effect effect = (Effect)vEffChar.elementAt(i);
@@ -7870,7 +7936,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private void paintRedEye(mGraphics g, int xx, int yy, int trans, int anchor)
+	public void paintRedEye(mGraphics g, int xx, int yy, int trans, int anchor)
 	{
 		if (head != 934 || (statusMe != 1 && statusMe != 6))
 		{
@@ -7905,7 +7971,7 @@ public class Char : IMapObject
 		return false;
 	}
 
-	private void updateFHead()
+	public void updateFHead()
 	{
 		if (isHead_2Fr(head))
 		{
@@ -7921,7 +7987,7 @@ public class Char : IMapObject
 		}
 	}
 
-	private int getFHead(int idHead)
+	public int getFHead(int idHead)
 	{
 		for (int i = 0; i < Arr_Head_2Fr.Length; i++)
 		{
@@ -7935,6 +8001,10 @@ public class Char : IMapObject
 
 	public void paintAuraBehind(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintAuraBehind())
+		{
+			return;
+		}
 		if ((!me || isPaintAura) && idAuraEff > -1 && (statusMe == 1 || statusMe == 6) && !GameCanvas.panel.isShow && mSystem.currentTimeMillis() - timeBlue > 0)
 		{
 			string nameImg = strEffAura + idAuraEff + "_0";
@@ -7948,6 +8018,10 @@ public class Char : IMapObject
 
 	public void paintAuraFront(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintAuraFront())
+		{
+			return;
+		}
 		if ((me && !isPaintAura) || idAuraEff <= -1)
 		{
 			return;
@@ -7995,6 +8069,10 @@ public class Char : IMapObject
 
 	public void paintEff_Lvup_behind(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEff_LvUp_Behind())
+		{
+			return;
+		}
 		if (idEff_Set_Item != -1)
 		{
 			if (fraEff != null)
@@ -8010,6 +8088,10 @@ public class Char : IMapObject
 
 	public void paintEff_Lvup_front(mGraphics g)
 	{
+		if (GraphicsReducer.OnCharPaintEff_LvUp_Front())
+		{
+			return;
+		}
 		if (idEff_Set_Item != -1)
 		{
 			if (fraEffSub != null)

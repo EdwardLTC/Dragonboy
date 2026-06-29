@@ -1,5 +1,6 @@
 using System;
 using Assets.src.g;
+using Mod;
 using UnityEngine;
 
 public class Service
@@ -31,6 +32,10 @@ public class Service
 
 	public void gotoPlayer(int id)
 	{
+		if (GameEvents.OnGotoPlayer(id))
+		{
+			return;
+		}
 		Message message = null;
 		try
 		{
@@ -862,6 +867,7 @@ public class Service
 
 	public void login(string username, string pass, string version, sbyte type)
 	{
+		GameEvents.OnLogin(ref username, ref pass, ref type);
 		Res.outz("Login " + username + " " + pass + " " + version);
 		Debug.LogError("Login " + username + " " + pass + " " + version);
 		try
@@ -903,6 +909,10 @@ public class Service
 
 	public void requestChangeMap()
 	{
+		if (GameEvents.OnRequestChangeMap())
+		{
+			return;
+		}
 		Message message = new Message((sbyte)(-23));
 		session.sendMessage(message);
 		message.cleanup();
@@ -1677,6 +1687,10 @@ public class Service
 
 	public void chat(string text)
 	{
+		if (GameEvents.OnSendChat(text))
+		{
+			return;	
+		}
 		Message message = null;
 		try
 		{
@@ -2429,6 +2443,10 @@ public class Service
 
 	public void getMapOffline()
 	{
+		if (GameEvents.OnGetMapOffline())
+		{
+			return;
+		}
 		Message message = null;
 		try
 		{

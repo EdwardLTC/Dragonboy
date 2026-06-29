@@ -1,3 +1,5 @@
+using Mod.Graphics;
+
 public class Npc : Char
 {
 	public const sbyte BINH_KHI = 0;
@@ -26,17 +28,17 @@ public class Npc : Char
 
 	public new bool isHide;
 
-	private int duaHauIndex;
+	public int duaHauIndex;
 
-	private int dyEff;
+	public int dyEff;
 
 	public static bool mabuEff;
 
 	public static int tMabuEff;
 
-	private static int[] shock_x = new int[4] { 1, -1, 1, -1 };
+	public static int[] shock_x = new int[4] { 1, -1, 1, -1 };
 
-	private static int[] shock_y = new int[4] { 1, -1, -1, 1 };
+	public static int[] shock_y = new int[4] { 1, -1, -1, 1 };
 
 	public static int shock_scr;
 
@@ -197,6 +199,10 @@ public class Npc : Char
 
 	public override void paint(mGraphics g)
 	{
+		if (GraphicsReducer.OnNpcPaint(this, g))
+		{
+			return;
+		}
 		if (Char.isLoadingMap || isHide || !isPaint() || statusMe == 15)
 		{
 			return;

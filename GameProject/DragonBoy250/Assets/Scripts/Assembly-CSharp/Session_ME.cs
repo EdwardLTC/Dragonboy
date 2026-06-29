@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Mod;
 using UnityEngine;
 
 public class Session_ME : ISession
@@ -309,6 +310,7 @@ public class Session_ME : ISession
 
 	public void connect(string host, int port)
 	{
+		GameEvents.OnSessionConnecting(ref host, ref port);
 		if (connected || connecting)
 		{
 			Debug.Log(">>>return connect ...!" + connected + "  ::  " + connecting);

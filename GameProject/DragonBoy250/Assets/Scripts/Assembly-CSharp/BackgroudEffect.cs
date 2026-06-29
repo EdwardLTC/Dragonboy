@@ -1,5 +1,6 @@
 using System;
 using Assets.src.e;
+using Mod.Graphics;
 
 public class BackgroudEffect
 {
@@ -427,6 +428,10 @@ public class BackgroudEffect
 
 	public static void initCloud()
 	{
+		if (GraphicsReducer.OnBackgroundEffectInitCloud())
+		{
+			return;
+		}
 		if (mSystem.clientType == 1)
 		{
 			imgCloud1 = null;
