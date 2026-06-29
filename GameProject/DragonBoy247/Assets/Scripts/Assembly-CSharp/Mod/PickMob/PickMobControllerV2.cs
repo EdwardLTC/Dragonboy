@@ -62,7 +62,6 @@ namespace Mod.PickMob
 					case TypePickItem.PickItemNormal:
 						_lockedItemMapId = target.itemMapID;
 						_lockedUntilMs = mSystem.currentTimeMillis() + 1200L;
-						// Ensure we actually move toward the item (server will pick once we're in range).
 						Move(target.xEnd, target.yEnd);
 						Service.gI().pickItem(target.itemMapID);
 						target.countAutoPick++;
@@ -80,7 +79,7 @@ namespace Mod.PickMob
 				}
 			}
 
-			if (Pk9rPickMob.IsTanSat)
+			if (Pk9rPickMob.IsTanSat && GameScr.vMob.size() > 0)
 			{
 				yield return DoSlaughter(myChar, isUseTDLT);
 			}
@@ -119,7 +118,7 @@ namespace Mod.PickMob
 					Skill skill = SkillPicker.GetSkillAttack();
 					if (skill is not null && !skill.paintCanNotUseSkill)
 					{
-						AttackMob(myChar, skill);
+						AttackMob(myChar, skill, isUseTDLT);
 					}
 				}
 			}
@@ -135,13 +134,13 @@ namespace Mod.PickMob
 			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 		}
 
-		static void AttackMob(Char myChar, Skill skill)
+		static void AttackMob(Char myChar, Skill skill, bool isUseTDLT)
 		{
 			Mob mobFocus = myChar.mobFocus;
 			mobFocus.x = mobFocus.xFirst;
 			mobFocus.y = mobFocus.yFirst;
 
-			if (Pk9rPickMob.IsAttackMonsterBySendCommand)
+			if (Pk9rPickMob.IsAttackMonsterBySendCommand || isUseTDLT)
 			{
 				AttackMobBySendCommand(myChar, skill, mobFocus);
 			}
