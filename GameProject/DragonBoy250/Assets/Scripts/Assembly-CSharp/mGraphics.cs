@@ -1191,14 +1191,36 @@ public class mGraphics
 		fillRect(i * zoomLevel, j * zoomLevel, k * zoomLevel, l * zoomLevel);
 	}
 
-	public void CreateLineMaterial()
+	// public void CreateLineMaterial()
+	// {
+	// 	if (!lineMaterial)
+	// 	{
+	// 		lineMaterial = new Material("Shader \"Lines/Colored Blended\" {SubShader { Pass {  Blend SrcAlpha OneMinusSrcAlpha  ZWrite Off Cull Off Fog { Mode Off }  BindChannels { Bind \"vertex\", vertex Bind \"color\", color }} } }");
+	// 		lineMaterial.hideFlags = HideFlags.HideAndDontSave;
+	// 		lineMaterial.shader.hideFlags = HideFlags.HideAndDontSave;
+	// 	}
+	// }
+	//
+	 public void CreateLineMaterial()
 	{
-		if (!lineMaterial)
+		if (lineMaterial != null)
+			return;
+	
+		Shader shader = Shader.Find("Hidden/Internal-Colored");
+	
+		if (shader == null)
 		{
-			lineMaterial = new Material("Shader \"Lines/Colored Blended\" {SubShader { Pass {  Blend SrcAlpha OneMinusSrcAlpha  ZWrite Off Cull Off Fog { Mode Off }  BindChannels { Bind \"vertex\", vertex Bind \"color\", color }} } }");
-			lineMaterial.hideFlags = HideFlags.HideAndDontSave;
-			lineMaterial.shader.hideFlags = HideFlags.HideAndDontSave;
+			Debug.LogError("Cannot find Hidden/Internal-Colored shader.");
+			return;
 		}
+	
+		lineMaterial = new Material(shader);
+		lineMaterial.hideFlags = HideFlags.HideAndDontSave;
+	
+		lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+		lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+		lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+		lineMaterial.SetInt("_ZWrite", 0);
 	}
 
 	public void drawlineGL(MyVector totalLine)
