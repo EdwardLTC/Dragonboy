@@ -793,6 +793,7 @@ public class ServerListScreen : mScreen, IActionListener
 		Char.isLoadingMap = false;
 		mSystem.resetCurInapp();
 		base.switchToMe();
+		GameEvents.OnServerListScreenLoaded(this);
 	}
 
 	public void switchToMe2()

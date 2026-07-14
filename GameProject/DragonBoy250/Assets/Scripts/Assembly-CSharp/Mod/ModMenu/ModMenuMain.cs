@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
 using Mod.AccountManager;
 using Mod.Auto;
 using Mod.CharEffect;
@@ -635,7 +636,7 @@ namespace Mod.ModMenu
 				TextInfo.reset();
 			else
 			{
-				TextInfo.paint(g, descriptionTextInfo, x, y, panel.wScroll - 10 - mFont.tahoma_7b_red.getWidth(currSelectedValue.ToString()), 15, mFont.tahoma_7_blue);
+				TextInfo.paint(g, descriptionTextInfo, x, y, panel.wScroll - 10 - mFont.tahoma_7b_red.getWidth(currSelectedValue.ToString(CultureInfo.InvariantCulture)), 15, mFont.tahoma_7_blue);
 				g.setClip(panel.xScroll, panel.yScroll, panel.wScroll, panel.hScroll);
 				g.translate(0, -panel.cmy);
 			}
