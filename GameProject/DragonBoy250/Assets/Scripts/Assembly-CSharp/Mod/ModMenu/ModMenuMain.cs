@@ -131,17 +131,6 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "PickMob_AutoPickItem_Toggle",
-					Title = Strings.autoPickItemTitle,
-					Description = Strings.autoPickItemDescription,
-					GetValueFunc = () => Pk9rPickMob.IsAutoPickItems,
-					SetValueAction = Pk9rPickMob.SetAutoPickItems,
-					RMSName = "pickmob_auto_pick",
-					GetIsDisabled = () => UpCSKBController.gI.IsActing,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
 					ID = "AutoKillAll_Toggle",
 					Title = "Kill all",
 					Description = "MỘT MÌNH TAO CHẤP HẾT",
@@ -198,6 +187,17 @@ namespace Mod.ModMenu
 					GetValueFunc = () => CharEffectMain.isEnabled,
 					SetValueAction = CharEffectMain.setState,
 					RMSName = "show_target_info"
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "PickMob_AutoPickItem_Toggle",
+					Title = Strings.autoPickItemTitle,
+					Description = Strings.autoPickItemDescription,
+					GetValueFunc = () => Pk9rPickMob.IsAutoPickItems,
+					SetValueAction = Pk9rPickMob.SetAutoPickItems,
+					RMSName = "pickmob_auto_pick",
+					GetIsDisabled = () => UpCSKBController.gI.IsActing,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
