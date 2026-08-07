@@ -118,7 +118,7 @@ namespace Mod.PickMob
 					Skill skill = SkillPicker.GetSkillAttack();
 					if (skill is not null && !skill.paintCanNotUseSkill)
 					{
-						AttackMob(myChar, skill, isUseTDLT);
+						AttackMob(myChar, skill);
 					}
 				}
 			}
@@ -134,13 +134,13 @@ namespace Mod.PickMob
 			yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 		}
 
-		static void AttackMob(Char myChar, Skill skill, bool isUseTDLT)
+		static void AttackMob(Char myChar, Skill skill)
 		{
 			Mob mobFocus = myChar.mobFocus;
 			mobFocus.x = mobFocus.xFirst;
 			mobFocus.y = mobFocus.yFirst;
 
-			if (Pk9rPickMob.IsAttackMonsterBySendCommand || isUseTDLT)
+			if (Pk9rPickMob.IsAttackMonsterBySendCommand)
 			{
 				AttackMobBySendCommand(myChar, skill, mobFocus);
 			}

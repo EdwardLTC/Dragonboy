@@ -105,6 +105,22 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "ShowCharInfo_Toggle",
+					Title = Strings.showCharListTitle,
+					Description = Strings.showCharListDescription,
+					GetValueFunc = () => ListCharsInMap.isEnabled,
+					SetValueAction = ListCharsInMap.setState
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "ShowBossInfo_Toggle",
+					Title = Strings.notifyBossTitle,
+					Description = Strings.notifyBossDescription,
+					GetValueFunc = () => Boss.isEnabled,
+					SetValueAction = Boss.setState
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "PickMob_Toggle",
 					Title = Strings.pickMobTitle,
 					Description = Strings.pickMobDescription,
@@ -123,16 +139,6 @@ namespace Mod.ModMenu
 					RMSName = "pickmob_auto_pick",
 					GetIsDisabled = () => UpCSKBController.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "Simple_UI_Toggle",
-					Title = "Simple UI",
-					Description = "Đơn giản hóa giao diện người chơi (ẩn pet, danh hiệu, ...)",
-					GetValueFunc = () => GraphicsReducer.IsSimpleUI,
-					SetValueAction = value => GraphicsReducer.IsSimpleUI = value,
-					GetIsDisabled = () => GraphicsReducer.IsEnabled,
-					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.setReduceGraphicsTitle)
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -160,6 +166,14 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "AutoKillSelfAndPickGold_Toggle",
+					Title = "Kill self and pick gold",
+					Description = "Tự chết và nhặt vàng (chỉ hoạt động ở map Làng)",
+					GetValueFunc = () => AutoKillSelfAndPickGold.gI.IsActing,
+					SetValueAction = AutoKillSelfAndPickGold.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoGoback_Toggle",
 					Title = "Goback",
 					Description = "Goback",
@@ -167,14 +181,6 @@ namespace Mod.ModMenu
 					SetValueAction = AutoGoback.gI.Toggle,
 					GetIsDisabled = () => AutoKillSelfAndPickGold.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, "Kill self and pick gold")
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoKillSelfAndPickGold_Toggle",
-					Title = "Kill self and pick gold",
-					Description = "Tự chết và nhặt vàng (chỉ hoạt động ở map Làng)",
-					GetValueFunc = () => AutoKillSelfAndPickGold.gI.IsActing,
-					SetValueAction = AutoKillSelfAndPickGold.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -192,22 +198,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => CharEffectMain.isEnabled,
 					SetValueAction = CharEffectMain.setState,
 					RMSName = "show_target_info"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "ShowCharInfo_Toggle",
-					Title = Strings.showCharListTitle,
-					Description = Strings.showCharListDescription,
-					GetValueFunc = () => ListCharsInMap.isEnabled,
-					SetValueAction = ListCharsInMap.setState
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "ShowBossInfo_Toggle",
-					Title = Strings.notifyBossTitle,
-					Description = Strings.notifyBossDescription,
-					GetValueFunc = () => Boss.isEnabled,
-					SetValueAction = Boss.setState
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -257,7 +247,17 @@ namespace Mod.ModMenu
 					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
 					SetValueAction = Pk9rPickMob.SetPickUpLimited,
 					RMSName = "pickmob_limit_pick_item_times"
-				})
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "Simple_UI_Toggle",
+					Title = "Simple UI",
+					Description = "Đơn giản hóa giao diện người chơi (ẩn pet, danh hiệu, ...)",
+					GetValueFunc = () => GraphicsReducer.IsSimpleUI,
+					SetValueAction = value => GraphicsReducer.IsSimpleUI = value,
+					GetIsDisabled = () => GraphicsReducer.IsEnabled,
+					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.setReduceGraphicsTitle)
+				}),
 			};
 			modMenuItemValues = new[]
 			{
@@ -314,7 +314,49 @@ namespace Mod.ModMenu
 					RMSName = "auto_pet_mode",
 					GetIsDisabled = () => AutoTrainPet.Mode <= AutoTrainPetMode.Disabled,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeEnabled, Strings.setAutoTrainPetTitle)
-				})
+				}),
+				new ModMenuItemValues(new ModMenuItemValuesConfig()
+				{
+					ID = "Set_AutoRescue",
+					Title = Strings.setAutoRescueTitle,
+					Values = Strings.setAutoRescueChoices,
+					GetValueFunc = () => (int)AutoSkill.targetMode,
+					SetValueAction = value => AutoSkill.setReviveTargetMode((int)value),
+					GetIsDisabled = () =>
+					{
+						if (Char.myCharz().cgender != 1)
+							return true;
+						Skill skill = (Skill)Char.myCharz().vSkillFight.elementAt(2);
+						if (skill == null)
+							return true;
+						return !skill.template.isBuffToPlayer();
+					},
+					GetDisabledReason = () =>
+					{
+						if (Char.myCharz().cgender != 1)
+							return Strings.youAreNotNamekian + '!';
+						Skill skill = (Skill)Char.myCharz().vSkillFight.elementAt(2);
+						if (skill == null)
+							return Strings.setAutoRescueSkill3Null + '!';
+						if (!skill.template.isBuffToPlayer())
+							return Strings.setAutoRescueSkill3BuffInvalid + '!';
+						return "";
+					}
+				}),
+				new ModMenuItemValues(new ModMenuItemValuesConfig()
+				{
+					ID = "Set_AutoUseCurrentSkill",
+					Title = "Auto use current skill",
+					Values = new []
+					{ 
+						"Disabled",
+						"Enabled"
+					},
+					GetValueFunc = () => AutoSkill.isUseCurrentSkill ? 1 : 0,
+					SetValueAction = value => AutoSkill.isUseCurrentSkill = (int)value == 1,
+					GetIsDisabled = () => false,
+					GetDisabledReason = () => string.Empty
+				}),
 			};
 			modMenuItemFunctions = new[]
 			{

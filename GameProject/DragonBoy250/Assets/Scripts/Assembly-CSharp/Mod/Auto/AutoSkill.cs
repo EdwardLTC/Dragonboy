@@ -9,6 +9,7 @@ namespace Mod.Auto
     {
         internal static TargetMode targetMode { get; set; } = TargetMode.None;
         internal static bool shouldReviveDeadChars => targetMode != TargetMode.None;
+        internal static bool isUseCurrentSkill { get; set; }
 
         internal static void setReviveTargetMode(int target)
         {
@@ -23,16 +24,27 @@ namespace Mod.Auto
 
         internal static void Update()
         {
-            if (!shouldReviveDeadChars || GameCanvas.gameTick % (30 * Time.timeScale) != 0)
+            if (GameCanvas.gameTick % (30 * Time.timeScale) != 0)
+            {
                 return;
-            Char deadChar = getDeadCharInMap();
-            Skill skillRescue = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
-            if (deadChar == null || !skillRescue.CanUse())
-                return;
-            if (canHealChar(deadChar) && skillRescue.point <= 1)
-                useSkillOn(deadChar, skillRescue);
-            else
-                Utils.buffMe();
+            }
+            
+            if (shouldReviveDeadChars)
+            {
+                Char deadChar = getDeadCharInMap();
+                Skill skillRescue = Char.myCharz().getSkill(Char.myCharz().nClass.skillTemplates[2]);
+                if (deadChar == null || !skillRescue.CanUse())
+                    return;
+                if (canHealChar(deadChar) && skillRescue.point <= 1)
+                    useSkillOn(deadChar, skillRescue);
+                else
+                    Utils.buffMe();
+            }
+
+            if (isUseCurrentSkill)
+            {
+                GameScr.gI().doSelectSkill(Char.myCharz().myskill,false);
+            }
         }
 
         static bool isValidTarget(Char target)
