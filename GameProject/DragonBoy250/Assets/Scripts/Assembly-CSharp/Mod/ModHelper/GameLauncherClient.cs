@@ -282,7 +282,7 @@ namespace Mod.ModHelper
 					Rms.saveRMSString("pass", Utils.password);
 				}
 				GameCanvas.serverScreen.perform(3, null);
-				DelayedAction.ScheduleRepeating(1f, SendCharacterInfo);
+				DelayedAction.ScheduleRepeating(30f, SendCharacterInfo);
 			}
 		}
 
