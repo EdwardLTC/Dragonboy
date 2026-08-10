@@ -988,12 +988,12 @@ public class Controller : IMessageHandler
 				}
 				if (b68 == 6)
 				{
-					short iconID3 = msg.reader().readShort();
-					short iconID4 = msg.reader().readShort();
-					GameCanvas.panel.combineSuccess = 0;
-					GameCanvas.panel.setCombineEff(3);
-					GameCanvas.panel.iconID1 = iconID3;
-					GameCanvas.panel.iconID3 = iconID4;
+					// short iconID3 = msg.reader().readShort();
+					// short iconID4 = msg.reader().readShort();
+					// GameCanvas.panel.combineSuccess = 0;
+					// GameCanvas.panel.setCombineEff(3);
+					// GameCanvas.panel.iconID1 = iconID3;
+					// GameCanvas.panel.iconID3 = iconID4;
 				}
 				if (b68 == 7)
 				{

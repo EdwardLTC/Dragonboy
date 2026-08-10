@@ -71,7 +71,6 @@ namespace Mod.PickMob
 
 			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
 			HideGameUI.SetState(true);
-			Pk9rPickMob.SetAttackMonsterBySendCommand(true);
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
@@ -108,7 +107,6 @@ namespace Mod.PickMob
 		{
 			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
 			HideGameUI.SetState(false);
-			Pk9rPickMob.SetAttackMonsterBySendCommand(false);
 			Pk9rPickMob.SetSlaughter(false);
 			AutoLogin.SetState(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
