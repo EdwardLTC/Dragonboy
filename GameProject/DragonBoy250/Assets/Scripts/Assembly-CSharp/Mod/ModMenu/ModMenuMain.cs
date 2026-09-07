@@ -201,6 +201,24 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "PickMob_PickMyItemOnly_Toggle",
+					Title = Strings.pickMobPickMyItemOnlyTitle,
+					Description = Strings.pickMobPickMyItemOnlyDescription,
+					GetValueFunc = () => Pk9rPickMob.IsItemMe,
+					SetValueAction = Pk9rPickMob.SetAutoPickItemsFromOthers,
+					RMSName = "pickmob_pick_my_item_only"
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "PickMob_LimitPickTimes_Toggle",
+					Title = Strings.pickMobLimitPickTimesTitle,
+					Description = Strings.pickMobLimitPickTimesDescription,
+					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
+					SetValueAction = Pk9rPickMob.SetPickUpLimited,
+					RMSName = "pickmob_limit_pick_item_times"
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "AutoAskForPeans_Toggle",
 					Title = Strings.autoAskForPeansTitle,
 					Description = Strings.autoAskForPeansDescription,
@@ -229,24 +247,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => AutoPean.isAutoHarvest,
 					SetValueAction = value => AutoPean.isAutoHarvest = value,
 					RMSName = "auto_harvest_peans"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "PickMob_PickMyItemOnly_Toggle",
-					Title = Strings.pickMobPickMyItemOnlyTitle,
-					Description = Strings.pickMobPickMyItemOnlyDescription,
-					GetValueFunc = () => Pk9rPickMob.IsItemMe,
-					SetValueAction = Pk9rPickMob.SetAutoPickItemsFromOthers,
-					RMSName = "pickmob_pick_my_item_only"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "PickMob_LimitPickTimes_Toggle",
-					Title = Strings.pickMobLimitPickTimesTitle,
-					Description = Strings.pickMobLimitPickTimesDescription,
-					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
-					SetValueAction = Pk9rPickMob.SetPickUpLimited,
-					RMSName = "pickmob_limit_pick_item_times"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{

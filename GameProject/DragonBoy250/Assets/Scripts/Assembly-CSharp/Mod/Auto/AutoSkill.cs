@@ -41,7 +41,7 @@ namespace Mod.Auto
                     Utils.buffMe();
             }
 
-            if (isUseCurrentSkill)
+            if (isUseCurrentSkill && Char.myCharz().myskill != null && Char.myCharz().myskill.CanUse())
             {
                 GameScr.gI().doSelectSkill(Char.myCharz().myskill,false);
             }

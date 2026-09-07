@@ -791,6 +791,15 @@
       <HintPath>/Users/edward/Documents/Dragonboy/GameProject/DragonBoy250/Assets/Plugins/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>/Applications/Unity/Hub/Editor/6000.3.9f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>/Applications/Unity/Hub/Editor/6000.3.9f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Apple.Extensions.Common">
+      <HintPath>/Applications/Unity/Hub/Editor/6000.3.9f1/PlaybackEngines/iOSSupport/UnityEditor.Apple.Extensions.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>/Applications/Unity/Hub/Editor/6000.3.9f1/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">

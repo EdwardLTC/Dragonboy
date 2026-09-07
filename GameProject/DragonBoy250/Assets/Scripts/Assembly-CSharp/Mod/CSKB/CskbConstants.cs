@@ -9,5 +9,6 @@ namespace Mod.PickMob
 		internal const short BunmaHomeMapId = 102;
 		internal const int DepositNpcId = 28;
 		internal const int SellNpcId = 37;
+		internal const int MaxCSKBInBag = 999;
 	}
 }

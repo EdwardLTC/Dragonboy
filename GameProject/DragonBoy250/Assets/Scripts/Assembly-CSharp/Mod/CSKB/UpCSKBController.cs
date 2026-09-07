@@ -52,7 +52,7 @@ namespace Mod.PickMob
 				yield return new WaitForSecondsRealtime(1f);
 			}
 
-			if (capsuleInBag?.quantity == 99)
+			if (capsuleInBag?.quantity == CskbConstants.MaxCSKBInBag)
 			{
 				yield return HandleFullBag(capsuleInBag);
 			}
@@ -81,9 +81,9 @@ namespace Mod.PickMob
 			Item capsuleInBag = Utils.getItemInBag(CskbConstants.IdCapsuleKb);
 			Item capsuleInBox = Utils.getItemInBox(CskbConstants.IdCapsuleKb);
 
-			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
+			if (capsuleInBox?.quantity == CskbConstants.MaxCSKBInBag && capsuleInBag?.quantity >= 970 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
 			{
-				Stop("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
+				Stop("Đã có " + CskbConstants.MaxCSKBInBag + " CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
 				return;
 			}
 
@@ -134,9 +134,9 @@ namespace Mod.PickMob
 
 		static bool TryRecoverMd(Item capsuleInBag, Item capsuleInBox)
 		{
-			if (capsuleInBox?.quantity == 99 && capsuleInBag?.quantity >= 70 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
+			if (capsuleInBox?.quantity == CskbConstants.MaxCSKBInBag && capsuleInBag?.quantity >= 970 && UpCSKB.actionOnFullBag == ActionOnFullBag.PutToBox)
 			{
-				StopAndGoHome("Đã có 99 CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
+				StopAndGoHome("Đã có " + CskbConstants.MaxCSKBInBag + " CSKB trong box và còn " + capsuleInBag.quantity + " CSKB trong túi");
 				return false;
 			}
 
@@ -158,7 +158,7 @@ namespace Mod.PickMob
 
 		static IEnumerator ReturnToTrainMapIfNeeded(Item capsuleInBag)
 		{
-			if (mapIdTrain == null || XmapController.gI.IsActing || TileMap.mapID == mapIdTrain || capsuleInBag?.quantity == 99)
+			if (mapIdTrain == null || XmapController.gI.IsActing || TileMap.mapID == mapIdTrain || capsuleInBag?.quantity == CskbConstants.MaxCSKBInBag)	
 			{
 				yield break;
 			}
