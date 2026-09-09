@@ -74,7 +74,7 @@ namespace Mod.PickMob
 			Pk9rPickMob.SetAutoPickItems(true);
 			Pk9rPickMob.SetAvoidSuperMonster(true);
 			Pk9rPickMob.SetSlaughter(true);
-			AutoLogin.SetState(true);
+			AutoLogin.gI.Toggle(true);
 			mapIdTrain = TileMap.mapID;
 			zoneIdTrain = TileMap.zoneID;
 
@@ -108,7 +108,7 @@ namespace Mod.PickMob
 			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
 			HideGameUI.SetState(false);
 			Pk9rPickMob.SetSlaughter(false);
-			AutoLogin.SetState(false);
+			AutoLogin.gI.Toggle(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
 			base.OnStop();
 		}
@@ -158,7 +158,7 @@ namespace Mod.PickMob
 
 		static IEnumerator ReturnToTrainMapIfNeeded(Item capsuleInBag)
 		{
-			if (mapIdTrain == null || XmapController.gI.IsActing || TileMap.mapID == mapIdTrain || capsuleInBag?.quantity == CskbConstants.MaxCSKBInBag)	
+			if (mapIdTrain == null || XmapController.gI.IsActing || TileMap.mapID == mapIdTrain || capsuleInBag?.quantity == CskbConstants.MaxCSKBInBag)
 			{
 				yield break;
 			}

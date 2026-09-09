@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Mod.Constants;
 using Mod.ModHelper;
 using Mod.Xmap;
@@ -6,7 +7,7 @@ using UnityEngine;
 
 namespace Mod.PickMob
 {
-	public class PickMobControllerV2 : CoroutineMainThreadAction<PickMobControllerV2>
+	public class PickMobController : CoroutineMainThreadAction<PickMobController>
 	{
 		const float PICK_ITEM_DELAY = 0.2f;
 		const float ATTACK_DELAY = 0.1f;
@@ -14,6 +15,11 @@ namespace Mod.PickMob
 
 		static int _lockedItemMapId = -1;
 		static long _lockedUntilMs;
+
+		static int[] _groundYCache;
+		static int _groundYCacheMapId = -1;
+
+		static readonly Dictionary<int, bool> _eventItemCache = new Dictionary<int, bool>();
 
 		protected override float Interval => 0f;
 
@@ -31,6 +37,8 @@ namespace Mod.PickMob
 				yield break;
 			}
 
+			EnsureGroundCache();
+
 			bool isUseTDLT = ItemTime.isExistItem(ID_ICON_ITEM_TDLT);
 			bool isTanSatTDLT = Pk9rPickMob.IsTanSat && isUseTDLT;
 
@@ -45,12 +53,11 @@ namespace Mod.PickMob
 				ItemMap target = FindBestPickTarget(myChar);
 				if (target != null)
 				{
-					TypePickItem type = GetTypePickItem(target);
+					TypePickItem type = GetTypePickItem(myChar, target);
 					switch (type)
 					{
 					case TypePickItem.PickItemTDLT:
-						_lockedItemMapId = target.itemMapID;
-						_lockedUntilMs = mSystem.currentTimeMillis() + 1200L;
+						LockTarget(target, 1200L);
 						myChar.cx = target.xEnd;
 						myChar.cy = target.yEnd;
 						Service.gI().charMove();
@@ -60,18 +67,16 @@ namespace Mod.PickMob
 						yield break;
 
 					case TypePickItem.PickItemNormal:
-						_lockedItemMapId = target.itemMapID;
-						_lockedUntilMs = mSystem.currentTimeMillis() + 1200L;
-						Move(target.xEnd, target.yEnd);
+						LockTarget(target, 1200L);
+						Move(myChar, target.xEnd, target.yEnd);
 						Service.gI().pickItem(target.itemMapID);
 						target.countAutoPick++;
 						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
 						yield break;
 
 					case TypePickItem.PickItemTanSat:
-						_lockedItemMapId = target.itemMapID;
-						_lockedUntilMs = mSystem.currentTimeMillis() + 2000L;
-						Move(target.xEnd, target.yEnd);
+						LockTarget(target, 2000L);
+						Move(myChar, target.xEnd, target.yEnd);
 						myChar.mobFocus = null;
 						yield return new WaitForSecondsRealtime(PICK_ITEM_DELAY);
 						yield break;
@@ -85,6 +90,12 @@ namespace Mod.PickMob
 			}
 		}
 
+		static void LockTarget(ItemMap target, long durationMs)
+		{
+			_lockedItemMapId = target.itemMapID;
+			_lockedUntilMs = mSystem.currentTimeMillis() + durationMs;
+		}
+
 		static IEnumerator DoSlaughter(Char myChar, bool isUseTDLT)
 		{
 			if (myChar.isCharge)
@@ -92,8 +103,6 @@ namespace Mod.PickMob
 				yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 				yield break;
 			}
-
-			myChar.clearFocus(0);
 
 			if (myChar.mobFocus != null && !MobPicker.IsMobTanSat(myChar.mobFocus))
 			{
@@ -127,7 +136,7 @@ namespace Mod.PickMob
 				Mob mob = MobPicker.GetMobNext();
 				if (mob != null)
 				{
-					Move(mob.xFirst - 24, mob.yFirst);
+					Move(myChar, mob.xFirst - 24, mob.yFirst);
 				}
 			}
 
@@ -162,7 +171,7 @@ namespace Mod.PickMob
 			{
 				if (Math.abs(myChar.cx - mobFocus.x) > 70)
 				{
-					Move(mobFocus.x, Utils.GetYGround(mobFocus.x));
+					Move(myChar, mobFocus.x, Utils.GetYGround(mobFocus.x));
 				}
 				else
 				{
@@ -174,7 +183,7 @@ namespace Mod.PickMob
 			}
 			else
 			{
-				Move(mobFocus.xFirst, mobFocus.yFirst);
+				Move(myChar, mobFocus.xFirst, mobFocus.yFirst);
 			}
 
 			bool inRange = Utils.Distance(myChar, mobFocus) <= 50 ||
@@ -201,13 +210,12 @@ namespace Mod.PickMob
 			}
 			else
 			{
-				Move(mobFocus.xFirst, mobFocus.yFirst);
+				Move(myChar, mobFocus.xFirst, mobFocus.yFirst);
 			}
 		}
 
-		static void Move(int x, int y)
+		static void Move(Char myChar, int x, int y)
 		{
-			Char myChar = Char.myCharz();
 			if (!Pk9rPickMob.IsVuotDiaHinh)
 			{
 				myChar.currentMovePoint = new MovePoint(x, y);
@@ -221,18 +229,45 @@ namespace Mod.PickMob
 				vs[1] = y;
 			}
 
+			if (ItemTime.isExistItem(ID_ICON_ITEM_TDLT))
+			{
+				Utils.TeleportMyChar(vs[0], vs[1]);
+				return;
+			}
+
 			myChar.currentMovePoint = new MovePoint(vs[0], vs[1]);
 		}
 
-		static int GetYsd(int xsd)
+		static void EnsureGroundCache()
+		{
+			if (_groundYCache != null && _groundYCacheMapId == TileMap.mapID)
+			{
+				return;
+			}
+
+			int cols = TileMap.pxw / 24 + 2;
+			_groundYCache = new int[cols];
+
+			for (int xi = 0; xi < cols; xi++)
+			{
+				int x = xi * 24;
+				_groundYCache[xi] = ComputeGroundY(x);
+			}
+
+			_groundYCacheMapId = TileMap.mapID;
+		}
+
+		static int ComputeGroundY(int x)
 		{
 			int dmin = TileMap.pxh;
 			int ysdBest = -1;
 			int myCharY = Char.myCharz().cy;
+
 			for (int i = 24; i < TileMap.pxh; i += 24)
 			{
-				if (!TileMap.tileTypeAt(xsd, i, 2))
+				if (!TileMap.tileTypeAt(x, i, 2))
 					continue;
+
 				int d = Res.abs(i - myCharY);
 				if (d < dmin)
 				{
@@ -242,6 +277,17 @@ namespace Mod.PickMob
 			}
 
 			return ysdBest;
+		}
+
+		static int GetYsd(int xsd)
+		{
+			int xi = xsd / 24;
+			if (_groundYCache == null || xi < 0 || xi >= _groundYCache.Length)
+			{
+				return ComputeGroundY(xsd);
+			}
+
+			return _groundYCache[xi];
 		}
 
 		static int[] GetPointYsdMax(int xStart, int xEnd)
@@ -280,7 +326,6 @@ namespace Mod.PickMob
 			};
 		}
 
-		#region Item picking helpers
 		static ItemMap FindBestPickTarget(Char myChar)
 		{
 			if (GameScr.vItemMap == null || GameScr.vItemMap.size() <= 0)
@@ -291,14 +336,12 @@ namespace Mod.PickMob
 
 			long now = mSystem.currentTimeMillis();
 
-			// If we already started moving/picking something, keep targeting it for a short time
-			// to prevent jitter between items.
 			if (_lockedItemMapId != -1 && now < _lockedUntilMs)
 			{
 				for (int i = 0; i < GameScr.vItemMap.size(); i++)
 				{
 					ItemMap it = (ItemMap)GameScr.vItemMap.elementAt(i);
-					if (it != null && it.itemMapID == _lockedItemMapId && GetTypePickItem(it) != TypePickItem.CanNotPickItem)
+					if (it != null && it.itemMapID == _lockedItemMapId && GetTypePickItem(myChar, it) != TypePickItem.CanNotPickItem)
 					{
 						return it;
 					}
@@ -318,13 +361,12 @@ namespace Mod.PickMob
 					continue;
 				}
 
-				TypePickItem type = GetTypePickItem(it);
+				TypePickItem type = GetTypePickItem(myChar, it);
 				if (type == TypePickItem.CanNotPickItem)
 				{
 					continue;
 				}
 
-				// Prefer items that are already in range, otherwise choose the closest.
 				int dx = Res.abs(myChar.cx - it.xEnd);
 				int dy = Res.abs(myChar.cy - it.yEnd);
 				int dist = dx + dy;
@@ -348,9 +390,8 @@ namespace Mod.PickMob
 			return best;
 		}
 
-		static TypePickItem GetTypePickItem(ItemMap itemMap)
+		static TypePickItem GetTypePickItem(Char myChar, ItemMap itemMap)
 		{
-			Char myChar = Char.myCharz();
 			if (Pk9rPickMob.IsItemMe && itemMap.playerId != myChar.charID && itemMap.playerId != -1)
 				return TypePickItem.CanNotPickItem;
 
@@ -360,7 +401,7 @@ namespace Mod.PickMob
 			if (!FilterItemPick(itemMap))
 				return TypePickItem.CanNotPickItem;
 
-			if (Pk9rPickMob.IsSkipPickEventItems && itemMap.template.description.Contains("Vật phẩm sự kiện"))
+			if (Pk9rPickMob.IsSkipPickEventItems && IsEventItem(itemMap.template.id, itemMap.template.description))
 				return TypePickItem.CanNotPickItem;
 
 			if (Res.abs(myChar.cx - itemMap.xEnd) < 60 && Res.abs(myChar.cy - itemMap.yEnd) < 60)
@@ -373,6 +414,17 @@ namespace Mod.PickMob
 				return TypePickItem.PickItemTanSat;
 
 			return TypePickItem.CanNotPickItem;
+		}
+
+		static bool IsEventItem(int templateId, string description)
+		{
+			if (!_eventItemCache.TryGetValue(templateId, out bool isEvent))
+			{
+				isEvent = description.Contains("Vật phẩm sự kiện");
+				_eventItemCache[templateId] = isEvent;
+			}
+
+			return isEvent;
 		}
 
 		static bool FilterItemPick(ItemMap itemMap)
@@ -399,6 +451,5 @@ namespace Mod.PickMob
 			PickItemTDLT,
 			PickItemTanSat
 		}
-		#endregion
 	}
 }

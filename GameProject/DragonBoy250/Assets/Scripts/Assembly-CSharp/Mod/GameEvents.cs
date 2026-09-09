@@ -179,7 +179,6 @@ namespace Mod
 				ModMenuMain.UpdatePosition();
 				InGameAccountManager.UpdateSizeAndPos();
 			}
-			AutoLogin.Update();
 		}
 
 		internal static void OnSaveRMSString(ref string filename, ref string data)
@@ -399,7 +398,7 @@ namespace Mod
 					pass = Utils.password == "" ? pass : Utils.password;
 				}
 			}
-			AutoLogin.server = ServerListScreen.ipSelect;
+			AutoLogin.SetServer(ServerListScreen.ipSelect);
 		}
 
 		internal static void OnServerListScreenLoaded(ServerListScreen serverListScreen)
@@ -1836,9 +1835,10 @@ namespace Mod
 				Item[] arrItemBag = Char.myCharz().arrItemBag;
 				int totalItems = arrItemBody.Length + arrItemBag.Length;
 				int offset = Math.max(panel.cmy / panel.ITEM_HEIGHT, 0);
-				for (int i = offset;
-				     i < Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, totalItems);
-				     i++)
+
+				int clamp = Mathf.Clamp(offset + (panel.hScroll - 21) / panel.ITEM_HEIGHT + 2, 0, totalItems);
+
+				for (int i = offset; i < clamp; i++)
 				{
 					int y = panel.yScroll + i * panel.ITEM_HEIGHT;
 					if (y - panel.cmy > panel.yScroll + panel.hScroll || y - panel.cmy < panel.yScroll)
@@ -1892,7 +1892,6 @@ namespace Mod
 
 						foreach (ItemOption option in item.itemOption)
 						{
-
 							if (option.optionTemplate.id == 72 && option.param > 0)
 							{
 								byte id_ = (byte)GetColor_Item_Upgrade(option.param);
@@ -1904,6 +1903,7 @@ namespace Mod
 						}
 
 						g.fillRect(panel.xScroll, y, 34, panel.ITEM_HEIGHT - 1);
+
 						CustomGraphics.PaintItemEffectInPanel(g,
 							panel.xScroll + 17 + (panel == GameCanvas.panel2 ? 2 : 0), y + 11, 34,
 							panel.ITEM_HEIGHT - 1, item);

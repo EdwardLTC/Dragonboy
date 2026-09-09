@@ -22,15 +22,15 @@ namespace Mod.PickMob
 			225, 353, 354, 355, 356, 357, 358, 359, 360, 362, 1229
 		};
 
-		internal static List<int> IdMobsTanSat = new List<int>();
-		internal static List<int> TypeMobsTanSat = new List<int>();
-		internal static List<sbyte> IdSkillsTanSat = new List<sbyte>(IdSkillsBase);
+		public static readonly List<int> IdMobsTanSat = new List<int>();
+		public static readonly List<int> TypeMobsTanSat = new List<int>();
+		public static readonly List<sbyte> IdSkillsTanSat = new List<sbyte>(IdSkillsBase);
 
 		internal static int TimesAutoPickItemMax = 14;
-		internal static List<short> IdItemPicks = new List<short>();
-		internal static List<short> IdItemBlocks = new List<short>(IdItemBlockBase);
-		internal static List<sbyte> TypeItemPicks = new List<sbyte>();
-		internal static List<sbyte> TypeItemBlocks = new List<sbyte>();
+		public static readonly List<short> IdItemPicks = new List<short>();
+		public static readonly List<short> IdItemBlocks = new List<short>(IdItemBlockBase);
+		public static readonly List<sbyte> TypeItemPicks = new List<sbyte>();
+		public static readonly List<sbyte> TypeItemBlocks = new List<sbyte>();
 
 		static Pk9rPickMob _Instance;
 
@@ -46,7 +46,7 @@ namespace Mod.PickMob
 
 		internal static void Init()
 		{
-			PickMobControllerV2.gI.Toggle(true);
+			PickMobController.gI.Toggle(true);
 		}
 
 		internal static void SetSlaughter(bool newState)
@@ -432,27 +432,17 @@ namespace Mod.PickMob
 				}
 			}
 			if (IdMobsTanSat.Count + TypeMobsTanSat.Count > 0)
-				menuBuilder.addItem(Strings.pickMobClearMonsterList, new MenuAction(() =>
-				{
-					ClearMonsterToFightList();
-				}));
+			{
+				menuBuilder.addItem(Strings.pickMobClearMonsterList, new MenuAction(ClearMonsterToFightList));
+			}
 			SkillTemplate mySkillTemplate = Char.myCharz().myskill.template;
 			if (IdSkillsTanSat.Contains(mySkillTemplate.id))
 				menuDesc = string.Format(Strings.pickMobRemoveFromSkillList, mySkillTemplate.name);
 			else
 				menuDesc = string.Format(Strings.pickMobAddToSkillList, mySkillTemplate.name);
-			menuBuilder.addItem(menuDesc, new MenuAction(() =>
-			{
-				ToggleSelectedSkillForSlaughter();
-			}));
-			menuBuilder.addItem(Strings.pickMobResetSkillListToDefault, new MenuAction(() =>
-			{
-				SaveCurrentSkillListAsDefault();
-			}));
-			menuBuilder.addItem(Strings.pickMobResetItemListToDefault, new MenuAction(() =>
-			{
-				ResetItemFilterToDefault();
-			}));
+			menuBuilder.addItem(menuDesc, new MenuAction(ToggleSelectedSkillForSlaughter));
+			menuBuilder.addItem(Strings.pickMobResetSkillListToDefault, new MenuAction(SaveCurrentSkillListAsDefault));
+			menuBuilder.addItem(Strings.pickMobResetItemListToDefault, new MenuAction(ResetItemFilterToDefault));
 			if (IdMobsTanSat.Count + TypeMobsTanSat.Count > 0)
 				menuBuilder.addItem(Strings.pickMobViewMonsterList, new MenuAction(() =>
 				{

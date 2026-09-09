@@ -1,82 +1,95 @@
+using System.Collections;
+using Mod.ModHelper;
 using Mod.R;
 
 namespace Mod.Auto
 {
-	internal class AutoLogin
+	internal sealed class AutoLogin : CoroutineMainThreadAction<AutoLogin>
 	{
-		internal static bool isEnabled;
-		static long lastTimeAttemptLogin;
-		static long lastTimeUpdate;
-		public static int server;
-		static int steps;
 
-		internal static void Update()
+		const long ReloginCooldownMs = 35_000;
+
+		static long _lastLoginAttemptTime;
+		static int _targetServerIndex;
+		static Step _currentStep;
+
+		protected override float Interval => 1f;
+
+		protected override IEnumerator OnUpdate()
 		{
-			if (!isEnabled)
-				return;
-			switch (steps)
+			switch (_currentStep)
 			{
-			case 0:
-				CheckForDisconnected();
+			case Step.CheckConnection:
+				CheckConnectionStatus();
 				break;
-			case 1:
-				if (mSystem.currentTimeMillis() - lastTimeUpdate <= 750) return;
-				lastTimeUpdate = mSystem.currentTimeMillis();
+
+			case Step.AttemptLogin:
 				AttemptLogin();
 				break;
-			case 2:
-				if (mSystem.currentTimeMillis() - lastTimeUpdate <= 750) return;
-				lastTimeUpdate = mSystem.currentTimeMillis();
-				break;
 			}
+
+			yield break;
 		}
 
-		static void CheckForDisconnected()
+		static void CheckConnectionStatus()
 		{
-			if (!IsLoginSuccess() || !Session_ME.gI().isConnected())
+			bool disconnected = !IsLoggedIn() || !Session_ME.gI().isConnected();
+			if (!disconnected)
 			{
-				lastTimeAttemptLogin = mSystem.currentTimeMillis();
-				GameCanvas.serverScreen.switchToMe();
-				Char.myChar = null;
-				steps = 1;
+				return;
 			}
-		}
 
-		static bool IsLoginSuccess()
-		{
-			return GameCanvas.currentScreen is not ServerListScreen && GameCanvas.currentScreen is not LoginScr;
+			GameCanvas.serverScreen.switchToMe();
+			Char.myChar = null;
+			_currentStep = Step.AttemptLogin;
 		}
 
 		static void AttemptLogin()
 		{
 			if (GameCanvas.currentScreen is GameScr)
 			{
-				steps = 2;
+				_currentStep = Step.CheckConnection;
 				return;
 			}
-			GameCanvas.startOKDlg(string.Format(Strings.autoLoginReattemptLoginIn, 35 - (mSystem.currentTimeMillis() - lastTimeAttemptLogin) / 1000) + '!');
-			if (mSystem.currentTimeMillis() - lastTimeAttemptLogin < 35000)
+
+			long elapsedSinceLastAttempt = mSystem.currentTimeMillis() - _lastLoginAttemptTime;
+			long remainingCooldownSeconds = (ReloginCooldownMs - elapsedSinceLastAttempt) / 1000;
+
+			GameCanvas.startOKDlg(
+				string.Format(Strings.autoLoginReattemptLoginIn, remainingCooldownSeconds) + '!');
+
+			bool stillOnCooldown = elapsedSinceLastAttempt < ReloginCooldownMs;
+			if (stillOnCooldown)
 			{
 				return;
 			}
-			lastTimeAttemptLogin = mSystem.currentTimeMillis();
+
+			_lastLoginAttemptTime = mSystem.currentTimeMillis();
+
 			if (GameCanvas.currentScreen is LoginScr)
 			{
 				GameCanvas.loginScr.doLogin();
 			}
 			else if (GameCanvas.currentScreen is ServerListScreen)
 			{
-				if (ServerListScreen.ipSelect != server)
-				{
-					SwitchServer(server);
-					return;
-				}
-				GameCanvas.serverScreen.perform(3, null);
+				TryLoginFromServerList();
 			}
 			else
 			{
 				GameCanvas.serverScreen.switchToMe();
 			}
+		}
+
+		static void TryLoginFromServerList()
+		{
+			bool wrongServerSelected = ServerListScreen.ipSelect != _targetServerIndex;
+			if (wrongServerSelected)
+			{
+				SwitchServer(_targetServerIndex);
+				return;
+			}
+
+			GameCanvas.serverScreen.perform(3, null);
 		}
 
 		static void SwitchServer(int index)
@@ -86,12 +99,26 @@ namespace Mod.Auto
 				ServerListScreen.ipSelect = index;
 				GameCanvas.serverScreen.selectServer();
 			}
-			catch { }
+			catch
+			{
+				// Ignore any exceptions that may occur during server switching
+			}
 		}
 
-		internal static void SetState(bool state)
+		static bool IsLoggedIn()
 		{
-			isEnabled = state;
+			return GameCanvas.currentScreen is not ServerListScreen && GameCanvas.currentScreen is not LoginScr;
+		}
+
+		public static void SetServer(int index)
+		{
+			_targetServerIndex = index;
+		}
+
+		enum Step
+		{
+			CheckConnection,
+			AttemptLogin
 		}
 	}
 }

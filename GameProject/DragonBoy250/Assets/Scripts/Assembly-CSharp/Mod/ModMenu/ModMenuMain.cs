@@ -176,8 +176,8 @@ namespace Mod.ModMenu
 					ID = "AutoLogin_Toggle",
 					Title = Strings.autoLoginTitle,
 					Description = Strings.autoLoginDescription,
-					GetValueFunc = () => AutoLogin.isEnabled,
-					SetValueAction = AutoLogin.SetState
+					GetValueFunc = () => AutoLogin.gI.IsActing,
+					SetValueAction = AutoLogin.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -257,7 +257,7 @@ namespace Mod.ModMenu
 					SetValueAction = value => GraphicsReducer.IsSimpleUI = value,
 					GetIsDisabled = () => GraphicsReducer.IsEnabled,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.setReduceGraphicsTitle)
-				}),
+				})
 			};
 			modMenuItemValues = new[]
 			{
@@ -315,7 +315,7 @@ namespace Mod.ModMenu
 					GetIsDisabled = () => AutoTrainPet.Mode <= AutoTrainPetMode.Disabled,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeEnabled, Strings.setAutoTrainPetTitle)
 				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig()
+				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
 					ID = "Set_AutoRescue",
 					Title = Strings.setAutoRescueTitle,
@@ -343,20 +343,19 @@ namespace Mod.ModMenu
 						return "";
 					}
 				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig()
+				new ModMenuItemValues(new ModMenuItemValuesConfig
 				{
 					ID = "Set_AutoUseCurrentSkill",
 					Title = "Auto use current skill",
-					Values = new []
-					{ 
-						"Disabled",
-						"Enabled"
+					Values = new[]
+					{
+						"Disabled", "Enabled"
 					},
 					GetValueFunc = () => AutoSkill.isUseCurrentSkill ? 1 : 0,
 					SetValueAction = value => AutoSkill.isUseCurrentSkill = (int)value == 1,
 					GetIsDisabled = () => false,
 					GetDisabledReason = () => string.Empty
-				}),
+				})
 			};
 			modMenuItemFunctions = new[]
 			{
