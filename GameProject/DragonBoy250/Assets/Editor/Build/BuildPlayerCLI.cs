@@ -17,7 +17,7 @@ namespace DragonBoy.Build
 		// Example (outside project): ../BuildArtifacts/{product}/{platform}/{version}_{datetime}
 		const string DefaultFolderPattern = "../BuildArtifacts/{product}_{platform}";
 
-		// macOS player: Unity writes a .app bundle; placing it under /Applications lets Finder run it like any Mac app.
+		// macOS player: Unity writes an.app bundle; placing it under /Applications lets Finder run it like any Mac app.
 		// Note: On a Mac host, writing here can require admin rights depending on ownership of /Applications.
 		const string MacOsApplicationsFolderPattern = "/Applications";
 
