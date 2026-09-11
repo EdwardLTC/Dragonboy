@@ -72,6 +72,8 @@ namespace Mod
 			Pk9rPickMob.Init();
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
+			AutoSkill.gI.Toggle(true);
+			AutoPean.gI.Toggle(true);
 
 			UIReportersManager.AddReporter(Boss.Paint);
 			UIReportersManager.AddReporter(ListCharsInMap.Paint);
@@ -350,8 +352,6 @@ namespace Mod
 			TeleportMenuMain.Update();
 			AutoTrainPet.Update();
 			AutoSellTrashItems.Update();
-			AutoPean.Update();
-			AutoSkill.Update();
 			DelayedAction.Tick();
 			AutoUseItem.Update();
 		}

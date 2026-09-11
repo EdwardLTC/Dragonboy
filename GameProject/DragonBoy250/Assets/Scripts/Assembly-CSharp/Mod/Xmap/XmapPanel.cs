@@ -5,7 +5,7 @@ namespace Mod.Xmap
 {
 	internal static class XmapPanel
 	{
-		static List<int> currentMaps = new List<int>();
+		static readonly List<int> currentMaps = new List<int>();
 
 		internal static void Show(List<int> maps)
 		{
@@ -27,7 +27,7 @@ namespace Mod.Xmap
 
 		static void PaintTabHeader(Panel panel, mGraphics g)
 		{
-			PaintPanelTemplates.PaintTabHeaderTemplate(panel, g, "Xmap by Phucprotein");
+			PaintPanelTemplates.PaintTabHeaderTemplate(panel, g, "Xmap");
 		}
 
 		static void SetTab(Panel panel)

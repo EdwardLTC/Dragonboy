@@ -168,7 +168,7 @@
 			xmapUseSpecialCapsule = "Sử dụng capsule đặc biệt khi Xmap";
 			xmapUseNormalCapsule = "Sử dụng capsule thường khi Xmap";
 			xmapCanceled = "Đã huỷ Xmap";
-			xmapChatPopup = "XmapNRO by Phucprotein\nMap hiện tại: {0}, ID: {1}\nVui lòng chọn nơi muốn đến";
+			xmapChatPopup = "XmapNRO \nMap hiện tại: {0}, ID: {1}\nVui lòng chọn nơi muốn đến";
 			xmapCantFindWay = "Không thể tìm thấy đường đi";
 			xmapDestinationReached = "Đã đến nơi";
 			xmapTimeout = "Thời gian chờ xmap";
@@ -505,7 +505,7 @@
 			xmapUseSpecialCapsule = "Use special capsule when Xmap";
 			xmapUseNormalCapsule = "Use normal capsule when Xmap";
 			xmapCanceled = "Xmap canceled";
-			xmapChatPopup = "XmapNRO by Phucprotein\nCurrent map: {0}, ID: {1}\nPlease select the destination";
+			xmapChatPopup = "XmapNRO by \nCurrent map: {0}, ID: {1}\nPlease select the destination";
 			xmapCantFindWay = "No possible way was found";
 			xmapDestinationReached = "Destination reached";
 			xmapTimeout = "Xmap timeout";

@@ -190,6 +190,16 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
+					ID = "AutoUseCurrentSkill",
+					Title = "Auto use current skill",
+					Description = "Auto use current skill",
+					GetValueFunc = () => AutoSkill.isUseCurrentSkill,
+					SetValueAction = value => AutoSkill.isUseCurrentSkill = value,
+					GetIsDisabled = () => false,
+					GetDisabledReason = () => string.Empty
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
 					ID = "PickMob_AutoPickItem_Toggle",
 					Title = Strings.autoPickItemTitle,
 					Description = Strings.autoPickItemDescription,
@@ -216,37 +226,6 @@ namespace Mod.ModMenu
 					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
 					SetValueAction = Pk9rPickMob.SetPickUpLimited,
 					RMSName = "pickmob_limit_pick_item_times"
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoAskForPeans_Toggle",
-					Title = Strings.autoAskForPeansTitle,
-					Description = Strings.autoAskForPeansDescription,
-					GetValueFunc = () => AutoPean.isAutoRequest,
-					SetValueAction = value => AutoPean.isAutoRequest = value,
-					RMSName = "auto_ask_for_peans",
-					GetIsDisabled = () => Char.myCharz().clan == null,
-					GetDisabledReason = () => Strings.youAreNotInAClan + '!'
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoDonatePeans_Toggle",
-					Title = Strings.autoDonatePeansTitle,
-					Description = Strings.autoDonatePeansDescription,
-					GetValueFunc = () => AutoPean.isAutoDonate,
-					SetValueAction = value => AutoPean.isAutoDonate = value,
-					RMSName = "auto_donate_peans",
-					GetIsDisabled = () => Char.myCharz().clan == null,
-					GetDisabledReason = () => Strings.youAreNotInAClan + '!'
-				}),
-				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
-				{
-					ID = "AutoHarvestPeans_Toggle",
-					Title = Strings.autoHarvestPeansTitle,
-					Description = Strings.autoHarvestPeansDescription,
-					GetValueFunc = () => AutoPean.isAutoHarvest,
-					SetValueAction = value => AutoPean.isAutoHarvest = value,
-					RMSName = "auto_harvest_peans"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -342,19 +321,6 @@ namespace Mod.ModMenu
 							return Strings.setAutoRescueSkill3BuffInvalid + '!';
 						return "";
 					}
-				}),
-				new ModMenuItemValues(new ModMenuItemValuesConfig
-				{
-					ID = "Set_AutoUseCurrentSkill",
-					Title = "Auto use current skill",
-					Values = new[]
-					{
-						"Disabled", "Enabled"
-					},
-					GetValueFunc = () => AutoSkill.isUseCurrentSkill ? 1 : 0,
-					SetValueAction = value => AutoSkill.isUseCurrentSkill = (int)value == 1,
-					GetIsDisabled = () => false,
-					GetDisabledReason = () => string.Empty
 				})
 			};
 			modMenuItemFunctions = new[]
@@ -386,6 +352,13 @@ namespace Mod.ModMenu
 					Title = Strings.openTeleportMenuTitle,
 					Description = Strings.openTeleportMenuDescription,
 					Action = TeleportMenuMain.ShowMenu
+				}),
+				new ModMenuItemFunction(new ModMenuItemFunctionConfig
+				{
+					ID = "AutoBeans",
+					Title = "Auto Beans",
+					Description = "Auto Beans",
+					Action = BeanPanel.Show
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{
