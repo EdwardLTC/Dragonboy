@@ -80,6 +80,11 @@ namespace Mod.PickMob
 				return false;
 			}
 
+			if (mob.x < 0 || mob.x > TileMap.pxw || mob.y < 0 || mob.y > TileMap.pxh)
+			{
+				return false;
+			}
+
 			return FilterMobTanSat(mob);
 		}
 

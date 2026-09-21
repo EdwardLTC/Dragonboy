@@ -158,7 +158,6 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Char.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Session_ME2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ServerEffect.cs" />
-    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/Anchor.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/Action/DepositCskbFullBagAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/myReader.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/SkillManaUseType.cs" />

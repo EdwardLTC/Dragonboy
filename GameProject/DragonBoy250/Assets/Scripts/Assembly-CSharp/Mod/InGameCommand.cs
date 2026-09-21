@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
@@ -137,17 +138,39 @@ namespace Mod
 		[HotkeyCommand('s')]
 		internal static void FocusBoss()
 		{
+			Char myChar = Char.myCharz();
+			if (myChar == null || GameScr.vCharInMap == null || GameScr.vCharInMap.size() == 0)
+			{
+				return;
+			}
+
+			List<Char> bosses = new List<Char>();
 			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
 			{
-				Char.myCharz().mobFocus = null;
-				Char.myCharz().npcFocus = null;
-				Char.myCharz().itemFocus = null;
-				Char @char = (Char)GameScr.vCharInMap.elementAt(i);
-				if (@char.cTypePk == 5 && Char.myCharz().charFocus != @char)
+				Char ch = (Char)GameScr.vCharInMap.elementAt(i);
+				if (ch != null && ch != myChar && ch.cTypePk == 5 && !ch.IsCharDead() && ch.statusMe != 5)
 				{
-					Char.myCharz().charFocus = @char;
+					bosses.Add(ch);
 				}
 			}
+
+			if (bosses.Count == 0)
+			{
+				return;
+			}
+
+			int nextIndex = 0;
+			Char currentFocus = myChar.charFocus;
+			if (currentFocus != null)
+			{
+				int currentIndex = bosses.FindIndex(b => b == currentFocus || b.charID == currentFocus.charID);
+				if (currentIndex != -1)
+				{
+					nextIndex = (currentIndex + 1) % bosses.Count;
+				}
+			}
+
+			myChar.focusManualTo(bosses[nextIndex]);
 		}
 	}
 }

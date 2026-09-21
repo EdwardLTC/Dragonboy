@@ -6,3 +6,6 @@ GameProject/DragonBoy250/obj/Debug/Assembly-CSharp.csproj.AssemblyReference.cach
 GameProject/DragonBoy250/DragonBoy250.sln.DotSettings.user
 /GameProject/DragonBoy250/obj
 /GameProject/DragonBoy250/obj
+*.cache
+*.cache
+GameProject/DragonBoy250/DragonBoy250.sln.DotSettings.user

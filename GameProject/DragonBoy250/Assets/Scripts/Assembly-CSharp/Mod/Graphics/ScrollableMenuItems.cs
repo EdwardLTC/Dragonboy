@@ -259,7 +259,9 @@ namespace Mod.Graphics
 			{
 				g.setColor(Color.white);
 				if (i == CurrentItemIndex)
+				{
 					g.setColor(0xFFF9BD);
+				}
 				g.fillRect(X, Y + i * ItemHeight - CurrentOffset, Width, ItemHeight);
 				g.setColor(new Color(0, 0, 0, .3f));
 				g.fillRect(X, Y + (i + 1) * ItemHeight - CurrentOffset, Width, 1);
