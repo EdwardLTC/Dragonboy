@@ -77,6 +77,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Cout.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/R/LocalizedString.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/PartImage.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandler/KillPlayerHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/KeyConstant.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemFunctionConfig.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CoroutineMainThreadAction.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Task.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/MotherCanvas.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BachTuoc.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/BigBoss2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapContext.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Sprite.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CharEffect/CharEffectTime.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/SkillType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/RadarScr.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandler/IQuestHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/CreateCharScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/FrameImage.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectManager.cs" />
@@ -185,7 +188,9 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/ArrayCast.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/CharGender.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Part.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/BoMongController.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Hotkey/HotkeyCommandHandler.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandler/TrainMonsterHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ChooseCharScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/ServerScr.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Constants/ItemTemplateType.cs" />
@@ -193,6 +198,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/ActionUpdate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillSelfAndPickGold.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/SocketEmitMessageType/CharacterInfoMessage.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/BoMongMenu.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CustomPanel/CustomPanelMenu.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/CharacterInfo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Utils.cs" />
@@ -228,6 +234,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/ServerConverter.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/StaticObj.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/Pathfinding/DijkstraPathFinder.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandler/KillLurcherHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Res.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Friend.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SmallImage.cs" />
@@ -236,6 +243,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/GameEvents.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/InGameAccountManager.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/GameCanvas.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/BoMongSettings.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/SkillTemplate.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/InputStream.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/ClientInput.cs" />
@@ -278,6 +286,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/Sound.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuItemValues.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModHelper/CommandMod/Chat/ChatCommandHandler.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/BoMongMessageEvent.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/f/Controller2.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/BigBoss.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/Action/SellCskbFullBagAction.cs" />
@@ -307,6 +316,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/IKbAction.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoKillBoss.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Auto/AutoUseGrape.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandlerFactory.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/iOSPlugins.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Assets/src/g/GameInfo.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/ModMenu/ModMenuMain.cs" />
@@ -332,6 +342,7 @@
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectFeet.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/Xmap/XmapController.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Dialog.cs" />
+    <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/BoMong/QuestHandler/TrainGoldHandler.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/EffectInfoPaint.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/AccountManager/AccountType.cs" />
     <Compile Include="Assets/Scripts/Assembly-CSharp/Mod/CSKB/FullBagAction/ICskbFullBagAction.cs" />

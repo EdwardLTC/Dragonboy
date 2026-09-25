@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using Mod.Constants;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 using Newtonsoft.Json.Linq;
-using System.Linq;
 using UnityEngine;
 
 namespace Mod
@@ -315,7 +316,7 @@ namespace Mod
 				Npc npc = (Npc)GameScr.vNpc.elementAt(i);
 				if (npc.template.npcTemplateId == npcId)
 				{
-					TeleportMyChar(npc.cx, npc.ySd - npc.ySd % 24);
+					TeleportMyChar(npc.cx - 24, npc.ySd - npc.ySd % 24);
 					Char.myCharz().npcFocus = npc;
 					return;
 				}
@@ -639,6 +640,40 @@ namespace Mod
 		internal static double Distance(double x1, double y1, double x2, double y2)
 		{
 			return System.Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		}
+
+		internal static string RemoveVietnameseDiacritics(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return string.Empty;
+
+			string normalized = text.Normalize(NormalizationForm.FormD);
+			StringBuilder result = new StringBuilder(normalized.Length);
+
+			foreach (char c in normalized)
+			{
+				UnicodeCategory category = CharUnicodeInfo.GetUnicodeCategory(c);
+
+				if (category == UnicodeCategory.NonSpacingMark)
+					continue;
+
+				switch (c)
+				{
+				case 'Đ':
+					result.Append('D');
+					break;
+
+				case 'đ':
+					result.Append('d');
+					break;
+
+				default:
+					result.Append(c);
+					break;
+				}
+			}
+
+			return result.ToString().Normalize(NormalizationForm.FormC);
 		}
 	}
 }

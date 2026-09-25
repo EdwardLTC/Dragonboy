@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Linq;
 using Mod.AccountManager;
 using Mod.Auto;
@@ -11,6 +11,7 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
+using Mod.BoMong;
 using UnityEngine;
 
 namespace Mod.ModMenu
@@ -155,11 +156,11 @@ namespace Mod.ModMenu
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
-					ID = "AutoKillSelfAndPickGold_Toggle",
-					Title = "Kill self and pick gold",
-					Description = "Tự chết và nhặt vàng (chỉ hoạt động ở map Làng)",
-					GetValueFunc = () => AutoKillSelfAndPickGold.gI.IsActing,
-					SetValueAction = AutoKillSelfAndPickGold.gI.Toggle
+					ID = "AutoBoMong_Toggle",
+					Title = "Auto Bò Mộng",
+					Description = "Tự động nhận và làm nhiệm vụ Bò Mộng hàng ngày",
+					GetValueFunc = () => BoMongController.gI.IsActing,
+					SetValueAction = BoMongController.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -359,6 +360,13 @@ namespace Mod.ModMenu
 					Title = "Auto Beans",
 					Description = "Auto Beans",
 					Action = BeanPanel.Show
+				}),
+				new ModMenuItemFunction(new ModMenuItemFunctionConfig
+				{
+					ID = "OpenBoMongMenu",
+					Title = "Cài đặt Bò Mộng",
+					Description = "Cài đặt mức độ nhiệm vụ, loại nhiệm vụ bỏ qua",
+					Action = BoMongMenu.ShowMenu
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{

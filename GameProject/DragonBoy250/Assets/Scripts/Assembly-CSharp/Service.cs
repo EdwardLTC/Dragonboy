@@ -1,11 +1,9 @@
 using System;
 using Assets.src.g;
 using Mod;
-using UnityEngine;
 
 public class Service
 {
-	private ISession session = Session_ME.gI();
 
 	protected static Service instance;
 
@@ -17,9 +15,10 @@ public class Service
 
 	public static long logMap;
 
-	public int demGui;
-
 	public static bool reciveFromMainSession;
+
+	public int demGui;
+	ISession session = Session_ME.gI();
 
 	public static Service gI()
 	{
@@ -140,7 +139,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-44));
+			message = new Message((sbyte)-44);
 			message.writer().writeByte(status);
 			session.sendMessage(message);
 		}
@@ -160,7 +159,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-81));
+			message = new Message((sbyte)-81);
 			message.writer().writeByte(action);
 			if (action == 1)
 			{
@@ -188,7 +187,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-86));
+			message = new Message((sbyte)-86);
 			message.writer().writeByte(action);
 			if (action == 0 || action == 1)
 			{
@@ -223,7 +222,7 @@ public class Service
 		try
 		{
 			Res.outz(" gui input ");
-			message = new Message((sbyte)(-125));
+			message = new Message((sbyte)-125);
 			Res.outz("byte lent = " + t.Length);
 			message.writer().writeByte(t.Length);
 			for (int i = 0; i < t.Length; i++)
@@ -310,7 +309,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-85));
+			message = new Message((sbyte)-85);
 			message.writer().writeChar(ch);
 			session.sendMessage(message);
 		}
@@ -329,7 +328,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-80));
+			message = new Message((sbyte)-80);
 			message.writer().writeByte(action);
 			if (playerId != -1)
 			{
@@ -353,7 +352,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-76));
+			message = new Message((sbyte)-76);
 			message.writer().writeByte(index);
 			session.sendMessage(message);
 		}
@@ -372,7 +371,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-79));
+			message = new Message((sbyte)-79);
 			message.writer().writeInt(playerID);
 			session.sendMessage(message);
 		}
@@ -390,7 +389,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-62));
+			message = new Message((sbyte)-62);
 			message.writer().writeByte(id);
 			session.sendMessage(message);
 		}
@@ -409,7 +408,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-45));
+			message = new Message((sbyte)-45);
 			message.writer().writeByte(status);
 			session.sendMessage(message);
 		}
@@ -428,7 +427,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-54));
+			message = new Message((sbyte)-54);
 			message.writer().writeInt(id);
 			session.sendMessage(message);
 		}
@@ -447,7 +446,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-51));
+			message = new Message((sbyte)-51);
 			message.writer().writeByte(type);
 			if (type == 0)
 			{
@@ -479,7 +478,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-43));
+			message = new Message((sbyte)-43);
 			message.writer().writeByte(type);
 			message.writer().writeByte(where);
 			message.writer().writeByte(index);
@@ -503,7 +502,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-49));
+			message = new Message((sbyte)-49);
 			message.writer().writeInt(id);
 			message.writer().writeByte(action);
 			session.sendMessage(message);
@@ -523,7 +522,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-50));
+			message = new Message((sbyte)-50);
 			message.writer().writeInt(id);
 			session.sendMessage(message);
 		}
@@ -542,7 +541,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-47));
+			message = new Message((sbyte)-47);
 			message.writer().writeUTF(text);
 			session.sendMessage(message);
 		}
@@ -561,7 +560,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-53));
+			message = new Message((sbyte)-53);
 			message.writer().writeShort(id);
 			session.sendMessage(message);
 		}
@@ -580,7 +579,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-56));
+			message = new Message((sbyte)-56);
 			message.writer().writeInt(id);
 			message.writer().writeByte(role);
 			session.sendMessage(message);
@@ -600,7 +599,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-55));
+			message = new Message((sbyte)-55);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -618,7 +617,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-57));
+			message = new Message((sbyte)-57);
 			message.writer().writeByte(action);
 			if (action == 0)
 			{
@@ -646,7 +645,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-46));
+			message = new Message((sbyte)-46);
 			message.writer().writeByte(action);
 			if (action == 2 || action == 4)
 			{
@@ -670,7 +669,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-41));
+			message = new Message((sbyte)-41);
 			message.writer().writeByte(gender);
 			session.sendMessage(message);
 		}
@@ -689,7 +688,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-40));
+			message = new Message((sbyte)-40);
 			message.writer().writeByte(type);
 			message.writer().writeByte(id);
 			session.sendMessage(message);
@@ -730,21 +729,21 @@ public class Service
 
 	public Message messageNotLogin(sbyte command)
 	{
-		Message message = new Message((sbyte)(-29));
+		Message message = new Message((sbyte)-29);
 		message.writer().writeByte(command);
 		return message;
 	}
 
 	public Message messageNotMap(sbyte command)
 	{
-		Message message = new Message((sbyte)(-28));
+		Message message = new Message((sbyte)-28);
 		message.writer().writeByte(command);
 		return message;
 	}
 
 	public static Message messageSubCommand(sbyte command)
 	{
-		Message message = new Message((sbyte)(-30));
+		Message message = new Message((sbyte)-30);
 		message.writer().writeByte(command);
 		return message;
 	}
@@ -834,7 +833,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-120));
+			message = new Message((sbyte)-120);
 			session.sendMessage(message);
 		}
 		catch (Exception)
@@ -852,7 +851,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-121));
+			message = new Message((sbyte)-121);
 			session.sendMessage(message);
 		}
 		catch (Exception)
@@ -868,8 +867,6 @@ public class Service
 	public void login(string username, string pass, string version, sbyte type)
 	{
 		GameEvents.OnLogin(ref username, ref pass, ref type);
-		Res.outz("Login " + username + " " + pass + " " + version);
-		Debug.LogError("Login " + username + " " + pass + " " + version);
 		try
 		{
 			Message message = messageNotLogin(0);
@@ -913,14 +910,14 @@ public class Service
 		{
 			return;
 		}
-		Message message = new Message((sbyte)(-23));
+		Message message = new Message((sbyte)-23);
 		session.sendMessage(message);
 		message.cleanup();
 	}
 
 	public void magicTree(sbyte type)
 	{
-		Message message = new Message((sbyte)(-34));
+		Message message = new Message((sbyte)-34);
 		try
 		{
 			message.writer().writeByte(type);
@@ -948,7 +945,7 @@ public class Service
 
 	public void checkMMove(int second)
 	{
-		Message message = new Message((sbyte)(-78));
+		Message message = new Message((sbyte)-78);
 		try
 		{
 			message.writer().writeInt(second);
@@ -964,13 +961,13 @@ public class Service
 	{
 		int num = Char.myCharz().cx - Char.myCharz().cxSend;
 		int num2 = Char.myCharz().cy - Char.myCharz().cySend;
-		if (Char.ischangingMap || (num == 0 && num2 == 0) || Controller.isStopReadMessage || Char.myCharz().isTeleport || Char.myCharz().cy <= 0 || Char.myCharz().telePortSkill)
+		if (Char.ischangingMap || num == 0 && num2 == 0 || Controller.isStopReadMessage || Char.myCharz().isTeleport || Char.myCharz().cy <= 0 || Char.myCharz().telePortSkill)
 		{
 			return;
 		}
 		try
 		{
-			Message message = new Message((sbyte)(-7));
+			Message message = new Message((sbyte)-7);
 			Char.myCharz().cxSend = Char.myCharz().cx;
 			Char.myCharz().cySend = Char.myCharz().cy;
 			Char.myCharz().cdirSend = Char.myCharz().cdir;
@@ -994,13 +991,13 @@ public class Service
 		}
 		catch (Exception ex)
 		{
-			Cout.LogError("LOI CHAR MOVE " + ex.ToString());
+			Cout.LogError("LOI CHAR MOVE " + ex);
 		}
 	}
 
 	public void selectCharToPlay(string charname)
 	{
-		Message message = new Message((sbyte)(-28));
+		Message message = new Message((sbyte)-28);
 		try
 		{
 			message.writer().writeByte((sbyte)1);
@@ -1019,7 +1016,7 @@ public class Service
 
 	public void createChar(string name, int gender, int hair)
 	{
-		Message message = new Message((sbyte)(-28));
+		Message message = new Message((sbyte)-28);
 		try
 		{
 			message.writer().writeByte((sbyte)2);
@@ -1202,7 +1199,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-66));
+			message = new Message((sbyte)-66);
 			message.writer().writeShort(id);
 			session.sendMessage(message);
 		}
@@ -1550,7 +1547,7 @@ public class Service
 				switch (type)
 				{
 				case 1:
-					message = new Message((sbyte)(-4));
+					message = new Message((sbyte)-4);
 					break;
 				case 2:
 					message = new Message((sbyte)67);
@@ -1586,13 +1583,13 @@ public class Service
 						message.writer().writeByte(mob2.mobId);
 						continue;
 					}
-					message.writer().writeByte((sbyte)(-1));
+					message.writer().writeByte((sbyte)-1);
 					message.writer().writeInt(mob2.mobId);
 				}
 			}
 			else if (vChar.size() > 0)
 			{
-				message = new Message((sbyte)(-60));
+				message = new Message((sbyte)-60);
 				for (int l = 0; l < vChar.size(); l++)
 				{
 					Char obj2 = (Char)vChar.elementAt(l);
@@ -1616,7 +1613,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-20));
+			message = new Message((sbyte)-20);
 			message.writer().writeShort(itemMapId);
 			session.sendMessage(message);
 		}
@@ -1635,7 +1632,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-18));
+			message = new Message((sbyte)-18);
 			message.writer().writeByte(index);
 			session.sendMessage(message);
 		}
@@ -1654,7 +1651,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-15));
+			message = new Message((sbyte)-15);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -1672,7 +1669,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-16));
+			message = new Message((sbyte)-16);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -1689,7 +1686,7 @@ public class Service
 	{
 		if (GameEvents.OnSendChat(text))
 		{
-			return;	
+			return;
 		}
 		Message message = null;
 		try
@@ -1713,7 +1710,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-87));
+			message = new Message((sbyte)-87);
 			if (Session_ME2.gI().isConnected() && !Session_ME2.connecting)
 			{
 				session = Session_ME2.gI();
@@ -1972,7 +1969,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-59));
+			message = new Message((sbyte)-59);
 			message.writer().writeByte(action);
 			message.writer().writeByte(type);
 			message.writer().writeInt(playerId);
@@ -2093,7 +2090,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-72));
+			message = new Message((sbyte)-72);
 			message.writer().writeInt(id);
 			message.writer().writeUTF(text);
 			session.sendMessage(message);
@@ -2113,7 +2110,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-71));
+			message = new Message((sbyte)-71);
 			message.writer().writeUTF(text);
 			session.sendMessage(message);
 		}
@@ -2252,7 +2249,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-67));
+			message = new Message((sbyte)-67);
 			message.writer().writeInt(id);
 			if (Session_ME2.gI().isConnected() && !Session_ME2.connecting)
 			{
@@ -2418,7 +2415,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-32));
+			message = new Message((sbyte)-32);
 			message.writer().writeShort(id);
 			if (Session_ME2.gI().isConnected() && !Session_ME2.connecting)
 			{
@@ -2450,7 +2447,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-33));
+			message = new Message((sbyte)-33);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -2468,7 +2465,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-38));
+			message = new Message((sbyte)-38);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -2486,7 +2483,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-38));
+			message = new Message((sbyte)-38);
 			message.writer().writeInt(playerID);
 			session.sendMessage(message);
 		}
@@ -2504,7 +2501,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-39));
+			message = new Message((sbyte)-39);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -2522,7 +2519,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-35));
+			message = new Message((sbyte)-35);
 			message.writer().writeByte(action);
 			session.sendMessage(message);
 		}
@@ -2541,7 +2538,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-63));
+			message = new Message((sbyte)-63);
 			message.writer().writeShort(ID);
 			session.sendMessage(message);
 		}
@@ -2560,7 +2557,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-36));
+			message = new Message((sbyte)-36);
 			message.writer().writeByte(action);
 			session.sendMessage(message);
 		}
@@ -2579,7 +2576,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-37));
+			message = new Message((sbyte)-37);
 			message.writer().writeByte(action);
 			session.sendMessage(message);
 		}
@@ -2599,7 +2596,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-101));
+			message = new Message((sbyte)-101);
 			message.writer().writeUTF(user);
 			message.writer().writeByte(1);
 			session.sendMessage(message);
@@ -2618,7 +2615,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-34));
+			message = new Message((sbyte)-34);
 			message.writer().writeByte(action);
 			session.sendMessage(message);
 		}
@@ -2658,7 +2655,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-74));
+			message = new Message((sbyte)-74);
 			message.writer().writeByte(action);
 			if (action == 2 && vResourceIndex != null)
 			{
@@ -2696,7 +2693,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-91));
+			message = new Message((sbyte)-91);
 			message.writer().writeByte(selected);
 			session.sendMessage(message);
 		}
@@ -2714,7 +2711,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-107));
+			message = new Message((sbyte)-107);
 			session.sendMessage(message);
 		}
 		catch (Exception)
@@ -2731,7 +2728,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-96));
+			message = new Message((sbyte)-96);
 			message.writer().writeUTF(topName);
 			message.writer().writeByte(selected);
 			session.sendMessage(message);
@@ -2751,7 +2748,7 @@ public class Service
 		Res.outz("add enemy");
 		try
 		{
-			message = new Message((sbyte)(-99));
+			message = new Message((sbyte)-99);
 			message.writer().writeByte(b);
 			if (b == 1 || b == 2)
 			{
@@ -2774,7 +2771,7 @@ public class Service
 		try
 		{
 			Res.outz("ki gui action= " + action);
-			message = new Message((sbyte)(-100));
+			message = new Message((sbyte)-100);
 			message.writer().writeByte(action);
 			if (action == 0)
 			{
@@ -2819,7 +2816,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-103));
+			message = new Message((sbyte)-103);
 			message.writer().writeByte(action);
 			Res.outz("------------service--  " + action + "   " + flagType);
 			if (action != 0)
@@ -2843,7 +2840,7 @@ public class Service
 		try
 		{
 			Res.outz("------------setLockInventory:     " + pass);
-			message = new Message((sbyte)(-104));
+			message = new Message((sbyte)-104);
 			message.writer().writeInt(pass);
 			session.sendMessage(message);
 		}
@@ -2861,7 +2858,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-108));
+			message = new Message((sbyte)-108);
 			message.writer().writeByte(status);
 			session.sendMessage(message);
 		}
@@ -2880,7 +2877,7 @@ public class Service
 		try
 		{
 			Res.outz("------------transportNow  ");
-			message = new Message((sbyte)(-105));
+			message = new Message((sbyte)-105);
 			session.sendMessage(message);
 		}
 		catch (Exception)
@@ -2918,7 +2915,7 @@ public class Service
 		try
 		{
 			Res.outz("IMAGE SOURCE size= " + vID.size());
-			message = new Message((sbyte)(-111));
+			message = new Message((sbyte)-111);
 			message.writer().writeShort(vID.size());
 			if (vID.size() > 0)
 			{
@@ -2955,7 +2952,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-126));
+			message = new Message((sbyte)-126);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -2974,7 +2971,7 @@ public class Service
 		try
 		{
 			Res.outz("SERVER DATA");
-			message = new Message((sbyte)(-110));
+			message = new Message((sbyte)-110);
 			message.writer().writeByte(action);
 			if (action == 1)
 			{
@@ -3002,7 +2999,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-113));
+			message = new Message((sbyte)-113);
 			for (int i = 0; i < GameScr.onScreenSkill.Length; i++)
 			{
 				message.writer().writeByte(skill[i]);
@@ -3024,7 +3021,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-114));
+			message = new Message((sbyte)-114);
 			session.sendMessage(message);
 		}
 		catch (Exception ex)
@@ -3043,7 +3040,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-118));
+			message = new Message((sbyte)-118);
 			message.writer().writeInt(id);
 			session.sendMessage(message);
 		}
@@ -3062,7 +3059,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-30));
+			message = new Message((sbyte)-30);
 			message.writer().writeByte((sbyte)63);
 			message.writer().writeInt(charId);
 			session.sendMessage(message);
@@ -3082,7 +3079,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-30));
+			message = new Message((sbyte)-30);
 			message.writer().writeByte((sbyte)64);
 			message.writer().writeInt(charId);
 			message.writer().writeShort(select);
@@ -3118,7 +3115,7 @@ public class Service
 
 	public void SendCrackBall(byte type, byte soluong)
 	{
-		Message message = new Message((sbyte)(-127));
+		Message message = new Message((sbyte)-127);
 		try
 		{
 			message.writer().writeByte(type);
@@ -3172,7 +3169,7 @@ public class Service
 			}
 			else
 			{
-				message.writer().writeByte((Char.myCharz().idHat != -1) ? (-1) : 0);
+				message.writer().writeByte(Char.myCharz().idHat != -1 ? -1 : 0);
 			}
 			session.sendMessage(message);
 		}
@@ -3206,7 +3203,7 @@ public class Service
 		Message message = null;
 		try
 		{
-			message = new Message((sbyte)(-45));
+			message = new Message((sbyte)-45);
 			message.writer().writeSByte(20);
 			message.writer().writeSByte(idTemplateSkill);
 			message.writer().writeShort(Char.myCharz().cx);

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ServerListScreen : mScreen, IActionListener
 {
+
+	public const sbyte languageVersion = 2;
 	public static string[] nameServer;
 
 	public static string[] address;
@@ -33,15 +35,7 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static bool isHaveChar;
 
-	public Command[] cmd;
-
-	public Command cmdCallHotline;
-
-	public int nCmdPlay;
-
 	public static Command cmdDeleteRMS;
-
-	public int lY;
 
 	public static string smartPhoneVN = "Vũ trụ 1:dragon1.teamobi.com:14445:0:0:0,Vũ trụ 2:dragon2.teamobi.com:14445:0:0:0,Vũ trụ 3:dragon3.teamobi.com:14445:0:0:0,Vũ trụ 4:dragon4.teamobi.com:14445:0:0:0,Vũ trụ 5:dragon5.teamobi.com:14445:0:0:0,Vũ trụ 6:dragon6.teamobi.com:14445:0:0:0,Vũ trụ 7:dragon7.teamobi.com:14445:0:0:0,Vũ trụ 8:dragon10.teamobi.com:14446:0:0:0,Vũ trụ 9:dragon10.teamobi.com:14447:0:0:0,Vũ trụ 10:dragon10.teamobi.com:14445:0:0:0,Vũ trụ 11:dragon11.teamobi.com:14445:0:0:0,Võ đài liên vũ trụ:dragonwar.teamobi.com:20000:0:0:0,Universe 1:dragon.indonaga.com:14445:1:0:0,Naga:dragon.indonaga.com:14446:2:0:0,0,0";
 
@@ -58,12 +52,6 @@ public class ServerListScreen : mScreen, IActionListener
 	public static string linkGetHost = "http://112.213.94.23/mod/server_extra.php";
 
 	public static string linkDefault = javaVN;
-
-	public const sbyte languageVersion = 2;
-
-	public new int keyTouch = -1;
-
-	public int tam;
 
 	public static bool stopDownload;
 
@@ -97,13 +85,9 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static int maxBg;
 
-	public static bool isGetData = false;
+	public static bool isGetData;
 
 	public static Command cmdDownload;
-
-	public Command cmdStart;
-
-	public string dataSize;
 
 	public static int p;
 
@@ -117,11 +101,27 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static string RMS_NR_Extralink = "NRlink_extra";
 
-	public Command[] cmd_New_Ui;
-
 	public static bool isNewUI;
 
 	public static bool isAutoLogin = true;
+
+	public Command[] cmd;
+
+	public Command cmdCallHotline;
+
+	public Command cmdStart;
+
+	public Command[] cmd_New_Ui;
+
+	public string dataSize;
+
+	public new int keyTouch = -1;
+
+	public int lY;
+
+	public int nCmdPlay;
+
+	public int tam;
 
 	public ServerListScreen()
 	{
@@ -198,6 +198,220 @@ public class ServerListScreen : mScreen, IActionListener
 		setLinkDefault(mSystem.LANGUAGE);
 	}
 
+	public void perform(int idAction, object p)
+	{
+		Res.outz("perform " + idAction);
+		if (idAction == 1000)
+		{
+			GameCanvas.connect();
+		}
+		if (idAction == 1 || idAction == 4)
+		{
+			Session_ME.gI().close();
+			isAutoConect = false;
+			countDieConnect = 0;
+			loadScreen = true;
+			testConnect = 0;
+			isGetData = false;
+			mSystem.println(">>>>>isGetData: " + isGetData);
+			Rms.clearAll();
+			switchToMe();
+		}
+		if (idAction == 2)
+		{
+			stopDownload = false;
+			cmdDownload = new Command(mResources.huy, this, 4, null);
+			cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
+			cmdDownload.y = GameCanvas.hh + 65;
+			right = null;
+			if (!GameCanvas.isTouch)
+			{
+				cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
+				cmdDownload.y = GameCanvas.h - cmdH - 1;
+			}
+			center = new Command(string.Empty, this, 4, null);
+			if (!isGetData)
+			{
+				Service.gI().getResource(1, null);
+				if (!GameCanvas.isTouch)
+				{
+					cmdDownload.isFocus = true;
+					center = new Command(string.Empty, this, 4, null);
+					mSystem.println(">>>>>isGetData: " + isGetData);
+				}
+				isGetData = true;
+			}
+		}
+		if (idAction == 3)
+		{
+			Res.outz("toi day");
+			Login_New();
+		}
+		if (idAction == 10100)
+		{
+			if (GameCanvas.loginScr == null)
+			{
+				GameCanvas.loginScr = new LoginScr();
+			}
+			GameCanvas.loginScr.switchToMe();
+			GameCanvas.connect();
+			Service.gI().login2(string.Empty);
+			Res.outz("tao user ao");
+			GameCanvas.startWaitDlg();
+			LoginScr.serverName = nameServer[ipSelect];
+		}
+		if (idAction == 5)
+		{
+			doUpdateServer();
+			if (nameServer.Length == 1)
+			{
+				return;
+			}
+			MyVector myVector = new MyVector(string.Empty);
+			for (int i = 0; i < nameServer.Length; i++)
+			{
+				myVector.addElement(new Command(nameServer[i], this, 6, null));
+			}
+			GameCanvas.menu.startAt(myVector, 0);
+			if (!GameCanvas.isTouch)
+			{
+				GameCanvas.menu.menuSelectedItem = ipSelect;
+			}
+		}
+		if (idAction == 6)
+		{
+			SetIpSelect(GameCanvas.menu.menuSelectedItem, false);
+			selectServer();
+		}
+		if (idAction == 7)
+		{
+			if (GameCanvas.loginScr == null)
+			{
+				GameCanvas.loginScr = new LoginScr();
+			}
+			GameCanvas.loginScr.switchToMe();
+		}
+		if (idAction == 8)
+		{
+			bool flag = Rms.loadRMSInt("lowGraphic") == 1;
+			MyVector myVector2 = new MyVector("cau hinh");
+			myVector2.addElement(new Command(mResources.cauhinhthap, this, 9, null));
+			myVector2.addElement(new Command(mResources.cauhinhcao, this, 10, null));
+			GameCanvas.menu.startAt(myVector2, 0);
+			if (flag)
+			{
+				GameCanvas.menu.menuSelectedItem = 0;
+			}
+			else
+			{
+				GameCanvas.menu.menuSelectedItem = 1;
+			}
+		}
+		if (idAction == 9)
+		{
+			Rms.saveRMSInt("lowGraphic", 1);
+			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
+		}
+		if (idAction == 10)
+		{
+			Rms.saveRMSInt("lowGraphic", 0);
+			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
+		}
+		if (idAction == 11)
+		{
+			if (GameCanvas.loginScr == null)
+			{
+				GameCanvas.loginScr = new LoginScr();
+			}
+			GameCanvas.loginScr.switchToMe();
+			string text = Rms.loadRMSString(Rms.RMS_userAo + ipSelect);
+			if (text == null || text.Equals(string.Empty))
+			{
+				Service.gI().login2(string.Empty);
+			}
+			else
+			{
+				GameCanvas.loginScr.isLogin2 = true;
+				GameCanvas.connect();
+				Service.gI().setClientType();
+				Service.gI().login(text, string.Empty, GameMidlet.VERSION, 1);
+			}
+			GameCanvas.startWaitDlg(mResources.PLEASEWAIT);
+			Res.outz("tao user ao");
+		}
+		if (idAction == 12)
+		{
+			GameMidlet.instance.exit();
+		}
+		if (idAction == 13 && (!isGetData || loadScreen))
+		{
+			switch (mSystem.clientType)
+			{
+			case 1:
+				mSystem.callHotlineJava();
+				break;
+			case 3:
+			case 5:
+				mSystem.callHotlineIphone();
+				break;
+			case 6:
+				mSystem.callHotlineWindowsPhone();
+				break;
+			case 4:
+				mSystem.callHotlinePC();
+				break;
+			}
+		}
+		if (idAction == 14)
+		{
+			Command cmdYes = new Command(mResources.YES, GameCanvas.serverScreen, 15, null);
+			Command cmdNo = new Command(mResources.NO, GameCanvas.serverScreen, 16, null);
+			GameCanvas.startYesNoDlg(mResources.deletaDataNote, cmdYes, cmdNo);
+		}
+		if (idAction == 15)
+		{
+			Rms.clearAll();
+			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
+		}
+		if (idAction == 16)
+		{
+			InfoDlg.hide();
+			GameCanvas.currentDialog = null;
+		}
+		if (idAction == 17)
+		{
+			if (GameCanvas.serverScr == null)
+			{
+				GameCanvas.serverScr = new ServerScr();
+			}
+			GameCanvas.serverScr.switchToMe();
+		}
+		if (idAction == 18)
+		{
+			GameCanvas.endDlg();
+			InfoDlg.hide();
+			if (GameCanvas.serverScr == null)
+			{
+				GameCanvas.serverScr = new ServerScr();
+			}
+			GameCanvas.serverScr.switchToMe();
+		}
+		if (idAction == 19)
+		{
+			if (mSystem.clientType == 1)
+			{
+				InfoDlg.hide();
+				GameCanvas.currentDialog = null;
+			}
+			else
+			{
+				countDieConnect = 0;
+				testConnect = 0;
+				isAutoConect = true;
+			}
+		}
+	}
+
 	public static void createDeleteRMS()
 	{
 		if (cmdDeleteRMS == null)
@@ -238,7 +452,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			nCmdPlay = 1;
 		}
-		cmd = new Command[(mGraphics.zoomLevel <= 1) ? (4 + nCmdPlay) : (3 + nCmdPlay)];
+		cmd = new Command[mGraphics.zoomLevel <= 1 ? 4 + nCmdPlay : 3 + nCmdPlay];
 		int num = GameCanvas.hh - 15 * cmd.Length + 28;
 		for (int i = 0; i < cmd.Length; i++)
 		{
@@ -379,7 +593,7 @@ public class ServerListScreen : mScreen, IActionListener
 		try
 		{
 			string empty = string.Empty;
-			empty = ((testConnect != 0) ? (empty + nameServer[ipSelect] + " connected") : (empty + nameServer[ipSelect] + " disconnect"));
+			empty = testConnect != 0 ? empty + nameServer[ipSelect] + " connected" : empty + nameServer[ipSelect] + " disconnect";
 			if (mSystem.isTest)
 			{
 				mFont.tahoma_7_white.drawString(g, empty, GameCanvas.w - 2, num + 15 + 15, 1, mFont.tahoma_7_grey);
@@ -403,7 +617,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			mFont.tahoma_7_white.drawString(g, linkweb, GameCanvas.w - 2, num, 1, mFont.tahoma_7_grey);
 		}
-		int num2 = ((GameCanvas.w < 200) ? 160 : 180);
+		int num2 = GameCanvas.w < 200 ? 160 : 180;
 		paintDeleteData(g);
 		if (!loadScreen)
 		{
@@ -631,7 +845,7 @@ public class ServerListScreen : mScreen, IActionListener
 		{
 			if (GameCanvas.keyPressed[8])
 			{
-				int num2 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num2 = mGraphics.zoomLevel <= 1 ? 4 : 2;
 				GameCanvas.keyPressed[8] = false;
 				selected++;
 				if (selected > num2)
@@ -642,7 +856,7 @@ public class ServerListScreen : mScreen, IActionListener
 			}
 			if (GameCanvas.keyPressed[2])
 			{
-				int num3 = ((mGraphics.zoomLevel <= 1) ? 4 : 2);
+				int num3 = mGraphics.zoomLevel <= 1 ? 4 : 2;
 				GameCanvas.keyPressed[2] = false;
 				selected--;
 				if (selected < 0)
@@ -776,7 +990,7 @@ public class ServerListScreen : mScreen, IActionListener
 		isWait = false;
 		GameCanvas.loginScr = null;
 		string text = Rms.loadRMSString(Rms.RMS_ResVersion);
-		int num = ((text == null || !(text != string.Empty)) ? (-1) : int.Parse(text));
+		int num = text == null || !(text != string.Empty) ? -1 : int.Parse(text);
 		if (num > 0)
 		{
 			loadScreen = true;
@@ -804,7 +1018,7 @@ public class ServerListScreen : mScreen, IActionListener
 		isWait = false;
 		GameCanvas.loginScr = null;
 		string text = Rms.loadRMSString(Rms.RMS_ResVersion);
-		int num = ((text == null || !(text != string.Empty)) ? (-1) : int.Parse(text));
+		int num = text == null || !(text != string.Empty) ? -1 : int.Parse(text);
 		if (num > 0)
 		{
 			loadScreen = true;
@@ -843,227 +1057,13 @@ public class ServerListScreen : mScreen, IActionListener
 		center = new Command(string.Empty, this, 2, null);
 	}
 
-	public void perform(int idAction, object p)
-	{
-		Res.outz("perform " + idAction);
-		if (idAction == 1000)
-		{
-			GameCanvas.connect();
-		}
-		if (idAction == 1 || idAction == 4)
-		{
-			Session_ME.gI().close();
-			isAutoConect = false;
-			countDieConnect = 0;
-			loadScreen = true;
-			testConnect = 0;
-			isGetData = false;
-			mSystem.println(">>>>>isGetData: " + isGetData);
-			Rms.clearAll();
-			switchToMe();
-		}
-		if (idAction == 2)
-		{
-			stopDownload = false;
-			cmdDownload = new Command(mResources.huy, this, 4, null);
-			cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
-			cmdDownload.y = GameCanvas.hh + 65;
-			right = null;
-			if (!GameCanvas.isTouch)
-			{
-				cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
-				cmdDownload.y = GameCanvas.h - mScreen.cmdH - 1;
-			}
-			center = new Command(string.Empty, this, 4, null);
-			if (!isGetData)
-			{
-				Service.gI().getResource(1, null);
-				if (!GameCanvas.isTouch)
-				{
-					cmdDownload.isFocus = true;
-					center = new Command(string.Empty, this, 4, null);
-					mSystem.println(">>>>>isGetData: " + isGetData);
-				}
-				isGetData = true;
-			}
-		}
-		if (idAction == 3)
-		{
-			Res.outz("toi day");
-			Login_New();
-		}
-		if (idAction == 10100)
-		{
-			if (GameCanvas.loginScr == null)
-			{
-				GameCanvas.loginScr = new LoginScr();
-			}
-			GameCanvas.loginScr.switchToMe();
-			GameCanvas.connect();
-			Service.gI().login2(string.Empty);
-			Res.outz("tao user ao");
-			GameCanvas.startWaitDlg();
-			LoginScr.serverName = nameServer[ipSelect];
-		}
-		if (idAction == 5)
-		{
-			doUpdateServer();
-			if (nameServer.Length == 1)
-			{
-				return;
-			}
-			MyVector myVector = new MyVector(string.Empty);
-			for (int i = 0; i < nameServer.Length; i++)
-			{
-				myVector.addElement(new Command(nameServer[i], this, 6, null));
-			}
-			GameCanvas.menu.startAt(myVector, 0);
-			if (!GameCanvas.isTouch)
-			{
-				GameCanvas.menu.menuSelectedItem = ipSelect;
-			}
-		}
-		if (idAction == 6)
-		{
-			SetIpSelect(GameCanvas.menu.menuSelectedItem, false);
-			selectServer();
-		}
-		if (idAction == 7)
-		{
-			if (GameCanvas.loginScr == null)
-			{
-				GameCanvas.loginScr = new LoginScr();
-			}
-			GameCanvas.loginScr.switchToMe();
-		}
-		if (idAction == 8)
-		{
-			bool flag = Rms.loadRMSInt("lowGraphic") == 1;
-			MyVector myVector2 = new MyVector("cau hinh");
-			myVector2.addElement(new Command(mResources.cauhinhthap, this, 9, null));
-			myVector2.addElement(new Command(mResources.cauhinhcao, this, 10, null));
-			GameCanvas.menu.startAt(myVector2, 0);
-			if (flag)
-			{
-				GameCanvas.menu.menuSelectedItem = 0;
-			}
-			else
-			{
-				GameCanvas.menu.menuSelectedItem = 1;
-			}
-		}
-		if (idAction == 9)
-		{
-			Rms.saveRMSInt("lowGraphic", 1);
-			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
-		}
-		if (idAction == 10)
-		{
-			Rms.saveRMSInt("lowGraphic", 0);
-			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
-		}
-		if (idAction == 11)
-		{
-			if (GameCanvas.loginScr == null)
-			{
-				GameCanvas.loginScr = new LoginScr();
-			}
-			GameCanvas.loginScr.switchToMe();
-			string text = Rms.loadRMSString(Rms.RMS_userAo + ipSelect);
-			if (text == null || text.Equals(string.Empty))
-			{
-				Service.gI().login2(string.Empty);
-			}
-			else
-			{
-				GameCanvas.loginScr.isLogin2 = true;
-				GameCanvas.connect();
-				Service.gI().setClientType();
-				Service.gI().login(text, string.Empty, GameMidlet.VERSION, 1);
-			}
-			GameCanvas.startWaitDlg(mResources.PLEASEWAIT);
-			Res.outz("tao user ao");
-		}
-		if (idAction == 12)
-		{
-			GameMidlet.instance.exit();
-		}
-		if (idAction == 13 && (!isGetData || loadScreen))
-		{
-			switch (mSystem.clientType)
-			{
-			case 1:
-				mSystem.callHotlineJava();
-				break;
-			case 3:
-			case 5:
-				mSystem.callHotlineIphone();
-				break;
-			case 6:
-				mSystem.callHotlineWindowsPhone();
-				break;
-			case 4:
-				mSystem.callHotlinePC();
-				break;
-			}
-		}
-		if (idAction == 14)
-		{
-			Command cmdYes = new Command(mResources.YES, GameCanvas.serverScreen, 15, null);
-			Command cmdNo = new Command(mResources.NO, GameCanvas.serverScreen, 16, null);
-			GameCanvas.startYesNoDlg(mResources.deletaDataNote, cmdYes, cmdNo);
-		}
-		if (idAction == 15)
-		{
-			Rms.clearAll();
-			GameCanvas.startOK(mResources.plsRestartGame, 8885, null);
-		}
-		if (idAction == 16)
-		{
-			InfoDlg.hide();
-			GameCanvas.currentDialog = null;
-		}
-		if (idAction == 17)
-		{
-			if (GameCanvas.serverScr == null)
-			{
-				GameCanvas.serverScr = new ServerScr();
-			}
-			GameCanvas.serverScr.switchToMe();
-		}
-		if (idAction == 18)
-		{
-			GameCanvas.endDlg();
-			InfoDlg.hide();
-			if (GameCanvas.serverScr == null)
-			{
-				GameCanvas.serverScr = new ServerScr();
-			}
-			GameCanvas.serverScr.switchToMe();
-		}
-		if (idAction == 19)
-		{
-			if (mSystem.clientType == 1)
-			{
-				InfoDlg.hide();
-				GameCanvas.currentDialog = null;
-			}
-			else
-			{
-				countDieConnect = 0;
-				testConnect = 0;
-				isAutoConect = true;
-			}
-		}
-	}
-
 	public void init()
 	{
 		if (!loadScreen)
 		{
 			cmdDownload = new Command(mResources.taidulieu, this, 2, null);
 			cmdDownload.isFocus = true;
-			cmdDownload.x = GameCanvas.w / 2 - mScreen.cmdW / 2;
+			cmdDownload.x = GameCanvas.w / 2 - cmdW / 2;
 			cmdDownload.y = GameCanvas.hh + 45;
 			if (cmdDownload.y > GameCanvas.h - 26)
 			{
@@ -1147,7 +1147,6 @@ public class ServerListScreen : mScreen, IActionListener
 
 	public static void SetIpSelect(int index, bool issave)
 	{
-		Debug.LogError(">>>>SetIpSelect: " + index + "  save:" + issave);
 		ipSelect = index;
 		if (issave)
 		{

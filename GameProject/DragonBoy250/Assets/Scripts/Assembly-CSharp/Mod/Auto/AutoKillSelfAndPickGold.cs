@@ -61,7 +61,7 @@ namespace Mod.Auto
 			}
 		}
 
-		void AttackSelf()
+		static void AttackSelf()
 		{
 			MyVector myVector = new MyVector();
 			myVector.addElement(Char.myCharz());

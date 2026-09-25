@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
+using Mod.BoMong;
 
 namespace Mod
 {
@@ -171,6 +172,13 @@ namespace Mod
 			}
 
 			myChar.focusManualTo(bosses[nextIndex]);
+		}
+
+		[ChatCommand("bomong")]
+		[ChatCommand("abm")]
+		internal static void OpenBoMongMenu()
+		{
+			BoMongMenu.ShowMenu();
 		}
 	}
 }

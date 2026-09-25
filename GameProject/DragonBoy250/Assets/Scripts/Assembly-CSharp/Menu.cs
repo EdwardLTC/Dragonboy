@@ -2,19 +2,6 @@ using Mod;
 
 public class Menu
 {
-	public bool showMenu;
-
-	public MyVector menuItems;
-
-	public int menuSelectedItem;
-
-	public int menuX;
-
-	public int menuY;
-
-	public int menuW;
-
-	public int menuH;
 
 	public static int[] menuTemY;
 
@@ -30,53 +17,66 @@ public class Menu
 
 	public static int xc;
 
-	private Command left = new Command(mResources.SELECT, 0);
-
-	private Command right = new Command(mResources.CLOSE, 0, GameCanvas.w - 71, GameCanvas.h - mScreen.cmdH + 1);
-
-	private Command center;
-
 	public static Image imgMenu1;
 
 	public static Image imgMenu2;
 
-	private bool disableClose;
+	Command center;
+
+	bool close;
+
+	int cmRun;
+
+	int cmdx;
+
+	int cmvx;
+
+	bool disableClose;
+
+	bool isClose;
+
+	bool isDownWhenRunning;
+
+	public bool[] isNotClose;
+
+	readonly Command left = new Command(mResources.SELECT, 0);
+
+	public int menuH;
+
+	public MyVector menuItems;
+
+	public int menuSelectedItem;
+
+	public int menuW;
+
+	public int menuX;
+
+	public int menuY;
+
+	int pa;
+
+	int pointerDownFirstX;
+
+	readonly int[] pointerDownLastX = new int[3];
+
+	int pointerDownTime;
+
+	bool pointerIsDowning;
+
+	readonly Command right = new Command(mResources.CLOSE, 0, GameCanvas.w - 71, GameCanvas.h - mScreen.cmdH + 1);
+	public bool showMenu;
 
 	public int tDelay;
 
+	bool touch;
+
+	bool trans;
+
 	public int w;
 
-	private int pa;
+	int waitToPerform;
 
-	private bool trans;
-
-	private int pointerDownTime;
-
-	private int pointerDownFirstX;
-
-	private int[] pointerDownLastX = new int[3];
-
-	private bool pointerIsDowning;
-
-	private bool isDownWhenRunning;
-
-	private bool wantUpdateList;
-
-	private int waitToPerform;
-
-	private int cmRun;
-
-	private bool touch;
-
-	private bool close;
-
-	private int cmvx;
-
-	private int cmdx;
-
-	private bool isClose;
-
-	public bool[] isNotClose;
+	bool wantUpdateList;
 
 	public static void loadBg()
 	{
@@ -191,7 +191,7 @@ public class Menu
 
 	public bool isScrolling()
 	{
-		if ((!isClose && menuTemY[menuTemY.Length - 1] > menuY) || (isClose && menuTemY[menuTemY.Length - 1] < GameCanvas.h))
+		if (!isClose && menuTemY[menuTemY.Length - 1] > menuY || isClose && menuTemY[menuTemY.Length - 1] < GameCanvas.h)
 		{
 			return true;
 		}
@@ -200,12 +200,12 @@ public class Menu
 
 	public void updateMenuKey()
 	{
-		if ((GameScr.gI().activeRongThan && GameScr.gI().isUseFreez) || !showMenu || isScrolling())
+		if (GameScr.gI().activeRongThan && GameScr.gI().isUseFreez || !showMenu || isScrolling())
 		{
 			return;
 		}
 		bool flag = false;
-		if (GameCanvas.keyPressed[(!Main.isPC) ? 2 : 21] || GameCanvas.keyPressed[(!Main.isPC) ? 4 : 23])
+		if (GameCanvas.keyPressed[!Main.isPC ? 2 : 21] || GameCanvas.keyPressed[!Main.isPC ? 4 : 23])
 		{
 			flag = true;
 			menuSelectedItem--;
@@ -214,7 +214,7 @@ public class Menu
 				menuSelectedItem = menuItems.size() - 1;
 			}
 		}
-		else if (GameCanvas.keyPressed[(!Main.isPC) ? 8 : 22] || GameCanvas.keyPressed[(!Main.isPC) ? 6 : 24])
+		else if (GameCanvas.keyPressed[!Main.isPC ? 8 : 22] || GameCanvas.keyPressed[!Main.isPC ? 6 : 24])
 		{
 			flag = true;
 			menuSelectedItem++;
@@ -223,7 +223,7 @@ public class Menu
 				menuSelectedItem = 0;
 			}
 		}
-		else if (GameCanvas.keyPressed[(!Main.isPC) ? 5 : 25])
+		else if (GameCanvas.keyPressed[!Main.isPC ? 5 : 25])
 		{
 			if (center != null)
 			{
@@ -306,7 +306,7 @@ public class Menu
 		{
 			if (!isScrolling())
 			{
-				pointerDownTime = (pointerDownFirstX = 0);
+				pointerDownTime = pointerDownFirstX = 0;
 				pointerIsDowning = false;
 				GameCanvas.clearAllPointerEvent();
 				Res.outz("menu select= " + menuSelectedItem);
@@ -402,7 +402,7 @@ public class Menu
 				else
 				{
 					int num3 = GameCanvas.px - pointerDownLastX[0] + (pointerDownLastX[0] - pointerDownLastX[1]) + (pointerDownLastX[1] - pointerDownLastX[2]);
-					num3 = ((num3 > 10) ? 10 : ((num3 < -10) ? (-10) : 0));
+					num3 = num3 > 10 ? 10 : num3 < -10 ? -10 : 0;
 					cmRun = -num3 * 100;
 				}
 			}
@@ -469,7 +469,10 @@ public class Menu
 			string[] array = command.subCaption;
 			if (array == null)
 			{
-				array = new string[1] { ((Command)menuItems.elementAt(i)).caption };
+				array = new string[1]
+				{
+					((Command)menuItems.elementAt(i)).caption
+				};
 			}
 			int num = menuTemY[i] + (menuH - array.Length * 14) / 2 + 1;
 			for (int j = 0; j < array.Length; j++)
@@ -535,6 +538,19 @@ public class Menu
 		if (menuSelectedItem >= 0)
 		{
 			Command command = (Command)menuItems.elementAt(menuSelectedItem);
+			if (command != null)
+			{
+				command.performAction();
+			}
+		}
+	}
+
+	public void performSelect(int index)
+	{
+		InfoDlg.hide();
+		if (index >= 0)
+		{
+			Command command = (Command)menuItems.elementAt(index);
 			if (command != null)
 			{
 				command.performAction();

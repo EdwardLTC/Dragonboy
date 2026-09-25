@@ -146,6 +146,21 @@ namespace Mod.Xmap
 			gI.Toggle(true);
 		}
 
+		internal static IEnumerator StartAndWait(int mapId, bool forceNotUseCapsuleLinks = false)
+		{
+			if (gI == null)
+			{
+				yield break;
+			}
+
+			start(mapId, forceNotUseCapsuleLinks);
+
+			while (gI != null && gI.IsActing)
+			{
+				yield return null;
+			}
+		}
+
 		internal static void finishXmap()
 		{
 			if (gI == null)
@@ -156,5 +171,4 @@ namespace Mod.Xmap
 			gI.Toggle(false);
 		}
 	}
-
 }

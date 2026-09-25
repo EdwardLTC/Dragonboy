@@ -16,6 +16,8 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
+using Assembly_CSharp.Mod.BoMong;
+using Mod.BoMong;
 using UnityEngine;
 using CharacterInfo = Mod.AccountManager.CharacterInfo;
 
@@ -74,6 +76,7 @@ namespace Mod
 			InGameAccountManager.OnStart();
 			AutoSkill.gI.Toggle(true);
 			AutoPean.gI.Toggle(true);
+			BoMongSettings.Load();
 
 			UIReportersManager.AddReporter(Boss.Paint);
 			UIReportersManager.AddReporter(ListCharsInMap.Paint);
@@ -516,6 +519,7 @@ namespace Mod
 		internal static bool OnChatPopupMultiLine(string chat)
 		{
 			GameScr.info1.addInfo(chat, 0);
+			BoMongMessageEvent.Process(chat);
 			return true;
 		}
 
@@ -568,6 +572,7 @@ namespace Mod
 		{
 			EdwardXmap.Info(str);
 			AutoUseGrape.Info(str);
+			BoMongMessageEvent.Process(str);
 		}
 
 		internal static bool OnUpdateTouchGameScr(GameScr instance)
