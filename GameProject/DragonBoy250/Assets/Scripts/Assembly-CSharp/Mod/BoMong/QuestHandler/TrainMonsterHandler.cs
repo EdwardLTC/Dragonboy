@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Mod.PickMob;
+using Mod.Xmap;
+using UnityEngine;
 
 namespace Mod.BoMong.QuestHandler
 {
@@ -113,15 +115,28 @@ namespace Mod.BoMong.QuestHandler
 		public void OnQuestCompleted()
 		{
 			Pk9rPickMob.SetSlaughter(false);
+			Char.myCharz().currentMovePoint = null;
 		}
 
-		public IEnumerator HandleQuest()
+		public IEnumerator HandleQuest(int mapId)
 		{
-			int? zoneId = FindLowestPlayerZoneId();
-
-			if (zoneId.HasValue && zoneId.Value != TileMap.zoneID)
+			if (TileMap.mapID != mapId && !XmapController.gI.IsActing)
 			{
-				Service.gI().requestChangeZone(zoneId.Value, 0);
+				XmapController.start(mapId);
+				yield return null;
+			}
+
+			int playersInCurrentZone = GameScr.gI().numPlayer[TileMap.zoneID];
+			
+			if (playersInCurrentZone > 1)
+			{
+				int? zoneId = FindLowestPlayerZoneId();
+
+				if (zoneId.HasValue && zoneId.Value != TileMap.zoneID)
+				{
+					Service.gI().requestChangeZone(zoneId.Value, 0);
+				}
+				yield return null;
 			}
 
 			// Slaughter is handled by Pk9rPickMob, so we just yield return null here to keep the coroutine running.

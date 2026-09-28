@@ -10,7 +10,7 @@ namespace Mod.BoMong.QuestHandler
 
 		public void PreHandleQuest();
 
-		public IEnumerator HandleQuest();
+		public IEnumerator HandleQuest(int mapId);
 
 		public void OnQuestCompleted();
 	}

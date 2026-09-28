@@ -1,6 +1,7 @@
 using System.Collections;
 using Mod.ModHelper;
 using Mod.PickMob;
+using Mod.Xmap;
 
 namespace Mod.Auto
 {
@@ -72,6 +73,11 @@ namespace Mod.Auto
 
 		protected override IEnumerator OnUpdate()
 		{
+			if (XmapController.gI.IsActing)
+			{
+				yield return null;
+			}
+
 			if (Char.myCharz().cFlag == 0)
 			{
 				Service.gI().getFlag(1, 8);
@@ -106,7 +112,6 @@ namespace Mod.Auto
 					break;
 				}
 			}
-
 		}
 
 		protected override void OnStart()

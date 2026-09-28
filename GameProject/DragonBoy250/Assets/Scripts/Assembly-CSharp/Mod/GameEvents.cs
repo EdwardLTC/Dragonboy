@@ -76,7 +76,6 @@ namespace Mod
 			InGameAccountManager.OnStart();
 			AutoSkill.gI.Toggle(true);
 			AutoPean.gI.Toggle(true);
-			BoMongSettings.Load();
 
 			UIReportersManager.AddReporter(Boss.Paint);
 			UIReportersManager.AddReporter(ListCharsInMap.Paint);

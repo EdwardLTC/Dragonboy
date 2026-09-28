@@ -11,7 +11,7 @@ namespace Mod.BoMong.QuestHandler
 			return 14; // kakarot village map id
 		}
 
-		public IEnumerator HandleQuest()
+		public IEnumerator HandleQuest(int mapId)
 		{
 			int? zoneId = FindHighestPlayerZoneId();
 
@@ -25,11 +25,13 @@ namespace Mod.BoMong.QuestHandler
 
 		public void OnQuestCompleted()
 		{
+			AutoGoback.gI.Toggle(false);
 			AutoKillAll.gI.Toggle(false);
 		}
 
 		public void PreHandleQuest()
 		{
+			AutoGoback.gI.Toggle(true);
 			AutoKillAll.gI.Toggle(true);
 		}
 

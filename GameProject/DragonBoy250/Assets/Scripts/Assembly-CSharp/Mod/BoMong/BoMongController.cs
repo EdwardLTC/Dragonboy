@@ -1,9 +1,7 @@
 using System.Collections;
 using Assembly_CSharp.Mod.BoMong;
-using Mod.Auto;
 using Mod.BoMong.QuestHandler;
 using Mod.ModHelper;
-using Mod.PickMob;
 using Mod.Xmap;
 using UnityEngine;
 
@@ -37,13 +35,13 @@ namespace Mod.BoMong
 			BoMongMessageEvent.ResetState();
 			IsWaitingReward = false;
 
-			Pk9rPickMob.SetSlaughter(false);
-			AutoKillAll.gI.Toggle(false);
-			AutoGoback.gI.Toggle(false);
-			AutoKillSelfAndPickGold.gI.Toggle(false);
-
 			GameCanvas.menu.doCloseMenu();
 			Char.chatPopup = null;
+
+			if (Utils.isUsingTDLT())
+			{
+				Utils.useItem(521);
+			}
 
 			GameScr.info1.addInfo("[Auto Bò Mộng] ĐÃ DỪNG", 0);
 		}
@@ -57,8 +55,8 @@ namespace Mod.BoMong
 
 			if (Char.myCharz().IsCharDead())
 			{
+				yield return new WaitForSecondsRealtime(0.5f);
 				Service.gI().returnTownFromDead();
-				yield return new WaitForSecondsRealtime(1.5f);
 				yield break;
 			}
 
@@ -67,8 +65,6 @@ namespace Mod.BoMong
 			// ==========================================
 			if (BoMongMessageEvent.EndNvBoMong)
 			{
-				StopCurrentQuest();
-				BoMongMessageEvent.ResetState();
 				GameScr.info1.addInfo("[Auto Bò Mộng] Đã hết nhiệm vụ hôm nay!", 0);
 				Toggle(false);
 				yield break;
@@ -131,6 +127,20 @@ namespace Mod.BoMong
 					yield break;
 				}
 
+				// ==========================================
+				// NEU MÁU THẤP -> VỀ NHÀ HỒI PHỤC
+				// ==========================================
+				if (Char.myCharz().cHP < Char.myCharz().cHPFull * 0.1)
+				{
+					yield return XmapController.StartAndWait(Char.myCharz().cgender + 21);
+
+					if (Utils.IsMyCharHome() && GameScr.vItemMap.size() > 0)
+					{
+						Service.gI().pickItem(((ItemMap)GameScr.vItemMap.elementAt(0)).itemMapID);
+						yield break;
+					}
+				}
+
 				int mapId = questHandler.MapIDForThisQuest(BoMongMessageEvent.CurrentQuestMessage);
 				if (mapId >= 0 && mapId != TileMap.mapID)
 				{
@@ -139,7 +149,7 @@ namespace Mod.BoMong
 
 				questHandler.PreHandleQuest();
 				IsHandlingQuest = true;
-				questCoroutine = StartCoroutine(RunQuest(questHandler));
+				questCoroutine = StartCoroutine(RunQuest(questHandler, mapId));
 				yield break;
 			}
 
@@ -149,18 +159,17 @@ namespace Mod.BoMong
 			if (TileMap.mapID != BOMONG_MAP_ID)
 			{
 				yield return XmapController.StartAndWait(BOMONG_MAP_ID);
-				yield return new WaitForSecondsRealtime(0.5f);
 				yield break;
 			}
 
 			yield return InteractRequestQuest();
 		}
 
-		static IEnumerator RunQuest(IQuestHandler handler)
+		static IEnumerator RunQuest(IQuestHandler handler, int mapId)
 		{
 			while (!BoMongMessageEvent.IsQuestCompleted && gI != null && gI.IsActing)
 			{
-				yield return handler.HandleQuest();
+				yield return handler.HandleQuest(mapId);
 				yield return new WaitForSecondsRealtime(handler.intervalHandleQuest);
 			}
 		}
@@ -202,7 +211,7 @@ namespace Mod.BoMong
 			yield return new WaitForSecondsRealtime(0.4f);
 
 			Service.gI().openMenu(BOMONG_NPC_ID);
-			yield return WaitForMenu(2.5f);
+			yield return WaitForMenu(1.5f);
 
 			if (!GameCanvas.menu.showMenu || GameCanvas.menu.menuItems == null)
 			{
@@ -216,7 +225,7 @@ namespace Mod.BoMong
 				ConfirmNPCMenuOption(dailyQuestIdx);
 
 				yield return new WaitForSecondsRealtime(0.8f);
-				yield return WaitForMenu(2.5f);
+				yield return WaitForMenu(1.5f);
 
 				if (GameCanvas.menu.showMenu && GameCanvas.menu.menuItems != null)
 				{
@@ -270,7 +279,7 @@ namespace Mod.BoMong
 			yield return new WaitForSecondsRealtime(0.4f);
 
 			Service.gI().openMenu(BOMONG_NPC_ID);
-			yield return WaitForMenu(2.5f);
+			yield return WaitForMenu(1.5f);
 
 			if (!GameCanvas.menu.showMenu || GameCanvas.menu.menuItems == null)
 			{
@@ -284,7 +293,7 @@ namespace Mod.BoMong
 				ConfirmNPCMenuOption(dailyQuestIdx);
 
 				yield return new WaitForSecondsRealtime(1f);
-				yield return WaitForMenu(2.5f);
+				yield return WaitForMenu(1.5f);
 
 				if (GameCanvas.menu.showMenu && GameCanvas.menu.menuItems != null)
 				{
@@ -343,7 +352,7 @@ namespace Mod.BoMong
 			yield return new WaitForSecondsRealtime(0.4f);
 
 			Service.gI().openMenu(BOMONG_NPC_ID);
-			yield return WaitForMenu(2.5f);
+			yield return WaitForMenu(1.5f);
 
 			if (!GameCanvas.menu.showMenu || GameCanvas.menu.menuItems == null)
 			{
@@ -356,7 +365,7 @@ namespace Mod.BoMong
 				ConfirmNPCMenuOption(dailyQuestIdx);
 
 				yield return new WaitForSecondsRealtime(0.8f);
-				yield return WaitForMenu(2.5f);
+				yield return WaitForMenu(1.5f);
 
 				if (GameCanvas.menu.showMenu && GameCanvas.menu.menuItems != null)
 				{

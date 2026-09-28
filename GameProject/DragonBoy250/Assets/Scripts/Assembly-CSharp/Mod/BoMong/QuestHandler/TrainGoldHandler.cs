@@ -17,7 +17,7 @@ namespace Mod.BoMong.QuestHandler
 			AutoKillSelfAndPickGold.gI.Toggle(true);
 		}
 
-		public IEnumerator HandleQuest()
+		public IEnumerator HandleQuest(int mapId)
 		{
 			if (TileMap.mapID != XmapContext.MapLookup.GetVillageMapId(Char.myCharz().cgender) && !AutoGoback.IsGoingBack && !XmapController.gI.IsActing)
 			{

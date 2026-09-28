@@ -18,7 +18,7 @@ namespace Mod.Xmap
 		int mapEnd;
 		List<MapNext> way;
 
-		protected override float Interval => 0.4f;
+		protected override float Interval => 0.6f;
 
 		protected override IEnumerator OnUpdate()
 		{

@@ -6443,7 +6443,6 @@ public class Controller : IMessageHandler
 		try
 		{
 			sbyte b = msg.reader().readByte();
-			mSystem.println(">>---read_cmdExtra-sub:" + b);
 			if (b == 0)
 			{
 				short idHat = msg.reader().readShort();

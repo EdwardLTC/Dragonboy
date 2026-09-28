@@ -13,7 +13,7 @@ namespace Mod.BoMong.QuestHandler
 		{
 			throw new NotImplementedException();
 		}
-		public IEnumerator HandleQuest()
+		public IEnumerator HandleQuest(int mapId)
 		{
 			throw new NotImplementedException();
 		}
