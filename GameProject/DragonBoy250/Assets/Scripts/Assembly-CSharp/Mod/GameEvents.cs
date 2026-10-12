@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Assembly_CSharp.Mod.BoMong;
 using Mod.AccountManager;
 using Mod.Auto;
 using Mod.CharEffect;
@@ -16,8 +17,6 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
-using Assembly_CSharp.Mod.BoMong;
-using Mod.BoMong;
 using UnityEngine;
 using CharacterInfo = Mod.AccountManager.CharacterInfo;
 

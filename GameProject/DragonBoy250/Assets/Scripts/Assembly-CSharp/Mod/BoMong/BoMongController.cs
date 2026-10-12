@@ -18,7 +18,7 @@ namespace Mod.BoMong
 		public bool IsHandlingQuest { get; private set; }
 		bool IsWaitingReward { get; set; }
 
-		protected override float Interval => 1f;
+		protected override float Interval => 0.5f;
 
 		protected override void OnStart()
 		{
@@ -276,9 +276,10 @@ namespace Mod.BoMong
 			}
 
 			Utils.TeleportToNPC(BOMONG_NPC_ID);
-			yield return new WaitForSecondsRealtime(0.4f);
+			yield return new WaitForSecondsRealtime(1f);
 
 			Service.gI().openMenu(BOMONG_NPC_ID);
+			yield return new WaitForSecondsRealtime(1f);
 			yield return WaitForMenu(1.5f);
 
 			if (!GameCanvas.menu.showMenu || GameCanvas.menu.menuItems == null)
@@ -325,7 +326,7 @@ namespace Mod.BoMong
 					{
 						ConfirmNPCMenuOption(diffIdx);
 						GameScr.info1.addInfo($"[Auto Bò Mộng] Đã chọn nhiệm vụ: {BoMongSettings.Difficulty}", 0);
-						yield return new WaitForSecondsRealtime(1.5f);
+						yield return new WaitForSecondsRealtime(1f);
 					}
 					else
 					{
@@ -353,6 +354,7 @@ namespace Mod.BoMong
 
 			Service.gI().openMenu(BOMONG_NPC_ID);
 			yield return WaitForMenu(1.5f);
+			yield return new WaitForSecondsRealtime(1f);
 
 			if (!GameCanvas.menu.showMenu || GameCanvas.menu.menuItems == null)
 			{
@@ -389,7 +391,7 @@ namespace Mod.BoMong
 
 						BoMongMessageEvent.ResetState();
 						GameScr.info1.addInfo("[Auto Bò Mộng] Đã hủy nhiệm vụ bỏ qua thành công!", 0);
-						yield return new WaitForSecondsRealtime(1.5f);
+						yield return new WaitForSecondsRealtime(1f);
 					}
 					else
 					{
@@ -435,9 +437,7 @@ namespace Mod.BoMong
 
 				string normCaption = NormalizeText(cmd.caption);
 
-				bool matched = forceExact
-					? normCaption.Equals(normKeyword)
-					: normCaption.Contains(normKeyword);
+				bool matched = forceExact ? normCaption.Equals(normKeyword) : normCaption.Contains(normKeyword);
 
 				if (matched)
 				{

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Linq;
 using Mod.AccountManager;
 using Mod.Auto;
+using Mod.BoMong;
 using Mod.CharEffect;
 using Mod.CustomPanel;
 using Mod.DeveloperFunctions;
@@ -11,7 +12,6 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
-using Mod.BoMong;
 using UnityEngine;
 
 namespace Mod.ModMenu

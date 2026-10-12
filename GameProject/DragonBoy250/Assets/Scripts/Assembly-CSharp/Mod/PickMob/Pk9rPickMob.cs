@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.Menu;
@@ -7,15 +6,13 @@ using Mod.R;
 
 namespace Mod.PickMob
 {
-	internal class Pk9rPickMob
+	internal static class Pk9rPickMob
 	{
 		const int ID_ITEM_GEM = 77;
 		const int ID_ITEM_GEM_LOCK = 861;
-		const int DEFAULT_HP_BUFF = 20;
-		const int DEFAULT_MP_BUFF = 20;
 		static readonly sbyte[] IdSkillsBase =
 		{
-			0, 2, 17, 4, 13, 19, 6 //21, 24, 25
+			2, 9, 17, 0, 4, 13, 19, 6 //21, 24, 25
 		};
 		static readonly short[] IdItemBlockBase =
 		{
@@ -32,8 +29,6 @@ namespace Mod.PickMob
 		public static readonly List<sbyte> TypeItemPicks = new List<sbyte>();
 		public static readonly List<sbyte> TypeItemBlocks = new List<sbyte>();
 
-		static Pk9rPickMob _Instance;
-
 		internal static bool IsTanSat { get; set; }
 		internal static bool IsNeSieuQuai { get; set; } = true;
 		internal static bool IsVuotDiaHinh { get; set; } = true;
@@ -42,7 +37,6 @@ namespace Mod.PickMob
 		internal static bool IsLimitTimesPickItem { get; set; } = true;
 		internal static bool IsAttackMonsterBySendCommand { get; set; }
 		internal static bool IsSkipPickEventItems { get; set; } = true;
-		internal static Pk9rPickMob getInstance => _Instance ??= new Pk9rPickMob();
 
 		internal static void Init()
 		{
@@ -527,61 +521,5 @@ namespace Mod.PickMob
 			}));
 			menuBuilder.start();
 		}
-
-		#region Không cần liên kết với game
-		static bool IsGetInfoChat<T>(string text, string s)
-		{
-			if (!text.StartsWith(s))
-			{
-				return false;
-			}
-			try
-			{
-				Convert.ChangeType(text.Substring(s.Length), typeof(T));
-			}
-			catch
-			{
-				return false;
-			}
-			return true;
-		}
-
-		static T GetInfoChat<T>(string text, string s)
-		{
-			return (T)Convert.ChangeType(text.Substring(s.Length), typeof(T));
-		}
-
-		static bool IsGetInfoChat<T>(string text, string s, int n)
-		{
-			if (!text.StartsWith(s))
-			{
-				return false;
-			}
-			try
-			{
-				string[] vs = text.Substring(s.Length).Split(' ');
-				for (int i = 0; i < n; i++)
-				{
-					Convert.ChangeType(vs[i], typeof(T));
-				}
-			}
-			catch
-			{
-				return false;
-			}
-			return true;
-		}
-
-		static T[] GetInfoChat<T>(string text, string s, int n)
-		{
-			T[] ts = new T[n];
-			string[] vs = text.Substring(s.Length).Split(' ');
-			for (int i = 0; i < n; i++)
-			{
-				ts[i] = (T)Convert.ChangeType(vs[i], typeof(T));
-			}
-			return ts;
-		}
-		#endregion
 	}
 }

@@ -120,8 +120,7 @@ namespace Mod
 				try
 				{
 					string filePath = GetFilePath(name, isCommon);
-					if (!File.Exists(filePath))
-						return;
+
 					byte[] buffer = File.ReadAllBytes(filePath);
 					if (buffer.Length < sizeof( long ))
 						return;
@@ -143,8 +142,7 @@ namespace Mod
 				try
 				{
 					string filePath = GetFilePath(name, isCommon);
-					if (!File.Exists(filePath))
-						return;
+
 					byte[] buffer = File.ReadAllBytes(filePath);
 					if (buffer.Length < 1)
 						return;
@@ -166,8 +164,7 @@ namespace Mod
 				try
 				{
 					string filePath = GetFilePath(name, isCommon);
-					if (!File.Exists(filePath))
-						return;
+
 					string text = File.ReadAllText(filePath, Encoding.UTF8);
 					if (!string.IsNullOrEmpty(text))
 						result = text;
@@ -188,8 +185,7 @@ namespace Mod
 				try
 				{
 					string filePath = GetFilePath(name, isCommon);
-					if (!File.Exists(filePath))
-						return;
+
 					byte[] buffer = File.ReadAllBytes(filePath);
 					if (buffer.Length < sizeof( double ))
 						return;
@@ -241,8 +237,6 @@ namespace Mod
 				try
 				{
 					string filePath = GetFilePath(name, isCommon);
-					if (!File.Exists(filePath))
-						return;
 					byte[] buffer = File.ReadAllBytes(filePath);
 					if (buffer.Length < sizeof( int ))
 						return;
@@ -283,8 +277,6 @@ namespace Mod
 			{
 				try
 				{
-					if (!File.Exists(filePath))
-						return;
 					string text = File.ReadAllText(filePath, Encoding.UTF8);
 					if (!string.IsNullOrEmpty(text))
 						result = text;

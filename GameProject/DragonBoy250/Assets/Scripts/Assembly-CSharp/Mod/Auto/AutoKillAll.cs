@@ -10,7 +10,7 @@ namespace Mod.Auto
 		Char currentTarget;
 		protected override float Interval => 0.2f;
 
-		bool IsEnemyCandidate(Char target)
+		static bool IsEnemyCandidate(Char target)
 		{
 			return target != null
 			       && !string.IsNullOrEmpty(target.cName)
@@ -24,7 +24,7 @@ namespace Mod.Auto
 			       && target.cHP > 0;
 		}
 
-		bool IsTargetValid(Char target)
+		static bool IsTargetValid(Char target)
 		{
 			return IsEnemyCandidate(target)
 			       && !target.meDead
@@ -36,14 +36,14 @@ namespace Mod.Auto
 			       && target.cy <= TileMap.pxh;
 		}
 
-		void ClearFocus()
+		static void ClearFocus()
 		{
 			Char.myCharz().mobFocus = null;
 			Char.myCharz().npcFocus = null;
 			Char.myCharz().itemFocus = null;
 		}
 
-		void AttackTarget(Char target)
+		static void AttackTarget(Char target)
 		{
 			ClearFocus();
 			Char.myCharz().charFocus = target;
@@ -75,7 +75,7 @@ namespace Mod.Auto
 		{
 			if (XmapController.gI.IsActing)
 			{
-				yield return null;
+				yield break;
 			}
 
 			if (Char.myCharz().cFlag == 0)

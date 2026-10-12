@@ -345,21 +345,21 @@ namespace Mod.Graphics
 
 		internal static bool OnCharPaintAuraBehind()
 		{
-			if (Level > ReduceGraphicsLevel.Level1)
+			if (Level > ReduceGraphicsLevel.Level1 || IsSimpleUI)
 				return true;
 			return false;
 		}
 
 		internal static bool OnCharPaintSuperEffFront()
 		{
-			if (Level > ReduceGraphicsLevel.Level1)
+			if (Level > ReduceGraphicsLevel.Level1 || IsSimpleUI)
 				return true;
 			return false;
 		}
 
 		internal static bool OnCharPaintSuperEffBehind()
 		{
-			if (Level > ReduceGraphicsLevel.Level1)
+			if (Level > ReduceGraphicsLevel.Level1 || IsSimpleUI)
 				return true;
 			return false;
 		}
