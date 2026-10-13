@@ -17,6 +17,7 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
+using Mod.Yardat;
 using UnityEngine;
 using CharacterInfo = Mod.AccountManager.CharacterInfo;
 
@@ -66,6 +67,7 @@ namespace Mod
 			OnSetResolution();
 			OnCheckZoomLevel(Screen.width, Screen.height);
 			ModStorage.EnsureCommonDataDirectory();
+			YardatSettings.Load();
 			CharEffectMain.Init();
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();

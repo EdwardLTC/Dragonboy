@@ -12,6 +12,7 @@ using Mod.PickMob;
 using Mod.R;
 using Mod.TeleportMenu;
 using Mod.Xmap;
+using Mod.Yardat;
 using UnityEngine;
 
 namespace Mod.ModMenu
@@ -161,6 +162,14 @@ namespace Mod.ModMenu
 					Description = "Tự động nhận và làm nhiệm vụ Bò Mộng hàng ngày",
 					GetValueFunc = () => BoMongController.gI.IsActing,
 					SetValueAction = BoMongController.gI.Toggle
+				}),
+				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
+				{
+					ID = "AutoYardat_Toggle",
+					Title = "Auto Yardat",
+					Description = "Tự động đánh chuyển mục tiêu quái Yardat, auto Porata và cho đệ về nhà",
+					GetValueFunc = () => AutoYardat.gI.IsActing,
+					SetValueAction = AutoYardat.gI.Toggle
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
 				{
@@ -367,6 +376,13 @@ namespace Mod.ModMenu
 					Title = "Cài đặt Bò Mộng",
 					Description = "Cài đặt mức độ nhiệm vụ, loại nhiệm vụ bỏ qua",
 					Action = BoMongMenu.ShowMenu
+				}),
+				new ModMenuItemFunction(new ModMenuItemFunctionConfig
+				{
+					ID = "OpenYardatMenu",
+					Title = "Menu Auto Yardat",
+					Description = "Cài đặt auto train Yardat: chuyển mục tiêu, Porata, đệ về nhà",
+					Action = YardatMenu.ShowMenu
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{

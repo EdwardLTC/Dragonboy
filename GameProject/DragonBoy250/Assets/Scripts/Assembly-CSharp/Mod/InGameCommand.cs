@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Mod.Auto;
 using Mod.BoMong;
+using Mod.Yardat;
 using Mod.ModHelper.CommandMod.Chat;
 using Mod.ModHelper.CommandMod.Hotkey;
 
@@ -178,6 +180,12 @@ namespace Mod
 		internal static void OpenBoMongMenu()
 		{
 			BoMongMenu.ShowMenu();
+		}
+
+		[ChatCommand("yardat"), ChatCommand("yd")]
+		internal static void OpenYardatMenu()
+		{
+			YardatMenu.ShowMenu();
 		}
 	}
 }
