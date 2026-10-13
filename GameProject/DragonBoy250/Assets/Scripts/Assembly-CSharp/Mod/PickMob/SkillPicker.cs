@@ -44,19 +44,10 @@ namespace Mod.PickMob
 				return true;
 			}
 
-			if (candidate.template.id == 0 && current.template.id == 9)
-			{
-				// kaioken
-				return false;
-			}
+			bool isPrioritize = candidate.template.id == 17 && current.template.id == 2 ||
+			                    candidate.template.id == 9 && current.template.id == 0;
 
-			if (candidate.template.id == 17 && candidate.template.manaUseType == 2)
-			{
-				// lien hoan
-				return false;
-			}
-
-			return current.coolDown < candidate.coolDown;
+			return current.coolDown < candidate.coolDown || isPrioritize;
 		}
 
 		static bool CanUseSkill(Skill skill)
@@ -76,16 +67,15 @@ namespace Mod.PickMob
 				return false;
 			}
 
-			if (mSystem.currentTimeMillis() - skill.lastTimeUseThisSkill < skill.coolDown && !IdSkillsMelee.Contains(skill.template.id))
+			if (skill.template.id == 9 && (Char.myCharz().cHP < Char.myCharz().cHPFull / 3 || Char.myCharz().cMP < Char.myCharz().cMPFull / 3))
 			{
 				return false;
 			}
 
 			if (Char.myCharz().cMP < GetManaUseSkill(skill))
+			{
 				return false;
-
-			if (skill.template.id == 9 && Char.myCharz().cHP < Char.myCharz().cHPFull / 3 && Char.myCharz().cMP < Char.myCharz().cMPFull / 3)
-				return false;
+			}
 
 			return true;
 		}

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Mod.ModHelper;
 using Mod.PickMob;
 using Mod.Xmap;
@@ -8,9 +9,18 @@ namespace Mod.Auto
 {
 	public class AutoKillSelfAndPickGold : CoroutineMainThreadAction<AutoKillSelfAndPickGold>
 	{
+
+		static readonly List<int> source = new List<int>
+		{
+			0,
+			2,
+			4,
+			17
+		};
 		int lastItemId = -1;
 
 		float pickStartTime = -1f;
+
 		protected override float Interval => 0.5f;
 
 		protected override IEnumerator OnUpdate()
@@ -63,6 +73,29 @@ namespace Mod.Auto
 
 		static void AttackSelf()
 		{
+			Skill selectedSkill = null;
+			Skill[] keySkill = GameScr.keySkill;
+			foreach (Skill s in keySkill)
+			{
+				if (s != null && source.Contains(s.template.id))
+				{
+					if (s.template.id == 17)
+					{
+						selectedSkill = s;
+						break;
+					}
+					if (selectedSkill == null)
+					{
+						selectedSkill = s;
+					}
+				}
+			}
+
+			if (selectedSkill != null && selectedSkill != Char.myCharz().myskill)
+			{
+				GameScr.gI().doSelectSkill(selectedSkill, true);
+			}
+
 			MyVector myVector = new MyVector();
 			myVector.addElement(Char.myCharz());
 			Service.gI().sendPlayerAttack(new MyVector(), myVector, -1);

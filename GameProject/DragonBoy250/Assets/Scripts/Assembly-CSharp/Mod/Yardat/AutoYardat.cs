@@ -33,8 +33,15 @@ namespace Mod.Yardat
 
 		protected override IEnumerator OnUpdate()
 		{
+
 			if (Char.myCharz().IsCharDead() || XmapController.gI.IsActing)
 			{
+				yield break;
+			}
+
+			if (TileMap.mapID == Char.myCharz().cgender + 21 && GameScr.vItemMap.size() > 0)
+			{
+				Service.gI().pickItem(((ItemMap)GameScr.vItemMap.elementAt(0)).itemMapID);
 				yield break;
 			}
 
