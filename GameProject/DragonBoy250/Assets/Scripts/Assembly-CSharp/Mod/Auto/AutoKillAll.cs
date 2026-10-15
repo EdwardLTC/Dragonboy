@@ -84,7 +84,7 @@ namespace Mod.Auto
 				yield return null;
 			}
 
-			if (Char.myCharz().meDead)
+			if (Char.myCharz().meDead || Char.myCharz().stone || Char.myCharz().isCharge)
 			{
 				yield break;
 			}

@@ -28,6 +28,10 @@ namespace Mod.Yardat
 		protected override void OnStop()
 		{
 			AutoGoback.gI.Toggle(false);
+			if (!Pk9rPickMob.IsAutoPickItems)
+			{
+				Pk9rPickMob.IsAutoPickItems = true;
+			}
 			GameScr.info1.addInfo("[Auto Yardat] ĐÃ DỪNG", 0);
 		}
 
@@ -134,6 +138,11 @@ namespace Mod.Yardat
 				Utils.useItem(521);
 			}
 
+			if (Pk9rPickMob.IsAutoPickItems)
+			{
+				Pk9rPickMob.IsAutoPickItems = false;
+			}
+
 			Skill skill = SkillPicker.GetSkillAttack();
 
 			GameScr.gI().doSelectSkill(skill, true);
@@ -177,7 +186,7 @@ namespace Mod.Yardat
 					}
 					else if (YardatSettings.AutoMoveToTarget)
 					{
-						Utils.TeleportMyChar(target.cx - 30, Utils.GetYGround(target.cx));
+						Utils.TeleportMyChar(target.cx, target.cy);
 					}
 				}
 			}

@@ -158,7 +158,7 @@ namespace Mod.PickMob
 
 		static IEnumerator DoSlaughter(Char myChar, bool isUseTDLT)
 		{
-			if (myChar.isCharge)
+			if (myChar.isCharge || myChar.stone)
 			{
 				yield return new WaitForSecondsRealtime(ATTACK_DELAY);
 				yield break;

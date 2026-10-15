@@ -21,11 +21,8 @@ namespace Mod.Auto
 		AttackMyself
 	}
 
-	internal class AutoTrainPet
+	internal static class AutoTrainPet
 	{
-		internal static List<int> mobTemplateIdList = new List<int>();
-
-		internal static List<int> mobIdList = new List<int>();
 		static long lastTimePick;
 		static int lastX;
 		static bool isAssignedLastX;
@@ -33,7 +30,7 @@ namespace Mod.Auto
 		static bool isAssignedLastXPet;
 		static bool isMyPetDied;
 
-		internal static bool isPicking;
+		static bool isPicking;
 		static long lastTimePetFollow = mSystem.currentTimeMillis();
 		static bool isGoHomeGetMorePean;
 		static bool isMagicTreeUpgrading;
@@ -133,7 +130,7 @@ namespace Mod.Auto
 				}
 			}
 
-			TeleToSafePos();
+			//TeleToSafePos();
 			AutoSkill();
 			if (isMyPetDied)
 				return;
@@ -312,11 +309,7 @@ namespace Mod.Auto
 			for (int i = 0; i < GameScr.vMob.size(); i++)
 			{
 				Mob mob = (Mob)GameScr.vMob.elementAt(i);
-				if (mob.status != 0 && mob.status != 1 && mob.hp > 0 && !mob.isMobMe && mob.levelBoss == 0 &&
-				    mob.getTemplate().type != MonsterType.Fly &&
-				    (mobTemplateIdList.Count > 0 && mobTemplateIdList.Contains(mob.templateId) ||
-				     mobIdList.Count > 0 && mobIdList.Contains(mob.mobId) || mobTemplateIdList.Count == 0 ||
-				     mobIdList.Count == 0))
+				if (mob.status != 0 && mob.status != 1 && mob.hp > 0 && !mob.isMobMe && mob.levelBoss == 0 && mob.getTemplate().type != MonsterType.Fly)
 				{
 					int distance = Res.distance(mob.x, mob.y, Char.myCharz().cx, Char.myCharz().cy);
 					if (minDistance > distance)
