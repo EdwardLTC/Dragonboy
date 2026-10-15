@@ -117,32 +117,6 @@ namespace Mod.Yardat
 			return (long)(skill.coolDown * 1.2 + 200.0);
 		}
 
-		static List<Char> GetValidTargets()
-		{
-			List<Char> result = new List<Char>();
-			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
-			{
-				Char c = (Char)GameScr.vCharInMap.elementAt(i);
-				if (c == null || c.charID == Char.myCharz().charID || c.isPet || c.isMiniPet || c.statusMe == 14 || c.statusMe == 5 || string.IsNullOrEmpty(c.cName))
-				{
-					continue;
-				}
-
-				if (YardatSettings.AutoSelectAllYardat)
-				{
-					if (c.charID <= 0)
-					{
-						result.Add(c);
-					}
-				}
-				else if (YardatSettings.CustomTargetIds.Contains(c.charID))
-				{
-					result.Add(c);
-				}
-			}
-			return result;
-		}
-
 		void UpdateAutoChangeFocus()
 		{
 			if (!YardatSettings.AutoChangeFocus || Char.myCharz().isCharge)
@@ -153,6 +127,11 @@ namespace Mod.Yardat
 			if (Char.myCharz().IsCharDead() || Char.myCharz().statusMe == 14 || Char.myCharz().statusMe == 5)
 			{
 				return;
+			}
+
+			if (!Utils.isUsingTDLT())
+			{
+				Utils.useItem(521);
 			}
 
 			Skill skill = SkillPicker.GetSkillAttack();
@@ -198,10 +177,36 @@ namespace Mod.Yardat
 					}
 					else if (YardatSettings.AutoMoveToTarget)
 					{
-						Utils.TeleportMyChar(target.cx, target.cy);
+						Utils.TeleportMyChar(target.cx - 30, Utils.GetYGround(target.cx));
 					}
 				}
 			}
+		}
+
+		static List<Char> GetValidTargets()
+		{
+			List<Char> result = new List<Char>();
+			for (int i = 0; i < GameScr.vCharInMap.size(); i++)
+			{
+				Char c = (Char)GameScr.vCharInMap.elementAt(i);
+				if (c == null || c.charID == Char.myCharz().charID || c.isPet || c.isMiniPet || c.statusMe == 14 || c.statusMe == 5 || string.IsNullOrEmpty(c.cName))
+				{
+					continue;
+				}
+
+				if (YardatSettings.AutoSelectAllYardat)
+				{
+					if (c.charID <= 0)
+					{
+						result.Add(c);
+					}
+				}
+				else if (YardatSettings.CustomTargetIds.Contains(c.charID))
+				{
+					result.Add(c);
+				}
+			}
+			return result;
 		}
 	}
 }

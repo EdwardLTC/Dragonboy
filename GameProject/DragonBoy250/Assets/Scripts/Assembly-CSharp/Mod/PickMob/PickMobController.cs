@@ -11,6 +11,7 @@ namespace Mod.PickMob
 	{
 		const float PICK_ITEM_DELAY = 0.2f;
 		const float ATTACK_DELAY = 0.1f;
+		const float ZONE_CHANGE_TIMEOUT = 8f;
 		const int ID_ICON_ITEM_TDLT = 4387;
 
 		static int _lockedItemMapId = -1;
@@ -84,10 +85,69 @@ namespace Mod.PickMob
 				}
 			}
 
-			if (Pk9rPickMob.IsTanSat && GameScr.vMob.size() > 0)
+			if (Pk9rPickMob.IsTanSat)
 			{
-				yield return DoSlaughter(myChar, isUseTDLT);
+				if (GameScr.vMob == null || GameScr.vMob.size() == 0)
+				{
+					yield return ChangeToLowestPlayerZone();
+				}
+				else
+				{
+					yield return DoSlaughter(myChar, isUseTDLT);
+				}
 			}
+		}
+
+		static IEnumerator ChangeToLowestPlayerZone()
+		{
+			int? targetZone = FindLowestPlayerZoneId();
+			if (!targetZone.HasValue)
+			{
+				yield break;
+			}
+
+			Service.gI().requestChangeZone(targetZone.Value, 0);
+
+			float deadline = Time.realtimeSinceStartup + ZONE_CHANGE_TIMEOUT;
+			while (TileMap.zoneID != targetZone.Value && Time.realtimeSinceStartup < deadline)
+			{
+				yield return null;
+			}
+		}
+
+		static int? FindLowestPlayerZoneId()
+		{
+			GameScr gameScr = GameScr.gI();
+			int[] zones = gameScr.zones;
+			int[] numPlayer = gameScr.numPlayer;
+
+			if (zones == null || numPlayer == null)
+			{
+				return null;
+			}
+
+			int count = System.Math.Min(zones.Length, numPlayer.Length);
+			int? bestZoneId = null;
+			int minPlayer = int.MaxValue;
+
+			for (int i = 0; i < count; i++)
+			{
+				int zoneId = zones[i];
+				int playerCount = numPlayer[i];
+
+				if (playerCount < minPlayer)
+				{
+					minPlayer = playerCount;
+					bestZoneId = zoneId;
+				}
+			}
+
+			if (bestZoneId == TileMap.zoneID)
+			{
+				return null;
+			}
+
+			return bestZoneId;
 		}
 
 		static void LockTarget(ItemMap target, long durationMs)
