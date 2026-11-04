@@ -114,6 +114,12 @@ namespace Mod.Xmap
 			// ===== Link đặc biệt type 3 =====
 			AddLink(45, 46, (TypeMapNext)3, 576, 552);
 			AddLink(46, 47, (TypeMapNext)3, 576, 552);
+
+			// ===== Link Vach nui kkr - Sa mạc hoang vu =====
+			AddLink(52, 181, (TypeMapNext)1, 44, 1, 0);
+
+			// ===== Link Sa mạc hoang vu - Vach nui kkr =====
+			AddLink(181, 52, (TypeMapNext)1, 44, 0);
 		}
 		#endregion
 
@@ -142,7 +148,8 @@ namespace Mod.Xmap
 					38,
 					26,
 					52,
-					84
+					84,
+					181
 				}
 			));
 
@@ -355,7 +362,7 @@ namespace Mod.Xmap
 			AddAutoWaypointChain(13, 33);
 
 			// ================= XAYDA =================
-			AddAutoWaypointChain(52, 44, 14, 15, 16, 17, 18, 20, 19);
+			AddAutoWaypointChain(181, 52, 44, 14, 15, 16, 17, 18, 20, 19);
 			AddAutoWaypointChain(17, 35, 36, 37, 38);
 			AddAutoWaypointChain(16, 26);
 			AddAutoWaypointChain(20, 37);

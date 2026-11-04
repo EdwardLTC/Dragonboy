@@ -23,6 +23,35 @@ namespace Mod.PickMob
 		static int astarStampCounter = 1;
 		static readonly List<AStarHeapItem> AstarHeap = new List<AStarHeapItem>(256);
 
+		public static bool AreAllTanSatMobsRespawning()
+		{
+			bool anyMatch = false;
+			for (int i = 0; i < GameScr.vMob.size(); i++)
+			{
+				Mob mob = (Mob)GameScr.vMob.elementAt(i);
+				if (mob.isMobMe || !FilterMobTanSat(mob))
+					continue;
+
+				anyMatch = true;
+				if (IsMobTanSat(mob))
+					return false;
+			}
+
+			return anyMatch;
+		}
+
+		public static bool HasAttackableMob()
+		{
+			for (int i = 0; i < GameScr.vMob.size(); i++)
+			{
+				Mob mob = (Mob)GameScr.vMob.elementAt(i);
+				if (IsMobTanSat(mob))
+					return true;
+			}
+
+			return false;
+		}
+
 		public static Mob GetMobTanSat()
 		{
 			Mob closest = null;

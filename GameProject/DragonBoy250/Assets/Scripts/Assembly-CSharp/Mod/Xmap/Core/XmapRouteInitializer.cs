@@ -5,7 +5,7 @@ namespace Mod.Xmap
 	internal sealed class XmapRouteInitializer
 	{
 		const float CapsuleProbeTimeoutSeconds = 5f;
-		const int MinStepsForCapsuleProbe = 5;
+		const int MinStepsForCapsuleProbe = 3;
 		readonly CapsuleService capsuleService;
 		readonly MapGraphService graphService;
 		readonly MapLookupService mapLookup;

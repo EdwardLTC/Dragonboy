@@ -37,6 +37,12 @@ namespace Mod.PickMob
 		internal static bool IsLimitTimesPickItem { get; set; } = true;
 		internal static bool IsAttackMonsterBySendCommand { get; set; }
 		internal static bool IsSkipPickEventItems { get; set; } = true;
+		internal static bool IsAutoChangeZone { get; set; } = true;
+
+		internal static void SetAutoChangeZone(bool newState)
+		{
+			IsAutoChangeZone = newState;
+		}
 
 		internal static void Init()
 		{
@@ -56,6 +62,13 @@ namespace Mod.PickMob
 		internal static void SetAttackMonsterBySendCommand(bool newState)
 		{
 			IsAttackMonsterBySendCommand = newState;
+		}
+
+		[ChatCommand("kv")]
+		internal static void ToggleAutoChangeZone()
+		{
+			SetAutoChangeZone(!IsAutoChangeZone);
+			GameScr.info1.addInfo("Auto đổi khu: " + Strings.OnOffStatus(IsAutoChangeZone), 0);
 		}
 
 		internal static void SetCrossTerrain(bool newState)
@@ -519,6 +532,7 @@ namespace Mod.PickMob
 				here:
 				GameCanvas.startOKDlg(infoskill);
 			}));
+			menuBuilder.addItem("Auto đổi khu: " + Strings.OnOffStatus(IsAutoChangeZone), new MenuAction(ToggleAutoChangeZone));
 			menuBuilder.start();
 		}
 	}

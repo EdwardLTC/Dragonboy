@@ -27,11 +27,6 @@ namespace Mod.Auto
 			[BeanAction.Harvest] = false
 		};
 
-		static AutoPean()
-		{
-			LoadSettings();
-		}
-
 		public static int HpPercent { get; private set; }
 		public static long HpValue { get; private set; }
 		public static int MpPercent { get; private set; }
@@ -39,7 +34,7 @@ namespace Mod.Auto
 
 		protected override float Interval => 0.25f;
 
-		static void LoadSettings()
+		public static void LoadSettings()
 		{
 			HpPercent = ModStorage.ReadInt(RMS_HP_PERCENT, 0);
 			HpValue = ModStorage.ReadLong(RMS_HP_VALUE);

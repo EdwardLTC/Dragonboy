@@ -14,11 +14,17 @@ namespace Mod.PickMob
 		const float ZONE_CHANGE_TIMEOUT = 8f;
 		const int ID_ICON_ITEM_TDLT = 4387;
 
+		const long NO_MOB_WAIT_MS = 1500;
+		const long ZONE_CHANGE_COOLDOWN_MS = 2000;
+
 		static int _lockedItemMapId = -1;
 		static long _lockedUntilMs;
 
 		static int[] _groundYCache;
 		static int _groundYCacheMapId = -1;
+
+		static long _noMobSinceMs;
+		static long _lastZoneChangeMs;
 
 		static readonly Dictionary<int, bool> _eventItemCache = new Dictionary<int, bool>();
 
@@ -87,15 +93,26 @@ namespace Mod.PickMob
 
 			if (Pk9rPickMob.IsTanSat)
 			{
-				if (GameScr.vMob == null || GameScr.vMob.size() == 0)
-				{
-					yield return ChangeToLowestPlayerZone();
-				}
-				else
-				{
-					yield return DoSlaughter(myChar, isUseTDLT);
-				}
+				yield return DoSlaughter(myChar, isUseTDLT);
 			}
+		}
+
+		static bool ShouldChangeZone()
+		{
+			if (!Pk9rPickMob.IsAutoChangeZone || !MobPicker.AreAllTanSatMobsRespawning())
+			{
+				_noMobSinceMs = 0;
+				return false;
+			}
+
+			long now = mSystem.currentTimeMillis();
+
+			if (_noMobSinceMs == 0)
+			{
+				_noMobSinceMs = now;
+			}
+
+			return now - _noMobSinceMs >= NO_MOB_WAIT_MS && now - _lastZoneChangeMs >= ZONE_CHANGE_COOLDOWN_MS;
 		}
 
 		static IEnumerator ChangeToLowestPlayerZone()
@@ -106,11 +123,23 @@ namespace Mod.PickMob
 				yield break;
 			}
 
+			int startMapId = TileMap.mapID;
+
 			Service.gI().requestChangeZone(targetZone.Value, 0);
 
 			float deadline = Time.realtimeSinceStartup + ZONE_CHANGE_TIMEOUT;
-			while (TileMap.zoneID != targetZone.Value && Time.realtimeSinceStartup < deadline)
+			while (Time.realtimeSinceStartup < deadline)
 			{
+				if (TileMap.zoneID == targetZone.Value || TileMap.mapID != startMapId)
+				{
+					yield break;
+				}
+
+				if (MobPicker.HasAttackableMob())
+				{
+					yield break;
+				}
+
 				yield return null;
 			}
 		}
@@ -182,6 +211,7 @@ namespace Mod.PickMob
 
 			if (myChar.mobFocus != null)
 			{
+				_noMobSinceMs = 0;
 				if (myChar.skillInfoPaint() == null)
 				{
 					Skill skill = SkillPicker.GetSkillAttack();
@@ -191,12 +221,24 @@ namespace Mod.PickMob
 					}
 				}
 			}
-			else if (!isUseTDLT)
+			else
 			{
-				Mob mob = MobPicker.GetMobNext();
-				if (mob != null)
+				if (ShouldChangeZone())
 				{
-					Move(myChar, mob.xFirst - 24, mob.yFirst);
+					_lastZoneChangeMs = mSystem.currentTimeMillis();
+					_noMobSinceMs = 0;
+					_lockedItemMapId = -1;
+					yield return ChangeToLowestPlayerZone();
+					yield break;
+				}
+
+				if (!isUseTDLT)
+				{
+					Mob mob = MobPicker.GetMobNext();
+					if (mob != null)
+					{
+						Move(myChar, mob.xFirst - 24, mob.yFirst);
+					}
 				}
 			}
 
