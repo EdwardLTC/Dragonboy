@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal static class CskbNpcHelper
 	{

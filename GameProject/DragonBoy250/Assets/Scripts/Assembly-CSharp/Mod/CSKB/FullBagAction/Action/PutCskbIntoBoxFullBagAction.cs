@@ -1,7 +1,7 @@
 using System.Collections;
 using Mod.Xmap;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal sealed class PutCskbIntoBoxFullBagAction : ICskbFullBagAction
 	{

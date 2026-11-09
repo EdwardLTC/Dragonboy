@@ -3,7 +3,7 @@ using System.Linq;
 using Mod.Xmap;
 using UnityEngine;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal sealed class DepositCskbFullBagAction : ICskbFullBagAction
 	{

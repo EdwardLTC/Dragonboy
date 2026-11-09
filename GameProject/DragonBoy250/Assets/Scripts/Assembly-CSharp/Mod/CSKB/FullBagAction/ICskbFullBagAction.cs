@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal interface ICskbFullBagAction
 	{

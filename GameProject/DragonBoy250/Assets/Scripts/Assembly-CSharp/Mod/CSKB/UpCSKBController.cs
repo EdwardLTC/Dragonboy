@@ -4,32 +4,27 @@ using System.Linq;
 using Mod.Auto;
 using Mod.Graphics;
 using Mod.ModHelper;
+using Mod.PickMob;
 using Mod.Xmap;
 using UnityEngine;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal class UpCSKBController : CoroutineMainThreadAction<UpCSKBController>
 	{
 		const long MD_IDLE_TIMEOUT_TICKS = 2 * 60 * TimeSpan.TicksPerSecond;
-		const float AUTO_FUSION_ITEM_REUSE_DELAY_SEC = 2f;
 		static readonly int[] mapCanTrain =
 		{
 			92, 93, 94, 95, 96, 97, 98, 99, 100
 		};
-		static readonly CskbZonePriorityTracker zonePriorityTracker = new CskbZonePriorityTracker(60 * TimeSpan.TicksPerSecond);
 
 		static long notUsingMDTime;
-		static long nextAutoFusionItemTicks;
 		static int? mapIdTrain;
-		static int? zoneIdTrain;
 
 		protected override float Interval => 1f;
 
 		protected override IEnumerator OnUpdate()
 		{
-			AutoFusion();
-
 			UpdateNotUsingMdTime();
 
 			Item capsuleInBag = Utils.getItemInBag(CskbConstants.IdCapsuleKb);
@@ -58,7 +53,6 @@ namespace Mod.PickMob
 			}
 
 			yield return ReturnToTrainMapIfNeeded(capsuleInBag);
-			yield return ChangeToTrainZoneIfNeeded();
 		}
 
 		protected override void OnStart()
@@ -76,7 +70,6 @@ namespace Mod.PickMob
 			Pk9rPickMob.SetSlaughter(true);
 			AutoLogin.gI.Toggle(true);
 			mapIdTrain = TileMap.mapID;
-			zoneIdTrain = TileMap.zoneID;
 
 			Item capsuleInBag = Utils.getItemInBag(CskbConstants.IdCapsuleKb);
 			Item capsuleInBox = Utils.getItemInBox(CskbConstants.IdCapsuleKb);
@@ -98,8 +91,6 @@ namespace Mod.PickMob
 			}
 
 			notUsingMDTime = 0L;
-			nextAutoFusionItemTicks = 0L;
-			zonePriorityTracker.Reset();
 			base.OnStart();
 		}
 
@@ -169,24 +160,6 @@ namespace Mod.PickMob
 			yield return null;
 		}
 
-		static void AutoFusion()
-		{
-			sbyte index = Utils.getIndexItemBag(921, 454);
-			if (index == -1 || !Char.myCharz().havePet || Char.myCharz().isNhapThe || Char.myCharz().isFusion)
-			{
-				return;
-			}
-
-			long nowTicks = DateTime.Now.Ticks;
-			if (nowTicks < nextAutoFusionItemTicks)
-			{
-				return;
-			}
-
-			Service.gI().useItem(0, 1, index, -1);
-			nextAutoFusionItemTicks = nowTicks + (long)(AUTO_FUSION_ITEM_REUSE_DELAY_SEC * TimeSpan.TicksPerSecond);
-		}
-
 		static void ClosePanels()
 		{
 			GameCanvas.menu.doCloseMenu();
@@ -199,24 +172,6 @@ namespace Mod.PickMob
 			{
 				GameCanvas.panel2.hide();
 			}
-		}
-
-		static IEnumerator ChangeToTrainZoneIfNeeded()
-		{
-			if (TileMap.mapID != mapIdTrain || zoneIdTrain == null)
-			{
-				yield break;
-			}
-
-			zoneIdTrain = zonePriorityTracker.ResolveTargetZone(zoneIdTrain.Value);
-
-			if (TileMap.zoneID == zoneIdTrain)
-			{
-				yield break;
-			}
-
-			yield return new WaitForSecondsRealtime(2f);
-			Service.gI().requestChangeZone(zoneIdTrain.Value, 0);
 		}
 
 		static void RegenHpWhenInHome()
@@ -240,11 +195,6 @@ namespace Mod.PickMob
 		{
 			gI.Toggle(false);
 			GameScr.info1.addInfo("[Up CSKB] " + message + ", đã tắt auto", 0);
-		}
-
-		public override string ToString()
-		{
-			return "State: " + (gI.IsActing ? "Running" : "Stopped") + ", Map: " + mapIdTrain + ", ZoneIdTrain: " + zoneIdTrain;
 		}
 	}
 }

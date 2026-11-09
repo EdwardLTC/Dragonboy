@@ -38,10 +38,16 @@ namespace Mod.PickMob
 		internal static bool IsAttackMonsterBySendCommand { get; set; }
 		internal static bool IsSkipPickEventItems { get; set; } = true;
 		internal static bool IsAutoChangeZone { get; set; } = true;
+		internal static bool IsAutoFusion { get; set; } = true;
 
 		internal static void SetAutoChangeZone(bool newState)
 		{
 			IsAutoChangeZone = newState;
+		}
+
+		internal static void SetAutoFusion(bool newState)
+		{
+			IsAutoFusion = newState;
 		}
 
 		internal static void Init()
@@ -59,9 +65,11 @@ namespace Mod.PickMob
 			IsNeSieuQuai = newState;
 		}
 
-		internal static void SetAttackMonsterBySendCommand(bool newState)
+		[ChatCommand("afs")]
+		internal static void ToggleAutoFusion()
 		{
-			IsAttackMonsterBySendCommand = newState;
+			SetAutoFusion(!IsAutoFusion);
+			GameScr.info1.addInfo("Auto hợp thể: " + Strings.OnOffStatus(IsAutoFusion), 0);
 		}
 
 		[ChatCommand("kv")]
@@ -533,6 +541,7 @@ namespace Mod.PickMob
 				GameCanvas.startOKDlg(infoskill);
 			}));
 			menuBuilder.addItem("Auto đổi khu: " + Strings.OnOffStatus(IsAutoChangeZone), new MenuAction(ToggleAutoChangeZone));
+			menuBuilder.addItem("Auto hợp thể: " + Strings.OnOffStatus(IsAutoFusion), new MenuAction(ToggleAutoFusion));
 			menuBuilder.start();
 		}
 	}

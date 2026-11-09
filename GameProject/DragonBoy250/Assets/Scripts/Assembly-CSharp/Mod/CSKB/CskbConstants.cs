@@ -1,4 +1,4 @@
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal static class CskbConstants
 	{

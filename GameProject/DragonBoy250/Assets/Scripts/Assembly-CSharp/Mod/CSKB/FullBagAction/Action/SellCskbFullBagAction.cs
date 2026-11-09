@@ -2,7 +2,7 @@ using System.Collections;
 using Mod.Xmap;
 using UnityEngine;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	internal sealed class SellCskbFullBagAction : ICskbFullBagAction
 	{

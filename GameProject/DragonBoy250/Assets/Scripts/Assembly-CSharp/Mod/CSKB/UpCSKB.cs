@@ -1,6 +1,6 @@
 using Mod.ModHelper.Menu;
 
-namespace Mod.PickMob
+namespace Mod.CSKB
 {
 	public class UpCSKB : IChatable
 	{
