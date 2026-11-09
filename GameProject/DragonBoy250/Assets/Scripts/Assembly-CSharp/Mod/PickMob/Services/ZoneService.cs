@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mod.PickMob.Services
@@ -78,27 +79,52 @@ namespace Mod.PickMob.Services
 			}
 
 			int count = System.Math.Min(zones.Length, numPlayer.Length);
-			int? bestZoneId = null;
 			int minPlayer = int.MaxValue;
 
+			// First pass: find the minimum player count
 			for (int i = 0; i < count; i++)
 			{
-				int zoneId = zones[i];
 				int playerCount = numPlayer[i];
-
 				if (playerCount < minPlayer)
 				{
 					minPlayer = playerCount;
-					bestZoneId = zoneId;
 				}
 			}
 
-			if (bestZoneId == TileMap.zoneID)
+			// Second pass: collect all zones tied for the lowest player count
+			List<int> tiedZones = new List<int>();
+			for (int i = 0; i < count; i++)
+			{
+				if (numPlayer[i] == minPlayer)
+				{
+					tiedZones.Add(zones[i]);
+				}
+			}
+
+			if (tiedZones.Count == 0)
 			{
 				return null;
 			}
 
-			return bestZoneId;
+			// Filter out the current zone if there are other options
+			List<int> candidates = new List<int>();
+			foreach (int zoneId in tiedZones)
+			{
+				if (zoneId != TileMap.zoneID)
+				{
+					candidates.Add(zoneId);
+				}
+			}
+
+			// If all tied zones are the current zone, return null
+			if (candidates.Count == 0)
+			{
+				return null;
+			}
+
+			// Randomly pick from the candidates
+			int randomIndex = Random.Range(0, candidates.Count);
+			return candidates[randomIndex];
 		}
 	}
 }
