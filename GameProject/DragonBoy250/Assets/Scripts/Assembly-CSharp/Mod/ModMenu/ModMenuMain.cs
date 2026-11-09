@@ -127,8 +127,8 @@ namespace Mod.ModMenu
 					ID = "PickMob_Toggle",
 					Title = Strings.pickMobTitle,
 					Description = Strings.pickMobDescription,
-					GetValueFunc = () => Pk9rPickMob.IsTanSat,
-					SetValueAction = Pk9rPickMob.SetSlaughter,
+					GetValueFunc = () => PickMobConfig.IsTanSat,
+					SetValueAction = PickMobConfig.SetSlaughter,
 					GetIsDisabled = () => UpCSKBController.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
 				}),
@@ -214,8 +214,8 @@ namespace Mod.ModMenu
 					ID = "PickMob_AutoPickItem_Toggle",
 					Title = Strings.autoPickItemTitle,
 					Description = Strings.autoPickItemDescription,
-					GetValueFunc = () => Pk9rPickMob.IsAutoPickItems,
-					SetValueAction = Pk9rPickMob.SetAutoPickItems,
+					GetValueFunc = () => PickMobConfig.IsAutoPickItems,
+					SetValueAction = PickMobConfig.SetAutoPickItems,
 					RMSName = "pickmob_auto_pick",
 					GetIsDisabled = () => UpCSKBController.gI.IsActing,
 					GetDisabledReason = () => string.Format(Strings.functionShouldBeDisabled, Strings.autoTrainForNewbieTitle)
@@ -225,8 +225,8 @@ namespace Mod.ModMenu
 					ID = "PickMob_PickMyItemOnly_Toggle",
 					Title = Strings.pickMobPickMyItemOnlyTitle,
 					Description = Strings.pickMobPickMyItemOnlyDescription,
-					GetValueFunc = () => Pk9rPickMob.IsItemMe,
-					SetValueAction = Pk9rPickMob.SetAutoPickItemsFromOthers,
+					GetValueFunc = () => PickMobConfig.IsItemMe,
+					SetValueAction = PickMobConfig.SetAutoPickItemsFromOthers,
 					RMSName = "pickmob_pick_my_item_only"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
@@ -234,8 +234,8 @@ namespace Mod.ModMenu
 					ID = "PickMob_LimitPickTimes_Toggle",
 					Title = Strings.pickMobLimitPickTimesTitle,
 					Description = Strings.pickMobLimitPickTimesDescription,
-					GetValueFunc = () => Pk9rPickMob.IsLimitTimesPickItem,
-					SetValueAction = Pk9rPickMob.SetPickUpLimited,
+					GetValueFunc = () => PickMobConfig.IsLimitTimesPickItem,
+					SetValueAction = PickMobConfig.SetPickUpLimited,
 					RMSName = "pickmob_limit_pick_item_times"
 				}),
 				new ModMenuItemBoolean(new ModMenuItemBooleanConfig
@@ -348,7 +348,7 @@ namespace Mod.ModMenu
 					ID = "OpenPickMobMenu",
 					Title = Strings.openPickMobMenuTitle,
 					Description = Strings.openPickMobMenuDescription,
-					Action = Pk9rPickMob.ShowMenu
+					Action = PickMobMenu.ShowMenu
 				}),
 				new ModMenuItemFunction(new ModMenuItemFunctionConfig
 				{

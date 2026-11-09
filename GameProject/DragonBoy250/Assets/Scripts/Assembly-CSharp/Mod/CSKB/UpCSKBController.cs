@@ -65,9 +65,9 @@ namespace Mod.CSKB
 
 			GraphicsReducer.Level = ReduceGraphicsLevel.Level2;
 			HideGameUI.SetState(true);
-			Pk9rPickMob.SetAutoPickItems(true);
-			Pk9rPickMob.SetAvoidSuperMonster(true);
-			Pk9rPickMob.SetSlaughter(true);
+			PickMobConfig.SetAutoPickItems(true);
+			PickMobConfig.SetAvoidSuperMonster(true);
+			PickMobConfig.SetSlaughter(true);
 			AutoLogin.gI.Toggle(true);
 			mapIdTrain = TileMap.mapID;
 
@@ -98,7 +98,7 @@ namespace Mod.CSKB
 		{
 			GraphicsReducer.Level = ReduceGraphicsLevel.Off;
 			HideGameUI.SetState(false);
-			Pk9rPickMob.SetSlaughter(false);
+			PickMobConfig.SetSlaughter(false);
 			AutoLogin.gI.Toggle(false);
 			GameScr.info1.addInfo("[Up CSKB] stop ", 0);
 			base.OnStop();

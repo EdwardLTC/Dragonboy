@@ -262,13 +262,13 @@ namespace Mod.Auto
 
 		protected override void OnStart()
 		{
-			Pk9rPickMob.IsAutoPickItems = false;
+			PickMobConfig.IsAutoPickItems = false;
 			base.OnStart();
 		}
 
 		protected override void OnStop()
 		{
-			Pk9rPickMob.IsAutoPickItems = true;
+			PickMobConfig.IsAutoPickItems = true;
 			base.OnStop();
 		}
 	}

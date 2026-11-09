@@ -114,14 +114,14 @@ namespace Mod.Auto
 				Service.gI().getFlag(1, 8);
 			}
 			AutoGoback.gI.Toggle(true);
-			Pk9rPickMob.IsAutoPickItems = false;
+			PickMobConfig.IsAutoPickItems = false;
 			base.OnStart();
 		}
 
 		protected override void OnStop()
 		{
 			AutoGoback.gI.Toggle(false);
-			Pk9rPickMob.IsAutoPickItems = true;
+			PickMobConfig.IsAutoPickItems = true;
 			GameScr.info1.addInfo("Đã tắt AutoKillSelfAndPickGold", 0);
 			base.OnStop();
 		}

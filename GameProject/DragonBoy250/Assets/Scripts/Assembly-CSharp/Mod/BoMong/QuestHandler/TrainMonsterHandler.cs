@@ -113,7 +113,7 @@ namespace Mod.BoMong.QuestHandler
 
 		public void OnQuestCompleted()
 		{
-			Pk9rPickMob.SetSlaughter(false);
+ 		PickMobConfig.SetSlaughter(false);
 			Char.myCharz().currentMovePoint = null;
 		}
 
@@ -138,13 +138,13 @@ namespace Mod.BoMong.QuestHandler
 				yield return null;
 			}
 
-			// Slaughter is handled by Pk9rPickMob, so we just yield return null here to keep the coroutine running.
+ 		// Slaughter is handled by PickMobConfig, so we just yield return null here to keep the coroutine running.
 			yield return null;
 		}
 
 		public void PreHandleQuest()
 		{
-			Pk9rPickMob.SetSlaughter(true);
+ 		PickMobConfig.SetSlaughter(true);
 		}
 
 		[CanBeNull]

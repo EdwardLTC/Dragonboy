@@ -73,7 +73,7 @@ namespace Mod
 			ChatCommandHandler.loadDefault();
 			HotkeyCommandHandler.loadDefault();
 			GraphicsReducer.InitializeTileMap(true);
-			Pk9rPickMob.Init();
+			PickMobConfig.Init();
 			SpaceshipSkip.isEnabled = true;
 			InGameAccountManager.OnStart();
 			AutoSkill.gI.Toggle(true);
@@ -742,12 +742,10 @@ namespace Mod
 
 		internal static void OnMobStartDie(Mob mob)
 		{
-			Pk9rPickMob.MobStartDie(mob);
 		}
 
 		internal static void OnUpdateMob(Mob mob)
 		{
-			Pk9rPickMob.UpdateCountDieMob(mob);
 		}
 
 		internal static bool OnCreateImage(string filename, out Image image)

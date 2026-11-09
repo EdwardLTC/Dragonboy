@@ -19,7 +19,7 @@ namespace Mod.PickMob
 		{
 			Skill best = null;
 			SkillTemplate template = new SkillTemplate();
-			foreach (sbyte id in Pk9rPickMob.IdSkillsTanSat)
+			foreach (sbyte id in PickMobConfig.IdSkillsTanSat)
 			{
 				template.id = id;
 				Skill candidate = Char.myCharz().getSkill(template);

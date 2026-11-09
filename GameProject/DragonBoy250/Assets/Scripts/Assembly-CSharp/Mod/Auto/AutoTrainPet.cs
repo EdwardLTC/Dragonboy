@@ -325,7 +325,7 @@ namespace Mod.Auto
 
 		static void AutoPick()
 		{
-			if (!Pk9rPickMob.IsAutoPickItems) return;
+			if (!PickMobConfig.IsAutoPickItems) return;
 			if (mSystem.currentTimeMillis() - lastTimePick > 550)
 			{
 				bool hasPickableItem = false;

@@ -255,13 +255,13 @@ namespace Mod.Auto
 
 		static void PausePickMob()
 		{
-			lastPickMobState = Pk9rPickMob.IsTanSat;
-			Pk9rPickMob.SetSlaughter(false);
+ 		lastPickMobState = PickMobConfig.IsTanSat;
+ 		PickMobConfig.SetSlaughter(false);
 		}
 
 		static void ResumePickMob()
 		{
-			Pk9rPickMob.SetSlaughter(lastPickMobState);
+ 		PickMobConfig.SetSlaughter(lastPickMobState);
 			lastPickMobState = false;
 		}
 
